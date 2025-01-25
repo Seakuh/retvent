@@ -1,0 +1,32 @@
+.category-filter {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.category-button {
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.category-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.category-button.active {
+  background: var(--color-neon-pink);
+  box-shadow: 0 0 10px var(--color-neon-pink);
+}

@@ -1,0 +1,20 @@
+.map-container {
+  width: 100%;
+  height: 70vh;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 0 20px var(--color-neon-blue);
+}
+
+.event-popup h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-neon-purple);
+}
+
+.event-popup p {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0.25rem 0;
+}
