@@ -167,7 +167,7 @@ function App() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
             <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-md" />
-            <h1 className="text-3xl font-bold text-white neon-text">Event Scanner</h1>
+            <h1 className="text-3xl font-bold text-white neon-text"></h1>
             </div>
             <div className="flex items-center gap-4">
               <ViewToggle view={viewMode} onViewChange={setViewMode} />
