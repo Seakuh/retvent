@@ -15,6 +15,7 @@ export const EventScanner: React.FC = () => {
         navigator.geolocation.getCurrentPosition(async (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
+          console.info('Location from Upload:', lat, lon);
           setLocation({ lat, lon });
           await uploadEventImage(image, lat, lon);
         }, () => {

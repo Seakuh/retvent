@@ -24,8 +24,15 @@ export class ChatGPTService {
     //   max_tokens: 150,
     // });
     // return JSON.parse(response.data.choices[0].text);
+    const mockEvent: Event = {
+      id: '1',
+      name: 'Event Name',
+      date: '2022-01-01',
+      location: 'Event Location',
+      description: 'Event Description',
+    };
 
-    return undefined
+    return mockEvent
   }
 
   async searchEvents(params: { query: string; location?: string }): Promise<Event[]> {

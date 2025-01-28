@@ -1,25 +1,42 @@
-// src/presentation/controllers/event.controller.ts
-import { Controller, Get, Query } from '@nestjs/common';
-import { EventServicePort } from '../../core/domain/event';
-import { MeetupService } from '../../infrastructure/services/meetup.service';
-import { ChatGPTService } from '../../infrastructure/services/chatgpt.service';
+import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { EventService } from 'src/infrastructure/services/event.service';
 
 @Controller('events')
 export class EventController {
   constructor(
-    private readonly meetupService: MeetupService,
-    private readonly chatGPTService: ChatGPTService,
+    // private readonly meetupService: MeetupService,
     private readonly eventService: EventService
   ) {}
 
-  @Get('search')
-  async searchEvents(@Query('query') query: string, @Query('location') location?: string): Promise<any> {
+  @Get('search/plattforms')
+  async searchEventPlattforms(@Query('query') query: string, @Query('location') location?: string): Promise<any> {
     const params = { query, location };
-    const meetupEvents = await this.meetupService.searchEvents(params);
+    console.info('Searching for events with params:', params);
+    // const meetupEvents = await this.meetupService.searchEvents(params);
     // const chatGPTEvents = await this.chatGPTService.searchEvents(params);
     // return [...meetupEvents, ...chatGPTEvents];
-    return [...meetupEvents];
+    // return [...meetupEvents];
 
   }
+
+  @Post('upload')
+  async uploadEvent(@Body() body: { imageUrl: string; lat?: number; lon?: number }) {
+    return this.eventService.processEventImage(body.imageUrl, body.lat, body.lon);
+  }
+
+  @Get('search')
+  async searchEvents(@Query('query') query: string, @Query('location') location?: string) {
+    return this.eventService.searchEvents({ query, location });
+  }
+
+  @Get('byId')
+  async getEventById(@Query('id') id: string) {
+    return this.eventService.getEventById(id);
+  }
+
+  @Get('byIds')
+  async getEventsByIds(@Query('ids') ids: string) {
+    return this.eventService.getEventsByIds(ids.split(','));
+  }
+
 }
