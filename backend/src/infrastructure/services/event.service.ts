@@ -10,7 +10,7 @@ import { EventRepository } from '../repositories/event.repository';
 
 @Injectable()
 export class EventService {
-
+ 
 
   constructor(
     @InjectModel('Event') private eventModel: Model<Event>,
@@ -80,4 +80,12 @@ export class EventService {
   async getEventsByIds(ids: string[]) {
     return this.eventModel.find({ _id: { $in: ids } });
   }
+
+   /**
+   * Holt die neuesten 30 Events aus der Datenbank.
+   */
+   async getLatestEvents(): Promise<Event[]> {
+    return this.eventRepository.findLatestEvents();
+  }
+
 }

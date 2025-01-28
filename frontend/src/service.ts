@@ -98,3 +98,15 @@ export const mockEvents: Event[] = [
       longitude: 13.41
     },
   ];
+
+  export const fetchLatestEvents = async (): Promise<Event[]> => {
+    try {
+      const response = await fetch("http://localhost:3000/events/latest");
+      if (!response.ok) throw new Error("Fehler beim Abrufen der Events");
+      return await response.json();
+    } catch (error) {
+      console.error("API-Fehler:", error);
+      return [];
+    }
+  };
+  

@@ -6,7 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class EventRepository {
-  constructor(@InjectModel('Event') private readonly eventModel: Model<Event>) {}
+
+  constructor(@InjectModel('Event') private readonly eventModel: Model<Event>) { }
 
   /**
    * Speichert ein Event in der Datenbank.
@@ -34,5 +35,12 @@ export class EventRepository {
    */
   async findById(id: string): Promise<Event | null> {
     return await this.eventModel.findOne({ id }).exec();
+  }
+
+  /**
+ * Findet die neuesten 30 Events, sortiert nach Erstellungsdatum.
+ */
+  async findLatestEvents(): Promise<Event[]> {
+    return await this.eventModel.find().sort({ createdAt: -1 }).limit(30).exec();
   }
 }

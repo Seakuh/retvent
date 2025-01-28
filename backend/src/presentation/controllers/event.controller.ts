@@ -51,4 +51,12 @@ export class EventController {
     return this.eventService.getEventsByIds(ids.split(','));
   }
 
+    /**
+   * Gibt die neuesten 30 Events zurück, sortiert nach Erstellungsdatum.
+   */
+    @Get('latest')
+    async getLatestEvents() {
+      return this.eventService.getLatestEvents();
+    }
+
 }

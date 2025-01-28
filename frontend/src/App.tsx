@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SearchBar } from './components/SearchBar/SearchBar';
 import { EventList } from './components/EventList/EventList';
 import { EventForm } from './components/EventForm/EventForm';
@@ -8,12 +8,12 @@ import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
 import { Event, ViewMode } from './types/event';
 import { PlusCircle, Menu, Heart } from 'lucide-react';
 import { EventScanner } from './components/EventScanner/Eventscanner';
-import { mockEvents } from './service';
+import { fetchLatestEvents } from './service';
 
 
 
 function App() {
-  const [events, setEvents] = useState<Event[]>(mockEvents);
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
   const [showEventForm, setShowEventForm] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -33,6 +33,21 @@ function App() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const loadEvents = async () => {
+      try {
+        const latestEvents = await fetchLatestEvents();
+        setEvents(latestEvents);
+      } catch (err) {
+        setError("Fehler beim Laden der Events");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, []);
 
   const handleCreateEvent = async (eventData: any) => {
     try {
@@ -148,3 +163,7 @@ function App() {
 }
 
 export default App;
+
+function setError(arg0: string) {
+  throw new Error('Function not implemented.');
+}
