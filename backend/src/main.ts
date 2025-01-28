@@ -10,7 +10,6 @@ async function bootstrap() {
     // allow these hosts to communicate with the backend
     origin: [
       'http://localhost:5173',
-      'https://guruhub-ai.com',
       'http://localhost:3000',
       '*',
     ],
