@@ -11,7 +11,6 @@ const categories = [
   { name: 'Tech', emoji: '💻' },
   { name: 'Education', emoji: '📚' },
   { name: 'Festival', emoji: '🎪' },
-  { name: 'Music', emoji: '🎵' },
   { name: 'Fitness', emoji: '💪' },
   { name: 'Travel', emoji: '✈️' },
   { name: 'Nature', emoji: '🌿' },
