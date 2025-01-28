@@ -1,4 +1,3 @@
-// components/EventScanner.tsx
 import React, { useRef, useState } from 'react';
 import './Eventscanner.css';
 import { uploadEventImage } from './service';
@@ -35,7 +34,6 @@ export const EventScanner: React.FC = () => {
 
   return (
     <div className="event-scanner">
-      {/* <h2>📸 Scan Event Flyer</h2> */}
       <button className="retro-button" onClick={triggerFileInput}>📤 Upload Event Flyer</button>
       <input 
         type="file" 
@@ -43,6 +41,7 @@ export const EventScanner: React.FC = () => {
         ref={fileInputRef} 
         style={{ display: 'none' }} 
         onChange={handleFileChange} 
+        capture="user" // Öffnet die Kamera auf mobilen Geräten
       />
     </div>
   );
