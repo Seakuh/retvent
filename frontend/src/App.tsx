@@ -24,7 +24,7 @@ function App() {
   const handleSearch = async (keyword: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/events/search?query=${keyword}`);
+      const response = await fetch(`http://api.event-scanner.com/events/search?query=${keyword}`);
       const data = await response.json();
       setEvents(data);
     } catch (error) {

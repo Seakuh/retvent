@@ -101,7 +101,7 @@ export const mockEvents: Event[] = [
 
   export const fetchLatestEvents = async (): Promise<Event[]> => {
     try {
-      const response = await fetch("http://localhost:3000/events/latest");
+      const response = await fetch("http://api.event-scanner.com/events/latest");
       if (!response.ok) throw new Error("Fehler beim Abrufen der Events");
       return await response.json();
     } catch (error) {

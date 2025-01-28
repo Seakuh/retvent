@@ -7,7 +7,7 @@ export const uploadEventImage = async (image: File, lat?: number, lon?: number) 
       formData.append("lon", lon.toString());
     }
 
-    const response = await fetch("http://localhost:3000/events/upload/event-image", {
+    const response = await fetch("http://api.event-scanner.com/events/upload/event-image", {
       method: "POST",
       body: formData,
     });
