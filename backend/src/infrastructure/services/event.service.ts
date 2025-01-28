@@ -1,3 +1,4 @@
+import * as Tesseract from 'tesseract.js';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -18,7 +19,7 @@ export class EventService {
   async processEventImage(imageUrl: string, lat?: number, lon?: number) {
     console.info('Processing event image:', imageUrl, lat, lon);
     const uploadedImageUrl = await this.imageService.uploadImage(imageUrl);
-    const extractedText = await this.extractTextFromImage(uploadedImageUrl);
+    const extractedText = await this.chatGptService.extractTextFromImage(uploadedImageUrl);
     const event = await this.chatGptService.generateEventFromText(extractedText);
     const createdEvent = await this.eventModel.create({ ...event, lat, lon, imageUrl: uploadedImageUrl });
     return createdEvent;
@@ -31,7 +32,7 @@ export class EventService {
 
     // 2. Bild durch ChatGPT analysieren, um Event-Daten zu erhalten
     console.info("Extract Object from Image...");
-    const extractedText = await this.extractTextFromImage(uploadedImageUrl);
+    const extractedText = await this.chatGptService.extractTextFromImage(uploadedImageUrl);
     const event = await this.chatGptService.generateEventFromText(extractedText);
 
     // 3. Event mit Bild-URL in MongoDB speichern
@@ -47,9 +48,23 @@ export class EventService {
     return createdEvent;
   }
 
-  async extractTextFromImage(imageUrl: string): Promise<string> {
-    return 'coworking party 12:23 am bei der blauen lagune mit DJ Bobo';
-  }
+
+  // async extractTextFromImage(imageUrl: string): Promise<string> {
+  //   console.info('Extracting text from image:', imageUrl);
+  
+  //   try {
+  //     const { data } = await Tesseract.recognize(imageUrl, 'eng', {
+  //       logger: (m) => console.log(m), // Zeigt Fortschritt an
+  //     });
+  
+  //     console.info('Extracted text:', data.text);
+  //     return data.text;
+  //   } catch (error) {
+  //     console.error('Error extracting text from image:', error);
+  //     throw new Error('Text extraction failed');
+  //   }
+  // }
+  
 
   async searchEvents(params: { query: string; location?: string }) {
     const filter: any = { name: new RegExp(params.query, 'i') };

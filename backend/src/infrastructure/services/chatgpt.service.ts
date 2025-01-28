@@ -17,7 +17,7 @@ export class ChatGPTService {
 
 
   // TODO EXTRACT TEXT AND OBJECT
-  async generateEventFromText(text: string) : Promise<Event> {
+  async generateEventFromText(text: string): Promise<Event> {
     // const response = await this.openai.createCompletion({
     //   model: 'gpt-4',
     //   prompt: `Create an event object from the following text: ${text}`,
@@ -69,25 +69,52 @@ export class ChatGPTService {
     - If there is only one event, duplicate it with slight variations in title, description, and date.
     - Do not include explanations, only return raw JSON.
   `;
-  
+
     const completion = await this.openai.beta.chat.completions.parse({
-        model: 'gpt-4o', // GPT-4o mini als Modell
-        messages: [
-          { role: 'system', content: extractionPrompt },
-          { role: 'user', content: 'Please give all the events in the correct format.' },
-        ],
-        response_format: zodResponseFormat(EventSchema, 'events'), // Korrektes Schema übergeben
-      });
+      model: 'gpt-4o', // GPT-4o mini als Modell
+      messages: [
+        { role: 'system', content: extractionPrompt },
+        { role: 'user', content: 'Please give all the events in the correct format.' },
+      ],
+      response_format: zodResponseFormat(EventSchema, 'events'), // Korrektes Schema übergeben
+    });
 
-      console.log('OpenAI API Response:', completion.choices[0].message.parsed);
+    console.log('OpenAI API Response:', completion.choices[0].message.parsed);
 
-      // Extrahiere Events aus der Antwort
-      const chatGPTEvents = completion.choices[0].message.parsed || [];
-    
-      if (!Array.isArray(chatGPTEvents)) {
-        throw new Error("OpenAI API response did not return an array of events");
-      }
-    
-      return chatGPTEvents;
+    // Extrahiere Events aus der Antwort
+    const chatGPTEvents = completion.choices[0].message.parsed || [];
+
+    if (!Array.isArray(chatGPTEvents)) {
+      throw new Error("OpenAI API response did not return an array of events");
+    }
+
+    return chatGPTEvents;
+  }
+
+  async extractTextFromImage(imageUrl: string): Promise<string> {
+    console.info('Extracting text from image using OpenAI Vision...');
+
+    const response = await this.openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: "What's in this image?" },
+            {
+              type: "image_url",
+              image_url: {
+                "url": imageUrl,
+              },
+            },
+          ],
+        },
+      ],
+      store: true,
+    });
+
+    const extractedText = response.choices[0]?.message?.content?.trim();
+    console.info('Extracted text:', extractedText);
+    return extractedText || 'Kein Text erkannt';
   }
 }
