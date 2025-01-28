@@ -71,18 +71,11 @@ export class ChatGPTService {
       if (!response.choices[0]?.message?.content) {
         throw new Error("Keine gültige Antwort von OpenAI erhalten.");
       }
+
+      console.info('OpenAI API Response:', response.choices[0].message.content);
   
       const parsedEvent = JSON.parse(response.choices[0].message.content);
-  
-      // Validierung mit `zod`
-      const validatedEvent = EventSchema.safeParse(parsedEvent);
-  
-      if (!validatedEvent.success) {
-        console.error("Ungültige Event-Daten:", validatedEvent.error);
-        throw new Error("Fehlende oder falsche Event-Daten");
-      }
-  
-      return validatedEvent.data;
+      return parsedEvent;
     } catch (error) {
       console.error("Fehler bei der Extraktion oder Validierung:", error);
       return null;

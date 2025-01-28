@@ -28,7 +28,7 @@ export class EventService {
   }
   async processEventImageUpload(image: Multer.File, uploadLat?: number, uploadLon?: number) {
     // 1. Bild auf dem Image-Server hochladen
-    console.info('Processing event image upload:', image, uploadLat, uploadLon);
+    console.info('Processing event image upload...');
     const uploadedImageUrl = await this.imageService.uploadImage(image);
 
     // 2. Bild durch ChatGPT analysieren, um Event-Daten zu erhalten
