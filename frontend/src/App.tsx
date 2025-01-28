@@ -79,8 +79,8 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-md" />
-            <h1 className="text-3xl font-bold text-white neon-text"></h1>
+              <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-md" />
+              <h1 className="text-3xl font-bold text-white neon-text"></h1>
             </div>
             <div className="flex items-center gap-4">
               <ViewToggle view={viewMode} onViewChange={setViewMode} />
@@ -92,7 +92,7 @@ function App() {
               </button>
             </div>
           </div>
-          
+
           {showMenu && (
             <div className="absolute right-4 mt-2 w-48 glass-effect rounded-lg shadow-lg py-2">
               <button
@@ -118,38 +118,38 @@ function App() {
           <div className="flex justify-between items-center">
             <SearchBar onSearch={handleSearch} />
           </div>
-          
+
           <CategoryFilter
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
           />
-          
+
           {loading ? (
             <div className="flex justify-center items-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-pink"></div>
             </div>
           ) : viewMode === 'list' ? (
-            <EventList 
+            <EventList
               events={filteredEvents}
               onToggleFavorite={toggleFavorite}
               onAddToCalendar={(event) => console.log('Add to calendar:', event)}
               favorites={favorites}
             />
           ) : (
-            <MapView 
+            <MapView
               events={filteredEvents}
               onMarkerClick={(event) => console.log('Clicked event:', event)}
             />
           )}
         </div>
 
-        <button
+        {/* <button
           onClick={() => setShowEventForm(true)}
           className="fixed bottom-6 right-6 flex items-center gap-2 px-6 py-3 glass-effect text-white rounded-full hover:bg-white/10 transition-colors neon-shadow"
         >
           <PlusCircle size={24} />
           Add Event
-        </button>
+        </button> */}
 
         {showEventForm && (
           <EventForm

@@ -38,9 +38,15 @@ export const EventScanner: React.FC = () => {
         style={{ display: "none" }}
         onChange={handleFileChange}
         capture="environment" />
+      {/* Upload Progressbar */}
+      {isUploading && (
+        <div className="progress-bar">
+          <div className="progress"></div>
+        </div>
+      )}
 
       {/* Hochgeladenes Event in Fullscreen anzeigen */}
-      {uploadedEvent && <UploadedEventCard event={uploadedEvent} onClose={() => setUploadedEvent(null)} />}
+      {uploadedEvent && <UploadedEventCard event={uploadedEvent} isUploading={isUploading} onClose={() => setUploadedEvent(null)} />}
     </div>
   );
 };
