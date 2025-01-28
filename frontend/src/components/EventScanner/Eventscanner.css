@@ -1,0 +1,21 @@
+.retro-button {
+    background: white;
+    border: 3px solid #000;
+    color: #000;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
+    padding: 10px 20px;
+    width: 100%;
+    height: 5rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 4px 4px 0px #000;
+    align-self: center;
+  }
+  
+  .retro-button:hover {
+    background: linear-gradient(45deg, var(--color-neon-pink), var(--color-neon-blue));
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #000;
+  }
+  

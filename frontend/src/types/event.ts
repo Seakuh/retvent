@@ -9,6 +9,7 @@ export interface Event {
   price?: string;
   latitude?: number;
   longitude?: number;
+  ticketUrl?: string; // Neue Eigenschaft für Ticket-URL
 }
 
 export interface SearchParams {

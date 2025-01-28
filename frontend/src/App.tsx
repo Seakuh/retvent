@@ -8,6 +8,7 @@ import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
 import { searchEvents } from './services/eventService';
 import { Event, ViewMode } from './types/event';
 import { CalendarDays, PlusCircle, Menu, Heart } from 'lucide-react';
+import { EventScanner } from './components/EventScanner/Eventscanner';
 
 const mockEvents: Event[] = [
   {
@@ -117,20 +118,14 @@ function App() {
   const [showFavorites, setShowFavorites] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
   const handleSearch = async (keyword: string) => {
     setLoading(true);
     try {
-      const filteredMockEvents = mockEvents.filter(event => 
-        event.name.toLowerCase().includes(keyword.toLowerCase()) ||
-        event.description.toLowerCase().includes(keyword.toLowerCase())
-      );
-      setEvents(filteredMockEvents);
-      
-      const results = await searchEvents({ keyword });
-      setEvents([...filteredMockEvents, ...results]);
+      const response = await fetch(`http://localhost:3000/events/search?query=${keyword}`);
+      const data = await response.json();
+      setEvents(data);
     } catch (error) {
-      console.error('Error searching events:', error);
+      console.error('Error fetching events:', error);
     } finally {
       setLoading(false);
     }
@@ -199,6 +194,9 @@ function App() {
 
       <main className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex flex-col gap-4">
+          <div>
+            <EventScanner />
+          </div>
           <div className="flex justify-between items-center">
             <SearchBar onSearch={handleSearch} />
           </div>
