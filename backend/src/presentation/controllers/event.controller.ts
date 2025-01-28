@@ -1,5 +1,7 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { EventService } from 'src/infrastructure/services/event.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Multer } from 'multer';
 
 @Controller('events')
 export class EventController {
@@ -18,6 +20,16 @@ export class EventController {
     // return [...meetupEvents];
 
   }
+
+  @Post('upload/event-image')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadEventImage(
+    @UploadedFile() image: Multer.File,
+    @Body() body: { uploadLat?: number; uploadLon?: number },
+  ) {
+    return this.eventService.processEventImageUpload(image, body.uploadLat, body.uploadLon);
+  }
+
 
   @Post('upload')
   async uploadEvent(@Body() body: { imageUrl: string; lat?: number; lon?: number }) {
