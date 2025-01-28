@@ -31,10 +31,16 @@ export const EventScanner: React.FC = () => {
       <button className="retro-button" onClick={triggerFileInput}>
         📤 Upload Event Flyer
       </button>
-      <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+        capture="environment" />
 
       {/* Hochgeladenes Event in Fullscreen anzeigen */}
-      {uploadedEvent && <UploadedEventCard event={uploadedEvent} isUploading={isUploading} onClose={() => setUploadedEvent(null)} />}
+      {uploadedEvent && <UploadedEventCard event={uploadedEvent} onClose={() => setUploadedEvent(null)} />}
     </div>
   );
 };
