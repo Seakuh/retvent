@@ -6,6 +6,7 @@ import { Event } from '../../core/domain/event';
 import { Multer } from 'multer';
 import { ChatGPTService } from './chatgpt.service';
 import { ImageService } from './image.service';
+import { EventRepository } from '../repositories/event.repository';
 
 @Injectable()
 export class EventService {
@@ -15,6 +16,7 @@ export class EventService {
     @InjectModel('Event') private eventModel: Model<Event>,
     private readonly chatGptService: ChatGPTService,
     private readonly imageService: ImageService,
+    private readonly eventRepository: EventRepository
   ) { }
   async processEventImage(imageUrl: string, lat?: number, lon?: number) {
     console.info('Processing event image:', imageUrl, lat, lon);
@@ -29,11 +31,10 @@ export class EventService {
     console.info('Processing event image upload:', image, uploadLat, uploadLon);
     const uploadedImageUrl = await this.imageService.uploadImage(image);
 
-
     // 2. Bild durch ChatGPT analysieren, um Event-Daten zu erhalten
     console.info("Extract Object from Image...");
-    const extractedText = await this.chatGptService.extractTextFromImage(uploadedImageUrl);
-    const event = await this.chatGptService.generateEventFromText(extractedText);
+    // const extractedText = await this.chatGptService.extractTextFromImage(uploadedImageUrl);
+    const event = await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
 
     // 3. Event mit Bild-URL in MongoDB speichern
     console.info("Save Event in MongoDB...");

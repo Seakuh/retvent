@@ -35,6 +35,60 @@ export class ChatGPTService {
     return mockEvent
   }
 
+  extractEventFromFlyer = async (imageUrl: string): Promise<Event | null> => {
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: "Bitte extrahiere die wichtigsten Informationen aus diesem Event-Flyer und erstelle ein JSON-Event-Objekt." },
+              { type: "image_url", image_url: { url: imageUrl } },
+              { 
+                type: "text", 
+                text: `Antwortformat (JSON):
+                {
+                  "name": "string (Event-Name)",
+                  "date": "string (YYYY-MM-DD oder null, wenn nicht angegeben)",
+                  "location": "string (Falls bekannt, formuliere den offiziellen Namen)",
+                  "description": "string (Erweitere die Event-Beschreibung für eine ansprechende Darstellung)",
+                  "imageUrl": "${imageUrl}",
+                  "category": "string (Wähle eine passende Event-Kategorie: Party, Festival, Workshop, Kunst, Tech etc.)",
+                  "price": "string (Falls nicht vorhanden, lasse das Feld leer oder setze 'Eintritt frei')",
+                  "latitude": "number (Falls ChatGPT die Koordinaten des Ortes kennt, füge sie hinzu, sonst null)",
+                  "longitude": "number (Falls ChatGPT die Koordinaten des Ortes kennt, füge sie hinzu, sonst null)",
+                  "ticketUrl": "string (Falls verfügbar, sonst null)"
+                }
+                Antworte nur mit JSON, ohne zusätzlichen Text.`
+              }
+            ],
+          },
+        ],
+        response_format: { type: "json_object" },
+      });
+  
+      if (!response.choices[0]?.message?.content) {
+        throw new Error("Keine gültige Antwort von OpenAI erhalten.");
+      }
+  
+      const parsedEvent = JSON.parse(response.choices[0].message.content);
+  
+      // Validierung mit `zod`
+      const validatedEvent = EventSchema.safeParse(parsedEvent);
+  
+      if (!validatedEvent.success) {
+        console.error("Ungültige Event-Daten:", validatedEvent.error);
+        throw new Error("Fehlende oder falsche Event-Daten");
+      }
+  
+      return validatedEvent.data;
+    } catch (error) {
+      console.error("Fehler bei der Extraktion oder Validierung:", error);
+      return null;
+    }
+  };
+
   async searchEvents(params: { query: string; location?: string }): Promise<Event[]> {
     const extractionPrompt = `
     Your task is to extract multiple events from the given query and location.
