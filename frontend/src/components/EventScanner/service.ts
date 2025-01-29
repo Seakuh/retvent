@@ -13,6 +13,7 @@ export const uploadEventImage = async (image: File, lat?: number, lon?: number) 
     });
 
     if (!response.ok) {
+      console.error("Upload-Fehler:", response.statusText);
       throw new Error("Fehler beim Upload");
     }
 
