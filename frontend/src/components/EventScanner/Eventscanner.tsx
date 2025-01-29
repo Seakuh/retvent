@@ -29,15 +29,14 @@ export const EventScanner: React.FC = () => {
   return (
     <div className="event-scanner">
       <button className="retro-button" onClick={triggerFileInput}>
-        📤 Upload Event Flyer
+        📤 Upload Event 
       </button>
       <input
         type="file"
         accept="image/*"
         ref={fileInputRef}
         style={{ display: "none" }}
-        onChange={handleFileChange}
-        capture="environment" />
+        onChange={handleFileChange}/>
       {/* Upload Progressbar */}
       {isUploading && (
         <div className="progress-bar">

@@ -24,7 +24,7 @@ function App() {
   const handleSearch = async (keyword: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://api.event-scanner.com/events/search?query=${keyword}`);
+      const response = await fetch(`https://api.event-scanner.com/events/search?query=${keyword}`);
       const data = await response.json();
       setEvents(data);
     } catch (error) {
@@ -38,7 +38,8 @@ function App() {
     const loadEvents = async () => {
       try {
         const latestEvents = await fetchLatestEvents();
-        setEvents(latestEvents);
+        // set the events reverse so the latest events are shown first
+        setEvents(latestEvents.reverse());
       } catch (err) {
         setError("Fehler beim Laden der Events");
       } finally {
