@@ -17,7 +17,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   return (
     <form onSubmit={handleSubmit} className="search-bar">
       <div className="search-input-container">
-        <Search className="search-icon" size={20} />
         <input
           type="text"
           value={searchTerm}

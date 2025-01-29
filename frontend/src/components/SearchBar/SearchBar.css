@@ -1,8 +1,7 @@
 .search-bar {
   display: flex;
   gap: 1rem;
-  max-width: 600px;
-  width: 100%;
+  width: 80%;
   margin: 0 auto;
   padding: 1rem;
 }
@@ -13,11 +12,11 @@
 }
 
 .search-icon {
-  position: absolute;
+  position: absolute;;
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--color-neon-blue);
+  color: white;
 }
 
 .search-input {

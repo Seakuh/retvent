@@ -7,16 +7,18 @@ import { Multer } from 'multer';
 import { ChatGPTService } from './chatgpt.service';
 import { ImageService } from './image.service';
 import { EventRepository } from '../repositories/event.repository';
+import { GeolocationService } from './geolocation.service';
 
 @Injectable()
 export class EventService {
- 
+
 
   constructor(
     @InjectModel('Event') private eventModel: Model<Event>,
     private readonly chatGptService: ChatGPTService,
     private readonly imageService: ImageService,
-    private readonly eventRepository: EventRepository
+    private readonly eventRepository: EventRepository,
+    private readonly geolocationService: GeolocationService,
   ) { }
   async processEventImage(imageUrl: string, lat?: number, lon?: number) {
     console.info('Processing event image:', imageUrl, lat, lon);
@@ -36,14 +38,20 @@ export class EventService {
     // const extractedText = await this.chatGptService.extractTextFromImage(uploadedImageUrl);
     const event = await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
 
-    // 3. Event mit Bild-URL in MongoDB speichern
+    // 3. lat/lon des Uploads per Geolocation-Service ermitteln (falls Location vorhanden ist)
+    const uploadLocation = event.location?.trim()
+      ? await this.geolocationService.getCoordinates(event.location)
+      : null;
+
+
+    // 4. Event mit Bild-URL in MongoDB speichern
     console.info("Save Event in MongoDB...");
     const createdEvent = await this.eventModel.create({
       ...event,
       uploadLat,
       uploadLon,
-      eventLat: event.latitude,
-      eventLon: event.longitude,
+      eventLat: uploadLocation.lat || uploadLat,  
+      eventLon: uploadLocation.lon || uploadLon,
       imageUrl: uploadedImageUrl,
     });
     return createdEvent;
@@ -52,12 +60,12 @@ export class EventService {
 
   // async extractTextFromImage(imageUrl: string): Promise<string> {
   //   console.info('Extracting text from image:', imageUrl);
-  
+
   //   try {
   //     const { data } = await Tesseract.recognize(imageUrl, 'eng', {
   //       logger: (m) => console.log(m), // Zeigt Fortschritt an
   //     });
-  
+
   //     console.info('Extracted text:', data.text);
   //     return data.text;
   //   } catch (error) {
@@ -65,7 +73,7 @@ export class EventService {
   //     throw new Error('Text extraction failed');
   //   }
   // }
-  
+
 
   async searchEvents(params: { query: string; location?: string }) {
     const filter: any = { name: new RegExp(params.query, 'i') };
@@ -81,10 +89,10 @@ export class EventService {
     return this.eventModel.find({ _id: { $in: ids } });
   }
 
-   /**
-   * Holt die neuesten 30 Events aus der Datenbank.
-   */
-   async getLatestEvents(): Promise<Event[]> {
+  /**
+  * Holt die neuesten 30 Events aus der Datenbank.
+  */
+  async getLatestEvents(): Promise<Event[]> {
     return this.eventRepository.findLatestEvents();
   }
 
