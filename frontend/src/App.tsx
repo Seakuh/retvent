@@ -48,7 +48,7 @@ function App() {
       try {
         const latestEvents = await fetchLatestEvents();
         // set the events reverse so the latest events are shown first
-        setEvents(latestEvents.reverse());
+        setEvents(latestEvents);
       } catch (err) {
         console.error("Fehler beim Laden der Events");
       } finally {
@@ -58,14 +58,6 @@ function App() {
 
     loadEvents();
   }, []);
-
-  const handleCreateEvent = async (eventData: any) => {
-    try {
-      console.log('Creating event:', eventData);
-    } catch (error) {
-      console.error('Error creating event:', error);
-    }
-  };
 
   const toggleFavorite = (eventId: string) => {
     setFavorites(prev => {
