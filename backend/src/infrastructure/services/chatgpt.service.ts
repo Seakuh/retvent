@@ -43,37 +43,47 @@ export class ChatGPTService {
           {
             role: "user",
             content: [
-              { type: "text", text: "Bitte extrahiere die wichtigsten Informationen aus diesem Event-Flyer und erstelle ein JSON-Event-Objekt." },
-              { type: "image_url", image_url: { url: imageUrl } },
-              { 
-                type: "text", 
-                text: `Antwortformat (JSON):
+              {
+                type: "text",
+                text: `Extrahiere die wichtigsten Informationen aus diesem Event-Flyer und erstelle ein vollständiges JSON-Event-Objekt. 
+                
+                **Regeln für die Extraktion:**
+                - Setze keine null-Werte. Falls eine Information fehlt, nutze einen sinnvollen Platzhalter.
+                - **Datum:** Falls kein Datum erkennbar ist, setze "TBA" (To Be Announced).
+                - **Ort:** Falls unbekannt, setze "Unbekannter Ort".
+                - **Beschreibung:** Falls nicht klar, generiere eine kurze, aber ansprechende Beschreibung.
+                - **Kategorie:** Nutze eine der vordefinierten Event-Kategorien: ["Party", "Festival", "Workshop", "Kunst", "Tech", "Sport", "Kultur", "Sonstiges"].
+                - **Preis:** Falls nicht angegeben, setze "Eintritt frei".
+                - **Koordinaten:** Falls der Ort nicht eindeutig erkannt wird, nutze eine allgemeine Stadtmitte (z. B. Berlin = 52.52, 13.405).
+                - **Ticket-URL:** Falls nicht angegeben, setze "Nicht verfügbar".
+      
+                **Antwortformat (JSON, KEINE zusätzlichen Kommentare oder Text):**
                 {
-                  "name": "string (Event-Name)",
-                  "date": "string (YYYY-MM-DD oder null, wenn nicht angegeben)",
-                  "location": "string (Falls bekannt, formuliere den offiziellen Namen)",
-                  "description": "string (Erweitere die Event-Beschreibung für eine ansprechende Darstellung)",
-                  "imageUrl": "${imageUrl}",
-                  "category": "string (Wähle eine passende Event-Kategorie: Party, Festival, Workshop, Kunst, Tech etc.)",
-                  "price": "string (Falls nicht vorhanden, lasse das Feld leer oder setze 'Eintritt frei')",
-                  "latitude": "number (Falls ChatGPT die Koordinaten des Ortes kennt, füge sie hinzu, sonst null)",
-                  "longitude": "number (Falls ChatGPT die Koordinaten des Ortes kennt, füge sie hinzu, sonst null)",
-                  "ticketUrl": "string (Falls verfügbar, sonst null)"
-                }
-                Antworte nur mit JSON, ohne zusätzlichen Text.`
-              }
+                  "name": "string (Event-Name, falls nicht vorhanden: 'Event ohne Titel')",
+                  "date": "string (YYYY-MM-DD oder 'TBA' falls unbekannt)",
+                  "location": "string (Falls bekannt, offizieller Name oder 'Unbekannter Ort')",
+                  "description": "string (Ansprechende Event-Beschreibung basierend auf dem Flyer)",
+                  "category": "string (Eine aus: Party, Festival, Workshop, Kunst, Tech, Sport, Kultur, Sonstiges)",
+                  "price": "string (Falls nicht angegeben, 'Eintritt frei')",
+                  "latitude": number (Falls möglich, Koordinaten des Ortes; andernfalls allgemeine Stadt-Koordinaten),
+                  "longitude": number (Falls möglich, Koordinaten des Ortes; andernfalls allgemeine Stadt-Koordinaten),
+                  "ticketUrl": "string (Falls verfügbar, sonst 'Nicht verfügbar')"
+                }`
+              },
+              { type: "image_url", image_url: { url: imageUrl } }
             ],
           },
         ],
         response_format: { type: "json_object" },
       });
-  
+
+
       if (!response.choices[0]?.message?.content) {
         throw new Error("Keine gültige Antwort von OpenAI erhalten.");
       }
 
       console.info('OpenAI API Response:', response.choices[0].message.content);
-  
+
       const parsedEvent = JSON.parse(response.choices[0].message.content);
       return parsedEvent;
     } catch (error) {

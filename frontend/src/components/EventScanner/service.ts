@@ -26,6 +26,7 @@ export const uploadEventImage = async (image: File) => {
           }
 
           const data = await response.json();
+          console.log("Upload successful:", data);
 
           if (data.eventId) {
             saveEventToLocalStorage(data.eventId);

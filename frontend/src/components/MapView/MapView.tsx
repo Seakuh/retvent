@@ -1,12 +1,11 @@
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { Event } from '../../types/event';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
 
 interface MapViewProps {
-  events: Event[];
   onMarkerClick: (event: Event) => void;
 }
 
@@ -19,26 +18,58 @@ const customIcon = new Icon({
   shadowSize: [41, 41]
 });
 
-export const MapView: React.FC<MapViewProps> = ({ events, onMarkerClick }) => {
-  const eventsWithCoords = events.filter(event => event.latitude && event.longitude);
-  const center = eventsWithCoords.length > 0
-    ? [eventsWithCoords[0].latitude!, eventsWithCoords[0].longitude!]
-    : [52.520008, 13.404954]; // Default to Berlin
+export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    // Hole die aktuelle Geolocation des Nutzers
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation([latitude, longitude]);
+        loadNearbyEvents(latitude, longitude);
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        setUserLocation([52.520008, 13.404954]); // Standard: Berlin
+        loadNearbyEvents(52.520008, 13.404954);
+      }
+    );
+  }, []);
+
+  const loadNearbyEvents = async (lat: number, lon: number) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/events/nearby?lat=${lat}&lon=${lon}&maxDistance=10`
+      );
+      if (!response.ok) throw new Error('Failed to fetch events');
+      const data = await response.json();
+      setEvents(data);
+    } catch (error) {
+      console.error('Error loading events:', error);
+    }
+  };
 
   return (
-    <MapContainer center={center as [number, number]} zoom={13} className="map-container">
+    <MapContainer center={userLocation ?? [52.520008, 13.404954]} zoom={13} className="map-container">
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {eventsWithCoords.map(event => (
+      {userLocation && (
+        <Marker position={userLocation} icon={customIcon}>
+          <Popup>📍 Deine aktuelle Position</Popup>
+        </Marker>
+      )}
+      {events.map((event) => (
         <Marker
           key={event.id}
-          position={[event.latitude!, event.longitude!]}
-          icon={customIcon}
-          eventHandlers={{
-            click: () => onMarkerClick(event)
-          }}
+          position={[
+            event.latitude ?? 52.520008, 
+            event.longitude ?? 13.404954
+          ]}          icon={customIcon}
+          eventHandlers={{ click: () => onMarkerClick(event) }}
         >
           <Popup>
             <div className="event-popup">

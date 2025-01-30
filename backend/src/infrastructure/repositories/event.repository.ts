@@ -43,4 +43,19 @@ export class EventRepository {
   async findLatestEvents(): Promise<Event[]> {
     return await this.eventModel.find().sort({ createdAt: -1 }).limit(30).exec();
   }
+
+
+  async findNearbyEvents(lat: number, lon: number, maxDistanceKm = 10) {
+    return this.eventModel.find({
+      geoLocation: {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [lon, lat], // MongoDB braucht [lon, lat]
+          },
+          $maxDistance: maxDistanceKm * 1000, // Meter
+        },
+      },
+    }).exec();
+  }
 }

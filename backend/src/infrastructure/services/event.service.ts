@@ -13,6 +13,7 @@ import { GeolocationService } from './geolocation.service';
 export class EventService {
 
 
+
   constructor(
     @InjectModel('Event') private eventModel: Model<Event>,
     private readonly chatGptService: ChatGPTService,
@@ -57,9 +58,18 @@ export class EventService {
       eventLat: eventLat,
       eventLon: eventLon,
       imageUrl: uploadedImageUrl,
+      geoLocation: {
+        type: 'Point',
+        coordinates: [eventLon, eventLat], // MongoDB benötigt [lon, lat]
+      },
     });
     return createdEvent;
   }
+
+
+  findNearbyEvents(latNum: number, lonNum: number, distanceNum: number) {
+      return this.eventRepository.findNearbyEvents(latNum, lonNum, distanceNum);
+    }
 
 
   // async extractTextFromImage(imageUrl: string): Promise<string> {

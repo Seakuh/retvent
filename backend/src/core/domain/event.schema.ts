@@ -39,6 +39,26 @@ export class Event extends Document {
 
   @Prop()
   ticketUrl?: string;
+
+  @Prop({
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+      index: '2dsphere',
+    },
+  })
+  geoLocation: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
+
+// WICHTIG: Index explizit setzen
+EventSchema.index({ geoLocation: '2dsphere' });

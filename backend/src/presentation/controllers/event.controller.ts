@@ -8,7 +8,7 @@ export class EventController {
   constructor(
     // private readonly meetupService: MeetupService,
     private readonly eventService: EventService
-  ) {}
+  ) { }
 
   @Get('search/plattforms')
   async searchEventPlattforms(@Query('query') query: string, @Query('location') location?: string): Promise<any> {
@@ -51,12 +51,30 @@ export class EventController {
     return this.eventService.getEventsByIds(ids.split(','));
   }
 
-    /**
-   * Gibt die neuesten 30 Events zurück, sortiert nach Erstellungsdatum.
-   */
-    @Get('latest')
-    async getLatestEvents() {
-      return this.eventService.getLatestEvents();
+  /**
+ * Gibt die neuesten 30 Events zurück, sortiert nach Erstellungsdatum.
+ */
+  @Get('latest')
+  async getLatestEvents() {
+    return this.eventService.getLatestEvents();
+  }
+
+
+  @Get('nearby')
+  async getNearbyEvents(
+    @Query('lat') lat: string,
+    @Query('lon') lon: string,
+    @Query('maxDistance') maxDistance: string
+  ) {
+    const latNum = parseFloat(lat);
+    const lonNum = parseFloat(lon);
+    const distanceNum = parseFloat(maxDistance) || 10;
+
+    if (isNaN(latNum) || isNaN(lonNum)) {
+      return { error: 'Invalid coordinates' };
     }
+    
+    return this.eventService.findNearbyEvents(latNum, lonNum, distanceNum);
+  }
 
 }

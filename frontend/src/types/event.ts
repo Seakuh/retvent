@@ -9,6 +9,8 @@ export interface Event {
   price?: string;
   latitude?: number;
   longitude?: number;
+  uploa?: number;
+  uploadL?: number;
   ticketUrl?: string; // Neue Eigenschaft für Ticket-URL
 }
 
