@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SearchBar } from './components/SearchBar/SearchBar';
 import { EventList } from './components/EventList/EventList';
-import { EventForm } from './components/EventForm/EventForm';
 import { MapView } from './components/MapView/MapView';
 import { ViewToggle } from './components/ViewToggle/ViewToggle';
 import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
@@ -48,7 +47,7 @@ function App() {
       try {
         const latestEvents = await fetchLatestEvents();
         // set the events reverse so the latest events are shown first
-        setEvents(latestEvents);
+        setEvents(latestEvents.reverse());
       } catch (err) {
         console.error("Fehler beim Laden der Events");
       } finally {
