@@ -6,7 +6,7 @@ import { MapView } from './components/MapView/MapView';
 import { ViewToggle } from './components/ViewToggle/ViewToggle';
 import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
 import { Event, ViewMode } from './types/event';
-import { PlusCircle, Menu, Heart } from 'lucide-react';
+import { Menu, Heart, Upload } from 'lucide-react';
 import { EventScanner } from './components/EventScanner/Eventscanner';
 import { fetchLatestEvents } from './service';
 
@@ -22,6 +22,8 @@ function App() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showFavorites, setShowFavorites] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [showUploads, setShowUploads] = useState(false);
+
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const handleSearch = async (keyword: string) => {
     setLoading(true);
@@ -95,9 +97,9 @@ function App() {
               </button>
             </div>
           </div>
-
           {showMenu && (
-            <div className="absolute right-4 mt-2 w-48 glass-effect rounded-lg shadow-lg py-2">
+            <div className="absolute right-4 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 bg-opacity-60 backdrop-blur-md">
+              {/* Show Favorites Button */}
               <button
                 onClick={() => {
                   setShowFavorites(!showFavorites);
@@ -106,10 +108,24 @@ function App() {
                 className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
               >
                 <Heart size={20} />
-                {showFavorites ? 'Show All Events' : 'Show Favorites'}
+                {showFavorites ? "Show All Events" : "Show Favorites"}
+              </button>
+
+              {/* My Uploads Button */}
+              <button
+                onClick={() => {
+                  setShowUploads(!showUploads);
+                  setShowMenu(false);
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+              >
+                <Upload size={20} />
+                {showUploads ? "Hide My Uploads" : "My Uploads"}
               </button>
             </div>
           )}
+
+
         </div>
       </header>
 

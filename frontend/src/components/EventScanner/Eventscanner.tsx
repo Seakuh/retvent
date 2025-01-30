@@ -3,6 +3,7 @@ import "./Eventscanner.css";
 import { uploadEventImage } from "./service";
 import UploadedEventCard from "../UploadedEventCard/UploadedEventCard";
 import ErrorDialog from "../ErrorDialog/ErrorDialog";
+import { Upload } from "lucide-react";
 
 export const EventScanner: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -41,15 +42,16 @@ export const EventScanner: React.FC = () => {
 
   return (
     <div className="event-scanner">
-      <button className="retro-button" onClick={triggerFileInput}>
-        📤 Upload Event 
+      <button className="retro-button flex items-center gap-2" onClick={triggerFileInput}>
+        <Upload size={35} />
+        Upload Event
       </button>
       <input
         type="file"
         accept="image/*"
         ref={fileInputRef}
         style={{ display: "none" }}
-        onChange={handleFileChange}/>
+        onChange={handleFileChange} />
       {/* Upload Progressbar */}
       {isUploading && (
         <div className="progress-bar">
@@ -59,7 +61,7 @@ export const EventScanner: React.FC = () => {
 
       {/* Hochgeladenes Event in Fullscreen anzeigen */}
       {uploadedEvent && <UploadedEventCard event={uploadedEvent} isUploading={isUploading} onClose={() => setUploadedEvent(null)} />}
-    
+
       {/* Error-Dialog anzeigen, wenn ein Fehler auftritt */}
       {error && <ErrorDialog message={error} onClose={() => setError(null)} />}
     </div>

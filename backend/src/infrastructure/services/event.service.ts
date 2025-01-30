@@ -43,6 +43,10 @@ export class EventService {
       ? await this.geolocationService.getCoordinates(event.location)
       : null;
 
+    const eventLat = uploadLocation && uploadLocation.lat ? uploadLocation.lat : uploadLat;
+    const eventLon = uploadLocation && uploadLocation.lon ? uploadLocation.lon : uploadLon;
+
+
 
     // 4. Event mit Bild-URL in MongoDB speichern
     console.info("Save Event in MongoDB...");
@@ -50,8 +54,8 @@ export class EventService {
       ...event,
       uploadLat,
       uploadLon,
-      eventLat: uploadLocation.lat || uploadLat,  
-      eventLon: uploadLocation.lon || uploadLon,
+      eventLat: eventLat,
+      eventLon: eventLon,
       imageUrl: uploadedImageUrl,
     });
     return createdEvent;
