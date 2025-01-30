@@ -1,7 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export const uploadEventImage = async (image: File) => {
-  return new Promise<{ eventId: string }>((resolve, reject) => {
+  return new Promise<{ _id: string }>((resolve, reject) => {
     // Nutzer-Position abrufen
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -28,8 +28,8 @@ export const uploadEventImage = async (image: File) => {
           const data = await response.json();
           console.log("Upload successful:", data);
 
-          if (data.eventId) {
-            saveEventToLocalStorage(data.eventId);
+          if (data._id) {
+            saveEventToLocalStorage(data._id);
           }
 
           resolve(data);
@@ -47,11 +47,11 @@ export const uploadEventImage = async (image: File) => {
 };
 
 
-const saveEventToLocalStorage = (eventId: string) => {
+const saveEventToLocalStorage = (_id: string) => {
   const existingEvents = JSON.parse(localStorage.getItem("uploadedEvents") || "[]");
   
-  if (!existingEvents.includes(eventId)) {
-    existingEvents.push(eventId);
+  if (!existingEvents.includes(_id)) {
+    existingEvents.push(_id);
     localStorage.setItem("uploadedEvents", JSON.stringify(existingEvents));
   }
 };

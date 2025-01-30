@@ -77,4 +77,5 @@ export class EventController {
     return this.eventService.findNearbyEvents(latNum, lonNum, distanceNum);
   }
 
+
 }

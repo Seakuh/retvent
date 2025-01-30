@@ -117,3 +117,23 @@ export const mockEvents: Event[] = [
     }
   };
   
+
+
+  export const fetchUserEvents = async (): Promise<Event[]> => {
+    const storedIds = JSON.parse(localStorage.getItem("uploadedEvents") || "[]");
+  
+    if (storedIds.length === 0) {
+      return [];
+    }
+  
+    try {
+      const response = await fetch(`${API_URL}/events/byIds?ids=${storedIds.join(',')}`);
+      if (!response.ok) throw new Error("Fehler beim Abrufen der Events");
+  
+      return await response.json();
+    } catch (error) {
+      console.error("Fehler beim Abrufen der hochgeladenen Events:", error);
+      return [];
+    }
+  };
+  

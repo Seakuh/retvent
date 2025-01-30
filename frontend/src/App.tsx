@@ -8,7 +8,7 @@ import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
 import { Event, ViewMode } from './types/event';
 import { Menu, Heart, Upload } from 'lucide-react';
 import { EventScanner } from './components/EventScanner/Eventscanner';
-import { fetchLatestEvents } from './service';
+import { fetchLatestEvents, fetchUserEvents } from './service';
 
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -23,6 +23,12 @@ function App() {
   const [showFavorites, setShowFavorites] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [showUploads, setShowUploads] = useState(false);
+  const [userEvents, setUserEvents] = useState<Event[]>([]);
+
+  const loadUserEvents = async () => {
+    const events = await fetchUserEvents();
+    setUserEvents(events);
+  };
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const handleSearch = async (keyword: string) => {
@@ -98,7 +104,7 @@ function App() {
             </div>
           </div>
           {showMenu && (
-            <div className="absolute right-4 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 bg-opacity-60 backdrop-blur-md">
+            <div className="absolute right-4 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 ">
               {/* Show Favorites Button */}
               <button
                 onClick={() => {
@@ -115,6 +121,7 @@ function App() {
               <button
                 onClick={() => {
                   setShowUploads(!showUploads);
+                  loadUserEvents(); // Lade Events des Nutzers
                   setShowMenu(false);
                 }}
                 className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
@@ -169,6 +176,23 @@ function App() {
           <PlusCircle size={24} />
           Add Event
         </button> */}
+
+        {showUploads && (
+          <div className="mt-4">
+            <h2 className="text-xl font-bold text-white">Meine hochgeladenen Events</h2>
+            {userEvents.length === 0 ? (
+              <p className="text-white">Keine hochgeladenen Events gefunden.</p>
+            ) : (
+              <EventList
+                events={userEvents}
+                onToggleFavorite={toggleFavorite}
+                onAddToCalendar={(event) => console.log('Add to calendar:', event)}
+                favorites={favorites}
+              />
+            )}
+          </div>
+        )}
+
 
         {showEventForm && (
           <EventForm
