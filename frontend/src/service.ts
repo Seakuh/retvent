@@ -99,9 +99,13 @@ export const mockEvents: Event[] = [
     },
   ];
 
+
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+
   export const fetchLatestEvents = async (): Promise<Event[]> => {
     try {
-      const response = await fetch("https://api.event-scanner.com/events/latest", {
+      const response = await fetch(`${API_URL}/events/latest`, {
         mode: "cors", // Sicherstellen, dass CORS aktiviert ist
 
       });

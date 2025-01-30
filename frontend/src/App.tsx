@@ -11,6 +11,8 @@ import { EventScanner } from './components/EventScanner/Eventscanner';
 import { fetchLatestEvents } from './service';
 
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 
 function App() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -24,7 +26,7 @@ function App() {
   const handleSearch = async (keyword: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`https://api.event-scanner.com/events/search?query=${keyword}`);
+      const response = await fetch(`${API_URL}/events/search?query=${keyword}`);
       const data = await response.json();
       setEvents(data);
     } catch (error) {

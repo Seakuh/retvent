@@ -1,3 +1,6 @@
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+
 export const uploadEventImage = async (image: File, lat?: number, lon?: number) => {
   try {
     const formData = new FormData();
@@ -7,7 +10,7 @@ export const uploadEventImage = async (image: File, lat?: number, lon?: number) 
       formData.append("lon", lon.toString());
     }
 
-    const response = await fetch("https://api.event-scanner.com/events/upload/event-image", {
+    const response = await fetch(`${API_URL}/events/upload/event-image`, {
       method: "POST",
       body: formData,
     });
