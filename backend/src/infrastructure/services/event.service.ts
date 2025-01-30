@@ -1,5 +1,5 @@
 import * as Tesseract from 'tesseract.js';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Event } from '../../core/domain/event';
@@ -108,6 +108,15 @@ export class EventService {
   */
   async getLatestEvents(): Promise<Event[]> {
     return this.eventRepository.findLatestEvents();
+  }
+
+
+  async updateEvent(eventId: string, updateData: any) {
+    const updatedEvent = await this.eventRepository.updateEvent(eventId, updateData);
+    if (!updatedEvent) {
+      throw new NotFoundException('Event nicht gefunden');
+    }
+    return updatedEvent;
   }
 
 }

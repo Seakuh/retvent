@@ -58,4 +58,8 @@ export class EventRepository {
       },
     }).exec();
   }
+  async updateEvent(eventId: string, updateData: any) {
+    return this.eventModel.findByIdAndUpdate(eventId, updateData, { new: true }).exec();
+  }
+
 }

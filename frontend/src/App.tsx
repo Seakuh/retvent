@@ -17,7 +17,6 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 function App() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
-  const [showEventForm, setShowEventForm] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showFavorites, setShowFavorites] = useState(false);
@@ -51,7 +50,7 @@ function App() {
         // set the events reverse so the latest events are shown first
         setEvents(latestEvents.reverse());
       } catch (err) {
-        setError("Fehler beim Laden der Events");
+        console.error("Fehler beim Laden der Events");
       } finally {
         setLoading(false);
       }
@@ -169,13 +168,6 @@ function App() {
           )}
         </div>
 
-        {/* <button
-          onClick={() => setShowEventForm(true)}
-          className="fixed bottom-6 right-6 flex items-center gap-2 px-6 py-3 glass-effect text-white rounded-full hover:bg-white/10 transition-colors neon-shadow"
-        >
-          <PlusCircle size={24} />
-          Add Event
-        </button> */}
 
         {showUploads && (
           <div className="mt-4">
@@ -193,13 +185,6 @@ function App() {
           </div>
         )}
 
-
-        {showEventForm && (
-          <EventForm
-            onSubmit={handleCreateEvent}
-            onClose={() => setShowEventForm(false)}
-          />
-        )}
       </main>
     </div>
   );
@@ -207,6 +192,3 @@ function App() {
 
 export default App;
 
-function setError(arg0: string) {
-  throw new Error('Function not implemented.');
-}
