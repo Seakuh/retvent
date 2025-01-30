@@ -5,6 +5,9 @@ import { Event } from '../../types/event';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+
 interface MapViewProps {
   onMarkerClick: (event: Event) => void;
 }
@@ -29,6 +32,7 @@ export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
         const { latitude, longitude } = position.coords;
         setUserLocation([latitude, longitude]);
         loadNearbyEvents(latitude, longitude);
+        console.log('Geolocation:', latitude, longitude);
       },
       (error) => {
         console.error('Geolocation error:', error);
@@ -41,10 +45,11 @@ export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
   const loadNearbyEvents = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/events/nearby?lat=${lat}&lon=${lon}&maxDistance=10`
+        `${API_URL}/events/nearby?lat=${lat}&lon=${lon}&maxDistance=10`
       );
       if (!response.ok) throw new Error('Failed to fetch events');
       const data = await response.json();
+      console.info('Loaded events:', data);
       setEvents(data);
     } catch (error) {
       console.error('Error loading events:', error);
@@ -59,12 +64,12 @@ export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
       />
       {userLocation && (
         <Marker position={userLocation} icon={customIcon}>
-          <Popup>📍 Deine aktuelle Position</Popup>
+          <Popup>📍 You are here</Popup>
         </Marker>
       )}
       {events.map((event) => (
         <Marker
-          key={event.id}
+          key={event._id}
           position={[
             event.latitude ?? 52.520008, 
             event.longitude ?? 13.404954
