@@ -6,14 +6,12 @@ import './EventList.css';
 interface EventListProps {
   events: Event[];
   onToggleFavorite: (eventId: string) => void;
-  onAddToCalendar: (event: Event) => void;
   favorites: Set<string>;
 }
 
 export const EventList: React.FC<EventListProps> = ({ 
   events, 
   onToggleFavorite, 
-  onAddToCalendar,
   favorites 
 }) => {
   const addToCalendar = (event: Event) => {

@@ -103,3 +103,125 @@ export async function fetchCoordinates(locationName: string) {
     return null;
   }
 }
+
+export const fetchUserUpcomingEvents = async () => {
+  return [
+    {
+      _id: '1',
+      id: '1',
+      name: 'Tech Meetup',
+      date: '2025-02-15',
+      location: 'Berlin',
+      description: 'A meetup for tech enthusiasts.',
+      imageUrl: 'https://via.placeholder.com/150',
+      category: 'Tech',
+      price: 'Free',
+      latitude: 52.52,
+      longitude: 13.405,
+      uploa: undefined,
+      uploadL: undefined,
+      ticketUrl: 'https://event.com/tech-meetup'
+    },
+    {
+      _id: '2',
+      id: '2',
+      name: 'Music Festival',
+      date: '2025-03-10',
+      location: 'Hamburg',
+      description: 'Enjoy live music and performances.',
+      imageUrl: 'https://via.placeholder.com/150',
+      category: 'Music',
+      price: '50€',
+      latitude: 53.5511,
+      longitude: 9.9937,
+      uploa: undefined,
+      uploadL: undefined,
+      ticketUrl: 'https://event.com/music-festival'
+    }
+  ];
+};
+
+export const fetchLocationUpcomingEvents = async () => {
+  return [
+    {
+      _id: '3',
+      id: '3',
+      name: 'Art Exhibition',
+      date: '2025-04-05',
+      location: 'Munich',
+      description: 'A modern art exhibition.',
+      imageUrl: 'https://via.placeholder.com/150',
+      category: 'Art',
+      price: '10€',
+      latitude: 48.1351,
+      longitude: 11.582,
+      uploa: undefined,
+      uploadL: undefined,
+      ticketUrl: 'https://event.com/art-exhibition'
+    },
+    {
+      _id: '3',
+      id: '3',
+      name: 'Art Exhibition',
+      date: '2025-04-05',
+      location: 'Munich',
+      description: 'A modern art exhibition.',
+      imageUrl: 'https://via.placeholder.com/150',
+      category: 'Art',
+      price: '10€',
+      latitude: 48.1351,
+      longitude: 11.582,
+      uploa: undefined,
+      uploadL: undefined,
+      ticketUrl: 'https://event.com/art-exhibition'
+    },
+    {
+      _id: '3',
+      id: '3',
+      name: 'Art Exhibition',
+      date: '2025-04-05',
+      location: 'Munich',
+      description: 'A modern art exhibition.',
+      imageUrl: 'https://via.placeholder.com/150',
+      category: 'Art',
+      price: '10€',
+      latitude: 48.1351,
+      longitude: 11.582,
+      uploa: undefined,
+      uploadL: undefined,
+      ticketUrl: 'https://event.com/art-exhibition'
+    },
+    {
+      _id: '3',
+      id: '3',
+      name: 'Art Exhibition',
+      date: '2025-04-05',
+      location: 'Munich',
+      description: 'A modern art exhibition.',
+      imageUrl: 'https://via.placeholder.com/150',
+      category: 'Art',
+      price: '10€',
+      latitude: 48.1351,
+      longitude: 11.582,
+      uploa: undefined,
+      uploadL: undefined,
+      ticketUrl: 'https://event.com/art-exhibition'
+    },
+    {
+      _id: '4',
+      id: '4',
+      name: 'Startup Pitch Night',
+      date: '2025-05-20',
+      location: 'Cologne',
+      description: 'Pitch your startup idea to investors.',
+      imageUrl: 'https://via.placeholder.com/150',
+      category: 'Startups',
+      price: 'Free',
+      latitude: 50.9375,
+      longitude: 6.9603,
+      uploa: undefined,
+      uploadL: undefined,
+      ticketUrl: 'https://event.com/startup-pitch'
+    }
+  ];
+};

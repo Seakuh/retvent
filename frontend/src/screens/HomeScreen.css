@@ -1,0 +1,84 @@
+
+/* Home Container */
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Buttons */
+  .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .modern-button {
+    width: 100%;
+    max-width: 250px;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .scan {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+  }
+  
+  .create {
+    background: linear-gradient(135deg, #ff512f, #dd2476);
+    color: white;
+  }
+  
+  .modern-button:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  
+  /* Event Listen */
+  .event-list {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #1e1e1e;
+  }
+  
+  .event-item {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+  }
+  
+  .event-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* Kategorien Filter */
+  .category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .category-button {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .category-button.active, .category-button:hover {
+    background: #0072ff;
+    color: white;
+  }
+  

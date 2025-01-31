@@ -6,7 +6,6 @@ import { fetchEvents, fetchCoordinates, fetchMockEvents } from "./service";
 import { Search } from "lucide-react";
 import "./MapScreen.css";
 import { Event } from "../types/event";
-import UploadedEventCard from "../components/UploadedEventCard/UploadedEventCard";
 import EventCard from "../components/EventCard/EventCard";
 
 const MapScreen: React.FC = () => {
