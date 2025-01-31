@@ -4,30 +4,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
-    padding: 20px;
-  }
-  
-  .add-event-screen h2 {
-    color: var(--color-neon-blue);
-    font-size: 24px;
-    margin-bottom: 20px;
-    text-shadow: 0 0 8px var(--color-neon-blue);
   }
   
   /* Formular */
   form {
     display: flex;
     flex-direction: column;
-    width: 90%;
-    max-width: 400px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
-    backdrop-filter: blur(15px);
+    padding: 3rem;
   }
   
   /* Input-Felder */
@@ -90,3 +74,51 @@
     box-shadow: 0 0 12px var(--color-neon-blue);
   }
   
+  /* Datei-Upload */
+.image-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--color-neon-blue);
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-bottom: 15px;
+  }
+  
+  .image-upload-container:hover {
+    background: rgba(0, 255, 255, 0.1);
+  }
+  
+  .image-selection {
+    display: none;
+  }
+  
+  .upload-label {
+    color: var(--color-neon-blue);
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .upload-label:hover {
+    color: white;
+    text-shadow: 0 0 10px var(--color-neon-blue);
+  }
+  
+  .image-preview {
+    margin-top: 10px;
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 0 8px var(--color-neon-blue);
+    display: none;
+  }
+  
+  .image-preview.active {
+    display: block;
+  }

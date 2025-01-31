@@ -1,3 +1,4 @@
+import { log } from "node:console";
 import { Event } from "../types/event";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3145";
@@ -227,7 +228,7 @@ export const fetchLocationUpcomingEvents = async () => {
   ];
 };
 
-export const createEvent = async (event : Event) => {
+export const createEvent = async (event: Event) => {
   const response = await fetch('/events/create', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -271,13 +272,19 @@ export const create = async (eventData: any) => {
   if (eventData.image) {
     formData.append("image", eventData.image);
   }
-  formData.append("eventLat", eventData.latitude?.toString() || "");
-  formData.append("eventLon", eventData.longitude?.toString() || "");
+  formData.append("eventLat", eventData.eventLat?.toString() || "");
+  formData.append("eventLon", eventData.eventLon?.toString() || "");
 
-  const response = await fetch("http://localhost:3145/events/create", {
+  console.info("Creating event:", eventData);
+
+  const response = await fetch(`${API_URL}/events/create`, {
     method: "POST",
     body: formData,
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to create event: ${response.statusText}`);
+  }
 
   return response.json();
 };
