@@ -1,124 +1,164 @@
 /* Allgemeine Stile */
 .add-event-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(10px);
-  }
-  
-  /* Formular */
-  form {
-    display: flex;
-    flex-direction: column;
-    padding: 3rem;
-  }
-  
-  /* Input-Felder */
-  input,
-  textarea,
-  select {
-    background: transparent;
-    border: 1px solid var(--color-neon-blue);
-    color: white;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 16px;
-    outline: none;
-    transition: 0.3s;
-    margin-bottom: 15px;
-  }
-  
-  input:focus,
-  textarea:focus,
-  select:focus {
-    border-color: white;
-    box-shadow: 0 0 8px var(--color-neon-blue);
-  }
-  
-  textarea {
-    resize: none;
-    height: 80px;
-  }
-  
-  /* Datei-Upload */
-  input[type="file"] {
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    transition: 0.3s;
-  }
-  
-  input[type="file"]:hover {
-    background: var(--color-neon-blue);
-    color: black;
-  }
-  
-  /* Button */
-  button {
-    background: var(--color-neon-blue);
-    border: none;
-    color: black;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    text-transform: uppercase;
-  }
-  
-  button:hover {
-    background: white;
-    color: var(--color-neon-blue);
-    box-shadow: 0 0 12px var(--color-neon-blue);
-  }
-  
-  /* Datei-Upload */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: 60px; /* Platz für Bottom-Navigation */
+  box-sizing: border-box;
+  overflow-y: auto; /* Falls nötig scrollbar */
+}
+
+/* Formular */
+form {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px; /* Damit es auf großen Bildschirmen nicht zu breit wird */
+}
+
+/* Input-Felder */
+input,
+textarea,
+select {
+  background: transparent;
+  border: 1px solid var(--color-neon-blue);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s;
+  margin-bottom: 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: white;
+  box-shadow: 0 0 8px var(--color-neon-blue);
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+/* Datei-Upload */
+input[type="file"] {
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  transition: 0.3s;
+  width: 100%;
+}
+
+input[type="file"]:hover {
+  background: var(--color-neon-blue);
+  color: black;
+}
+
+/* Button */
+button {
+  background: var(--color-neon-blue);
+  border: none;
+  color: black;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+button:hover {
+  background: white;
+  color: var(--color-neon-blue);
+  box-shadow: 0 0 12px var(--color-neon-blue);
+}
+
+/* Datei-Upload */
 .image-upload-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px dashed var(--color-neon-blue);
-    padding: 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.3s;
-    margin-bottom: 15px;
-  }
-  
-  .image-upload-container:hover {
-    background: rgba(0, 255, 255, 0.1);
-  }
-  
-  .image-selection {
-    display: none;
-  }
-  
-  .upload-label {
-    color: var(--color-neon-blue);
-    font-size: 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .upload-label:hover {
-    color: white;
-    text-shadow: 0 0 10px var(--color-neon-blue);
-  }
-  
-  .image-preview {
-    margin-top: 10px;
-    width: 100px;
-    height: 100px;
-    border-radius: 10px;
-    object-fit: cover;
-    box-shadow: 0 0 8px var(--color-neon-blue);
-    display: none;
-  }
-  
-  .image-preview.active {
-    display: block;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--color-neon-blue);
+  padding: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.image-upload-container:hover {
+  background: rgba(0, 255, 255, 0.1);
+}
+
+.image-selection {
+  display: none;
+}
+
+.upload-label {
+  color: var(--color-neon-blue);
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.upload-label:hover {
+  color: white;
+  text-shadow: 0 0 10px var(--color-neon-blue);
+}
+
+.image-preview {
+  margin-top: 10px;
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 0 8px var(--color-neon-blue);
+  display: none;
+}
+
+.image-preview.active {
+  display: block;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: var(--color-neon-blue);
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+.nav-item {
+  color: white;
+  font-size: 16px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-item:hover {
+  transform: scale(1.1);
+  text-shadow: 0 0 10px var(--color-neon-pink);
+}

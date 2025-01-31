@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './HomeScreen.css';
 import { CategoryFilter } from '../components/CategoryFilter/CategoryFilter';
 import { EventList } from '../components/EventList/EventList';
-import { EventScanner } from '../components/EventScanner/Eventscanner';
 import { createEvent, fetchLocationUpcomingEvents, fetchUserUpcomingEvents } from './service';
 import { Event } from '../types/event';
 import { fetchLatestEvents } from '../service';
