@@ -5,6 +5,7 @@ import HomeScreen from "./screens/HomeScreen";
 import MapScreen from "./screens/MapScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import MyEventsScreen from "./screens/MyEventsScreen";
+import { AddScreen } from "./screens/AddScreen";
 
 function App() {
   return (
@@ -14,8 +15,9 @@ function App() {
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/home" element={<HomeScreen />} />
           <Route path="/map" element={<MapScreen />} />
+          <Route path="/add" element={<AddScreen />} />
           <Route path="/profile" element={<ProfileScreen />} />
-          <Route path="/my" element={<MyEventsScreen />} />
+
         </Routes>
         <BottomNavigation />
       </div>

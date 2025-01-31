@@ -1,6 +1,6 @@
 import { Event } from "../types/event";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3145";
 
 export async function fetchEvents(lat: number, lon: number, radius: number) {
   try {
@@ -228,7 +228,7 @@ export const fetchLocationUpcomingEvents = async () => {
 };
 
 export const createEvent = async (event : Event) => {
-  const response = await fetch('/api/events', {
+  const response = await fetch('/events/create', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(event),

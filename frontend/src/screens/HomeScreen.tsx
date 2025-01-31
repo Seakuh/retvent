@@ -3,7 +3,7 @@ import './HomeScreen.css';
 import { CategoryFilter } from '../components/CategoryFilter/CategoryFilter';
 import { EventList } from '../components/EventList/EventList';
 import { EventScanner } from '../components/EventScanner/Eventscanner';
-import { fetchLocationUpcomingEvents, fetchUserUpcomingEvents } from './service';
+import { createEvent, fetchLocationUpcomingEvents, fetchUserUpcomingEvents } from './service';
 import { Event } from '../types/event';
 import { fetchLatestEvents } from '../service';
 import { EventForm } from '../components/EventForm/EventForm';
@@ -39,11 +39,6 @@ const Home = () => {
     });
   };
 
-  const addToCalendar = (event: Event) => {
-    console.log(`Adding ${event.name} to calendar`);
-  };
-
-
   const handleEventSubmit = async (event: Event) => {
     try {
       const newEvent = await createEvent(event);
@@ -56,10 +51,10 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      <div className="button-group">
+      {/* <div className="button-group">
         <EventScanner />
         <button className="modern-button create" onClick={() => setShowEventForm(true)}>➕ Add Event</button>
-      </div>
+      </div> */}
       {showEventForm && <EventForm onSubmit={handleEventSubmit} onClose={() => setShowEventForm(false)} />}
 
       

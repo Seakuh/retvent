@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { EventService } from 'src/infrastructure/services/event.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Multer } from 'multer';
+import { Event } from 'src/core/domain/event';
 
 @Controller('events')
 export class EventController {
@@ -88,4 +89,13 @@ export class EventController {
   }
 
 
+  @Post('create')
+  @UseInterceptors(FileInterceptor('image'))
+  async createEvent(
+    @Body() eventData: any,
+    @UploadedFile() image?: Multer.File
+  ) {
+    return this.eventService.createEvent(eventData, image);
+  }
 }
+

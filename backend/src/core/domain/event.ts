@@ -22,6 +22,8 @@ export const EventSchema = z.object({
   price: z.string().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
+  uploadLatitude: z.number().optional(),
+  uploadLongitude: z.number().optional(),
   ticketUrl: z.string().optional(),
 });
 

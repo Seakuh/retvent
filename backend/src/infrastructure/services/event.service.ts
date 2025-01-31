@@ -1,16 +1,18 @@
 import * as Tesseract from 'tesseract.js';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Event } from '../../core/domain/event';
 import { Multer } from 'multer';
 import { ChatGPTService } from './chatgpt.service';
 import { ImageService } from './image.service';
 import { EventRepository } from '../repositories/event.repository';
 import { GeolocationService } from './geolocation.service';
+import { Event } from '../../core/domain/event.schema';
 
 @Injectable()
 export class EventService {
+  private readonly logger = new Logger(EventService.name);
+
   constructor(
     @InjectModel('Event') private eventModel: Model<Event>,
     private readonly chatGptService: ChatGPTService,
@@ -69,8 +71,8 @@ export class EventService {
 
 
   findNearbyEvents(latNum: number, lonNum: number, distanceNum: number) {
-      return this.eventRepository.findNearbyEvents(latNum, lonNum, distanceNum);
-    }
+    return this.eventRepository.findNearbyEvents(latNum, lonNum, distanceNum);
+  }
 
 
   // async extractTextFromImage(imageUrl: string): Promise<string> {
@@ -108,16 +110,50 @@ export class EventService {
   * Holt die neuesten 30 Events aus der Datenbank.
   */
   async getLatestEvents(): Promise<Event[]> {
-    return this.eventRepository.findLatestEvents();
+    this.logger.log('Fetching latest events...');
+    return this.eventModel.find().sort({ createdAt: -1 }).limit(30).exec();
   }
-
-
   async updateEvent(eventId: string, updateData: any) {
     const updatedEvent = await this.eventRepository.updateEvent(eventId, updateData);
     if (!updatedEvent) {
       throw new NotFoundException('Event nicht gefunden');
     }
     return updatedEvent;
+  }
+
+
+  async createEvent(eventData: Partial<Event>, image?: Multer.File): Promise<Event> {
+    this.logger.log('Validating event data...');
+    
+    // 1. Validierung der Pflichtfelder
+    if (!eventData.name || !eventData.date || !eventData.location || !eventData.description) {
+      throw new BadRequestException('Missing required fields: name, date, location, description');
+    }
+
+    if (eventData.eventLat === undefined || eventData.eventLon === undefined) {
+      throw new BadRequestException('Missing required fields: eventLat, eventLon');
+    }
+
+    // 2. Bild hochladen (falls vorhanden)
+    let uploadedImageUrl = eventData.imageUrl;
+    if (image) {
+      this.logger.log('Uploading event image...');
+      uploadedImageUrl = await this.imageService.uploadImage(image);
+      this.logger.log(`Image uploaded: ${uploadedImageUrl}`);
+    }
+
+    // 3. Event mit Bild-URL und GeoLocation speichern
+    this.logger.log('Saving event to MongoDB...');
+    const createdEvent = await this.eventModel.create({
+      ...eventData,
+      imageUrl: uploadedImageUrl,
+      geoLocation: {
+        type: 'Point',
+        coordinates: [eventData.eventLon, eventData.eventLat], // MongoDB benötigt [lon, lat]
+      },
+    });
+    this.logger.log(`Event saved with ID: ${createdEvent.id}`);
+    return createdEvent;
   }
 
 }
