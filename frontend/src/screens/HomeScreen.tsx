@@ -6,13 +6,14 @@ import { EventScanner } from '../components/EventScanner/Eventscanner';
 import { fetchLocationUpcomingEvents, fetchUserUpcomingEvents } from './service';
 import { Event } from '../types/event';
 import { fetchLatestEvents } from '../service';
+import { EventForm } from '../components/EventForm/EventForm';
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [latestEvents, setLatestEvents] = useState<Event[]>([]);
-
   const [locationEvents, setLocationEvents] = useState<Event[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [showEventForm, setShowEventForm] = useState<boolean>(false);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -42,14 +43,25 @@ const Home = () => {
     console.log(`Adding ${event.name} to calendar`);
   };
 
+
+  const handleEventSubmit = async (event: Event) => {
+    try {
+      const newEvent = await createEvent(event);
+      setShowEventForm(false);
+      setUserEvents((prevEvents) => [...prevEvents, newEvent]);
+    } catch (error) {
+      console.error('Error creating event:', error);
+    }
+  };
+
   return (
     <div className="home-container">
-      <h1>Discover Events</h1>
-      
       <div className="button-group">
         <EventScanner />
-        <button className="modern-button create">➕ Add Event</button>
+        <button className="modern-button create" onClick={() => setShowEventForm(true)}>➕ Add Event</button>
       </div>
+      {showEventForm && <EventForm onSubmit={handleEventSubmit} onClose={() => setShowEventForm(false)} />}
+
       
       <CategoryFilter selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
       

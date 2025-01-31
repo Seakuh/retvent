@@ -1,3 +1,4 @@
+import { Event } from "../types/event";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -224,4 +225,16 @@ export const fetchLocationUpcomingEvents = async () => {
       ticketUrl: 'https://event.com/startup-pitch'
     }
   ];
+};
+
+export const createEvent = async (event : Event) => {
+  const response = await fetch('/api/events', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(event),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create event');
+  }
+  return response.json();
 };
