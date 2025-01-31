@@ -53,7 +53,7 @@ export class EventRepository {
             type: 'Point',
             coordinates: [lon, lat], // MongoDB braucht [lon, lat]
           },
-          $maxDistance: maxDistanceKm * 1000, // Meter
+          $maxDistance: maxDistanceKm * 15000, // Meter
         },
       },
     }).exec();
