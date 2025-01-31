@@ -77,5 +77,15 @@ export class EventController {
     return this.eventService.findNearbyEvents(latNum, lonNum, distanceNum);
   }
 
+  @Get('favorites')
+  async getUserFavorites(@Query('ids') ids: string) {
+    if (!ids) {
+      return { error: 'Keine Favoriten-IDs angegeben' };
+    }
+    
+    const eventIds = ids.split(',');
+    return this.eventService.getUserFavorites(eventIds);
+  }
+
 
 }

@@ -11,9 +11,6 @@ import { GeolocationService } from './geolocation.service';
 
 @Injectable()
 export class EventService {
-
-
-
   constructor(
     @InjectModel('Event') private eventModel: Model<Event>,
     private readonly chatGptService: ChatGPTService,
@@ -64,6 +61,10 @@ export class EventService {
       },
     });
     return createdEvent;
+  }
+
+  async getUserFavorites(eventIds: string[]) {
+    return this.eventRepository.findEventsByIds(eventIds);
   }
 
 

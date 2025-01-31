@@ -62,4 +62,9 @@ export class EventRepository {
     return this.eventModel.findByIdAndUpdate(eventId, updateData, { new: true }).exec();
   }
 
+
+  async findEventsByIds(eventIds: string[]) {
+    return this.eventModel.find({ _id: { $in: eventIds } }).exec();
+  }
+
 }

@@ -1,0 +1,60 @@
+name: Deploy to Hetzner Backend
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Build Project
+        working-directory: backend
+        run: npm run build
+
+      - name: Deploy to Hetzner via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: 37.27.41.23
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "🚀 Verbunden mit Hetzner Server"
+
+            # Wechsle ins Backend-Verzeichnis
+            cd ~/backend || exit 1
+
+            # Stoppe das Backend (falls es läuft)
+            pm2 stop event-scanner || true
+
+            # Lösche alten Code
+            rm -rf *
+
+            # Klone den neuesten Code
+            git clone --depth=1 --branch=master git@github.com:Seakuh/backend.git temp && mv temp/* . && rm -rf temp
+
+            # Installiere Dependencies und baue das Backend
+            npm install
+            npm run build
+
+            # Starte das Backend mit PM2
+            pm2 start dist/main.js --name event-scanner --env production
+
+            # Speichere die PM2 Config für Neustarts
+            pm2 save
