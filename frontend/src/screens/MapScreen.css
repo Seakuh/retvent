@@ -1,0 +1,62 @@
+/* Allgemeine Styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #111;
+  color: white;
+}
+
+/* Map Container */
+.map-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  z-index: 0; /* Verhindert, dass die Map außerhalb der Klick-Ebene liegt */
+}
+
+/* Suchleiste */
+.search-bar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 80%;
+  transform: translateX(-50%);
+  display: flex;
+  background: var(--color-neon-blue);
+  padding: 8px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px var(--color-neon-pink);
+  z-index: 1000; /* Liegt über der Map */
+  pointer-events: none; /* Klicks gehen durch, außer auf Inputs */
+}
+
+.search-bar input,
+.search-bar button {
+  pointer-events: auto; /* Aktiviert Interaktion für Input und Button */
+}
+
+.search-bar input {
+  border: none;
+  width: 100%;
+  padding: 8px;
+  border-radius: 20px;
+  outline: none;
+  color: black;
+  font-size: 16px;
+}
+
+.search-bar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  margin-left: 8px;
+  transition: all 0.3s ease-in-out;
+}
+
+.search-bar button:hover {
+  transform: scale(1.1);
+  color: var(--color-neon-pink);
+}
