@@ -1,0 +1,56 @@
+
+
+.event-button {
+    width: 100%;
+    max-width: 300px;
+    padding: 16px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .event-button .icon {
+    font-size: 24px;
+  }
+  
+  .event-button-pink {
+    background-color: var(--color-neon-pink);
+    color: var(--color-white);
+  }
+  
+  .event-button-blue {
+    background-color: var(--color-neon-blue);
+    color: var(--color-white);
+  }
+  
+  .event-button-green {
+    background-color: var(--color-neon-green);
+    color: var(--color-white);
+  }
+  
+  .event-button-purple {
+    background-color: var(--color-neon-purple);
+    color: var(--color-white);
+  }
+  
+  .event-button-yellow {
+    background-color: var(--color-neon-yellow);
+    color: #000;
+  }
+  
+  .event-button:hover {
+    opacity: 0.8;
+  }
+  
+  .event-button:active {
+    transform: scale(0.95);
+  }
