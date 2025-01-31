@@ -4,8 +4,8 @@ import BottomNavigation from "./components/BottomNavigation/BottomNavigation";
 import HomeScreen from "./screens/HomeScreen";
 import MapScreen from "./screens/MapScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-import MyEventsScreen from "./screens/MyEventsScreen";
-import { AddScreen } from "./screens/AddScreen";
+import { AddScreen, CreateEvent } from "./screens/AddScreen";
+import AddEventScreen from "./screens/AddEventScreen";
 
 function App() {
   return (
@@ -17,6 +17,7 @@ function App() {
           <Route path="/map" element={<MapScreen />} />
           <Route path="/add" element={<AddScreen />} />
           <Route path="/profile" element={<ProfileScreen />} />
+          <Route path="/create-event" element={<AddEventScreen />} />
 
         </Routes>
         <BottomNavigation />

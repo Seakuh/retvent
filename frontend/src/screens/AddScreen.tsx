@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, MapPin, PlusCircle, FilePlus } from 'lucide-react';
 import './AddScreen.css';
+import { EventScanner } from '../components/EventScanner/Eventscanner';
 
 export const AddScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -9,9 +10,8 @@ export const AddScreen: React.FC = () => {
   return (
     <div className="add-screen">
       <div className="button-container">
-        <button className="action-button" onClick={() => navigate('/upload-flyer')}>
-          <Upload size={24} /> Upload Event Flyer
-        </button>
+        <EventScanner />
+ 
         <button className="action-button" onClick={() => navigate('/create-event')}>
           <PlusCircle size={24} /> Add Event
         </button>

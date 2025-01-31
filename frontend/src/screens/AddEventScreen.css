@@ -1,0 +1,94 @@
+.add-event-screen {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  background: var(--glass-bg);
+  border-radius: 15px;
+  border: 2px solid var(--border-glow);
+  box-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-pink);
+  backdrop-filter: blur(10px);
+  animation: pulse 2s infinite alternate ease-in-out;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-pink); }
+  100% { box-shadow: 0 0 20px var(--neon-purple), 0 0 40px var(--neon-blue); }
+}
+
+h2 {
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--neon-blue);
+  text-shadow: 2px 2px var(--neon-pink);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input,
+textarea,
+select {
+  margin: 10px 0;
+  padding: 12px;
+  background: var(--input-bg);
+  border: 2px solid var(--neon-blue);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 12px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 8px var(--neon-pink);
+}
+
+button {
+  margin-top: 15px;
+  padding: 12px;
+  font-size: 14px;
+  text-transform: uppercase;
+  background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue));
+  color: var(--text-color);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--neon-blue);
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  box-shadow: 0 0 15px var(--neon-purple);
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+input[type="file"] {
+  border: none;
+  padding: 5px;
+}
+
+@media (max-width: 600px) {
+  .add-event-screen {
+    max-width: 90%;
+  }
+
+  input,
+  textarea {
+    font-size: 10px;
+  }
+}

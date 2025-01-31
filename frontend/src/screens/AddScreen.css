@@ -1,121 +1,142 @@
- 
-  .add-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: var(--color-neon-blue);
-    color: var(--color-neon-yellow);
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-shadow: 0 0 10px var(--color-neon-yellow);
-  }
-  
+.add-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--color-bg-dark);
+  text-align: center;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-neon-blue);
+  text-shadow: 0 0 12px var(--color-neon-blue);
+  margin-bottom: 1.5rem;
+}
+
+/* ✅ Consistent button style across all actions */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 90%;
+  max-width: 400px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 4.5rem;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: var(--color-glass);
+  color: var(--color-text-light);
+  border: 2px solid var(--color-neon-blue);
+  border-radius: 10px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.action-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--color-neon-blue);
+}
+
+/* ✅ Special color styles */
+.upload-flyer {
+  border-color: var(--color-neon-pink);
+}
+.upload-flyer:hover {
+  box-shadow: 0 0 15px var(--color-neon-pink);
+}
+
+.create-event {
+  border-color: var(--color-neon-yellow);
+}
+.create-event:hover {
+  box-shadow: 0 0 15px var(--color-neon-yellow);
+}
+
+.add-location {
+  border-color: var(--color-neon-purple);
+}
+.add-location:hover {
+  box-shadow: 0 0 15px var(--color-neon-purple);
+}
+
+/* ✅ File Input Styling */
+.file-input {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 2px solid var(--color-neon-pink);
+  background: var(--color-glass);
+  color: var(--color-text-light);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* ✅ Form Button (Upload, Create, Add Location) */
+.form-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: var(--color-neon-purple);
+  color: var(--color-text-light);
+  border: 2px solid var(--color-neon-yellow);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.form-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--color-neon-yellow);
+  border-color: var(--color-neon-blue);
+}
+
+/* ✅ Navigation Items */
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 1rem;
+  color: var(--color-neon-yellow);
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.nav-item:hover {
+  transform: scale(1.05);
+  color: var(--color-neon-pink);
+  text-shadow: 0 0 12px var(--color-neon-blue);
+}
+
+/* ✅ Mobile Optimized Layout */
+@media (max-width: 768px) {
   .button-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 90%;
-    max-width: 500px;
+    width: 95%;
   }
-  
+
   .action-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    width: 100%;
-    height: 7.5rem;
-    padding: 1.5rem;
-    font-size: 1.8rem;
-    font-weight: bold;
-    border: 3px solid var(--color-neon-yellow);
-    border-radius: 1rem;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    font-size: 1.1rem;
+    height: 4rem;
   }
-  
-  .action-button:nth-child(1) {
-    background: var(--color-neon-green);
-    text-align: center;
-    color: black;
+
+  .title {
+    font-size: 1.5rem;
   }
-  
-  .action-button:nth-child(2) {
-    background: var(--color-neon-yellow);
-    text-align: center;
-    color: black;
-  }
-  
-  .action-button:nth-child(3) {
-    background: var(--color-neon-pink);
-    text-align: center;
-    color: black;
-  }
-  
-  .action-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px var(--color-neon-purple);
-    border-color: var(--color-neon-pink);
-  }
-  
-  .upload-flyer, .create-event, .add-location {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: black;
-    color: var(--color-neon-yellow);
-    text-align: center;
-    font-size: 2rem;
-  }
-  
-  .file-input {
-    margin: 1.5rem 0;
-    padding: 1rem;
-    border: 3px solid var(--color-neon-pink);
-    background: black;
-    color: var(--color-neon-yellow);
-    border-radius: 1rem;
-  }
-  
-  .upload-button, .create-button, .location-button {
-    background: var(--color-neon-purple);
-    color: black;
-    font-size: 1.8rem;
-    font-weight: bold;
-    padding: 1.5rem;
-    border: 3px solid var(--color-neon-yellow);
-    border-radius: 1rem;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-  
-  .upload-button:hover, .create-button:hover, .location-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px var(--color-neon-yellow);
-    border-color: var(--color-neon-blue);
-  }
-  
-  .nav-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    color: var(--color-neon-yellow);
-    font-size: 1.8rem;
-    font-weight: bold;
-    padding: 1.5rem;
-    text-decoration: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
-  }
-  
-  .nav-item:hover {
-    transform: scale(1.1);
-    color: var(--color-neon-pink);
-    text-shadow: 0 0 15px var(--color-neon-blue);
-  }
-  
+}

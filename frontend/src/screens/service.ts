@@ -238,3 +238,46 @@ export const createEvent = async (event : Event) => {
   }
   return response.json();
 };
+
+
+export const createEventForm = async (formData: Record<string, any>, image: File | null) => {
+  const formDataToSend = new FormData();
+  Object.entries(formData).forEach(([key, value]) => {
+    if (value) formDataToSend.append(key, value);
+  });
+  if (image) formDataToSend.append('image', image);
+
+  try {
+    const response = await fetch('http://localhost:3145/events/create', {
+      method: 'POST',
+      body: formDataToSend,
+    });
+    if (!response.ok) throw new Error('Event creation failed');
+    console.log('Event created successfully!');
+  } catch (error) {
+    console.error('Error creating event:', error);
+  }
+};
+
+
+export const create = async (eventData: any) => {
+  const formData = new FormData();
+  formData.append("name", eventData.name);
+  formData.append("date", eventData.date);
+  formData.append("location", eventData.location);
+  formData.append("description", eventData.description);
+  formData.append("category", eventData.category || "");
+  formData.append("price", eventData.price || "");
+  if (eventData.image) {
+    formData.append("image", eventData.image);
+  }
+  formData.append("eventLat", eventData.latitude?.toString() || "");
+  formData.append("eventLon", eventData.longitude?.toString() || "");
+
+  const response = await fetch("http://localhost:3145/events/create", {
+    method: "POST",
+    body: formData,
+  });
+
+  return response.json();
+};
