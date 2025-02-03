@@ -69,18 +69,19 @@ export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
       )}
       {events.map((event) => (
         <Marker
-          key={event._id}
+          key={event.id}
           position={[
-            event.latitude ?? 52.520008, 
-            event.longitude ?? 13.404954
-          ]}          icon={customIcon}
+            event.location.coordinates.lat,
+            event.location.coordinates.lng
+          ]}
+          icon={customIcon}
           eventHandlers={{ click: () => onMarkerClick(event) }}
         >
           <Popup>
             <div className="event-popup">
-              <h3>{event.name}</h3>
+              <h3>{event.title}</h3>
               <p>{event.date}</p>
-              <p>{event.location}</p>
+              <p>{event.location.name}</p>
             </div>
           </Popup>
         </Marker>

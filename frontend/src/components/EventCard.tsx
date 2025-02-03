@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { IoCalendarOutline, IoHeartOutline, IoShareSocialOutline, IoLocationOutline, IoTimeOutline } from 'react-icons/io5';
 import { format } from 'date-fns';
+import { toast } from 'react-hot-toast';
 
 interface EventCardProps {
   event: {
@@ -24,27 +25,76 @@ export const EventCard: React.FC<EventCardProps> = ({
   onToggleFavorite,
   isFavorite 
 }) => {
+  const generateShareMessage = () => {
+    const eventDate = format(new Date(event.date), 'EEEE, MMMM do');
+    const eventTime = format(new Date(event.date), 'h:mm a');
+    
+    return `
+🎉 ${event.title}
+
+📅 ${eventDate}
+⏰ ${eventTime}
+📍 ${event.location}
+
+${event.description}
+
+Join me at this event! 
+🔗 ${window.location.origin}/event/${event.id}
+    `.trim();
+  };
+
   const handleShare = async () => {
-    if (navigator.share) {
+    const shareData = {
+      title: event.title,
+      text: generateShareMessage(),
+      url: `${window.location.origin}/event/${event.id}`
+    };
+
+    if (navigator.canShare && navigator.canShare(shareData)) {
       try {
-        await navigator.share({
-          title: event.title,
-          text: event.description,
-          url: window.location.href,
-        });
+        await navigator.share(shareData);
       } catch (error) {
-        console.log('Error sharing:', error);
+        console.error('Error sharing:', error);
+        // Fallback
+        await navigator.clipboard.writeText(shareData.text);
+        toast.success('Link copied to clipboard!');
       }
+    } else {
+      // Fallback für Browser ohne Share API
+      await navigator.clipboard.writeText(shareData.text);
+      toast.success('Link copied to clipboard!');
     }
   };
 
   const addToCalendar = () => {
-    const startTime = new Date(event.date).toISOString();
-    const endTime = new Date(new Date(event.date).getTime() + 2 * 60 * 60 * 1000).toISOString();
-    
-    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startTime.replace(/[-:]/g, '')}/${endTime.replace(/[-:]/g, '')}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`;
-    
-    window.open(calendarUrl, '_blank');
+    const startDate = new Date(event.date);
+    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); // 2 hours duration
+
+    const calendarEvent = {
+      title: event.title,
+      description: event.description,
+      location: event.location,
+      start: startDate,
+      end: endDate,
+      url: `${window.location.origin}/event/${event.id}`
+    };
+
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(calendarEvent.title)}&dates=${startDate.toISOString().replace(/[-:]/g, '')}/${endDate.toISOString().replace(/[-:]/g, '')}&details=${encodeURIComponent(`${calendarEvent.description}\n\nEvent Link: ${calendarEvent.url}`)}&location=${encodeURIComponent(calendarEvent.location)}`;
+
+    window.open(googleCalendarUrl, '_blank');
+  };
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Datum nicht verfügbar';
+      }
+      return format(date, 'MMM dd, HH:mm');
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Datum nicht verfügbar';
+    }
   };
 
   return (
@@ -83,56 +133,61 @@ export const EventCard: React.FC<EventCardProps> = ({
           </span>
         </motion.div>
         
-        {/* Content Container */}
+        {/* Content Container - angepasstes Padding */}
         <motion.div 
-          className="absolute bottom-0 left-0 right-0 p-8"
+          className="absolute bottom-0 left-0 right-0 p-6"
           initial={{ y: 100 }}
           animate={{ y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          {/* Date and Location */}
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex items-center text-white/80">
-              <IoTimeOutline className="mr-2" />
-              {format(new Date(event.date), 'MMM dd, HH:mm')}
+          {/* Date and Location - kleinere Schrift */}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center text-white/80 text-sm">
+              <IoTimeOutline className="mr-1.5 text-base" />
+              {formatDate(event.date)}
             </div>
-            <div className="flex items-center text-white/80">
-              <IoLocationOutline className="mr-2" />
+            <div className="flex items-center text-white/80 text-sm">
+              <IoLocationOutline className="mr-1.5 text-base" />
               {event.location}
             </div>
           </div>
 
-          {/* Title and Description */}
-          <h2 className="text-white text-3xl font-bold mb-3 neon-text">{event.title}</h2>
-          <p className="text-white/70 mb-8 line-clamp-2 text-lg">{event.description}</p>
+          {/* Title and Description - optimierte Abstände */}
+          <h2 className="text-white text-2xl font-bold mb-2 neon-text">{event.title}</h2>
+          <p className="text-white/70 mb-6 line-clamp-2 text-base">{event.description}</p>
           
-          {/* Action Buttons */}
-          <div className="flex gap-4 justify-end">
+          {/* Action Buttons - vertikal */}
+          <div className="absolute bottom-6 right-6 flex flex-col gap-2">
             <motion.button
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-4 glass-effect rounded-full backdrop-blur-sm neon-shadow"
+              className="p-2.5 glass-effect rounded-full backdrop-blur-sm neon-shadow hover:bg-white/10 transition-colors"
               onClick={addToCalendar}
+              title="Add to Calendar"
             >
-              <IoCalendarOutline className="text-white text-xl" />
+              <IoCalendarOutline className="text-white text-lg" />
             </motion.button>
             
             <motion.button
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-4 glass-effect rounded-full backdrop-blur-sm neon-shadow"
+              className="p-2.5 glass-effect rounded-full backdrop-blur-sm neon-shadow hover:bg-white/10 transition-colors"
               onClick={() => onToggleFavorite?.(event.id)}
+              title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             >
-              <IoHeartOutline className={`text-xl ${isFavorite ? 'text-pink-500' : 'text-white'}`} />
+              <IoHeartOutline 
+                className={`text-lg ${isFavorite ? 'text-pink-500' : 'text-white'}`}
+              />
             </motion.button>
             
             <motion.button
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-4 glass-effect rounded-full backdrop-blur-sm neon-shadow"
+              className="p-2.5 glass-effect rounded-full backdrop-blur-sm neon-shadow hover:bg-white/10 transition-colors"
               onClick={handleShare}
+              title="Share Event"
             >
-              <IoShareSocialOutline className="text-white text-xl" />
+              <IoShareSocialOutline className="text-white text-lg" />
             </motion.button>
           </div>
         </motion.div>

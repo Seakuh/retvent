@@ -45,7 +45,7 @@ export const EventList: React.FC<EventListProps> = ({
         style={{ scrollBehavior: 'smooth' }}
       >
         {events.map((event, index) => (
-          <div key={event.id} className="snap-center">
+          <div key={`${event.id}-${index}`} className="snap-center">
             <EventCard 
               event={{
                 id: event.id,
@@ -57,6 +57,8 @@ export const EventList: React.FC<EventListProps> = ({
                 category: event.category || 'Event'
               }}
               isActive={index === activeIndex}
+              isFavorite={favorites.has(event.id)}
+              onToggleFavorite={onToggleFavorite}
             />
           </div>
         ))}

@@ -1,32 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import './HomeScreen.css';
-import { CategoryFilter } from '../components/CategoryFilter/CategoryFilter';
+import { CategoryFilter } from '../components/CategoryFilter';
 import { EventList } from '../components/EventList/EventList';
 import { Event } from '../types/event';
 import { useAuth } from '../contexts/AuthContext';
 
 const HomeScreen = () => {
   const { isAuthenticated } = useAuth();
-  const [latestEvents, setLatestEvents] = useState<Event[]>([]);
-  const [categoryEvents, setCategoryEvents] = useState<Record<string, Event[]>>({});
+  const [events, setEvents] = useState<Event[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch latest events
-    fetch('http://localhost:3145/events/latest')
-      .then(res => res.json())
-      .then(data => setLatestEvents(data.events));
+    setIsLoading(true);
+    const endpoint = selectedCategory 
+      ? `http://localhost:3145/events/category/${selectedCategory}`
+      : 'http://localhost:3145/events/latest?limit=20';
 
-    // Fetch events by category
-    ['Music', 'Sports', 'Art', 'Food'].forEach(category => {
-      fetch(`http://localhost:3145/events/category/${category}`)
-        .then(res => res.json())
-        .then(data => setCategoryEvents(prev => ({
-          ...prev,
-          [category]: data.events
-        })));
-    });
-  }, []);
+    fetch(endpoint)
+      .then(res => res.json())
+      .then(data => {
+        console.info('Fetched events:', data.events);
+        setEvents(data.events);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching events:', error);
+        setIsLoading(false);
+      });
+  }, [selectedCategory]);
 
   const handleToggleFavorite = (eventId: string) => {
     setFavorites(prev => {
@@ -41,23 +44,41 @@ const HomeScreen = () => {
   };
 
   return (
-    <div className="home-container pb-16">
-      <EventList 
-        title="Latest Events"
-        events={latestEvents}
-        onToggleFavorite={handleToggleFavorite}
-        favorites={favorites}
-      />
-      
-      {Object.entries(categoryEvents).map(([category, events]) => (
-        <EventList 
-          key={category}
-          title={category}
-          events={events}
-          onToggleFavorite={handleToggleFavorite}
-          favorites={favorites}
+    <div className="flex flex-col h-screen pb-16">
+      {/* Header */}
+      <div className="flex-none">
+        <CategoryFilter 
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
         />
-      ))}
+      </div>
+
+      {/* Scrollbarer Content */}
+      <div className="flex-1 overflow-y-auto">
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+          </div>
+        ) : (
+          <>
+            {/* Featured Events */}
+            <EventList 
+              title={selectedCategory || "Featured Events"}
+              events={events.slice(0, 5)}
+              onToggleFavorite={handleToggleFavorite}
+              favorites={favorites}
+            />
+
+            {/* Upcoming Events */}
+            <EventList 
+              title="Upcoming Events"
+              events={events.slice(5)}
+              onToggleFavorite={handleToggleFavorite}
+              favorites={favorites}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 };

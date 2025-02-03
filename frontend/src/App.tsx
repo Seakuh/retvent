@@ -7,12 +7,15 @@ import ProfileScreen from "./screens/ProfileScreen";
 import { AddScreen, CreateEvent } from "./screens/AddScreen";
 import AddEventScreen from "./screens/AddEventScreen";
 import { AuthProvider } from './contexts/AuthContext';
+import EventDetailPage from "./screens/EventDetailPage";
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <div className="app-container">
+          <Toaster position="top-center" />
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<HomeScreen />} />
@@ -20,6 +23,7 @@ function App() {
             <Route path="/add" element={<AddScreen />} />
             <Route path="/profile" element={<ProfileScreen />} />
             <Route path="/create-event" element={<AddEventScreen />} />
+            <Route path="/event/:id" element={<EventDetailPage />} />
           </Routes>
           <BottomNavigation />
         </div>

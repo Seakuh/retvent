@@ -1,12 +1,17 @@
 export interface Event {
   id: string;
-  name: string;
-  date: string;
+  title: string;
   description: string;
-  location: string;
-  imageUrl?: string;
-  category?: string;
-  price?: string;
+  date: string;
+  imageUrl: string;
+  category: string;
+  location: {
+    name: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    }
+  };
 }
 
 export interface SearchParams {
