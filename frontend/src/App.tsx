@@ -6,23 +6,25 @@ import MapScreen from "./screens/MapScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import { AddScreen, CreateEvent } from "./screens/AddScreen";
 import AddEventScreen from "./screens/AddEventScreen";
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
   return (
-    <Router>
-      <div className="app-container">
-        <Routes>
-          <Route path="/" element={<Navigate to="/home" />} />
-          <Route path="/home" element={<HomeScreen />} />
-          <Route path="/map" element={<MapScreen />} />
-          <Route path="/add" element={<AddScreen />} />
-          <Route path="/profile" element={<ProfileScreen />} />
-          <Route path="/create-event" element={<AddEventScreen />} />
-
-        </Routes>
-        <BottomNavigation />
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div className="app-container">
+          <Routes>
+            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/home" element={<HomeScreen />} />
+            <Route path="/map" element={<MapScreen />} />
+            <Route path="/add" element={<AddScreen />} />
+            <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/create-event" element={<AddEventScreen />} />
+          </Routes>
+          <BottomNavigation />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 
