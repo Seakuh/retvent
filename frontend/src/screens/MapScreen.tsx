@@ -38,7 +38,7 @@ const LocationSearch = ({ onSelect }: { onSelect: (location: Location) => void }
   }, 300);
 
   return (
-    <div className="absolute top-4 left-4 z-[1000] w-80">
+    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] w-80">
       <div className="relative">
         <input
           type="text"
@@ -48,11 +48,11 @@ const LocationSearch = ({ onSelect }: { onSelect: (location: Location) => void }
             searchLocations(e.target.value);
           }}
           placeholder="Search location..."
-          className="w-full px-4 py-2 pl-10 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg text-gray-800 placeholder-gray-500"
+          className="w-full px-4 py-2 pl-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg text-gray-800 placeholder-gray-500 border border-white/20"
         />
-        <IoSearchOutline className="absolute left-3 top-3 text-gray-500" />
+        <IoSearchOutline className="absolute left-3 top-2.5 text-gray-500" />
       </div>
-      
+
       {suggestions.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -82,51 +82,41 @@ const LocationButton = () => {
   const map = useMap();
   const [isLocating, setIsLocating] = useState(false);
 
-  const handleClick = () => {
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        map.flyTo(
-          [position.coords.latitude, position.coords.longitude],
-          15,
-          {
-            duration: 1.5
-          }
-        );
-        setIsLocating(false);
-      },
-      (error) => {
-        console.error('Error getting location:', error);
-        setIsLocating(false);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      }
-    );
-  };
-
   return (
     <motion.button
-      whileHover={{ scale: 1.05 }}
+      whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
       animate={isLocating ? { rotate: 360 } : {}}
-      transition={isLocating ? { 
-        rotate: { 
+      transition={isLocating ? {
+        rotate: {
           duration: 1,
           repeat: Infinity,
           ease: "linear"
         }
       } : {}}
-      onClick={handleClick}
-      className="absolute bottom-20 left-4 z-[400] p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg 
-                hover:bg-blue-50/90 transition-colors border border-blue-100/50"
+      onClick={() => {
+        setIsLocating(true);
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            map.flyTo(
+              [position.coords.latitude, position.coords.longitude],
+              15,
+              { duration: 1.5 }
+            );
+            setIsLocating(false);
+          },
+          (error) => {
+            console.error('Error:', error);
+            setIsLocating(false);
+          }
+        );
+      }}
+      className="fixed left-4 bottom-20 z-[1000] w-10 h-10 flex items-center justify-center
+                 bg-white/90 hover:bg-white rounded-full shadow-lg border border-white/20
+                 transition-all duration-300"
       title="Find my location"
     >
-      <IoLocationOutline 
-        className={`text-base ${isLocating ? 'text-blue-600' : 'text-blue-500'}`}
-      />
+      <IoLocationOutline className={`w-5 h-5 ${isLocating ? 'text-blue-600' : 'text-blue-500'}`} />
     </motion.button>
   );
 };
@@ -137,15 +127,34 @@ const MapScreen: React.FC = () => {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    const endpoint = selectedCategory 
+    const endpoint = selectedCategory
       ? `http://localhost:3145/events/category/${selectedCategory}`
       : 'http://localhost:3145/events/latest';
 
     fetch(endpoint)
       .then(res => res.json())
       .then(data => {
-        console.info('Fetched events:', data.events);
-        setEvents(data.events);
+        console.info('Fetched events for map:', data);
+        if (Array.isArray(data.events)) {
+          const validEvents = data.events.map(event => ({
+            ...event,
+            id: event._id,
+            title: event.name,
+            location: {
+              name: event.location,
+              coordinates: {
+                lat: event.eventLat || event.geoLocation?.coordinates[1],
+                lng: event.eventLon || event.geoLocation?.coordinates[0]
+              }
+            }
+          })).filter(event =>
+            event.location?.coordinates?.lat &&
+            event.location?.coordinates?.lng
+          );
+
+          console.info('Valid events for map:', validEvents);
+          setEvents(validEvents);
+        }
       })
       .catch(error => console.error('Error fetching events:', error));
   }, [selectedCategory]);
@@ -159,7 +168,7 @@ const MapScreen: React.FC = () => {
 
   return (
     <div className="h-[calc(100vh-80px)] w-full relative flex flex-col pb-16">
-      <CategoryFilter 
+      <CategoryFilter
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
       />
@@ -176,19 +185,28 @@ const MapScreen: React.FC = () => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           <LocationButton />
-          {events.map((event) => (
-            <Marker
-              key={event.id}
-              position={[event.location.coordinates.lat, event.location.coordinates.lng]}
-            >
-              <Popup>
-                <div className="p-2">
-                  <h3 className="font-bold text-gray-800">{event.title}</h3>
-                  <p className="text-sm text-gray-600">{event.description}</p>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
+          {events.length > 0 ? (
+            events.map((event) => (
+              <Marker
+                key={event.id}
+                position={[
+                  event.location.coordinates.lat,
+                  event.location.coordinates.lng
+                ]}
+              >
+                <Popup>
+                  <div className="p-2">
+                    <h3 className="font-bold text-gray-800">{event.title}</h3>
+                    <p className="text-sm text-gray-600">{event.description}</p>
+                  </div>
+                </Popup>
+              </Marker>
+            ))
+          ) : (
+            <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-[1000] bg-white/90 px-4 py-2 rounded-full shadow-lg">
+              No events found in this area
+            </div>
+          )}
         </MapContainer>
         <LocationSearch onSelect={handleLocationSelect} />
       </div>

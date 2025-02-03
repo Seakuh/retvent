@@ -1,7 +1,7 @@
-import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, BadRequestException, Param } from '@nestjs/common';
 import { EventService } from 'src/infrastructure/services/event.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Multer } from 'multer';
+import * as multer from 'multer';
 import { Event } from 'src/core/domain/event';
 
 @Controller('events')
@@ -12,6 +12,7 @@ export class EventController {
   ) { }
 
   @Get('search/plattforms')
+  
   async searchEventPlattforms(@Query('query') query: string, @Query('location') location?: string): Promise<any> {
     const params = { query, location };
     console.info('Searching for events with params:', params);
@@ -25,7 +26,7 @@ export class EventController {
   @Post('upload/event-image')
   @UseInterceptors(FileInterceptor('image'))
   async uploadEventImage(
-    @UploadedFile() image: Multer.File,
+    @UploadedFile() image: Express.Multer.File,
     @Body() body: { uploadLat?: number; uploadLon?: number },
   ) {
     return this.eventService.processEventImageUpload(image, body.uploadLat, body.uploadLon);
@@ -56,8 +57,9 @@ export class EventController {
  * Gibt die neuesten 30 Events zurück, sortiert nach Erstellungsdatum.
  */
   @Get('latest')
-  async getLatestEvents() {
-    return this.eventService.getLatestEvents();
+  async getLatestEvents(@Query('limit') limit: number = 10) {
+    const events = await this.eventService.findLatest(limit);
+    return { events };
   }
 
 
@@ -93,9 +95,32 @@ export class EventController {
   @UseInterceptors(FileInterceptor('image'))
   async createEvent(
     @Body() eventData: any,
-    @UploadedFile() image?: Multer.File
+    @UploadedFile() image?: Express.Multer.File
   ) {
     return this.eventService.createEvent(eventData, image);
+  }
+
+  @Get('category/:category')
+  async getEventsByCategory(
+    @Param('category') category: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    const skip = (page - 1) * limit;
+    const [events, total] = await Promise.all([
+      this.eventService.findByCategory(category, skip, limit),
+      this.eventService.countByCategory(category),
+    ]);
+
+    return {
+      events,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    };
   }
 }
 

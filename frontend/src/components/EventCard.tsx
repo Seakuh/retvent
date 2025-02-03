@@ -109,7 +109,7 @@ Join me at this event!
         duration: 0.4,
         ease: [0.4, 0, 0.2, 1]
       }}
-      className="relative w-[90vw] h-[75vh] flex-shrink-0 mx-2 rounded-3xl overflow-hidden shadow-2xl"
+      className="relative w-[80vw] h-[60vh] flex-shrink-0 mx-2 rounded-2xl overflow-hidden shadow-2xl"
     >
       <motion.img 
         src={event.image} 

@@ -49,12 +49,12 @@ export const EventList: React.FC<EventListProps> = ({
             <EventCard 
               event={{
                 id: event.id,
-                title: event.name,
-                image: event.imageUrl || '',
+                title: event.title,
+                image: event.imageUrl,
                 date: event.date,
-                location: event.location,
+                location: event.location.name,
                 description: event.description,
-                category: event.category || 'Event'
+                category: event.category
               }}
               isActive={index === activeIndex}
               isFavorite={favorites.has(event.id)}

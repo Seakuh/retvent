@@ -22,11 +22,17 @@ const HomeScreen = () => {
       .then(res => res.json())
       .then(data => {
         console.info('Fetched events:', data.events);
-        setEvents(data.events);
+        if (Array.isArray(data.events)) {
+          setEvents(data.events);
+        } else {
+          console.error('Events data is not an array:', data);
+          setEvents([]);
+        }
         setIsLoading(false);
       })
       .catch(error => {
         console.error('Error fetching events:', error);
+        setEvents([]);
         setIsLoading(false);
       });
   }, [selectedCategory]);

@@ -1,30 +1,38 @@
+import { IEvent } from './interfaces/event.interface';
 
-  export interface SearchParams {
-    query: string;
-    location?: string;
-    dateRange?: { start: string; end: string };
-  }
+export class Event implements IEvent {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
   
-  export interface EventServicePort {
-    searchEvents(params: SearchParams): Promise<Event[]>;
+  // Zeitliche Daten
+  startDate: Date;
+  startTime: string;
+  endDate?: Date;
+  endTime?: string;
+  
+  // Beziehungen
+  organizerId: string;
+  locationId: string;
+  artistIds: string[] = [];
+  likeIds: string[] = [];
+  
+  // Timestamps
+  createdAt: Date;
+  updatedAt: Date;
+
+  constructor(data: Partial<IEvent>) {
+    Object.assign(this, data);
   }
+}
 
-  import { z } from 'zod';
+export interface SearchParams {
+  query: string;
+  location?: string;
+  dateRange?: { start: string; end: string };
+}
 
-export const EventSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  date: z.string(),
-  location: z.string(),
-  description: z.string(),
-  imageUrl: z.string().optional(),
-  category: z.string().optional(),
-  price: z.string().optional(),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
-  uploadLatitude: z.number().optional(),
-  uploadLongitude: z.number().optional(),
-  ticketUrl: z.string().optional(),
-});
-
-export type Event = z.infer<typeof EventSchema>;
+export interface EventServicePort {
+  searchEvents(params: SearchParams): Promise<Event[]>;
+}
