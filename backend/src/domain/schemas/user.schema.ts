@@ -13,10 +13,22 @@ export class User extends Document {
   password: string;
 
   @Prop({ default: [] })
-  favorites: string[];
+  likedEvents: string[];
 
   @Prop({ default: [] })
   createdEvents: string[];
+
+  @Prop({ default: [] })
+  followedLocations: string[];
+
+  @Prop({ default: [] })
+  followedArtists: string[];
+
+  @Prop()
+  profileImage?: string;
+
+  @Prop()
+  bio?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User); 

@@ -3,18 +3,12 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
-  favorites: string[];
-  createdEvents: string[];
-  artistName?: string;
+  likedEventIds: string[];
+  createdEventIds: string[];
+  followedLocationIds: string[];
+  followedArtistIds: string[];
   profileImage?: string;
   bio?: string;
-  isArtist: boolean;
-  ownedLocationIds: string[];
-  createdEventIds: string[];
-  likedEventIds: string[];
-  likedLocationIds: string[];
-  followedLocationIds: string[];
-  performingEventIds: string[];
   createdAt: Date;
   updatedAt: Date;
 } 

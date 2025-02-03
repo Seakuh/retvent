@@ -3,11 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Event } from '../../../core/domain/event';
 import { IEventRepository } from '../../../core/repositories/event.repository.interface';
+import { EventDocument } from '../../../infrastructure/schemas/event.schema';
 
 @Injectable()
 export class MongoEventRepository implements IEventRepository {
   constructor(
-    @InjectModel('Event') private eventModel: Model<Event>
+    @InjectModel('Event') private eventModel: Model<EventDocument>
   ) {}
 
   async findById(id: string): Promise<Event | null> {
@@ -57,26 +58,36 @@ export class MongoEventRepository implements IEventRepository {
     return this.update(id, eventData);
   }
 
-  async addLike(eventId: string, userId: string): Promise<Event | null> {
-    const updated = await this.eventModel
-      .findByIdAndUpdate(
-        eventId,
-        { $addToSet: { likeIds: userId } },
-        { new: true }
-      )
-      .exec();
-    return updated ? new Event(updated.toObject()) : null;
+  async addLike(eventId: string, userId: string): Promise<void> {
+    await this.eventModel.findByIdAndUpdate(
+      eventId,
+      { 
+        $addToSet: { likedBy: userId },
+        $inc: { likesCount: 1 }
+      }
+    );
   }
 
-  async removeLike(eventId: string, userId: string): Promise<Event | null> {
-    const updated = await this.eventModel
-      .findByIdAndUpdate(
-        eventId,
-        { $pull: { likeIds: userId } },
-        { new: true }
-      )
+  async removeLike(eventId: string, userId: string): Promise<void> {
+    await this.eventModel.findByIdAndUpdate(
+      eventId,
+      { 
+        $pull: { likedBy: userId },
+        $inc: { likesCount: -1 }
+      }
+    );
+  }
+
+  async findByIds(ids: string[]): Promise<Event[]> {
+    const events = await this.eventModel
+      .find({ _id: { $in: ids } })
       .exec();
-    return updated ? new Event(updated.toObject()) : null;
+    return events.map(event => new Event(event.toObject()));
+  }
+
+  async isLikedByUser(eventId: string, userId: string): Promise<boolean> {
+    const event = await this.eventModel.findById(eventId);
+    return event?.likedBy?.includes(userId) || false;
   }
 
   async addArtist(eventId: string, artistId: string): Promise<Event | null> {
@@ -99,5 +110,47 @@ export class MongoEventRepository implements IEventRepository {
       )
       .exec();
     return updated ? new Event(updated.toObject()) : null;
+  }
+
+  async findByArtistId(artistId: string): Promise<Event[]> {
+    const events = await this.eventModel
+      .find({ artistIds: artistId })
+      .sort({ date: 'asc' })
+      .exec();
+    return events.map(event => new Event(event.toObject()));
+  }
+
+  async findByArtistIds(artistIds: string[]): Promise<Event[]> {
+    const events = await this.eventModel
+      .find({ artistIds: { $in: artistIds } })
+      .sort({ date: 'asc' })
+      .exec();
+    return events.map(event => new Event(event.toObject()));
+  }
+
+  async findByLocationIds(locationIds: string[]): Promise<Event[]> {
+    const events = await this.eventModel
+      .find({ locationId: { $in: locationIds } })
+      .sort({ date: 'asc' })
+      .exec();
+    return events.map(event => new Event(event.toObject()));
+  }
+
+  async findLatest(limit: number = 10): Promise<Event[]> {
+    const events = await this.eventModel
+      .find()
+      .sort({ date: -1 })
+      .limit(limit)
+      .exec();
+    return events.map(event => new Event(event.toObject()));
+  }
+
+  async findByCategory(category: string, limit: number = 20): Promise<Event[]> {
+    const events = await this.eventModel
+      .find({ category })
+      .sort({ date: -1 })
+      .limit(limit)
+      .exec();
+    return events.map(event => new Event(event.toObject()));
   }
 } 

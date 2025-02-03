@@ -10,6 +10,8 @@ import { AuthController } from './infrastructure/controllers/auth.controller';
 import { AuthService } from './application/services/auth.service';
 import { UserSchema } from './domain/schemas/user.schema';
 import { MongoUserRepository } from './infrastructure/repositories/mongodb/user.repository';
+import { MongoEventRepository } from './infrastructure/repositories/mongodb/event.repository';
+import { PassportModule } from '@nestjs/passport';
 
 
 dotenv.config(); // Lädt die .env-Datei
@@ -22,6 +24,7 @@ dotenv.config(); // Lädt die .env-Datei
       { name: 'Event', schema: EventSchema },
       { name: 'User', schema: UserSchema }
     ]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     InfrastructureModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'your-secret-key',
@@ -34,6 +37,10 @@ dotenv.config(); // Lädt die .env-Datei
     {
       provide: 'UserRepository',
       useClass: MongoUserRepository
+    },
+    {
+      provide: 'IEventRepository',
+      useClass: MongoEventRepository
     }
   ]
 })

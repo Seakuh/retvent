@@ -9,32 +9,29 @@ export class EventDocument extends Document {
   @Prop({ required: true })
   description: string;
 
+  @Prop({ required: true, type: Date })
+  date: Date;
+
   @Prop({ required: true })
   imageUrl: string;
 
   @Prop({ required: true })
-  startDate: Date;
-
-  @Prop({ required: true })
-  startTime: string;
-
-  @Prop()
-  endDate?: Date;
-
-  @Prop()
-  endTime?: string;
-
-  @Prop({ required: true })
-  organizerId: string;
+  category: string;
 
   @Prop({ required: true })
   locationId: string;
 
-  @Prop([String])
-  artistIds: string[];
+  @Prop({ required: true })
+  creatorId: string;
 
-  @Prop([String])
-  likeIds: string[];
+  @Prop({ default: [] })
+  likedBy: string[];
+
+  @Prop({ default: 0 })
+  likesCount: number;
+
+  @Prop({ default: [] })
+  artistIds: string[];
 }
 
 export const EventSchema = SchemaFactory.createForClass(EventDocument); 

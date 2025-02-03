@@ -9,37 +9,38 @@ import { Event } from '../../core/domain/event';
 import { IEventRepository } from '../../core/repositories/event.repository.interface';
 import { Inject } from '@nestjs/common';
 import { Express } from 'express';
-
-
+import { EventDocument } from '../../infrastructure/schemas/event.schema';
+import { MongoUserRepository } from '../../infrastructure/repositories/mongodb/user.repository';
+import { CreateEventDto, UpdateEventDto } from '../../core/dto/event.dto';
 
 @Injectable()
 export class EventService {
   private readonly logger = new Logger(EventService.name);
 
   constructor(
-    @InjectModel('Event') private eventModel: Model<Event>,
+    @InjectModel('Event') private eventModel: Model<EventDocument>,
     private readonly chatGptService: ChatGPTService,
     private readonly imageService: ImageService,
     @Inject('IEventRepository')
     private readonly eventRepository: IEventRepository,
     private readonly geolocationService: GeolocationService,
+    @Inject('UserRepository')
+    private readonly userRepository: MongoUserRepository
   ) { }
 
   async processEventImage(imageUrl: string, lat?: number, lon?: number): Promise<Event> {
-    // Hier würde die Bildverarbeitung stattfinden
     const eventData: Partial<Event> = {
       imageUrl,
-      title: 'Neues Event', // Placeholder
-      description: 'Eventbeschreibung', // Placeholder
-      startDate: new Date(),
-      startTime: '18:00',
-      locationId: '', // Muss später gesetzt werden
-      organizerId: '', // Muss später gesetzt werden
+      title: 'Neues Event',
+      description: 'Eventbeschreibung',
+      date: new Date(),
+      category: 'Unspecified',
+      locationId: '',
+      creatorId: '',
+      likedBy: [],
+      likesCount: 0,
+      artistIds: []
     };
-
-    if (lat && lon) {
-      // Hier könnte man die nächstgelegene Location suchen und setzen
-    }
 
     return this.eventRepository.create(eventData);
   }
@@ -89,54 +90,25 @@ export class EventService {
     return this.getEventsByIds(eventIds);
   }
 
-  async createEvent(eventData: Partial<Event>, image?: Express.Multer.File): Promise<Event> {
-    let imageUrl = eventData.imageUrl;
-    
-    if (image) {
-      try {
-        // Nutze den ImageService um das Bild hochzuladen
-        imageUrl = await this.imageService.uploadImage(image);
-      } catch (error) {
-        this.logger.error('Fehler beim Bildupload:', error);
-        throw new BadRequestException('Fehler beim Bildupload: ' + error.message);
-      }
-    }
-
-    const newEventData = {
+  async createEvent(eventData: CreateEventDto & { creatorId: string }): Promise<Event> {
+    const newEventData: Partial<Event> = {
       ...eventData,
-      imageUrl,
+      date: new Date(eventData.date),
+      likedBy: [],
+      likesCount: 0,
+      artistIds: []
     };
-
+    
     return this.eventRepository.create(newEventData);
   }
 
-  async updateEvent(eventId: string, updateData: any, image?: Express.Multer.File) {
-    const existingEvent = await this.eventRepository.findById(eventId);
-    if (!existingEvent) {
-      throw new NotFoundException('Event nicht gefunden');
-    }
-
-    let imageUrl = updateData.imageUrl;
-
-    if (image) {
-      try {
-        // Nutze den ImageService um das neue Bild hochzuladen
-        imageUrl = await this.imageService.uploadImage(image);
-      } catch (error) {
-        this.logger.error('Fehler beim Bildupload:', error);
-        throw new BadRequestException('Fehler beim Bildupload: ' + error.message);
-      }
-    }
-
-    const updatedEvent = await this.eventRepository.updateEvent(eventId, {
-      ...updateData,
-      imageUrl,
-    });
-
-    if (!updatedEvent) {
-      throw new NotFoundException('Event nicht gefunden');
-    }
-    return updatedEvent;
+  async updateEvent(id: string, eventData: UpdateEventDto): Promise<Event | null> {
+    const updateData: Partial<Event> = {
+      ...eventData,
+      ...(eventData.date && { date: new Date(eventData.date) })
+    };
+    
+    return this.eventRepository.updateEvent(id, updateData);
   }
 
   // async extractTextFromImage(imageUrl: string): Promise<string> {
@@ -156,25 +128,61 @@ export class EventService {
   // }
 
   async findLatest(limit: number): Promise<Event[]> {
-    return this.eventModel
+    const events = await this.eventModel
       .find()
       .populate('location')
       .sort({ date: -1 })
       .limit(limit)
       .exec();
+    return events.map(event => new Event(event.toObject()));
   }
 
   async findByCategory(category: string, skip: number, limit: number): Promise<Event[]> {
-    return this.eventModel
+    const events = await this.eventModel
       .find({ category })
       .populate('location')
       .sort({ date: 1 })
       .skip(skip)
       .limit(limit)
       .exec();
+    return events.map(event => new Event(event.toObject()));
   }
 
   async countByCategory(category: string): Promise<number> {
     return this.eventModel.countDocuments({ category }).exec();
+  }
+
+  async deleteEvent(id: string): Promise<boolean> {
+    return this.eventRepository.delete(id);
+  }
+
+  async likeEvent(eventId: string, userId: string): Promise<void> {
+    return this.eventRepository.addLike(eventId, userId);
+  }
+
+  async unlikeEvent(eventId: string, userId: string): Promise<void> {
+    return this.eventRepository.removeLike(eventId, userId);
+  }
+
+  async getLikedEvents(userId: string): Promise<Event[]> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new Error('User not found');
+    return this.eventRepository.findByIds(user.likedEventIds);
+  }
+
+  async isLikedByUser(eventId: string, userId: string): Promise<boolean> {
+    return this.eventRepository.isLikedByUser(eventId, userId);
+  }
+
+  async getEventsByLocation(locationId: string): Promise<Event[]> {
+    return this.eventRepository.findByLocationId(locationId);
+  }
+
+  async getEventsByArtist(artistId: string): Promise<Event[]> {
+    return this.eventRepository.findByArtistId(artistId);
+  }
+
+  async getUpcomingEvents(locationId: string): Promise<Event[]> {
+    return this.eventRepository.findUpcoming(locationId);
   }
 }

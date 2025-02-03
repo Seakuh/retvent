@@ -12,9 +12,11 @@ import { UserSchema } from './schemas/user.schema';
 import { LocationService } from './services/location.service';
 import { MongoLocationRepository } from './repositories/mongodb/location.repository';
 import { MongoUserRepository } from './repositories/mongodb/user.repository';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
+    PassportModule,
     HttpModule,
     MongooseModule.forFeature([
       { name: 'Event', schema: EventSchema },
@@ -37,7 +39,7 @@ import { MongoUserRepository } from './repositories/mongodb/user.repository';
       useClass: MongoLocationRepository,
     },
     {
-      provide: 'IUserRepository',
+      provide: 'UserRepository',
       useClass: MongoUserRepository,
     },
   ],
@@ -47,7 +49,9 @@ import { MongoUserRepository } from './repositories/mongodb/user.repository';
     GeolocationService,
     'IEventRepository',
     'ILocationRepository',
-    'IUserRepository',
+    'UserRepository',
+    ChatGPTService,
+    ImageService,
   ],
 })
 export class InfrastructureModule {}

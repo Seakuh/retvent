@@ -1,9 +1,11 @@
-import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, BadRequestException, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, BadRequestException, Param, UseGuards } from '@nestjs/common';
 import { EventService } from 'src/infrastructure/services/event.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
 import { Event } from 'src/core/domain/event';
-
+import { AuthGuard } from '@nestjs/passport';
+import { Req } from '@nestjs/common';
+import { CreateEventDto } from 'src/core/dto/event.dto';
 @Controller('events')
 export class EventController {
   constructor(
@@ -91,13 +93,13 @@ export class EventController {
   }
 
 
-  @Post('create')
-  @UseInterceptors(FileInterceptor('image'))
-  async createEvent(
-    @Body() eventData: any,
-    @UploadedFile() image?: Express.Multer.File
-  ) {
-    return this.eventService.createEvent(eventData, image);
+  @Post()
+  @UseGuards(AuthGuard())
+  async createEvent(@Body() eventData: CreateEventDto, @Req() req: any) {
+    return this.eventService.createEvent({
+      ...eventData,
+      creatorId: req.user.id
+    });
   }
 
   @Get('category/:category')

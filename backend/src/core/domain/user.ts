@@ -7,22 +7,12 @@ export class User implements IUser {
   name: string;
   email: string;
   password: string;
-  favorites: string[];
-  createdEvents: string[];
-  artistName?: string;
+  likedEventIds: string[];
+  createdEventIds: string[];
+  followedLocationIds: string[];
+  followedArtistIds: string[];
   profileImage?: string;
   bio?: string;
-  isArtist: boolean;
-  
-  // Beziehungen werden als Arrays von IDs gespeichert
-  ownedLocationIds: string[] = [];
-  createdEventIds: string[] = [];
-  likedEventIds: string[] = [];
-  likedLocationIds: string[] = [];
-  followedLocationIds: string[] = [];
-  performingEventIds: string[] = [];
-  
-  // Timestamps
   createdAt: Date;
   updatedAt: Date;
 
@@ -31,7 +21,13 @@ export class User implements IUser {
     this.name = data.name;
     this.email = data.email;
     this.password = data.password;
-    this.favorites = data.favorites || [];
-    this.createdEvents = data.createdEvents || [];
+    this.likedEventIds = data.likedEventIds || [];
+    this.createdEventIds = data.createdEventIds || [];
+    this.followedLocationIds = data.followedLocationIds || [];
+    this.followedArtistIds = data.followedArtistIds || [];
+    this.profileImage = data.profileImage;
+    this.bio = data.bio;
+    this.createdAt = data.createdAt;
+    this.updatedAt = data.updatedAt;
   }
 } 

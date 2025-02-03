@@ -13,6 +13,7 @@ interface EventCardProps {
     location: string;
     description: string;
     category: string;
+    likesCount: number;
   };
   isActive?: boolean;
   onToggleFavorite?: (id: string) => void;
@@ -156,6 +157,12 @@ Join me at this event!
           <h2 className="text-white text-2xl font-bold mb-2 neon-text">{event.title}</h2>
           <p className="text-white/70 mb-6 line-clamp-2 text-base">{event.description}</p>
           
+          {/* Like Counter hinzufügen */}
+          <div className="absolute bottom-6 left-6 flex items-center gap-2 text-white/90">
+            <IoHeartOutline className={`text-lg ${isFavorite ? 'text-pink-500 fill-current' : ''}`} />
+            <span className="text-sm font-medium">{event.likesCount}</span>
+          </div>
+
           {/* Action Buttons - vertikal */}
           <div className="absolute bottom-6 right-6 flex flex-col gap-2">
             <motion.button
