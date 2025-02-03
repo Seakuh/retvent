@@ -9,6 +9,8 @@ import AddEventScreen from "./screens/AddEventScreen";
 import { AuthProvider } from './contexts/AuthContext';
 import EventDetailPage from "./screens/EventDetailPage";
 import { Toaster } from 'react-hot-toast';
+import RegisterScreen from "./screens/RegisterScreen";
+import LoginScreen from "./screens/LoginScreen";
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
             <Route path="/profile" element={<ProfileScreen />} />
             <Route path="/create-event" element={<AddEventScreen />} />
             <Route path="/event/:id" element={<EventDetailPage />} />
+            <Route path="/auth/login" element={<LoginScreen />} />
+            <Route path="/auth/register" element={<RegisterScreen />} />
           </Routes>
           <BottomNavigation />
         </div>

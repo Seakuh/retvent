@@ -4,9 +4,11 @@ import { Location } from './location';
 
 export class User implements IUser {
   id: string;
-  username: string;
+  name: string;
   email: string;
   password: string;
+  favorites: string[];
+  createdEvents: string[];
   artistName?: string;
   profileImage?: string;
   bio?: string;
@@ -24,7 +26,12 @@ export class User implements IUser {
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(data: Partial<IUser>) {
-    Object.assign(this, data);
+  constructor(data: any) {
+    this.id = data._id?.toString() || data.id;
+    this.name = data.name;
+    this.email = data.email;
+    this.password = data.password;
+    this.favorites = data.favorites || [];
+    this.createdEvents = data.createdEvents || [];
   }
 } 

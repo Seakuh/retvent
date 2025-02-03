@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface AuthContextType {
   isAuthenticated: boolean;
   user: any | null;
-  login: (userData: any) => void;
+  login: (email: string, password: string) => void;
   logout: () => void;
 }
 
@@ -22,10 +22,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = (userData: any) => {
-    setUser(userData);
-    setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(userData));
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await fetch('http://localhost:3145/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      // Token im localStorage speichern
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
+      setIsAuthenticated(true);
+    } catch (error) {
+      throw error;
+    }
   };
 
   const logout = () => {
