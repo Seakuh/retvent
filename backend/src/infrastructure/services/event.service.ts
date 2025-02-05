@@ -1,77 +1,143 @@
 import * as Tesseract from 'tesseract.js';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Event } from '../../core/domain/event';
-import { Multer } from 'multer';
 import { ChatGPTService } from './chatgpt.service';
 import { ImageService } from './image.service';
-import { EventRepository } from '../repositories/event.repository';
 import { GeolocationService } from './geolocation.service';
+import { Event } from '../../core/domain/event';
+import { IEventRepository } from '../../core/repositories/event.repository.interface';
+import { Inject } from '@nestjs/common';
+import { Express } from 'express';
+
+
 
 @Injectable()
 export class EventService {
+  private readonly logger = new Logger(EventService.name);
+
   constructor(
     @InjectModel('Event') private eventModel: Model<Event>,
     private readonly chatGptService: ChatGPTService,
     private readonly imageService: ImageService,
-    private readonly eventRepository: EventRepository,
+    @Inject('IEventRepository')
+    private readonly eventRepository: IEventRepository,
     private readonly geolocationService: GeolocationService,
   ) { }
-  async processEventImage(imageUrl: string, lat?: number, lon?: number) {
-    console.info('Processing event image:', imageUrl, lat, lon);
-    const uploadedImageUrl = await this.imageService.uploadImage(imageUrl);
-    const extractedText = await this.chatGptService.extractTextFromImage(uploadedImageUrl);
-    const event = await this.chatGptService.generateEventFromText(extractedText);
-    const createdEvent = await this.eventModel.create({ ...event, lat, lon, imageUrl: uploadedImageUrl });
-    return createdEvent;
-  }
-  async processEventImageUpload(image: Multer.File, uploadLat?: number, uploadLon?: number) {
-    // 1. Bild auf dem Image-Server hochladen
-    console.info('Processing event image upload...');
-    const uploadedImageUrl = await this.imageService.uploadImage(image);
 
-    // 2. Bild durch ChatGPT analysieren, um Event-Daten zu erhalten
-    console.info("Extract Object from Image...");
-    // const extractedText = await this.chatGptService.extractTextFromImage(uploadedImageUrl);
-    const event = await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
+  async processEventImage(imageUrl: string, lat?: number, lon?: number): Promise<Event> {
+    // Hier würde die Bildverarbeitung stattfinden
+    const eventData: Partial<Event> = {
+      imageUrl,
+      title: 'Neues Event', // Placeholder
+      description: 'Eventbeschreibung', // Placeholder
+      startDate: new Date(),
+      startTime: '18:00',
+      locationId: '', // Muss später gesetzt werden
+      organizerId: '', // Muss später gesetzt werden
+    };
 
-    // 3. lat/lon des Uploads per Geolocation-Service ermitteln (falls Location vorhanden ist)
-    const uploadLocation = event.location?.trim()
-      ? await this.geolocationService.getCoordinates(event.location)
-      : null;
-
-    const eventLat = uploadLocation && uploadLocation.lat ? uploadLocation.lat : uploadLat;
-    const eventLon = uploadLocation && uploadLocation.lon ? uploadLocation.lon : uploadLon;
-
-
-
-    // 4. Event mit Bild-URL in MongoDB speichern
-    console.info("Save Event in MongoDB...");
-    const createdEvent = await this.eventModel.create({
-      ...event,
-      uploadLat,
-      uploadLon,
-      eventLat: eventLat,
-      eventLon: eventLon,
-      imageUrl: uploadedImageUrl,
-      geoLocation: {
-        type: 'Point',
-        coordinates: [eventLon, eventLat], // MongoDB benötigt [lon, lat]
-      },
-    });
-    return createdEvent;
-  }
-
-  async getUserFavorites(eventIds: string[]) {
-    return this.eventRepository.findEventsByIds(eventIds);
-  }
-
-
-  findNearbyEvents(latNum: number, lonNum: number, distanceNum: number) {
-      return this.eventRepository.findNearbyEvents(latNum, lonNum, distanceNum);
+    if (lat && lon) {
+      // Hier könnte man die nächstgelegene Location suchen und setzen
     }
 
+    return this.eventRepository.create(eventData);
+  }
+
+  async processEventImageUpload(
+    image: Express.Multer.File,
+    uploadLat?: number,
+    uploadLon?: number
+  ): Promise<Event> {
+    try {
+      // Nutze den ImageService um das Bild hochzuladen
+      const imageUrl = await this.imageService.uploadImage(image);
+      return this.processEventImage(imageUrl, uploadLat, uploadLon);
+    } catch (error) {
+      this.logger.error('Fehler beim Bildupload:', error);
+      throw new BadRequestException('Fehler beim Bildupload: ' + error.message);
+    }
+  }
+
+  async searchEvents(params: { query: string; location?: string }): Promise<Event[]> {
+    // Implementierung der Suche
+    return [];
+  }
+
+  async getEventById(id: string): Promise<Event | null> {
+    return this.eventRepository.findById(id);
+  }
+
+  async getEventsByIds(ids: string[]): Promise<Event[]> {
+    const events = await Promise.all(
+      ids.map(id => this.eventRepository.findById(id))
+    );
+    return events.filter((event): event is Event => event !== null);
+  }
+
+  async getLatestEvents(): Promise<Event[]> {
+    // Implementierung für die neuesten Events
+    return [];
+  }
+
+  async findNearbyEvents(lat: number, lon: number, maxDistance: number): Promise<Event[]> {
+    // Implementierung für Events in der Nähe
+    return [];
+  }
+
+  async getUserFavorites(eventIds: string[]): Promise<Event[]> {
+    return this.getEventsByIds(eventIds);
+  }
+
+  async createEvent(eventData: Partial<Event>, image?: Express.Multer.File): Promise<Event> {
+    let imageUrl = eventData.imageUrl;
+    
+    if (image) {
+      try {
+        // Nutze den ImageService um das Bild hochzuladen
+        imageUrl = await this.imageService.uploadImage(image);
+      } catch (error) {
+        this.logger.error('Fehler beim Bildupload:', error);
+        throw new BadRequestException('Fehler beim Bildupload: ' + error.message);
+      }
+    }
+
+    const newEventData = {
+      ...eventData,
+      imageUrl,
+    };
+
+    return this.eventRepository.create(newEventData);
+  }
+
+  async updateEvent(eventId: string, updateData: any, image?: Express.Multer.File) {
+    const existingEvent = await this.eventRepository.findById(eventId);
+    if (!existingEvent) {
+      throw new NotFoundException('Event nicht gefunden');
+    }
+
+    let imageUrl = updateData.imageUrl;
+
+    if (image) {
+      try {
+        // Nutze den ImageService um das neue Bild hochzuladen
+        imageUrl = await this.imageService.uploadImage(image);
+      } catch (error) {
+        this.logger.error('Fehler beim Bildupload:', error);
+        throw new BadRequestException('Fehler beim Bildupload: ' + error.message);
+      }
+    }
+
+    const updatedEvent = await this.eventRepository.updateEvent(eventId, {
+      ...updateData,
+      imageUrl,
+    });
+
+    if (!updatedEvent) {
+      throw new NotFoundException('Event nicht gefunden');
+    }
+    return updatedEvent;
+  }
 
   // async extractTextFromImage(imageUrl: string): Promise<string> {
   //   console.info('Extracting text from image:', imageUrl);
@@ -89,35 +155,26 @@ export class EventService {
   //   }
   // }
 
-
-  async searchEvents(params: { query: string; location?: string }) {
-    const filter: any = { name: new RegExp(params.query, 'i') };
-    if (params.location) filter.location = new RegExp(params.location, 'i');
-    return this.eventModel.find(filter);
+  async findLatest(limit: number): Promise<Event[]> {
+    return this.eventModel
+      .find()
+      .populate('location')
+      .sort({ date: -1 })
+      .limit(limit)
+      .exec();
   }
 
-  async getEventById(id: string) {
-    return this.eventModel.findById(id);
+  async findByCategory(category: string, skip: number, limit: number): Promise<Event[]> {
+    return this.eventModel
+      .find({ category })
+      .populate('location')
+      .sort({ date: 1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
   }
 
-  async getEventsByIds(ids: string[]) {
-    return this.eventModel.find({ _id: { $in: ids } });
+  async countByCategory(category: string): Promise<number> {
+    return this.eventModel.countDocuments({ category }).exec();
   }
-
-  /**
-  * Holt die neuesten 30 Events aus der Datenbank.
-  */
-  async getLatestEvents(): Promise<Event[]> {
-    return this.eventRepository.findLatestEvents();
-  }
-
-
-  async updateEvent(eventId: string, updateData: any) {
-    const updatedEvent = await this.eventRepository.updateEvent(eventId, updateData);
-    if (!updatedEvent) {
-      throw new NotFoundException('Event nicht gefunden');
-    }
-    return updatedEvent;
-  }
-
 }

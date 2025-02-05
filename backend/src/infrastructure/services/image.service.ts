@@ -1,11 +1,11 @@
 import * as FormData from 'form-data';
 import fetch from 'node-fetch';
 import { Injectable } from '@nestjs/common';
-import { Multer } from 'multer';
+import { Express } from 'express';
 
 @Injectable()
 export class ImageService {
-  async uploadImage(image: Multer.File): Promise<string> {
+  async uploadImage(image: Express.Multer.File): Promise<string> {
     const formData = new FormData();
     formData.append('file', image.buffer, { filename: image.originalname });
     formData.append('folder', 'event-scanner/user/uploads');

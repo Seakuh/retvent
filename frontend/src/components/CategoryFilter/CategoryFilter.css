@@ -1,14 +1,17 @@
 .category-filter {
   display: flex;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   padding: 1rem;
+  max-width: 100vw; /* Maximale Breite auf Bildschirmbreite begrenzen */
   overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: none; /* Versteckt Scrollbar in Firefox */
+  -ms-overflow-style: none; /* Versteckt Scrollbar in IE/Edge */
+  white-space: nowrap;
 }
 
 .category-filter::-webkit-scrollbar {
-  display: none;
+  display: none; /* Versteckt Scrollbar in Chrome/Safari */
 }
 
 .category-button {
@@ -20,6 +23,7 @@
   color: white;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 1rem;
 }
 
 .category-button:hover {

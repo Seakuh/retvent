@@ -1,18 +1,17 @@
 export interface Event {
-  _id?: string;
   id: string;
-  name: string;
-  date: string;
-  location: string;
+  title: string;
   description: string;
-  imageUrl?: string;
-  category?: string;
-  price?: string;
-  latitude?: number;
-  longitude?: number;
-  uploa?: number;
-  uploadL?: number;
-  ticketUrl?: string; // Neue Eigenschaft für Ticket-URL
+  date: string;
+  imageUrl: string;
+  category: string;
+  location: {
+    name: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    }
+  };
 }
 
 export interface SearchParams {

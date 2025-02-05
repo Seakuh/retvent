@@ -1,5 +1,5 @@
 .event-list {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
   padding: 2rem;
@@ -95,4 +95,55 @@
 
 .action-button.favorite {
   color: var(--color-neon-pink);
+}
+
+.event-list-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding: 1rem 0;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+/* Glassmorphism für die Progress Dots */
+.progress-dots {
+  position: relative;
+  z-index: 10;
+  padding: 8px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Smooth Scrolling */
+@media (prefers-reduced-motion: no-preference) {
+  .event-list-container {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Hover Effekte für aktive Karten */
+.event-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 640px) {
+  .event-list-container {
+    padding: 0;
+  }
 }

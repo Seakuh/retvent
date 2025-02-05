@@ -1,24 +1,54 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class GeolocationService {
   constructor(private readonly httpService: HttpService) {}
 
-  async getCoordinates(locationName: string): Promise<{ lat: number; lon: number } | null> {
+  async getCoordinates(address: string) {
     try {
-      const response = await this.httpService.axiosRef.get(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}`
+      const response = await firstValueFrom(
+        this.httpService.get('https://nominatim.openstreetmap.org/search', {
+          params: {
+            q: address,
+            format: 'json',
+            limit: 1,
+          },
+        })
       );
 
-      if (response.data.length > 0) {
-        const { lat, lon } = response.data[0];
-        return { lat: parseFloat(lat), lon: parseFloat(lon) };
+      if (response.data && response.data.length > 0) {
+        return {
+          latitude: parseFloat(response.data[0].lat),
+          longitude: parseFloat(response.data[0].lon),
+        };
       }
-
-      return null; // Kein Ergebnis gefunden
+      return null;
     } catch (error) {
-      console.error('Geolocation Error:', error);
+      console.error('Error getting coordinates:', error);
+      return null;
+    }
+  }
+
+  async getAddress(lat: number, lon: number) {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get('https://nominatim.openstreetmap.org/reverse', {
+          params: {
+            lat,
+            lon,
+            format: 'json',
+          },
+        })
+      );
+
+      if (response.data && response.data.display_name) {
+        return response.data.display_name;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting address:', error);
       return null;
     }
   }

@@ -100,7 +100,7 @@ export const mockEvents: Event[] = [
   ];
 
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3145";
 
 
   export const fetchLatestEvents = async (): Promise<Event[]> => {

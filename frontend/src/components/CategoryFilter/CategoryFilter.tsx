@@ -23,7 +23,6 @@ const categories = [
   { name: 'Health', emoji: '🏥' },
   { name: 'DIY & Crafting', emoji: '✂️' },
   { name: 'Animals', emoji: '🐾' },
-  { name: 'Sports', emoji: '⚽' },
   { name: 'Spirituality', emoji: '🧘' },
   { name: 'Comedy', emoji: '😂' },
   { name: 'History', emoji: '🏛️' },

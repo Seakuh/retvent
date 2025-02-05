@@ -1,0 +1,116 @@
+/* Vollbild-Overlay */
+.event-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Dark Overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  /* Event-Karte in der Mitte */
+  .event-card {
+    width: 90%;
+    max-width: 800px;
+    background: #0e1a2b;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-in-out;
+    position: relative;
+  }
+  
+  /* Animiertes Erscheinen */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  /* Schließen-Button */
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: red;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 50%;
+    background: lightgray;
+  }
+  
+  /* Event-Bild */
+  .event-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+  
+  /* Event-Informationen */
+  .event-info {
+    padding: 15px;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .event-title {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+  
+  .event-date, .event-location, .event-description, .event-category, .event-price {
+    margin: 5px 0;
+  }
+  
+  /* Ticket-Button */
+  .event-ticket {
+    display: inline-block;
+    background: #ff4757;
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .event-ticket:hover {
+    background: #e84118;
+  }
+  
+  /* OpenStreetMap */
+  .event-map {
+    width: 100%;
+    height: 200px;
+    border-radius: 0 0 12px 12px;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    height: 5px;
+    background: #333;
+    overflow: hidden;
+  }
+  
+  .progress {
+    width: 100%;
+    height: 100%;
+    background: #4CAF50;
+    animation: loading 2s infinite linear;
+  }
+
+  @keyframes loading {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+  }
+  
