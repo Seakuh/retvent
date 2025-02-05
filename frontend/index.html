@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
     <!-- ✅ SEO-Optimierung -->
-    <title>Eventscanner - Find all Events everywhere</title>
+    <title>Event Finder</title>
     <meta name="description" content="Finde die besten Events in deiner Stadt! Echtzeit-Updates, interaktive Karte und personalisierte Empfehlungen.">
     <meta name="keywords" content="Events, Veranstaltungen, Konzerte, Partys, Stadt, Festival, Open Air">
     <meta name="author" content="EventRadar Team">
@@ -15,8 +15,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <meta name="theme-color" content="#ffffff">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#000046">
 
     <!-- ✅ Open Graph für Social Media (Facebook, LinkedIn, WhatsApp) -->
     <meta property="og:title" content="EventRadar - Find all Events... everywhere">
@@ -37,12 +37,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     
     <!-- ✅ Progressive Web App (PWA) -->
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="manifest" href="/manifest.json">
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-            .then(() => console.log("Service Worker registered!"))
-            .catch(err => console.log("Service Worker registration failed:", err));
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js', {
+                    scope: '/'
+                }).then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                }).catch(function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
         }
     </script>
 
