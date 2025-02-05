@@ -4,17 +4,14 @@ import BottomNavigation from "./components/BottomNavigation/BottomNavigation";
 import HomeScreen from "./screens/HomeScreen";
 import MapScreen from "./screens/MapScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-import { AddScreen, CreateEvent } from "./screens/AddScreen";
-import AddEventScreen from "./screens/AddEventScreen";
-import { AuthProvider } from './contexts/AuthContext';
+import AddScreen from "./screens/AddScreen";
 import EventDetailPage from "./screens/EventDetailPage";
 import { Toaster } from 'react-hot-toast';
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
-import { AddEventPage } from './pages/AddEventPage';
-import { AddLocationPage } from './pages/AddLocationPage';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
   return (
@@ -22,22 +19,23 @@ function App() {
       <Notifications />
       <AuthProvider>
         <Router>
-          <div className="app-container">
-            <Toaster position="top-center" />
-            <Routes>
-              <Route path="/" element={<Navigate to="/home" />} />
-              <Route path="/home" element={<HomeScreen />} />
-              <Route path="/map" element={<MapScreen />} />
-              <Route path="/add" element={<AddScreen />} />
-              <Route path="/profile" element={<ProfileScreen />} />
-              <Route path="/create-event" element={<AddEventScreen />} />
-              <Route path="/event/:id" element={<EventDetailPage />} />
-              <Route path="/auth/login" element={<LoginScreen />} />
-              <Route path="/auth/register" element={<RegisterScreen />} />
-              <Route path="/events/add" element={<AddEventPage />} />
-              <Route path="/locations/add" element={<AddLocationPage />} />
-            </Routes>
-            <BottomNavigation />
+          <div className="App">
+            <div className="content">
+              <Toaster position="top-center" />
+              <Routes>
+                <Route path="/" element={<Navigate to="/home" />} />
+                <Route path="/home" element={<HomeScreen />} />
+                <Route path="/map" element={<MapScreen />} />
+                <Route path="/add" element={<AddScreen />} />
+                <Route path="/add-location" element={<Navigate to="/add?tab=location" />} />
+                <Route path="/create-event" element={<Navigate to="/add?tab=event" />} />
+                <Route path="/profile" element={<ProfileScreen />} />
+                <Route path="/event/:id" element={<EventDetailPage />} />
+                <Route path="/auth/login" element={<LoginScreen />} />
+                <Route path="/auth/register" element={<RegisterScreen />} />
+              </Routes>
+              <BottomNavigation />
+            </div>
           </div>
         </Router>
       </AuthProvider>

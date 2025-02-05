@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { CATEGORIES } from '../../constants/categories';
+import { LocationMap } from '../LocationMap';
 
 interface EntityFormProps {
   type: 'event' | 'location';
@@ -23,6 +24,8 @@ export function EntityForm({ type, onSubmit }: EntityFormProps) {
       address: '',
       category: '',
       image: null as File | null,
+      latitude: null as number | null,
+      longitude: null as number | null,
       // Event-spezifische Felder
       ...(type === 'event' && {
         date: '',
@@ -50,11 +53,20 @@ export function EntityForm({ type, onSubmit }: EntityFormProps) {
 
   const handleImageUpload = (file: File) => {
     form.setFieldValue('image', file);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    if (file) {  // Prüfe, ob eine Datei ausgewählt wurde
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setImagePreview(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLocationSelect = (lat: number, lng: number) => {
+    form.setFieldValue('latitude', lat);
+    form.setFieldValue('longitude', lng);
   };
 
   const handleSubmit = async (values: typeof form.values) => {
@@ -79,39 +91,38 @@ export function EntityForm({ type, onSubmit }: EntityFormProps) {
   };
 
   return (
-    <Paper p="xl" radius="md" withBorder>
+    <Paper p={0} className="form-container">
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack spacing="md">
-          {/* Image Upload Area */}
+        <Stack spacing="lg">
           <Paper 
-            withBorder 
-            p="xl" 
-            sx={(theme) => ({
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-              cursor: 'pointer',
-              '&:hover': {
-                backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-              },
-            })}
+            className="upload-area"
+            onClick={() => document.querySelector<HTMLElement>('.file-input-button')?.click()}
           >
             {imagePreview ? (
-              <Image
-                src={imagePreview}
-                alt="Preview"
-                radius="md"
-                height={200}
-                fit="cover"
-              />
+              <div className="preview-container">
+                <Image
+                  src={imagePreview}
+                  alt="Preview"
+                  radius={0}
+                  height={200}
+                  fit="cover"
+                  style={{ width: '100%' }}
+                />
+              </div>
             ) : (
               <Stack align="center" spacing="xs">
-                <IconUpload size={32} />
-                <Text size="sm" color="dimmed">Bild hochladen</Text>
+                <IconUpload size={32} color="gray" />
+                <Text size="lg" color="dimmed">Upload Image</Text>
               </Stack>
             )}
-            <FileButton onChange={handleImageUpload} accept="image/png,image/jpeg">
+            <FileButton 
+              onChange={handleImageUpload} 
+              accept="image/png,image/jpeg"
+              className="file-input-button"
+            >
               {(props) => (
-                <Button {...props} variant="subtle" fullWidth mt="sm">
-                  {imagePreview ? 'Bild ändern' : 'Bild auswählen'}
+                <Button {...props} variant="subtle" style={{ display: 'none' }}>
+                  Select File
                 </Button>
               )}
             </FileButton>
@@ -119,32 +130,48 @@ export function EntityForm({ type, onSubmit }: EntityFormProps) {
 
           <TextInput
             required
+            size="md"
             label="Name"
-            placeholder={`${type === 'event' ? 'Event' : 'Location'} Name`}
+            placeholder={`${type === 'event' ? 'Event' : 'Location'} name`}
             {...form.getInputProps('name')}
           />
 
           <Textarea
             required
-            label="Beschreibung"
-            placeholder="Beschreibe dein(e) Event/Location..."
-            minRows={3}
+            size="md"
+            label="Description"
+            placeholder="Describe your event/location..."
+            minRows={4}
             {...form.getInputProps('description')}
-          />
-
-          <TextInput
-            required
-            label="Adresse"
-            placeholder="Vollständige Adresse"
-            {...form.getInputProps('address')}
           />
 
           <Select
             required
-            label="Kategorie"
-            placeholder="Wähle eine Kategorie"
+            size="md"
+            label="Category"
+            placeholder="Select a category"
             data={CATEGORIES}
+            searchable
+            maxDropdownHeight={400}
             {...form.getInputProps('category')}
+          />
+
+          <TextInput
+            required
+            size="md"
+            label="Address"
+            placeholder="Full address"
+            {...form.getInputProps('address')}
+          />
+
+          <Text size="md" weight={500} mb="xs">Location</Text>
+          <LocationMap 
+            onLocationSelect={handleLocationSelect}
+            initialLocation={
+              form.values.latitude && form.values.longitude
+                ? { lat: form.values.latitude, lng: form.values.longitude }
+                : undefined
+            }
           />
 
           {type === 'event' && (
@@ -152,13 +179,13 @@ export function EntityForm({ type, onSubmit }: EntityFormProps) {
               <TextInput
                 required
                 type="date"
-                label="Datum"
+                label="Date"
                 {...form.getInputProps('date')}
               />
               <TextInput
                 required
                 type="time"
-                label="Uhrzeit"
+                label="Time"
                 {...form.getInputProps('time')}
               />
             </Group>
@@ -193,11 +220,15 @@ export function EntityForm({ type, onSubmit }: EntityFormProps) {
             type="submit" 
             loading={isSubmitting}
             size="lg"
+            fullWidth
+            color="blue"
+            style={{ height: '60px' }}
           >
-            {type === 'event' ? 'Event erstellen' : 'Location erstellen'}
+            {type === 'event' ? 'Create Event' : 'Create Location'}
           </Button>
         </Stack>
       </form>
     </Paper>
   );
-} 
+}
+
