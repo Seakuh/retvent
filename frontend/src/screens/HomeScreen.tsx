@@ -2,14 +2,19 @@ import React, { useState, useEffect } from 'react';
 import './HomeScreen.css';
 import { CategoryFilter } from '../components/CategoryFilter';
 import { EventList } from '../components/EventList/EventList';
+import { LocationList } from '../components/LocationList/LocationList';
 import { Event } from '../types/event';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'react-hot-toast';
+import { Location } from '../types/location';
 
 const HomeScreen = () => {
   const { isAuthenticated } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [followedLocations, setFollowedLocations] = useState(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,6 +40,19 @@ const HomeScreen = () => {
         setEvents([]);
         setIsLoading(false);
       });
+
+    // Lade Locations
+    fetch(`http://localhost:3145/locations`)
+      .then(res => res.json())
+      .then(data => {
+        // Stelle sicher, dass wir ein Array haben
+        const locationArray = Array.isArray(data) ? data : data.locations || [];
+        setLocations(locationArray);
+      })
+      .catch(error => {
+        console.error('Error fetching locations:', error);
+        setLocations([]);
+      });
   }, [selectedCategory]);
 
   const handleToggleFavorite = (eventId: string) => {
@@ -47,6 +65,41 @@ const HomeScreen = () => {
       }
       return newFavorites;
     });
+  };
+
+  const handleToggleFollow = async (locationId) => {
+    if (!isAuthenticated) {
+      toast.error('Please login to follow locations');
+      return;
+    }
+
+    try {
+      const method = followedLocations.has(locationId) ? 'DELETE' : 'POST';
+      await fetch(`http://localhost:3145/locations/${locationId}/follow`, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      setFollowedLocations(prev => {
+        const next = new Set(prev);
+        if (next.has(locationId)) {
+          next.delete(locationId);
+        } else {
+          next.add(locationId);
+        }
+        return next;
+      });
+
+      toast.success(
+        followedLocations.has(locationId) 
+          ? 'Location unfollowed' 
+          : 'Location followed'
+      );
+    } catch (error) {
+      toast.error('Failed to update location follow status');
+    }
   };
 
   return (
@@ -73,6 +126,12 @@ const HomeScreen = () => {
               events={events.slice(0, 5)}
               onToggleFavorite={handleToggleFavorite}
               favorites={favorites}
+            />
+
+            <LocationList
+              title="Popular Locations"
+              locations={locations}
+              onToggleFollow={handleToggleFollow}
             />
 
             {/* Upcoming Events */}

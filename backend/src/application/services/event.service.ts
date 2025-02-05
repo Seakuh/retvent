@@ -1,83 +1,88 @@
-import { Injectable } from '@nestjs/common';
-import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
-import { MongoUserRepository } from '../../infrastructure/repositories/mongodb/user.repository';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { Event } from '../../core/domain/event';
-import { convertToEventData, CreateEventDto, UpdateEventDto } from '../../core/dto/event.dto';
+import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
 
 @Injectable()
 export class EventService {
-  constructor(
-    private readonly eventRepository: MongoEventRepository,
-    private readonly userRepository: MongoUserRepository
-  ) {}
+  constructor(private readonly eventRepository: MongoEventRepository) {}
 
-  async findLatest(limit: number = 10): Promise<Event[]> {
-    return this.eventRepository.findLatest(limit);
-  }
-
-  async findByCategory(category: string, limit: number = 20): Promise<Event[]> {
-    return this.eventRepository.findByCategory(category, limit);
+  async findAll(): Promise<Event[]> {
+    return this.eventRepository.findAll();
   }
 
   async findById(id: string): Promise<Event | null> {
     return this.eventRepository.findById(id);
   }
 
-  async likeEvent(eventId: string, userId: string) {
-    const event = await this.eventRepository.findById(eventId);
-    if (!event) throw new Error('Event not found');
-
-    await this.eventRepository.addLike(eventId, userId);
-    await this.userRepository.addLikedEvent(userId, eventId);
-
-    return { message: 'Event liked successfully' };
+  async getEventById(id: string): Promise<Event | null> {
+    return this.eventRepository.findById(id);
   }
 
-  async unlikeEvent(eventId: string, userId: string) {
-    const event = await this.eventRepository.findById(eventId);
-    if (!event) throw new Error('Event not found');
-
-    await this.eventRepository.removeLike(eventId, userId);
-    await this.userRepository.removeLikedEvent(userId, eventId);
-
-    return { message: 'Event unliked successfully' };
+  async getEventsByIds(ids: string[]): Promise<Event[]> {
+    return this.eventRepository.getUserFavorites(ids);
   }
 
-  async getLikedEvents(userId: string): Promise<Event[]> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) throw new Error('User not found');
-    return this.eventRepository.findByIds(user.likedEventIds);
-  }
-
-  async isLikedByUser(eventId: string, userId: string): Promise<boolean> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) return false;
-    return user.likedEventIds.includes(eventId);
-  }
-
-  async getEventsByLocation(locationId: string): Promise<Event[]> {
+  async findByLocationId(locationId: string): Promise<Event[]> {
     return this.eventRepository.findByLocationId(locationId);
   }
 
-  async getEventsByArtist(artistId: string): Promise<Event[]> {
-    return this.eventRepository.findByArtistId(artistId);
+  async findLatest(limit: number = 10): Promise<Event[]> {
+    return this.eventRepository.findLatest(limit);
   }
 
-  async getUpcomingEvents(locationId: string): Promise<Event[]> {
-    return this.eventRepository.findUpcoming(locationId);
+  async findByCategory(category: string, skip: number = 0, limit: number = 10): Promise<Event[]> {
+    return this.eventRepository.findByCategory(category, skip, limit);
   }
 
-  async createEvent(eventData: CreateEventDto & { creatorId: string }): Promise<Event> {
-    const event = await this.eventRepository.create(convertToEventData(eventData));
-    await this.userRepository.addCreatedEvent(eventData.creatorId, event.id);
-    return event;
+  async countByCategory(category: string): Promise<number> {
+    return this.eventRepository.countByCategory(category);
   }
 
-  async updateEvent(id: string, eventData: UpdateEventDto): Promise<Event | null> {
-    return this.eventRepository.updateEvent(id, convertToEventData(eventData));
+  async findNearbyEvents(lat: number, lon: number, distance: number): Promise<Event[]> {
+    return this.eventRepository.findNearbyEvents(lat, lon, distance);
   }
 
-  async deleteEvent(id: string): Promise<boolean> {
+  async getUserFavorites(eventIds: string[]): Promise<Event[]> {
+    return this.eventRepository.getUserFavorites(eventIds);
+  }
+
+  async create(eventData: Partial<Event>): Promise<Event> {
+    return this.eventRepository.create(eventData);
+  }
+
+  async createEvent(eventData: Partial<Event>, image?: Express.Multer.File): Promise<Event> {
+    // Hier könntest du die Bildverarbeitung implementieren
+    return this.eventRepository.create(eventData);
+  }
+
+  async update(id: string, eventData: Partial<Event>): Promise<Event | null> {
+    return this.eventRepository.update(id, eventData);
+  }
+
+  async delete(id: string): Promise<boolean> {
     return this.eventRepository.delete(id);
+  }
+
+  async addLike(eventId: string, userId: string): Promise<Event | null> {
+    return this.eventRepository.addLike(eventId, userId);
+  }
+
+  async removeLike(eventId: string, userId: string): Promise<Event | null> {
+    return this.eventRepository.removeLike(eventId, userId);
+  }
+
+  async processEventImageUpload(image: Express.Multer.File, lat?: number, lon?: number): Promise<any> {
+    // Implementiere die Bildverarbeitung
+    throw new BadRequestException('Not implemented yet');
+  }
+
+  async processEventImage(imageUrl: string, lat?: number, lon?: number): Promise<any> {
+    // Implementiere die Bildverarbeitung
+    throw new BadRequestException('Not implemented yet');
+  }
+
+  async searchEvents(params: { query: string; location?: string }): Promise<Event[]> {
+    // Implementiere die Suche
+    return this.eventRepository.findAll(); // Vorläufig alle Events zurückgeben
   }
 } 

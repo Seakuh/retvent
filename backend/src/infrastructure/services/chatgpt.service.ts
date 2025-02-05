@@ -26,6 +26,20 @@ export class ChatGPTService {
     });
   }
 
+  async generateEventFromText(text: string): Promise<Partial<Event>> {
+    // Mock-Event mit der neuen Struktur
+    const mockEvent: Partial<Event> = {
+      title: 'Event Name',
+      description: 'Event Description',
+      startDate: new Date(),
+      startTime: '18:00',
+      imageUrl: 'https://example.com/image.jpg',
+      locationId: '1',
+      organizerId: '1',
+    };
+
+    return mockEvent;
+  }
 
   extractEventFromFlyer = async (imageUrl: string): Promise<Partial<Event> | null> => {
     try {
@@ -124,20 +138,5 @@ export class ChatGPTService {
     const extractedText = response.choices[0]?.message?.content?.trim();
     console.info('Extracted text:', extractedText);
     return extractedText || 'Kein Text erkannt';
-  }
-
-  async processEventData(data: any): Promise<Partial<Event>> {
-    return {
-      title: data.title || 'Neues Event',
-      description: data.description || 'Eventbeschreibung',
-      date: new Date(),
-      category: data.category || 'Unspecified',
-      locationId: data.locationId || '',
-      creatorId: data.creatorId || '',
-      imageUrl: data.imageUrl || '',
-      likedBy: [],
-      likesCount: 0,
-      artistIds: []
-    };
   }
 }

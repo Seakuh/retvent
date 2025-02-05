@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { User } from '../../../core/domain/user';
 import { IUserRepository } from '../../../core/repositories/user.repository.interface';
 import { UserDocument } from '../../schemas/user.schema';
-import { Location } from '../../../core/domain/location';
 
 @Injectable()
 export class MongoUserRepository implements IUserRepository {
@@ -39,78 +38,57 @@ export class MongoUserRepository implements IUserRepository {
     return result.deletedCount === 1;
   }
 
-  async addLikedEvent(userId: string, eventId: string): Promise<void> {
-    await this.userModel.findByIdAndUpdate(
-      userId,
-      { $addToSet: { likedEventIds: eventId } }
-    );
-  }
-
-  async removeLikedEvent(userId: string, eventId: string): Promise<void> {
-    await this.userModel.findByIdAndUpdate(
-      userId,
-      { $pull: { likedEventIds: eventId } }
-    );
-  }
-
-  async addFollowedLocation(userId: string, locationId: string): Promise<void> {
-    await this.userModel.findByIdAndUpdate(
-      userId,
-      { $addToSet: { followedLocations: locationId } }
-    );
-  }
-
-  async removeFollowedLocation(userId: string, locationId: string): Promise<void> {
-    await this.userModel.findByIdAndUpdate(
-      userId,
-      { $pull: { followedLocations: locationId } }
-    );
-  }
-
-  async addFollowedArtist(userId: string, artistId: string): Promise<void> {
-    await this.userModel.findByIdAndUpdate(
-      userId,
-      { $addToSet: { followedArtists: artistId } }
-    );
-  }
-
-  async removeFollowedArtist(userId: string, artistId: string): Promise<void> {
-    await this.userModel.findByIdAndUpdate(
-      userId,
-      { $pull: { followedArtists: artistId } }
-    );
-  }
-
-  async getFollowedLocationsWithDetails(userId: string): Promise<Location[]> {
-    const user = await this.userModel
-      .findById(userId)
-      .populate<{ followedLocationIds: Location[] }>('followedLocationIds')
+  async addLikedEvent(userId: string, eventId: string): Promise<User | null> {
+    const updated = await this.userModel
+      .findByIdAndUpdate(
+        userId,
+        { $addToSet: { likedEventIds: eventId } },
+        { new: true }
+      )
       .exec();
-    return user?.followedLocationIds || [];
+    return updated ? new User(updated.toObject()) : null;
   }
 
-  async getFollowedArtistsWithDetails(userId: string): Promise<User[]> {
-    const user = await this.userModel
-      .findById(userId)
-      .populate<{ followedArtistIds: User[] }>('followedArtistIds')
+  async removeLikedEvent(userId: string, eventId: string): Promise<User | null> {
+    const updated = await this.userModel
+      .findByIdAndUpdate(
+        userId,
+        { $pull: { likedEventIds: eventId } },
+        { new: true }
+      )
       .exec();
-    return user?.followedArtistIds || [];
+    return updated ? new User(updated.toObject()) : null;
   }
 
-  async isFollowingLocation(userId: string, locationId: string): Promise<boolean> {
-    const user = await this.userModel.findById(userId);
-    return user?.followedLocationIds?.includes(locationId) || false;
+  async addFollowedLocation(userId: string, locationId: string): Promise<User | null> {
+    const updated = await this.userModel
+      .findByIdAndUpdate(
+        userId,
+        { $addToSet: { followedLocationIds: locationId } },
+        { new: true }
+      )
+      .exec();
+    return updated ? new User(updated.toObject()) : null;
   }
 
-  async isFollowingArtist(userId: string, artistId: string): Promise<boolean> {
-    const user = await this.userModel.findById(userId);
-    return user?.followedArtistIds?.includes(artistId) || false;
+  async removeFollowedLocation(userId: string, locationId: string): Promise<User | null> {
+    const updated = await this.userModel
+      .findByIdAndUpdate(
+        userId,
+        { $pull: { followedLocationIds: locationId } },
+        { new: true }
+      )
+      .exec();
+    return updated ? new User(updated.toObject()) : null;
   }
 
-  async addCreatedEvent(userId: string, eventId: string): Promise<void> {
-    await this.userModel.findByIdAndUpdate(
-      userId,
-      { $addToSet: { createdEventIds: eventId } }
-    );
+  async findByEmailOrUsername(email: string, username: string): Promise<User | null> {
+    const user = await this.userModel.findOne({
+      $or: [{ email }, { username }]
+    }).exec();
+    
+    return user ? new User(user.toObject()) : null;
   }
+
+  // Ähnliche Implementierungen für Location-Following...
 } 

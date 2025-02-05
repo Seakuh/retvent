@@ -3,13 +3,14 @@ import { ILocation } from './interfaces/location.interface';
 export class Location implements ILocation {
   id: string;
   name: string;
+  description: string;
   logoUrl: string;
   
   // Kontakt & Social Media
   website?: string;
   whatsappGroupLink?: string;
   youtubeLink?: string;
-  socialMediaLinks: {
+  socialMediaLinks?: {
     instagram?: string;
     facebook?: string;
     twitter?: string;
@@ -33,7 +34,9 @@ export class Location implements ILocation {
 
   ownerId: string;
 
-  constructor(data: Partial<ILocation>) {
+  eventsCount: number;
+
+  constructor(data: Partial<Location>) {
     Object.assign(this, data);
   }
 } 

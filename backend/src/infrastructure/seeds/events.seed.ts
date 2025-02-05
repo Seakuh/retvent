@@ -15,6 +15,7 @@ export const kohPhanganEvents = [
       }
     }
   },
+  
   {
     title: "Yoga at Zen Beach",
     description: "Morning yoga session with ocean view",

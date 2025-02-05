@@ -4,30 +4,27 @@ import { Location } from './location';
 
 export class User implements IUser {
   id: string;
-  name: string;
+  username: string;
   email: string;
   password: string;
-  likedEventIds: string[];
-  createdEventIds: string[];
-  followedLocationIds: string[];
-  followedArtistIds: string[];
+  artistName?: string;
   profileImage?: string;
   bio?: string;
+  isArtist: boolean;
+  
+  // Beziehungen werden als Arrays von IDs gespeichert
+  ownedLocationIds: string[] = [];
+  createdEventIds: string[] = [];
+  likedEventIds: string[] = [];
+  likedLocationIds: string[] = [];
+  followedLocationIds: string[] = [];
+  performingEventIds: string[] = [];
+  
+  // Timestamps
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(data: any) {
-    this.id = data._id?.toString() || data.id;
-    this.name = data.name;
-    this.email = data.email;
-    this.password = data.password;
-    this.likedEventIds = data.likedEventIds || [];
-    this.createdEventIds = data.createdEventIds || [];
-    this.followedLocationIds = data.followedLocationIds || [];
-    this.followedArtistIds = data.followedArtistIds || [];
-    this.profileImage = data.profileImage;
-    this.bio = data.bio;
-    this.createdAt = data.createdAt;
-    this.updatedAt = data.updatedAt;
+  constructor(data: Partial<IUser>) {
+    Object.assign(this, data);
   }
 } 

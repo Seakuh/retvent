@@ -3,8 +3,8 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class UserDocument extends Document {
-  @Prop({ required: true })
-  name: string;
+  @Prop({ required: true, unique: true })
+  username: string;
 
   @Prop({ required: true, unique: true })
   email: string;
@@ -27,17 +27,20 @@ export class UserDocument extends Document {
   @Prop([String])
   ownedLocationIds: string[];
 
-  @Prop({ default: [] })
-  likedEventIds: string[];
-
-  @Prop({ default: [] })
+  @Prop([String])
   createdEventIds: string[];
 
-  @Prop({ default: [] })
+  @Prop([String])
+  likedEventIds: string[];
+
+  @Prop([String])
+  likedLocationIds: string[];
+
+  @Prop([String])
   followedLocationIds: string[];
 
-  @Prop({ default: [] })
-  followedArtistIds: string[];
+  @Prop([String])
+  performingEventIds: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserDocument); 

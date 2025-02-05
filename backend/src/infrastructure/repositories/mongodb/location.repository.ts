@@ -11,6 +11,30 @@ export class MongoLocationRepository implements ILocationRepository {
     @InjectModel('Location') private locationModel: Model<LocationDocument>
   ) {}
 
+  async findAll(): Promise<Location[]> {
+    const locations = await this.locationModel
+      .find()
+      .populate('eventsCount')
+      .exec();
+    return locations.map(loc => new Location(loc.toObject()));
+  }
+
+  async findPopular(): Promise<Location[]> {
+    const locations = await this.locationModel
+      .find()
+      .sort({ followersCount: -1 })
+      .limit(10)
+      .exec();
+    return locations.map(loc => new Location(loc.toObject()));
+  }
+
+  async findByFollowerId(userId: string): Promise<Location[]> {
+    const locations = await this.locationModel
+      .find({ followerIds: userId })
+      .exec();
+    return locations.map(loc => new Location(loc.toObject()));
+  }
+
   async findById(id: string): Promise<Location | null> {
     const location = await this.locationModel.findById(id).exec();
     return location ? new Location(location.toObject()) : null;

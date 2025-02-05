@@ -1,29 +1,20 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { LocationService } from '../../infrastructure/services/location.service';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { LocationService } from '../../application/services/location.service';
 
 @Injectable()
 export class OwnerGuard implements CanActivate {
-  constructor(private locationService: LocationService) {}
+  constructor(private readonly locationService: LocationService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user = request.user;
     const locationId = request.params.id;
+    const userId = request.user.id;
 
-    if (!user || !locationId) {
-      throw new ForbiddenException('Keine Berechtigung');
-    }
-
-    const location = await this.locationService.getLocationById(locationId);
-    
+    const location = await this.locationService.findById(locationId);
     if (!location) {
-      throw new ForbiddenException('Location nicht gefunden');
+      return false;
     }
 
-    if (location.ownerId !== user.id) {
-      throw new ForbiddenException('Keine Berechtigung für diese Location');
-    }
-
-    return true;
+    return location.ownerId === userId;
   }
 } 

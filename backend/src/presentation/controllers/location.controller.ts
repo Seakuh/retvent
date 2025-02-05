@@ -1,6 +1,6 @@
-import { Controller, Post, Put, Body, Param, UseGuards, Get } from '@nestjs/common';
-import { LocationService } from '../../infrastructure/services/location.service';
-import { CreateLocationDto } from '../dtos/create-location.dto';
+import { Controller, Post, Put, Body, Param, UseGuards, Get, Delete, Req } from '@nestjs/common';
+import { LocationService } from '../../application/services/location.service';
+import { CreateLocationDto, UpdateLocationDto } from '../../core/dto/location.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { OwnerGuard } from '../guards/owner.guard';
 import { User as UserDecorator } from '../decorators/user.decorator';
@@ -23,7 +23,7 @@ export class LocationController {
   @UseGuards(JwtAuthGuard, OwnerGuard)
   async updateLocation(
     @Param('id') id: string,
-    @Body() updateLocationDto: CreateLocationDto,
+    @Body() updateLocationDto: UpdateLocationDto,
     @UserDecorator() user: User
   ) {
     return this.locationService.updateLocation(id, updateLocationDto, user.id);
@@ -31,11 +31,8 @@ export class LocationController {
 
   @Post(':id/follow')
   @UseGuards(JwtAuthGuard)
-  async followLocation(
-    @Param('id') id: string,
-    @UserDecorator() user: User
-  ) {
-    return this.locationService.followLocation(id, user.id);
+  async followLocation(@Param('id') id: string, @Req() req: any) {
+    return this.locationService.followLocation(id, req.user.id);
   }
 
   @Post(':id/like')
@@ -51,5 +48,26 @@ export class LocationController {
   @UseGuards(JwtAuthGuard)
   async getFollowedLocationsEvents(@UserDecorator() user: User) {
     return this.locationService.getFollowedLocationsEvents(user.id);
+  }
+
+  @Get()
+  async getAllLocations() {
+    return this.locationService.findAll();
+  }
+
+  @Get('popular')
+  async getPopularLocations() {
+    return this.locationService.findPopular();
+  }
+
+  @Get(':id')
+  async getLocationById(@Param('id') id: string) {
+    return this.locationService.findById(id);
+  }
+
+  @Delete(':id/follow')
+  @UseGuards(JwtAuthGuard)
+  async unfollowLocation(@Param('id') id: string, @Req() req: any) {
+    return this.locationService.unfollowLocation(id, req.user.id);
   }
 } 

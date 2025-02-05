@@ -1,14 +1,12 @@
 export interface IUser {
   id: string;
-  name: string;
+  username: string;
   email: string;
   password: string;
-  likedEventIds: string[];
-  createdEventIds: string[];
-  followedLocationIds: string[];
-  followedArtistIds: string[];
+  artistName?: string;
   profileImage?: string;
   bio?: string;
+  isArtist: boolean;
   createdAt: Date;
   updatedAt: Date;
 } 

@@ -1,28 +1,29 @@
 import { IEvent } from './interfaces/event.interface';
 
-export interface Event {
+export class Event implements IEvent {
   id: string;
   title: string;
   description: string;
-  date: Date;
   imageUrl: string;
-  category: string;
+  
+  // Zeitliche Daten
+  startDate: Date;
+  startTime: string;
+  endDate?: Date;
+  endTime?: string;
+  
+  // Beziehungen
+  organizerId: string;
   locationId: string;
-  creatorId: string;
-  likedBy: string[];
-  likesCount: number;
-  artistIds: string[];
+  artistIds: string[] = [];
+  likeIds: string[] = [];
+  
+  // Timestamps
   createdAt: Date;
   updatedAt: Date;
-}
 
-export class Event implements Event {
-  constructor(data: Partial<Event>) {
+  constructor(data: Partial<IEvent>) {
     Object.assign(this, data);
-    // Konvertiere date String zu Date Objekt wenn nötig
-    if (data.date && typeof data.date === 'string') {
-      this.date = new Date(data.date);
-    }
   }
 }
 

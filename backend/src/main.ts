@@ -8,14 +8,10 @@ import * as path from 'path';
 async function bootstrap() {
   dotenv.config(); // Funktion direkt aufrufen
   const app = await NestFactory.create(AppModule);
+  
+  // CORS konfigurieren
   app.enableCors({
-    // allow these hosts to communicate with the backend
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      "https://event-scanner.com/",
-      '*',
-    ],
+    origin: 'http://localhost:5173', // Frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
