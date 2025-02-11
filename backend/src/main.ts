@@ -9,16 +9,23 @@ async function bootstrap() {
   dotenv.config(); // Funktion direkt aufrufen
   const app = await NestFactory.create(AppModule);
   
-  // CORS konfigurieren
+  // CORS für lokale Entwicklung
   app.enableCors({
-    origin: 'http://localhost:5173', // Frontend URL
+    origin: ['http://localhost:5173', 'http://localhost:3000'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
 
+  // Global Validation Pipe
+  app.useGlobalPipes(new ValidationPipe());
+
   // Statische Dateien servieren
   app.use('/images', express.static(path.join(__dirname, '..', 'uploads/images')));
 
-  await app.listen(3145);
+  const port = process.env.PORT || 3145;
+  
+  console.log(`Application is running on http://localhost:${port}`);
+  // Wichtig: '0.0.0.0' damit der Container erreichbar ist
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
