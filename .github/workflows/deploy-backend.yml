@@ -3,7 +3,7 @@ name: Deploy Backend
 on:
   push:
     branches:
-      - master  # Deployment bei jedem Push auf den main-Branch
+      - main
 
 jobs:
   deploy:
@@ -36,9 +36,9 @@ jobs:
       - name: Deploy Backend via SSH
         run: |
           ssh root@37.27.41.23 "
-            cd root/event-server/revent/backend &&
+            cd /root/event-server/retvent/backend &&
             git pull origin main &&
             npm install &&
             npm run build &&
-            pm2 restart backend || pm2 start dist/main.js --name backend
+            pm2 restart backend || pm2 start /root/event-server/retvent/backend/dist/main.js --name backend
           "
