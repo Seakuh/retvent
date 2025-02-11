@@ -97,6 +97,7 @@ export class EventController {
     @Body() eventData: any,
     @UploadedFile() image?: Express.Multer.File
   ) {
+    console.log('Creating event:', eventData); // Debug log
     return this.eventService.createEvent(eventData, image);
   }
 
@@ -121,6 +122,11 @@ export class EventController {
         pages: Math.ceil(total / limit),
       },
     };
+  }
+
+  @Get()
+  async getAllEvents() {
+    return this.eventService.findAll();
   }
 }
 
