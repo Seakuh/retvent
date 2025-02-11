@@ -44,4 +44,24 @@ export const kohPhanganLocations = [
     },
     eventsCount: 3
   }
+];
+
+export const testLocations = [
+  {
+    name: "Club Unique",
+    description: "Der angesagteste Club in der Stadt mit bester elektronischer Musik und einzigartiger Atmosphäre",
+    logoUrl: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67",
+    address: "Hauptstraße 1, 10178 Berlin",
+    coordinates: {
+      latitude: 52.520008,
+      longitude: 13.404954
+    },
+    socialMediaLinks: {
+      instagram: "club_unique",
+      facebook: "clubunique"
+    },
+    website: "https://club-unique.de",
+    whatsappGroupLink: "https://whatsapp.group/clubunique",
+    eventsCount: 1
+  }
 ]; 
