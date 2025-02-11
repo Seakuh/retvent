@@ -2,6 +2,7 @@ import { IUser } from './interfaces/user.interface';
 import { Event } from './event';
 import { Location } from './location';
 
+// User-Entität, die das IUser-Interface implementiert
 export class User implements IUser {
   id: string;
   username: string;
