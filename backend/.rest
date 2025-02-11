@@ -106,3 +106,12 @@ Authorization: Bearer {{authToken}}
 # Locations suchen
 GET {{baseUrl}}/locations/search?query=park
 Authorization: Bearer {{authToken}}
+
+### Test MongoDB Connection
+GET {{baseUrl}}/test-db
+
+### Get all events
+GET {{baseUrl}}/events
+
+### Get all locations
+GET {{baseUrl}}/locations
