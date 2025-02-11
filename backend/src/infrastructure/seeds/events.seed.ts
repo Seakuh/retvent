@@ -44,4 +44,30 @@ export const kohPhanganEvents = [
       }
     }
   }
+];
+
+export const testEvents = [
+  {
+    title: "Techno Night Special",
+    description: "Eine unvergessliche Nacht mit den besten DJs der Stadt. Live-Sets, visuelle Shows und eine einzigartige Atmosphäre erwarten dich.",
+    category: "party",
+    date: new Date("2024-03-15"),
+    imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7",
+    startTime: "22:00",
+    endTime: "06:00",
+    location: {
+      name: "Club Unique",
+      coordinates: {
+        lat: 52.520008,
+        lng: 13.404954
+      }
+    },
+    price: {
+      amount: 15,
+      currency: "EUR"
+    },
+    artists: ["DJ Thunder", "Electra Beat", "Sonic Wave"],
+    tags: ["techno", "electronic", "nightlife", "party"],
+    minimumAge: 18
+  }
 ]; 

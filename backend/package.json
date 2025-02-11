@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage --config jest.config.js",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-        "seed": "ts-node src/infrastructure/seeds/seed.ts"
+    "seed": "ts-node src/infrastructure/seeds/seed.ts"
   },
   "dependencies": {
     "@google-cloud/vision": "^4.3.2",
@@ -32,6 +32,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.7",
     "mongoose": "^8.9.5",
