@@ -12,15 +12,7 @@ dotenv.config(); // Lädt die .env-Datei
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(
-      process.env.NODE_ENV === 'production'
-        ? process.env.MONGODB_URI // Atlas in Produktion
-        : 'mongodb://mongodb:27017/eventscanner', // Lokale DB in Entwicklung
-      {
-        retryAttempts: 5,
-        autoIndex: true,
-      }
-    ),
+    MongooseModule.forRoot('mongodb+srv://event-backend-deploy:mongodb123@cluster0.mongodb.net/Cluster0?retryWrites=true&w=majority'),
     InfrastructureModule
   ],
   controllers: [EventController, LocationController]
