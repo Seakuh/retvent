@@ -25,6 +25,7 @@ jobs:
       - name: Build Backend
         run: npm run build
         working-directory: backend
+
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
@@ -35,7 +36,7 @@ jobs:
       - name: Deploy Backend via SSH
         run: |
           ssh root@37.27.41.23 "
-            cd /event-server &&
+            cd root/event-server/revent/backend &&
             git pull origin main &&
             npm install &&
             npm run build &&
