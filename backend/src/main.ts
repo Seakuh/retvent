@@ -22,6 +22,7 @@ async function bootstrap() {
   // Statische Dateien servieren
   app.use('/images', express.static(path.join(__dirname, '..', 'uploads/images')));
 
+  // start 3145
   const port = process.env.PORT || 3145;
   
   console.log(`Application is running on http://localhost:${port}`);
