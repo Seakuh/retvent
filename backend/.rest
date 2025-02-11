@@ -1,6 +1,6 @@
 ### Variablen
 @baseUrl = http://localhost:3145
-@authToken = your-auth-token-here
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNzM5MjcyMjY2LCJleHAiOjE3MzkzNTg2NjZ9.PFNJN67xeystNXf-j8VG1X6RhbSeGa7c_BlIRlusBp4
 
 ### Authentifizierung
 
@@ -30,32 +30,135 @@ Authorization: Bearer {{authToken}}
 
 ### Locations
 
-# Neue Location erstellen
+# Location erstellen
 POST {{baseUrl}}/locations
-Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "Olympiapark München",
-  "description": "Berühmter Park und Veranstaltungsort",
-  "address": "Spiridon-Louis-Ring 21, 80809 München",
-  "latitude": 48.1755,
-  "longitude": 11.5517,
-  "logoUrl": "https://example.com/logo.jpg",
-  "website": "https://www.olympiapark.de",
+  "name": "Club Unique",
+  "description": "Der angesagteste Club in der Stadt mit bester elektronischer Musik",
+  "logoUrl": "https://images.unsplash.com/photo-1566737236500-c8ac43014a67",
+  "address": "Hauptstraße 1, 10178 Berlin",
+  "coordinates": {
+    "latitude": 52.520008,
+    "longitude": 13.404954
+  },
   "socialMediaLinks": {
-    "instagram": "https://instagram.com/olympiapark",
-    "facebook": "https://facebook.com/olympiapark"
-  }
+    "instagram": "club_unique",
+    "facebook": "clubunique"
+  },
+  "website": "https://club-unique.de",
+  "whatsappGroupLink": "https://whatsapp.group/clubunique"
 }
 
-# Location by ID abrufen
-GET {{baseUrl}}/locations/123
-Authorization: Bearer {{authToken}}
+### Alle Locations abrufen
+GET {{baseUrl}}/locations
 
-# Location folgen
-POST {{baseUrl}}/locations/123/follow
-Authorization: Bearer {{authToken}}
+### Spezifische Location abrufen
+GET {{baseUrl}}/locations/{{locationId}}
+
+### Events für Location
+
+# Event für Location erstellen
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "title": "Techno Night Special",
+  "description": "Eine unvergessliche Nacht mit den besten DJs der Stadt",
+  "category": "party",
+  "startDate": "2024-03-20",
+  "startTime": "22:00",
+  "endTime": "06:00",
+  "imageUrl": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7",
+  "locationId": "{{locationId}}",
+  "price": {
+    "amount": 15,
+    "currency": "EUR"
+  },
+  "artists": ["DJ Thunder", "Electra Beat", "Sonic Wave"],
+  "tags": ["techno", "electronic", "nightlife"],
+  "minimumAge": 18
+}
+
+### Upcoming Events einer Location abrufen
+GET {{baseUrl}}/locations/{{locationId}}/events/upcoming
+
+### Past Events einer Location abrufen
+GET {{baseUrl}}/locations/{{locationId}}/events/past
+
+### Beispiel-Sequenz
+
+# 1. Location erstellen
+POST {{baseUrl}}/locations
+Content-Type: application/json
+
+{
+  "name": "Berghain",
+  "description": "Legendärer Techno Club in Berlin",
+  "logoUrl": "https://example.com/berghain-logo.jpg",
+  "address": "Am Wriezener Bahnhof, 10243 Berlin",
+  "coordinates": {
+    "latitude": 52.5111,
+    "longitude": 13.4433
+  },
+  "socialMediaLinks": {
+    "instagram": "berghain_official"
+  },
+  "website": "https://berghain.de"
+}
+
+### 2. Event für heute erstellen
+# @name createCurrentEvent
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "title": "Techno Saturday",
+  "description": "Die beste Techno Party",
+  "category": "party",
+  "startDate": "{{$datetime iso8601}}",
+  "startTime": "23:00",
+  "locationId": "{{locationId}}",
+  "imageUrl": "https://example.com/event1.jpg"
+}
+
+### 3. Event für nächste Woche erstellen
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "title": "Future Beats",
+  "description": "Zukunftsweisende elektronische Musik",
+  "category": "party",
+  "startDate": "{{$datetime iso8601 7 d}}",
+  "startTime": "23:00",
+  "locationId": "{{locationId}}",
+  "imageUrl": "https://example.com/event2.jpg"
+}
+
+### 4. Vergangenes Event erstellen
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "title": "Past Party",
+  "description": "Eine legendäre Party",
+  "category": "party",
+  "startDate": "{{$datetime iso8601 -7 d}}",
+  "startTime": "23:00",
+  "locationId": "{{locationId}}",
+  "imageUrl": "https://example.com/event3.jpg"
+}
+
+### 5. Alle Events der Location abrufen
+GET {{baseUrl}}/locations/{{locationId}}/events
+
+### 6. Nur zukünftige Events abrufen
+GET {{baseUrl}}/locations/{{locationId}}/events/upcoming
+
+### 7. Nur vergangene Events abrufen
+GET {{baseUrl}}/locations/{{locationId}}/events/past
 
 ### Events
 
