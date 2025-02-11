@@ -1,15 +1,42 @@
 // src/app.module.ts
-import { Module } from '@nestjs/common';
+import { Module, Controller, Get } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { EventController } from './presentation/controllers/event.controller';
 import { LocationController } from './presentation/controllers/location.controller';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://gi:gi@ac-rlxgin6-shard-00-00.2qpgkpj.mongodb.net:27017,ac-rlxgin6-shard-00-01.2qpgkpj.mongodb.net:27017,ac-rlxgin6-shard-00-02.2qpgkpj.mongodb.net:27017/event?ssl=true&replicaSet=atlas-jk0nx1-shard-0&authSource=admin&retryWrites=true&w=majority';
+@Controller()
+class TestController {
+  constructor(@InjectConnection() private connection: Connection) {}
+
+  @Get('test-db')
+  async testConnection() {
+    try {
+      // Test the connection
+      const state = this.connection.readyState;
+      console.log('MongoDB Connection State:', state);
+      return {
+        status: 'success',
+        connectionState: state,
+        message: state === 1 ? 'Connected to MongoDB' : 'Not connected'
+      };
+    } catch (error) {
+      console.error('MongoDB Connection Error:', error);
+      return {
+        status: 'error',
+        message: error.message
+      };
+    }
+  }
+}
+
+const MONGODB_URI = 'mongodb://gi:gi@cluster0.3qoob.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 @Module({
   imports: [
@@ -21,6 +48,10 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://gi:gi@ac-rlxgin6-shard
     }),
     InfrastructureModule
   ],
-  controllers: [EventController, LocationController]
+  controllers: [EventController, LocationController, TestController]
 })
 export class AppModule {}
+
+// Log the connection URI (without credentials)
+const sanitizedUri = MONGODB_URI.replace(/\/\/[^@]+@/, '//***:***@');
+console.log('Trying to connect to MongoDB at:', sanitizedUri);
