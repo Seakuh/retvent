@@ -1,56 +1,31 @@
 // src/app.module.ts
-import { Module, Controller, Get } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { EventController } from './presentation/controllers/event.controller';
+import { EventService } from './application/services/event.service';
 import { LocationController } from './presentation/controllers/location.controller';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
-import { InjectConnection } from '@nestjs/mongoose';
-import { Connection } from 'mongoose';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-@Controller()
-class TestController {
-  constructor(@InjectConnection() private connection: Connection) {}
-
-  @Get('test-db')
-  async testConnection() {
-    try {
-      // Test the connection
-      const state = this.connection.readyState;
-      console.log('MongoDB Connection State:', state);
-      return {
-        status: 'success',
-        connectionState: state,
-        message: state === 1 ? 'Connected to MongoDB' : 'Not connected'
-      };
-    } catch (error) {
-      console.error('MongoDB Connection Error:', error);
-      return {
-        status: 'error',
-        message: error.message
-      };
-    }
-  }
-}
-
-const MONGODB_URI = 'mongodb+srv://gi:gi@cluster0.3qoob.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = 'mongodb+srv://gi:gi@cluster0.3qoob.mongodb.net/event?retryWrites=true&w=majority';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(MONGODB_URI, {
-      retryWrites: true,
-      retryAttempts: 5,
-      retryDelay: 1000,
-    }),
+    MongooseModule.forRoot(MONGODB_URI),
     InfrastructureModule
   ],
-  controllers: [EventController, LocationController, TestController]
+  controllers: [EventController],
+  providers: [EventService]
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log('AppModule initialized'); // Debug log
+  }
+}
 
 // Log the connection URI (without credentials)
 const sanitizedUri = MONGODB_URI.replace(/\/\/[^@]+@/, '//***:***@');
