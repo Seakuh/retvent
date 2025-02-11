@@ -7,12 +7,18 @@ import { LocationController } from './presentation/controllers/location.controll
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import * as dotenv from 'dotenv';
 
-dotenv.config(); // Lädt die .env-Datei
+dotenv.config();
+
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://gi:gi@ac-rlxgin6-shard-00-00.2qpgkpj.mongodb.net:27017,ac-rlxgin6-shard-00-01.2qpgkpj.mongodb.net:27017,ac-rlxgin6-shard-00-02.2qpgkpj.mongodb.net:27017/event?ssl=true&replicaSet=atlas-jk0nx1-shard-0&authSource=admin&retryWrites=true&w=majority';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb+srv://event-backend-deploy:mongodb123@cluster0.mongodb.net/Cluster0?retryWrites=true&w=majority'),
+    MongooseModule.forRoot(MONGODB_URI, {
+      retryWrites: true,
+      retryAttempts: 5,
+      retryDelay: 1000,
+    }),
     InfrastructureModule
   ],
   controllers: [EventController, LocationController]
