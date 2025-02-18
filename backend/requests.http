@@ -1,6 +1,6 @@
 ### Variablen
 @baseUrl = http://localhost:3145
-@authToken = your-auth-token-here
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZGRzZmV4YW1wbGUuY29tIiwidXNlcm5hbWUiOiJ0ZXRlc3RzdHVzZXIiLCJpYXQiOjE3Mzk4NTIzMDksImV4cCI6MTczOTkzODcwOX0.x6n2PxuiQCTzgj8R4ojk_5PkCEqaatI9Jmxok2IvzZ0
 
 ### Authentifizierung
 
@@ -9,8 +9,8 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "testuser",
-  "email": "test@example.com",
+  "username": "tetedddststuser",
+  "email": "test@dddddsfexample.com",
   "password": "test123456",
   "isArtist": false
 }
@@ -20,7 +20,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
+  "email": "test@ddsfexample.com",
   "password": "test123456"
 }
 
@@ -33,21 +33,25 @@ Authorization: Bearer {{authToken}}
 # Neue Location erstellen
 POST {{baseUrl}}/locations
 Authorization: Bearer {{authToken}}
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
-{
-  "name": "Olympiapark München",
-  "description": "Berühmter Park und Veranstaltungsort",
-  "address": "Spiridon-Louis-Ring 21, 80809 München",
-  "latitude": 48.1755,
-  "longitude": 11.5517,
-  "logoUrl": "https://example.com/logo.jpg",
-  "website": "https://www.olympiapark.de",
-  "socialMediaLinks": {
-    "instagram": "https://instagram.com/olympiapark",
-    "facebook": "https://facebook.com/olympiapark"
-  }
-}
+------WebKitFormBoundary
+Content-Disposition: form-data; name="name"
+
+Olympiapark München
+------WebKitFormBoundary
+Content-Disposition: form-data; name="address"
+
+Spiridon-Louis-Ring 21
+------WebKitFormBoundary
+Content-Disposition: form-data; name="latitude"
+
+48.1755
+------WebKitFormBoundary
+Content-Disposition: form-data; name="longitude"
+
+11.5517
+------WebKitFormBoundary--
 
 # Location by ID abrufen
 GET {{baseUrl}}/locations/123
@@ -59,30 +63,114 @@ Authorization: Bearer {{authToken}}
 
 ### Events
 
-# Event erstellen
+# 1. Minimales Event (nur Pflichtfelder)
 POST {{baseUrl}}/events/create
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "title": "Sommerfestival 2024",
-  "description": "Das größte Sommerfestival in München",
-  "startDate": "2024-07-15",
-  "startTime": "18:00",
-  "locationId": "123",
-  "imageUrl": "https://example.com/event.jpg"
-}
-
-# Event-Bild hochladen
-POST {{baseUrl}}/events/upload/event-image
 Authorization: Bearer {{authToken}}
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
 ------WebKitFormBoundary
+Content-Disposition: form-data; name="title"
+
+Minimal Test Event
+------WebKitFormBoundary
+Content-Disposition: form-data; name="startDate"
+
+2024-03-20
+------WebKitFormBoundary
+Content-Disposition: form-data; name="startTime"
+
+20:00
+------WebKitFormBoundary--
+
+# 2. Event mit Basis-Optionen
+POST {{baseUrl}}/events/create
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="title"
+
+Jazz Night
+------WebKitFormBoundary
+Content-Disposition: form-data; name="description"
+
+Eine entspannte Jazznacht
+------WebKitFormBoundary
+Content-Disposition: form-data; name="startDate"
+
+2024-03-25
+------WebKitFormBoundary
+Content-Disposition: form-data; name="startTime"
+
+19:30
+------WebKitFormBoundary
+Content-Disposition: form-data; name="locationId"
+
+location123
+------WebKitFormBoundary
+Content-Disposition: form-data; name="category"
+
+music
+------WebKitFormBoundary
+Content-Disposition: form-data; name="price"
+
+15.99
+------WebKitFormBoundary--
+
+# 3. Event mit allen Features
+POST {{baseUrl}}/events/create
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="title"
+
+Summer Festival 2024
+------WebKitFormBoundary
+Content-Disposition: form-data; name="description"
+
+Das größte Festival des Jahres
+------WebKitFormBoundary
+Content-Disposition: form-data; name="startDate"
+
+2024-07-01
+------WebKitFormBoundary
+Content-Disposition: form-data; name="startTime"
+
+16:00
+------WebKitFormBoundary
+Content-Disposition: form-data; name="locationId"
+
+location123
+------WebKitFormBoundary
+Content-Disposition: form-data; name="category"
+
+festival
+------WebKitFormBoundary
+Content-Disposition: form-data; name="price"
+
+49.99
+------WebKitFormBoundary
+Content-Disposition: form-data; name="ticketLink"
+
+https://tickets.example.com/summer-fest
+------WebKitFormBoundary
+Content-Disposition: form-data; name="lineup"
+
+[{"name":"DJ Cool","role":"Headliner","startTime":"22:00"},{"name":"Band XYZ","role":"Support","startTime":"20:00"}]
+------WebKitFormBoundary
+Content-Disposition: form-data; name="socialMediaLinks"
+
+{"instagram":"https://instagram.com/summerfest","facebook":"https://facebook.com/summerfest"}
+------WebKitFormBoundary
+Content-Disposition: form-data; name="tags"
+
+["musik","sommer","festival"]
+------WebKitFormBoundary
 Content-Disposition: form-data; name="image"; filename="event.jpg"
 Content-Type: image/jpeg
 
-< ./event.jpg
+< ./test.jpg
 ------WebKitFormBoundary--
 
 # Events in der Nähe finden

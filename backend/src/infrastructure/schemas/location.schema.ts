@@ -6,8 +6,11 @@ export class LocationDocument extends Document {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
-  logoUrl: string;
+  @Prop()
+  description?: string;
+
+  @Prop()
+  logoUrl?: string;
 
   @Prop()
   website?: string;
@@ -25,7 +28,7 @@ export class LocationDocument extends Document {
       twitter: String
     }
   })
-  socialMediaLinks: {
+  socialMediaLinks?: {
     instagram?: string;
     facebook?: string;
     twitter?: string;
@@ -35,29 +38,27 @@ export class LocationDocument extends Document {
     type: {
       latitude: Number,
       longitude: Number
-    },
-    required: true,
-    index: '2dsphere'
+    }
   })
-  coordinates: {
+  coordinates?: {
     latitude: number;
     longitude: number;
   };
 
-  @Prop({ required: true })
-  address: string;
+  @Prop()
+  address?: string;
 
-  @Prop({ required: true })
-  ownerId: string;
-
-  @Prop([String])
-  eventIds: string[];
+  @Prop()
+  ownerId?: string;
 
   @Prop([String])
-  followerIds: string[];
+  eventIds?: string[];
 
   @Prop([String])
-  likeIds: string[];
+  followerIds?: string[];
+
+  @Prop([String])
+  likeIds?: string[];
 }
 
 export const LocationSchema = SchemaFactory.createForClass(LocationDocument); 

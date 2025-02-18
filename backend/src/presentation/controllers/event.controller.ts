@@ -1,18 +1,25 @@
-import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, BadRequestException, Param } from '@nestjs/common';
+import { Controller, Request, Post, Body, Get, Query, UseInterceptors, UploadedFile, BadRequestException, Param, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { EventService } from '../../application/services/event.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Multer } from 'multer';
 import { Event } from '../../core/domain/event';
+import { CreateEventDto } from '../dtos/create-event.dto';
+import { User as UserDecorator } from '../decorators/user.decorator';
+import { User } from '../../core/domain/user';
+import { EventMapper } from '../../application/mappers/event.mapper';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('events')
 export class EventController {
   constructor(
     // private readonly meetupService: MeetupService,
-    private readonly eventService: EventService
+    private readonly eventService: EventService,
+    private readonly eventMapper: EventMapper
   ) { }
 
   @Get('search/plattforms')
-  
+
   async searchEventPlattforms(@Query('query') query: string, @Query('location') location?: string): Promise<any> {
     const params = { query, location };
     console.info('Searching for events with params:', params);
@@ -33,9 +40,14 @@ export class EventController {
   }
 
 
-  @Post('upload')
-  async uploadEvent(@Body() body: { imageUrl: string; lat?: number; lon?: number }) {
-    return this.eventService.processEventImage(body.imageUrl, body.lat, body.lon);
+  // @Post('upload')
+  // async uploadEvent(@Body() body: { imageUrl: string; lat?: number; lon?: number }) {
+  //   return this.eventService.processEventImage(body.imageUrl, body.lat, body.lon);
+  // }
+
+  @Post('upload/event')
+  async uploadEvent(@Body() body: {}) {
+
   }
 
   @Get('search')
@@ -76,7 +88,7 @@ export class EventController {
     if (isNaN(latNum) || isNaN(lonNum)) {
       return { error: 'Invalid coordinates' };
     }
-    
+
     return this.eventService.findNearbyEvents(latNum, lonNum, distanceNum);
   }
 
@@ -85,20 +97,39 @@ export class EventController {
     if (!ids) {
       return { error: 'Keine Favoriten-IDs angegeben' };
     }
-    
+
     const eventIds = ids.split(',');
     return this.eventService.getUserFavorites(eventIds);
   }
 
 
+  // HOST EVENTS ------------------------------------------------------
+  @Get('host/:hostId')
+  async getEventsByHost(@Param('hostId') hostId: string) {
+    return this.eventService.findByHostId(hostId);
+  }
+
+  // CREATE EVENT ------------------------------------------------------
   @Post('create')
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   async createEvent(
-    @Body() eventData: any,
+    @Body() eventData: CreateEventDto,
+    @Request() req,
     @UploadedFile() image?: Express.Multer.File
   ) {
-    console.log('Creating event:', eventData); // Debug log
-    return this.eventService.createEvent(eventData, image);
+    const user = req.user;
+    console.log('User from request:', user); // Debug
+
+    if (!user?._id) {
+      throw new UnauthorizedException('No user ID found in token');
+    }
+
+    const parsedData = this.eventMapper.toEntity({
+      ...eventData,
+    }, user._id.toString()); // 👈 _id als String
+
+    return await this.eventService.createEvent(parsedData, image);
   }
 
   @Get('category/:category')

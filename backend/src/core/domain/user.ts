@@ -4,7 +4,7 @@ import { Location } from './location';
 
 // User-Entität, die das IUser-Interface implementiert
 export class User implements IUser {
-  id: string;
+  _id: string;
   username: string;
   email: string;
   password: string;

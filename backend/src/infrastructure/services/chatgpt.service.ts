@@ -8,12 +8,15 @@ import { z } from 'zod';
 const EventResponseSchema = z.object({
   id: z.string(),
   title: z.string(),
-  description: z.string(),
+  description: z.string().optional(),
   imageUrl: z.string().optional(),
   startDate: z.string(),
   startTime: z.string(),
-  locationId: z.string(),
-  organizerId: z.string(),
+  hostId: z.string(),
+  locationId: z.string().optional(),
+  category: z.string().optional(),
+  price: z.number().optional(),
+  ticketLink: z.string().optional(),
 });
 
 @Injectable()
@@ -33,9 +36,8 @@ export class ChatGPTService {
       description: 'Event Description',
       startDate: new Date(),
       startTime: '18:00',
-      imageUrl: 'https://example.com/image.jpg',
-      locationId: '1',
-      organizerId: '1',
+      hostId: '1',
+      locationId: '1'
     };
 
     return mockEvent;

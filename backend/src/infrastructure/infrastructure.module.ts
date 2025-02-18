@@ -19,6 +19,7 @@ import { MongoLocationRepository } from './repositories/mongodb/location.reposit
 import { MongoUserRepository } from './repositories/mongodb/user.repository';
 import { JwtAuthGuard } from '../presentation/guards/jwt-auth.guard';
 import { OwnerGuard } from '../presentation/guards/owner.guard';
+import { EventMapper } from '../application/mappers/event.mapper';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { OwnerGuard } from '../presentation/guards/owner.guard';
     JwtStrategy,
     JwtAuthGuard,
     OwnerGuard,
+    EventMapper,
     {
       provide: 'IEventRepository',
       useClass: MongoEventRepository
@@ -69,6 +71,7 @@ import { OwnerGuard } from '../presentation/guards/owner.guard';
     EventService,
     LocationService,
     AuthService,
+    ImageService,
     JwtAuthGuard,
     OwnerGuard,
     'IEventRepository',
@@ -76,7 +79,8 @@ import { OwnerGuard } from '../presentation/guards/owner.guard';
     'IUserRepository',
     JwtModule,
     MongoEventRepository,
-    MongoLocationRepository
+    MongoLocationRepository,
+    EventMapper
   ],
 })
 export class InfrastructureModule {}

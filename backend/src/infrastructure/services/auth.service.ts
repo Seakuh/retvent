@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { IUserRepository } from '../../core/repositories/user.repository.interface';
 import { RegisterUserDto } from '../../presentation/dtos/register-user.dto';
@@ -16,7 +16,6 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterUserDto): Promise<{ user: User; access_token: string }> {
-    // Prüfe ob Email oder Username bereits existiert
     const existingUser = await this.userRepository.findByEmailOrUsername(
       registerDto.email,
       registerDto.username
@@ -26,10 +25,8 @@ export class AuthService {
       throw new ConflictException('Email oder Username bereits vergeben');
     }
 
-    // Hash das Passwort
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-    // Erstelle den neuen User
     const newUser = await this.userRepository.create({
       ...registerDto,
       password: hashedPassword,
@@ -43,14 +40,15 @@ export class AuthService {
       performingEventIds: [],
     });
 
-    // Entferne das Passwort aus der Rückgabe
-    const { password, ...userWithoutPassword } = newUser;
+    const payload = {
+      email: newUser.email,
+      username: newUser.username
+    };
 
-    // Generiere JWT Token
-    const token = this.jwtService.sign({
-      sub: newUser.id,
-      username: newUser.username,
-    });
+    console.log('Register token payload:', payload);
+
+    const token = this.jwtService.sign(payload);
+    const { password, ...userWithoutPassword } = newUser;
 
     return {
       user: userWithoutPassword as User,
@@ -69,15 +67,20 @@ export class AuthService {
       throw new UnauthorizedException('Email oder Passwort falsch');
     }
 
-    const token = this.jwtService.sign({
-      sub: user.id,
-      username: user.username,
-    });
+    const payload = { 
+      sub: user._id.toString(),
+      email: user.email,
+      username: user.username
+    };
 
+    console.log('Login token payload:', payload);
+
+    const token = this.jwtService.sign(payload);
     const { password, ...userWithoutPassword } = user;
+
     return {
       user: userWithoutPassword as User,
-      access_token: token,
+      access_token: token
     };
   }
 
@@ -90,7 +93,6 @@ export class AuthService {
     return userWithoutPassword as User;
   }
 
-  // Optional: Token Blacklisting für Logout
   private tokenBlacklist: Set<string> = new Set();
 
   async logout(token: string): Promise<void> {

@@ -1,19 +1,20 @@
 // event.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsOptional } from 'class-validator';
 import { Document } from 'mongoose';
 
 @Schema()
 export class Event extends Document {
   @Prop({ required: true })
-  name: string;
+  title: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   date: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   location: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   description: string;
 
   @Prop()
@@ -40,22 +41,23 @@ export class Event extends Document {
   @Prop()
   ticketUrl?: string;
 
-  @Prop({
-    type: {
-      type: String,
-      enum: ['Point'],
-      required: true,
-    },
-    coordinates: {
-      type: [Number],
-      required: true,
-      index: '2dsphere',
-    },
-  })
-  geoLocation: {
-    type: 'Point';
-    coordinates: [number, number];
-  };
+  // @Prop({
+  //   type: {
+  //     type: String,
+  //     enum: ['Point'],
+  //     required: true,
+  //   },
+  //   coordinates: {
+  //     type: [Number],
+  //     required: true,
+  //     index: '2dsphere',
+  //   },
+  // })
+  // @IsOptional()
+  // geoLocation?: {
+  //   type?: 'Point';
+  //   coordinates?: [number, number];
+  // };
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

@@ -1,11 +1,17 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Event } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
+import { ImageService } from '../../infrastructure/services/image.service';
 
 @Injectable()
 export class EventService {
-  constructor(private readonly eventRepository: MongoEventRepository) {}
+  constructor(
+    private readonly eventRepository: MongoEventRepository,
+    private readonly imageService: ImageService
+  ) {}
 
+
+  
   async findAll(): Promise<Event[]> {
     return this.eventRepository.findAll();
   }
@@ -51,8 +57,24 @@ export class EventService {
   }
 
   async createEvent(eventData: Partial<Event>, image?: Express.Multer.File): Promise<Event> {
-    // Hier könntest du die Bildverarbeitung implementieren
-    return this.eventRepository.create(eventData);
+    try {
+      let imageUrl = undefined;
+      
+      if (image) {
+        imageUrl = await this.imageService.uploadImage(image);
+      }
+      
+      const eventWithImage = {
+        ...eventData,
+        imageUrl,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      return this.eventRepository.create(eventWithImage);
+    } catch (error) {
+      throw new BadRequestException(`Failed to create event: ${error.message}`);
+    }
   }
 
   async update(id: string, eventData: Partial<Event>): Promise<Event | null> {
@@ -84,5 +106,9 @@ export class EventService {
   async searchEvents(params: { query: string; location?: string }): Promise<Event[]> {
     // Implementiere die Suche
     return this.eventRepository.findAll(); // Vorläufig alle Events zurückgeben
+  }
+
+  async findByHostId(hostId: string): Promise<Event[]> {
+    return this.eventRepository.findByHostId(hostId);
   }
 } 

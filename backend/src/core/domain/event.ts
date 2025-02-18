@@ -1,11 +1,14 @@
 import { IEvent } from './interfaces/event.interface';
 
 export class Event implements IEvent {
+  // ID
   id: string;
+  // Titel
   title: string;
-  description: string;
-  imageUrl: string;
-  
+  // Beschreibung
+  description?: string;
+  // Bild URL
+  imageUrl?: string;
   // Zeitliche Daten
   startDate: Date;
   startTime: string;
@@ -13,10 +16,20 @@ export class Event implements IEvent {
   endTime?: string;
   
   // Beziehungen
-  organizerId: string;
-  locationId: string;
-  artistIds: string[] = [];
-  likeIds: string[] = [];
+  hostId: string;
+  locationId?: string;
+  category?: string;
+  price?: number;
+  ticketLink?: string;
+  lineup?: Array<{ name: string; role?: string; startTime?: string }>;
+  socialMediaLinks?: {
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+  };
+  tags?: string[];
+  website?: string;
+  likeIds?: string[];
   
   // Timestamps
   createdAt: Date;

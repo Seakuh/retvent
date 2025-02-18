@@ -3,14 +3,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { EventController } from './presentation/controllers/event.controller';
-import { EventService } from './application/services/event.service';
-import { LocationController } from './presentation/controllers/location.controller';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
-import * as dotenv from 'dotenv';
 
-dotenv.config();
-
-const MONGODB_URI = 'mongodb+srv://gi:gi@cluster0.3qoob.mongodb.net/event?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://gi:gi@cluster0.3qoob.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 @Module({
   imports: [
@@ -18,12 +13,11 @@ const MONGODB_URI = 'mongodb+srv://gi:gi@cluster0.3qoob.mongodb.net/event?retryW
     MongooseModule.forRoot(MONGODB_URI),
     InfrastructureModule
   ],
-  controllers: [EventController],
-  providers: [EventService]
+  controllers: [EventController]
 })
 export class AppModule {
   constructor() {
-    console.log('AppModule initialized'); // Debug log
+    console.log('AppModule initialized');
   }
 }
 
