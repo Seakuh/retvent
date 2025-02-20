@@ -24,12 +24,21 @@ import { MongoUserRepository } from './repositories/mongodb/user.repository';
 import { JwtAuthGuard } from '../presentation/guards/jwt-auth.guard';
 import { OwnerGuard } from '../presentation/guards/owner.guard';
 import { EventMapper } from '../application/mappers/event.mapper';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     CoreModule,
     AuthModule,
-    MongooseModule.forRoot(process.env.MONGODB_URI),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URI'),
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      }),
+      inject: [ConfigService],
+    }),
     HttpModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
