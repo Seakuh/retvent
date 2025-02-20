@@ -20,7 +20,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "ts-node src/infrastructure/seeds/seed.ts",
     "test:integration": "jest --config jest.integration.config.js --runInBand",
-    "test:integration:watch": "jest --config jest.integration.config.js --runInBand --watch"
+    "test:integration:watch": "jest --config jest.integration.config.js --runInBand --watch",
+    "test:edit": "jest event-edit.spec.ts",
+    "test:edit:watch": "jest event-edit.spec.ts --watch"
   },
   "dependencies": {
     "@google-cloud/vision": "^4.3.2",

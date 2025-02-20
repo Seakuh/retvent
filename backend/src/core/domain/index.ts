@@ -1,3 +1,3 @@
-export { EventSchema } from './event.schema';
-export { LocationSchema } from './location.schema';
-export { UserSchema } from './user.schema'; 
+export { Event } from './event';
+export { Location } from './location';
+export { User } from './user'; 

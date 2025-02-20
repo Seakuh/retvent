@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Event } from '../../../core/domain/event';
 import { IEventRepository } from '../../../core/repositories/event.repository.interface';
-
+import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 @Injectable()
 export class MongoEventRepository implements IEventRepository {
   constructor(
@@ -11,11 +11,14 @@ export class MongoEventRepository implements IEventRepository {
   ) {}
 
   private toEntity(doc: any): Event {
-    const event = doc.toObject();
+    const event = doc.toObject ? doc.toObject() : doc;
+    const { _id, __v, ...rest } = event;
+    
+    // Ensure city is included in response
     return {
-      ...event,
-      id: event._id.toString(),
-      _id: undefined
+      ...rest,
+      id: _id.toString(),
+      city: event.city || event.location?.city // Fallback to location.city
     };
   }
 
@@ -35,11 +38,29 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async create(eventData: Partial<Event>): Promise<Event> {
-    const created = await this.eventModel.create(eventData);
-    return this.toEntity(created);
+    try {
+      console.log('Creating event with data:', JSON.stringify(eventData, null, 2));
+      
+      // Clean undefined values
+      const cleanData = Object.fromEntries(
+        Object.entries(eventData).filter(([_, v]) => v !== undefined)
+      );
+
+      // Create new event document
+      const event = new this.eventModel(cleanData);
+      
+      // Save and wait for result
+      const savedEvent = await event.save();
+      console.log('Saved event:', JSON.stringify(savedEvent.toObject(), null, 2));
+      
+      return this.toEntity(savedEvent);
+    } catch (error) {
+      console.error('Error saving event:', error);
+      throw error;
+    }
   }
 
-  async update(id: string, eventData: Partial<Event>): Promise<Event | null> {
+  async update(id: string, eventData: UpdateEventDto): Promise<Event | null> {
     const updated = await this.eventModel
       .findByIdAndUpdate(id, eventData, { new: true })
       .exec();
@@ -62,7 +83,7 @@ export class MongoEventRepository implements IEventRepository {
     return events.map(event => this.toEntity(event));
   }
 
-  async updateEvent(id: string, eventData: Partial<Event>): Promise<Event | null> {
+  async updateEvent(id: string, eventData: UpdateEventDto): Promise<Event | null> {
     return this.update(id, eventData);
   }
 
@@ -132,24 +153,18 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async findByCategory(category: string, skip: number = 0, limit: number = 10): Promise<Event[]> {
+    console.log(`Finding events for category: ${category}`); // Debug log
     const events = await this.eventModel
       .find({ category })
       .skip(skip)
       .limit(limit)
       .exec();
+    console.log(`Found ${events.length} events`); // Debug log
     return events.map(event => this.toEntity(event));
   }
 
   async countByCategory(category: string): Promise<number> {
     return this.eventModel.countDocuments({ category }).exec();
-  }
-
-  async findNearbyEvents(lat: number, lon: number, maxDistance: number): Promise<Event[]> {
-    const events = await this.eventModel
-      .find()
-      .sort({ createdAt: -1 })
-      .exec();
-    return events.map(event => this.toEntity(event));
   }
 
   async getUserFavorites(eventIds: string[]): Promise<Event[]> {
@@ -159,11 +174,105 @@ export class MongoEventRepository implements IEventRepository {
     return events.map(event => this.toEntity(event));
   }
 
-  async findByHostId(hostId: string): Promise<Event[]> {
+  async findByHostId(hostId: string, skip: number = 0, limit: number = 10): Promise<Event[]> {
+    console.log(`Finding events for hostId: ${hostId}`); // Debug log
     const events = await this.eventModel
       .find({ hostId })
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .exec();
+    console.log(`Found ${events.length} events`); // Debug log
+    return events.map(event => this.toEntity(event));
+  }
+
+  async countByHostId(hostId: string): Promise<number> {
+    return this.eventModel.countDocuments({ hostId }).exec();
+  }
+
+  async findByHostUsername(username: string): Promise<Event[]> {
+    console.log(`Finding events for host: ${username}`); // Debug log
+    const events = await this.eventModel
+      .find({ hostUsername: username })
+      .sort({ createdAt: -1 })
+      .exec();
+    console.log(`Found ${events.length} events`); // Debug log
+    return events.map(event => this.toEntity(event));
+  }
+
+  async searchEvents(params: {
+    query?: string;
+    city?: string;
+    dateRange?: { startDate: string; endDate: string };
+  }): Promise<Event[]> {
+    const filter: any = {};
+
+    if (params.query) {
+      filter.$or = [
+        { title: { $regex: params.query, $options: 'i' } },
+        { description: { $regex: params.query, $options: 'i' } }
+      ];
+    }
+
+    if (params.city) {
+      filter['location.city'] = { $regex: new RegExp(params.city, 'i') };
+    }
+
+    if (params.dateRange) {
+      filter.startDate = {
+        $gte: new Date(params.dateRange.startDate),
+        $lte: new Date(params.dateRange.endDate)
+      };
+    }
+
+    const events = await this.eventModel.find(filter).exec();
+    return events.map(event => this.toEntity(event));
+  }
+
+  async findByCity(city: string, skip: number = 0, limit: number = 10): Promise<Event[]> {
+    const events = await this.eventModel
+      .find({ 'location.city': { $regex: new RegExp(city, 'i') } })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+    return events.map(event => this.toEntity(event));
+  }
+
+  async countByCity(city: string): Promise<number> {
+    return this.eventModel.countDocuments({
+      'location.city': { $regex: new RegExp(city, 'i') }
+    });
+  }
+
+  async getPopularCities(limit: number = 10): Promise<{ city: string; count: number }[]> {
+    const cities = await this.eventModel.aggregate([
+      { $group: {
+        _id: '$location.city',
+        count: { $sum: 1 }
+      }},
+      { $sort: { count: -1 } },
+      { $limit: limit },
+      { $project: {
+        _id: 0,
+        city: '$_id',
+        count: 1
+      }}
+    ]).exec();
+    return cities;
+  }
+
+  async findNearbyEvents(lat: number, lon: number, distance: number): Promise<Event[]> {
+    const events = await this.eventModel.find({
+      'location.coordinates': {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [lon, lat]
+          },
+          $maxDistance: distance * 1000 // Convert km to meters
+        }
+      }
+    }).exec();
     return events.map(event => this.toEntity(event));
   }
 } 

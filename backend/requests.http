@@ -9,8 +9,8 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "tetedddststuser",
-  "email": "test@dddddsfexample.com",
+  "username": "tetedfdsafdddststuser",
+  "email": "test@dddsfasdddsfexample.com",
   "password": "test123456",
   "isArtist": false
 }

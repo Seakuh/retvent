@@ -1,46 +1,27 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Schema, Document } from 'mongoose';
+import { IUser } from '../../core/domain/interfaces/user.interface';
 
-@Schema({ timestamps: true })
-export class UserDocument extends Document {
-  @Prop({ required: true, unique: true })
-  username: string;
-
-  @Prop({ required: true, unique: true })
-  email: string;
-
-  @Prop({ required: true })
-  password: string;
-
-  @Prop()
-  artistName?: string;
-
-  @Prop()
-  profileImage?: string;
-
-  @Prop()
-  bio?: string;
-
-  @Prop({ default: false })
-  isArtist: boolean;
-
-  @Prop([String])
-  ownedLocationIds: string[];
-
-  @Prop([String])
-  createdEventIds: string[];
-
-  @Prop([String])
-  likedEventIds: string[];
-
-  @Prop([String])
-  likedLocationIds: string[];
-
-  @Prop([String])
-  followedLocationIds: string[];
-
-  @Prop([String])
-  performingEventIds: string[];
+export interface UserDocument extends Document, Omit<IUser, 'id'> {
+  _id: Schema.Types.ObjectId;
 }
 
-export const UserSchema = SchemaFactory.createForClass(UserDocument); 
+export const UserSchema = new Schema({
+  email: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  isArtist: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+UserSchema.pre('save', function(next) {
+  this.updatedAt = new Date();
+  next();
+});
+
+UserSchema.virtual('id').get(function() {
+  return this._id.toHexString();
+});
+
+UserSchema.set('toObject', { virtuals: true });
+UserSchema.set('toJSON', { virtuals: true }); 

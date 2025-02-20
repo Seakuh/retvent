@@ -1,6 +1,6 @@
-import { 
-  IsString, IsOptional, IsArray, IsUrl, ValidateNested, 
-  IsNumber, Matches, IsDateString, IsObject 
+import {
+  IsString, IsOptional, IsArray, IsUrl, ValidateNested,
+  IsNumber, Matches, IsDateString, IsObject
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -48,8 +48,9 @@ class LocationDto {
   coordinates: CoordinatesDto;
 }
 
-export class CreateEventDto {
+export class UpdateEventDto {
   @IsString()
+  @IsOptional()
   title: string;
 
   @IsString()
@@ -57,9 +58,11 @@ export class CreateEventDto {
   description?: string;
 
   @IsDateString()
+  @IsOptional()
   startDate: string;
 
   @IsString()
+  @IsOptional()
   @Matches(/^\d{2}:\d{2}$/, {
     message: 'startTime must be in format HH:mm'
   })

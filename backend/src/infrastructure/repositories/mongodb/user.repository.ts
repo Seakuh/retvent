@@ -11,26 +11,41 @@ export class MongoUserRepository implements IUserRepository {
     @InjectModel('User') private userModel: Model<UserDocument>
   ) {}
 
-  async findById(id: string): Promise<User | null> {
-    const user = await this.userModel.findById(id).exec();
-    return user ? new User(user.toObject()) : null;
+  private toEntity(doc: UserDocument): User {
+    const { _id, ...rest } = doc.toObject();
+    return new User({
+      id: _id.toString(),
+      ...rest
+    });
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const user = await this.userModel.findOne({ email }).exec();
-    return user ? new User(user.toObject()) : null;
+    const user = await this.userModel.findOne({ email });
+    return user ? this.toEntity(user) : null;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const user = await this.userModel.findById(id);
+    return user ? this.toEntity(user) : null;
+  }
+
+  async findByEmailOrUsername(email: string, username: string): Promise<User | null> {
+    const user = await this.userModel.findOne({
+      $or: [{ email }, { username }]
+    });
+    return user ? this.toEntity(user) : null;
   }
 
   async create(userData: Partial<User>): Promise<User> {
     const created = await this.userModel.create(userData);
-    return new User(created.toObject());
+    return this.toEntity(created);
   }
 
   async update(id: string, userData: Partial<User>): Promise<User | null> {
     const updated = await this.userModel
       .findByIdAndUpdate(id, userData, { new: true })
       .exec();
-    return updated ? new User(updated.toObject()) : null;
+    return updated ? this.toEntity(updated) : null;
   }
 
   async delete(id: string): Promise<boolean> {
@@ -46,7 +61,7 @@ export class MongoUserRepository implements IUserRepository {
         { new: true }
       )
       .exec();
-    return updated ? new User(updated.toObject()) : null;
+    return updated ? this.toEntity(updated) : null;
   }
 
   async removeLikedEvent(userId: string, eventId: string): Promise<User | null> {
@@ -57,7 +72,7 @@ export class MongoUserRepository implements IUserRepository {
         { new: true }
       )
       .exec();
-    return updated ? new User(updated.toObject()) : null;
+    return updated ? this.toEntity(updated) : null;
   }
 
   async addFollowedLocation(userId: string, locationId: string): Promise<User | null> {
@@ -68,7 +83,7 @@ export class MongoUserRepository implements IUserRepository {
         { new: true }
       )
       .exec();
-    return updated ? new User(updated.toObject()) : null;
+    return updated ? this.toEntity(updated) : null;
   }
 
   async removeFollowedLocation(userId: string, locationId: string): Promise<User | null> {
@@ -79,15 +94,7 @@ export class MongoUserRepository implements IUserRepository {
         { new: true }
       )
       .exec();
-    return updated ? new User(updated.toObject()) : null;
-  }
-
-  async findByEmailOrUsername(email: string, username: string): Promise<User | null> {
-    const user = await this.userModel.findOne({
-      $or: [{ email }, { username }]
-    }).exec();
-    
-    return user ? new User(user.toObject()) : null;
+    return updated ? this.toEntity(updated) : null;
   }
 
   // Ähnliche Implementierungen für Location-Following...

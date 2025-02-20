@@ -6,9 +6,10 @@ export interface IEvent {
   startDate: Date;
   startTime: string;
   hostId: string;
+  hostUsername?: string;
   locationId?: string;
   category?: string;
-  price?: number;
+  price?: string;
   ticketLink?: string;
   lineup?: Array<{ name: string; role?: string; startTime?: string }>;
   socialMediaLinks?: {
@@ -21,4 +22,12 @@ export interface IEvent {
   likeIds?: string[];
   createdAt: Date;
   updatedAt: Date;
+  location?: {
+    city?: string; 
+    address?: string;
+    coordinates?: {
+      lat?: number;
+      lng?: number;
+    };
+  };
 } 

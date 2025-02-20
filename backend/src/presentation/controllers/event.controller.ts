@@ -1,21 +1,20 @@
-import { Controller, Request, Post, Body, Get, Query, UseInterceptors, UploadedFile, BadRequestException, Param, UseGuards, UnauthorizedException } from '@nestjs/common';
-import { EventService } from '../../application/services/event.service';
+import { Body, Controller, Get, Param, Post, Query, Request, Put, Delete, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, BadRequestException, NotFoundException, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import type { Multer } from 'multer';
-import { Event } from '../../core/domain/event';
-import { CreateEventDto } from '../dtos/create-event.dto';
-import { User as UserDecorator } from '../decorators/user.decorator';
-import { User } from '../../core/domain/user';
 import { EventMapper } from '../../application/mappers/event.mapper';
-import { AuthGuard } from '@nestjs/passport';
+import { EventService } from '../../application/services/event.service';
+import { ImageService } from '../../infrastructure/services/image.service';
+import { CreateEventDto } from '../dtos/create-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { UpdateEventDto } from '../dtos/update-event.dto';
+import { EventUpdateHelper } from '../../application/helpers/event-update.helper';
 
 @Controller('events')
 export class EventController {
   constructor(
     // private readonly meetupService: MeetupService,
     private readonly eventService: EventService,
-    private readonly eventMapper: EventMapper
+    private readonly eventMapper: EventMapper,
+    private readonly imageService: ImageService
   ) { }
 
   @Get('search/plattforms')
@@ -51,8 +50,18 @@ export class EventController {
   }
 
   @Get('search')
-  async searchEvents(@Query('query') query: string, @Query('location') location?: string) {
-    return this.eventService.searchEvents({ query, location });
+  async searchEvents(
+    @Query('query') query?: string,
+    @Query('city') city?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string
+  ) {
+    const searchParams = {
+      query,
+      city,
+      dateRange: startDate && endDate ? { startDate, endDate } : undefined
+    };
+    return this.eventService.searchEvents(searchParams);
   }
 
   @Get('byId')
@@ -79,14 +88,14 @@ export class EventController {
   async getNearbyEvents(
     @Query('lat') lat: string,
     @Query('lon') lon: string,
-    @Query('maxDistance') maxDistance: string
+    @Query('distance') distance: string = '10'
   ) {
     const latNum = parseFloat(lat);
     const lonNum = parseFloat(lon);
-    const distanceNum = parseFloat(maxDistance) || 10;
+    const distanceNum = parseFloat(distance);
 
     if (isNaN(latNum) || isNaN(lonNum)) {
-      return { error: 'Invalid coordinates' };
+      throw new BadRequestException('Invalid coordinates');
     }
 
     return this.eventService.findNearbyEvents(latNum, lonNum, distanceNum);
@@ -104,9 +113,33 @@ export class EventController {
 
 
   // HOST EVENTS ------------------------------------------------------
-  @Get('host/:hostId')
-  async getEventsByHost(@Param('hostId') hostId: string) {
-    return this.eventService.findByHostId(hostId);
+  @Get('host/:username')
+  @UseGuards(JwtAuthGuard)
+  async getEventsByHost(@Param('username') username: string) {
+    return this.eventService.findEventsByHost(username);
+  }
+
+  @Get('host/id/:hostId')
+  async getEventsByHostId(
+    @Param('hostId') hostId: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ) {
+    const skip = (page - 1) * limit;
+    const [events, total] = await Promise.all([
+      this.eventService.findByHostId(hostId, skip, limit),
+      this.eventService.countByHostId(hostId)
+    ]);
+
+    return {
+      events,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    };
   }
 
   // CREATE EVENT ------------------------------------------------------
@@ -114,22 +147,13 @@ export class EventController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   async createEvent(
-    @Body() eventData: CreateEventDto,
     @Request() req,
+    @Body() eventData: CreateEventDto,
     @UploadedFile() image?: Express.Multer.File
   ) {
-    const user = req.user;
-    console.log('User from request:', user); // Debug
-
-    if (!user?._id) {
-      throw new UnauthorizedException('No user ID found in token');
-    }
-
-    const parsedData = this.eventMapper.toEntity({
-      ...eventData,
-    }, user._id.toString()); // 👈 _id als String
-
-    return await this.eventService.createEvent(parsedData, image);
+    const parsedData = this.eventMapper.toEntity(eventData, req.user.id);
+    const event = await this.eventService.createEvent(parsedData, image);
+    return event;
   }
 
   @Get('category/:category')
@@ -158,6 +182,108 @@ export class EventController {
   @Get()
   async getAllEvents() {
     return this.eventService.findAll();
+  }
+
+  // PUBLIC EVENT CREATION ------------------------------------------------------
+  // @Post('create/public')
+  // @UseInterceptors(FileInterceptor('image'))
+  // async createPublicEvent(
+  //   @Body() eventData: CreateEventDto,
+  //   @UploadedFile() image?: Express.Multer.File
+  // ) {
+  //   const parsedData = this.eventMapper.toEntity({
+  //     ...eventData,
+  //   }, 'public'  // Default public username
+  //   );
+
+  //   return await this.eventService.createEvent(parsedData, image);
+  // }
+
+  @Get('location/:city')
+  async getEventsByCity(
+    @Param('city') city: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ) {
+    const skip = (page - 1) * limit;
+    const [events, total] = await Promise.all([
+      this.eventService.findByCity(city, skip, limit),
+      this.eventService.countByCity(city)
+    ]);
+
+    return {
+      events,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    };
+  }
+
+  @Get('locations/popular')
+  async getPopularLocations(
+    @Query('limit') limit: number = 10
+  ) {
+    return this.eventService.getPopularCities(limit);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  async updateEvent(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+    @Request() req
+  ) {
+    try {
+      const event = await this.eventService.findById(id);
+      
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      if (event.hostId !== req.user.id) {
+        throw new ForbiddenException('You can only edit your own events');
+      }
+
+      return this.eventService.update(id, updateEventDto);
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deleteEvent(
+    @Param('id') id: string,
+    @Request() req
+  ) {
+    try {
+      const event = await this.eventService.findById(id);
+      
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      if (event.hostId !== req.user.id) {
+        throw new ForbiddenException('You can only delete your own events');
+      }
+
+      const deleted = await this.eventService.delete(id);
+      if (deleted) {
+        return { message: 'Event deleted successfully' };
+      }
+      throw new InternalServerErrorException('Failed to delete event');
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
   }
 }
 

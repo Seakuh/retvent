@@ -36,7 +36,6 @@ export class ChatGPTService {
       description: 'Event Description',
       startDate: new Date(),
       startTime: '18:00',
-      hostId: '1',
       locationId: '1'
     };
 

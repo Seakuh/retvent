@@ -1,66 +1,74 @@
 // event.schema.ts
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsOptional } from 'class-validator';
-import { Document } from 'mongoose';
+import { Schema, Document, model } from 'mongoose';
 
-@Schema()
-export class Event extends Document {
-  @Prop({ required: true })
+export interface IEvent extends Document {
   title: string;
-
-  @Prop({ required: false })
-  date: string;
-
-  @Prop({ required: false })
-  location: string;
-
-  @Prop({ required: false })
-  description: string;
-
-  @Prop()
+  description?: string;
   imageUrl?: string;
-
-  @Prop()
+  startDate: Date;
+  startTime: string;
+  hostId?: string;
+  hostUsername?: string;
+  locationId?: string;
   category?: string;
-
-  @Prop()
-  price?: string;
-
-  @Prop()
-  eventLat?: number;
-
-  @Prop()
-  eventLon?: number;
-
-  @Prop()
-  uploadLat?: number;
-
-  @Prop()
-  uploadLon?: number;
-
-  @Prop()
-  ticketUrl?: string;
-
-  // @Prop({
-  //   type: {
-  //     type: String,
-  //     enum: ['Point'],
-  //     required: true,
-  //   },
-  //   coordinates: {
-  //     type: [Number],
-  //     required: true,
-  //     index: '2dsphere',
-  //   },
-  // })
-  // @IsOptional()
-  // geoLocation?: {
-  //   type?: 'Point';
-  //   coordinates?: [number, number];
-  // };
+  price?: string | number;
+  ticketLink?: string;
+  lineup?: {
+    name: string;
+    role: string;
+    startTime: string;
+  }[];
+  socialMediaLinks?: {
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+  };
+  tags?: string[];
+  website?: string;
+  likeIds?: string[];
 }
 
-export const EventSchema = SchemaFactory.createForClass(Event);
+// Event Schema Definition
+const EventSchema = new Schema<IEvent>({
+  title: { type: String, required: true },
+  description: { type: String },
+  imageUrl: { type: String },
+  startDate: { type: Date, required: true },
+  startTime: { type: String, required: true },
+  hostId: { type: String },
+  hostUsername: { type: String },
+  locationId: { type: String },
+  category: { type: String },
+  price: { type: Schema.Types.Mixed }, // String oder Number
+  ticketLink: { type: String },
+  lineup: [
+    {
+      name: { type: String, required: true },
+      role: { type: String, required: true },
+      startTime: { type: String, required: true }
+    }
+  ],
+  socialMediaLinks: {
+    instagram: { type: String },
+    facebook: { type: String },
+    twitter: { type: String }
+  },
+  tags: [{ type: String }],
+  website: { type: String },
+  likeIds: [{ type: String }]
+}, {
+  timestamps: true,
+  strict: true
+});
 
-// WICHTIG: Index explizit setzen
-EventSchema.index({ geoLocation: '2dsphere' });
+// Index für Performance bei Geo-Queries
+EventSchema.index({ "location.coordinates": "2dsphere" });
+
+// Pre-Hook für Debugging
+EventSchema.pre('save', function(next) {
+  console.log('Saving event:', this.toObject());
+  next();
+});
+
+// Model Export
+export const Event = model<IEvent>('Event', EventSchema);

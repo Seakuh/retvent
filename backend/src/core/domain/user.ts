@@ -4,28 +4,15 @@ import { Location } from './location';
 
 // User-Entität, die das IUser-Interface implementiert
 export class User implements IUser {
-  _id: string;
-  username: string;
+  id?: string;
   email: string;
-  password: string;
-  artistName?: string;
-  profileImage?: string;
-  bio?: string;
+  username: string;
+  password?: string;
   isArtist: boolean;
-  
-  // Beziehungen werden als Arrays von IDs gespeichert
-  ownedLocationIds: string[] = [];
-  createdEventIds: string[] = [];
-  likedEventIds: string[] = [];
-  likedLocationIds: string[] = [];
-  followedLocationIds: string[] = [];
-  performingEventIds: string[] = [];
-  
-  // Timestamps
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 
-  constructor(data: Partial<IUser>) {
-    Object.assign(this, data);
+  constructor(partial: Partial<IUser>) {
+    Object.assign(this, partial);
   }
 } 

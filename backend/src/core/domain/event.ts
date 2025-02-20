@@ -17,9 +17,11 @@ export class Event implements IEvent {
   
   // Beziehungen
   hostId: string;
+  hostUsername?: string;
+  city?: string;
   locationId?: string;
   category?: string;
-  price?: number;
+  price?: string;
   ticketLink?: string;
   lineup?: Array<{ name: string; role?: string; startTime?: string }>;
   socialMediaLinks?: {
@@ -30,7 +32,14 @@ export class Event implements IEvent {
   tags?: string[];
   website?: string;
   likeIds?: string[];
-  
+  location?: {
+    city?: string;
+    address?: string;
+    coordinates?: {
+      lat?: number;
+      lng?: number;
+    };
+  };
   // Timestamps
   createdAt: Date;
   updatedAt: Date;

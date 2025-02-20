@@ -1,12 +1,11 @@
 export interface IUser {
-  _id: string;
-  username: string;
+  id?: string;
   email: string;
-  password: string;
-  artistName?: string;
-  profileImage?: string;
-  bio?: string;
+  username: string;
+  password?: string;
   isArtist: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-} 
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export type UserResponse = Omit<IUser, 'password'>; 

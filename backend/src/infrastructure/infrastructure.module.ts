@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from './modules/auth.module';
+import { CoreModule } from '../core/core.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HttpModule } from '@nestjs/axios';
 import { EventService } from '../application/services/event.service';
 import { ChatGPTService } from './services/chatgpt.service';
 import { ImageService } from './services/image.service';
 import { GeolocationService } from './services/geolocation.service';
-import { EventSchema, LocationSchema, UserSchema } from '../core/domain';
+import { EventSchema } from './schemas/event.schema';
+import { LocationSchema } from './schemas/location.schema';
+import { UserSchema } from './schemas/user.schema';
 import { MongoEventRepository } from './repositories/mongodb/event.repository';
 import { LocationService } from '../application/services/location.service';
 import { AuthService } from './services/auth.service';
@@ -23,6 +27,9 @@ import { EventMapper } from '../application/mappers/event.mapper';
 
 @Module({
   imports: [
+    CoreModule,
+    AuthModule,
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     HttpModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
@@ -80,7 +87,8 @@ import { EventMapper } from '../application/mappers/event.mapper';
     JwtModule,
     MongoEventRepository,
     MongoLocationRepository,
-    EventMapper
+    EventMapper,
+    AuthModule
   ],
 })
 export class InfrastructureModule {}
