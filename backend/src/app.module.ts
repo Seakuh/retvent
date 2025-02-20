@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { EventController } from './presentation/controllers/event.controller';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://gi:gi@cluster0.3qoob.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = 'mongodb+srv://gi:gi@cluster0.3qoob.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 @Module({
   imports: [
