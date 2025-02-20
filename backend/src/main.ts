@@ -16,7 +16,8 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'https://www.retromountainphangan.com',
-      'https://avanti-kollektiv.de'
+      'https://avanti-kollektiv.de',
+      'https://www.event-scanner.com'
     ],
     credentials: true
   });
