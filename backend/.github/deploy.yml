@@ -55,6 +55,9 @@ jobs:
 
             # Starte das Backend mit PM2
             pm2 start dist/main.js --name event-scanner --env production
+            echo "Backend gestartet"
+
 
             # Speichere die PM2 Config
             pm2 save
+
