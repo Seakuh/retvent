@@ -18,15 +18,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /var/www/events-backend
-            git checkout master
+            # Navigate to correct directory
             cd /var/www/events-backend/retvent/backend
-            git pull origin master
+            
+            # Fetch latest changes
+            git fetch origin master
+            git reset --hard origin/master
+            
+            # Install dependencies and build
             npm install
             npm run build
-            pm2 delete events-backend || true
-            pm2 start dist/main.js --name events-backend
-          
             
             # Create/Update .env file
             echo "PORT=4000" > .env
@@ -35,14 +36,12 @@ jobs:
             echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
             echo "MEETUP_API_KEY=${{ secrets.MEETUP_API_KEY }}" >> .env
             
-            # Restart PM2
-            pm2 stop event-scanner || true
-            pm2 delete event-scanner || true
-            pm2 start dist/main.js --name backend --env production
+            # Restart PM2 process
+            pm2 delete events-backend || true
+            pm2 start dist/main.js --name events-backend
             pm2 save
-
             
-            # Check application status
+            # Check status
             pm2 status
             
             # Verify nginx configuration and restart
