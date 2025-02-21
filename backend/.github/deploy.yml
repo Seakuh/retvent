@@ -1,4 +1,4 @@
-name: Deploy Event Scanner Backend
+name: Deploy Event Backend
 
 on:
   push:

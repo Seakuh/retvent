@@ -3,7 +3,6 @@ export interface IUser {
   email: string;
   username: string;
   password?: string;
-  isArtist: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

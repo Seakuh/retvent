@@ -47,7 +47,6 @@ describe('EventController (Integration)', () => {
         email: testEmail,
         username: testUsername,
         password: 'password123',
-        isArtist: false
       });
 
     console.log('Register response:', registerResponse.body);  // Debug log

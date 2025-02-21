@@ -35,7 +35,6 @@ export async function setupTestApp(): Promise<TestContext> {
       email: testEmail,
       username: testUsername,
       password: 'password123',
-      isArtist: false
     });
 
   const testUserId = registerResponse.body.user.id;

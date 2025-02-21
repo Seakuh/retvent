@@ -10,10 +10,6 @@ export class ArtistGuard implements CanActivate {
       throw new ForbiddenException('Nicht authentifiziert');
     }
 
-    if (!user.isArtist) {
-      throw new ForbiddenException('Nur für Künstler verfügbar');
-    }
-
     return true;
   }
 } 

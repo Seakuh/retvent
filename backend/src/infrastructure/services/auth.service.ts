@@ -19,7 +19,7 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterUserDto) {
-    const { email, password, username, isArtist } = registerDto;
+    const { email, password, username } = registerDto;
 
     // Check if user exists
     const existingUser = await this.userModel.findOne({
@@ -38,7 +38,6 @@ export class AuthService {
       email,
       username,
       password: hashedPassword,
-      isArtist
     });
 
     const payload = {
