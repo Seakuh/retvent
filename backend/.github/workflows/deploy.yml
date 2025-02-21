@@ -21,7 +21,7 @@ jobs:
             # Navigate to correct directory
             cd /root/retvent/backend
             
-            # Fetch latest changes
+            # Fetch latest changes and reset to master
             git fetch origin master
             git reset --hard origin/master
             
