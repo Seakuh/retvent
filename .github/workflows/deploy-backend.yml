@@ -54,6 +54,7 @@ jobs:
             echo "MEETUP_API_KEY=${{ secrets.MEETUP_API_KEY }}" >> .env
             
             # Restart PM2 process
+            echo pwd
             pm2 delete events-backend || true
             pm2 start dist/main.js --name events-backend
             pm2 save
