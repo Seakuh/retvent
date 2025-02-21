@@ -1,0 +1,49 @@
+name: Deploy to Production 🚀
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: SSH and Deploy 🔄
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /var/www/events-backend
+            git checkout master
+            cd /var/www/events-backend/retvent/backend
+            git pull origin master
+            npm install
+            npm run build
+            pm2 delete events-backend || true
+            pm2 start dist/main.js --name events-backend
+          
+            
+            # Create/Update .env file
+            echo "PORT=4000" > .env
+            echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+            echo "MEETUP_API_KEY=${{ secrets.MEETUP_API_KEY }}" >> .env
+            
+            # Restart PM2
+            pm2 stop event-scanner || true
+            pm2 delete event-scanner || true
+            pm2 start dist/main.js --name backend --env production
+            pm2 save
+
+            
+            # Check application status
+            pm2 status
+            
+            # Verify nginx configuration and restart
+            nginx -t && systemctl restart nginx 
