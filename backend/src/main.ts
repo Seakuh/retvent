@@ -44,7 +44,6 @@ async function bootstrap() {
     }
   });
 
-  // start 3145
   const port = 4000;
   
   await app.listen(port, '0.0.0.0');

@@ -19,7 +19,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             # Navigate to correct directory
-            cd /var/www/events-backend/retvent/backend
+            cd /root/retvent/backend
             
             # Fetch latest changes
             git fetch origin master
