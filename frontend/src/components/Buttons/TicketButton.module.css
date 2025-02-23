@@ -1,0 +1,115 @@
+.buttonWrapper {
+  position: relative;
+  z-index: 2;
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.ticketButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 3rem;
+  text-decoration: none;
+  color: white;
+  border: 4px solid white;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 1.3rem;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), 0 0 60px rgba(0, 255, 255, 0.2);
+  font-family: var(--font-elegant);
+  background: rgba(42, 109, 255, 0.418);
+  backdrop-filter: blur(5px);
+}
+
+.ticketButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(0, 255, 255, 0.1) 0%,
+    rgb(0, 255, 255) 50%,
+    rgba(0, 255, 255, 0.1) 100%
+  );
+  transform: skewX(-45deg);
+  transition: all 0.5s ease-in-out;
+  z-index: -1;
+}
+
+.ticketButton::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    rgba(0, 255, 255, 0.4) 0%,
+    transparent 50%,
+    rgba(0, 255, 255, 0.4) 100%
+  );
+  border-radius: 50px;
+  z-index: -2;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  transform: scale(0.95);
+}
+
+.ticketButton:hover {
+  color: white;
+  background: rgba(0, 255, 255, 0.4);
+  box-shadow: 0 0 50px rgba(0, 255, 255, 0.6), 0 0 80px rgba(0, 255, 255, 0.4);
+  transform: translateY(-4px) scale(1.1);
+  letter-spacing: 6px;
+}
+
+.ticketButton:hover::before {
+  left: 125%;
+}
+
+.ticketButton:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (max-width: 768px) {
+  .buttonWrapper {
+    margin: 1.5rem 0;
+  }
+
+  .ticketButton {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+  }
+
+  .ticketButton:hover {
+    letter-spacing: 5px;
+  }
+}
+
+@keyframes neonGlow {
+  0% {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), 0 0 60px rgba(0, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.5), 0 0 80px rgba(0, 255, 255, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), 0 0 60px rgba(0, 255, 255, 0.2);
+  }
+}
+
+.ticketButton {
+  animation: neonGlow 2s infinite;
+} 

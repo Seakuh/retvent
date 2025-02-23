@@ -83,7 +83,7 @@ function LandingPage() {
   console.log('Events:', events);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#000046] to-[#1CB5E0]">
+    <div className="min-h-screen">
       <header className="glass-effect sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
@@ -134,8 +134,8 @@ function LandingPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex flex-col gap-4">
+      <main className="max-w-7xl mx-auto">
+        <div className="px-4 py-6">
           <div>
             <EventScanner />
           </div>
@@ -147,20 +147,19 @@ function LandingPage() {
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
           />
-
-          {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-pink"></div>
-            </div>
-          ) : (
-            <EventGallery
-              events={events} 
-              favorites={favorites}
-              onToggleFavorite={toggleFavorite}
-            />
-          )}
         </div>
 
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-pink"></div>
+          </div>
+        ) : (
+          <EventGallery
+            events={events} 
+            favorites={favorites}
+            onToggleFavorite={toggleFavorite}
+          />
+        )}
 
         {showUploads && (
           <div className="mt-4">
@@ -177,7 +176,6 @@ function LandingPage() {
             )}
           </div>
         )}
-
       </main>
     </div>
   );

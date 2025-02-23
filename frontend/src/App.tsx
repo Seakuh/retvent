@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useParams, useSearchParams } fr
 import { createRoot } from 'react-dom/client';
 import LandingPage from './LandingPage';
 import { AdminPage } from './components/AdminPage/AdminPage';
+import { EventDetail } from './components/EventDetail/EventDetail';
 
 const ArtistPage: React.FC = () => {
   const { artistid } = useParams<{ artistid: string }>();
@@ -41,7 +42,7 @@ const App: React.FC = () => (
       <Route path="/" element={<LandingPage />} />
       <Route path="/artist/:artistid" element={<ArtistPage />} />
       <Route path="/location/:locationid" element={<LocationPage />} />
-      <Route path="/event/:eventid" element={<EventPage />} />
+      <Route path="/event/:eventid" element={<EventDetail />} />
       <Route path="/admin" element={<AdminPage />} />
     </Routes>
   </Router>
