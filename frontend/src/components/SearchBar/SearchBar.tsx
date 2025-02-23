@@ -21,7 +21,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Suche nach Events..."
+          placeholder="Search for Events..."
           className="search-input"
         />
       </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useParams, useSearchParams } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import LandingPage from './LandingPage';
+import { AdminPage } from './components/AdminPage/AdminPage';
 
 const ArtistPage: React.FC = () => {
   const { artistid } = useParams<{ artistid: string }>();
@@ -41,6 +42,7 @@ const App: React.FC = () => (
       <Route path="/artist/:artistid" element={<ArtistPage />} />
       <Route path="/location/:locationid" element={<LocationPage />} />
       <Route path="/event/:eventid" element={<EventPage />} />
+      <Route path="/admin" element={<AdminPage />} />
     </Routes>
   </Router>
 );

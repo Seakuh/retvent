@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SearchBar } from './components/SearchBar/SearchBar';
 import { EventList } from './components/EventList/EventList';
-import { MapView } from './components/MapView/MapView';
 import { ViewToggle } from './components/ViewToggle/ViewToggle';
 import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
 import { Event, ViewMode } from './types/event';
 import { Menu, Heart, Upload } from 'lucide-react';
 import { EventScanner } from './components/EventScanner/Eventscanner';
 import { fetchLatestEvents, fetchUserEvents } from './service';
+import { EventGallery } from './components/EventGallery/EventGallery';
 
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -15,7 +15,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showFavorites, setShowFavorites] = useState(false);
@@ -34,7 +34,7 @@ function LandingPage() {
     try {
       const response = await fetch(`${API_URL}/events/search?query=${keyword}`);
       const data = await response.json();
-      setEvents(data);
+      //setEvents(data);
     } catch (error) {
       console.error('Error fetching events:', error);
     } finally {
@@ -44,12 +44,17 @@ function LandingPage() {
 
   useEffect(() => {
     const loadEvents = async () => {
+      setLoading(true);
       try {
         const latestEvents = await fetchLatestEvents();
-        // set the events reverse so the latest events are shown first
-        setEvents(latestEvents.reverse());
+        console.log('Raw API response:', latestEvents);
+        if (Array.isArray(latestEvents) && latestEvents.length > 0) {
+          setEvents(latestEvents.reverse());
+        } else {
+          console.warn('Received empty or invalid events array:', latestEvents);
+        }
       } catch (err) {
-        console.error("Fehler beim Laden der Events");
+        console.error("Fehler beim Laden der Events:", err);
       } finally {
         setLoading(false);
       }
@@ -73,6 +78,9 @@ function LandingPage() {
   const filteredEvents = events
     .filter(event => !selectedCategory || event.category === selectedCategory)
     .filter(event => !showFavorites || favorites.has(event.id));
+
+  console.log('Filtered events:', filteredEvents);
+  console.log('Events:', events);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#000046] to-[#1CB5E0]">
@@ -144,17 +152,11 @@ function LandingPage() {
             <div className="flex justify-center items-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-pink"></div>
             </div>
-          ) : viewMode === 'list' ? (
-            <EventList
-              events={filteredEvents}
-              onToggleFavorite={toggleFavorite}
-              onAddToCalendar={(event) => console.log('Add to calendar:', event)}
-              favorites={favorites}
-            />
           ) : (
-            <MapView
-              events={filteredEvents}
-              onMarkerClick={(event) => console.log('Clicked event:', event)}
+            <EventGallery
+              events={events} 
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
             />
           )}
         </div>
