@@ -13,9 +13,9 @@ export const UploadAnimation: React.FC<UploadAnimationProps> = ({ isUploading, p
       }`}
     >
       <div className="p-10 rounded-3xl w-96 text-center">
-        <div className="w-28 h-28 mx-auto mb-6 flex items-center justify-center text-4xl rocket-animation">
+        {/* <div className="w-28 h-28 mx-auto mb-6 flex items-center justify-center text-4xl rocket-animation">
           <span role="img" aria-label="Rocket">🚀</span>
-        </div>
+        </div> */}
 
         <div className="h-3 bg-gray-800 rounded-full overflow-hidden mb-4">
           <div
