@@ -43,9 +43,9 @@ const EventSchema = new Schema<IEvent>({
   ticketLink: { type: String },
   lineup: [
     {
-      name: { type: String, required: true },
-      role: { type: String, required: true },
-      startTime: { type: String, required: true }
+      name: { type: String, required: false },
+      role: { type: String, required: false },
+      startTime: { type: String, required: false }
     }
   ],
   socialMediaLinks: {
