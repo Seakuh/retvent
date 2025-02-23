@@ -105,7 +105,7 @@ export const mockEvents: Event[] = [
 
   export const fetchLatestEvents = async (): Promise<Event[]> => {
     try {
-      const response = await fetch(`${API_URL}/events/latest`, {
+      const response = await fetch(`${API_URL}events/latest`, {
         mode: "cors", // Sicherstellen, dass CORS aktiviert ist
 
       });
