@@ -12,9 +12,12 @@ export class EventService {
     private readonly imageService: ImageService,
     private readonly chatGptService: ChatGPTService,
     private readonly geolocationService: GeolocationService,
-    ) {}
-
-
+  ) {}
+  
+  
+  searchByCity(city: string) {
+    return this.eventRepository.searchByCity(city);
+  }
   
   async findAll(): Promise<Event[]> {
     return this.eventRepository.findAll();

@@ -7,7 +7,10 @@ import { CreateEventDto } from '../dtos/create-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { EventUpdateHelper } from '../../application/helpers/event-update.helper';
+import { SearchByCityDto } from 'src/events/dto/search-by-city.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Events')
 @Controller('events')
 export class EventController {
   constructor(
@@ -62,6 +65,14 @@ export class EventController {
       dateRange: startDate && endDate ? { startDate, endDate } : undefined
     };
     return this.eventService.searchEvents(searchParams);
+  }
+
+  @Get('search/city')
+  async searchByCity(@Query('query') city: string) {
+    if (!city || city.length < 2) {
+      throw new BadRequestException('City query must be at least 2 characters long');
+    }
+    return this.eventService.searchByCity(city);
   }
 
   @Get('byId')

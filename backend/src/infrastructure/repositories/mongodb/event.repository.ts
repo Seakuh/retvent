@@ -9,7 +9,14 @@ export class MongoEventRepository implements IEventRepository {
   constructor(
     @InjectModel('Event') private eventModel: Model<Event>
   ) {}
-
+  
+  searchByCity(city: string) {
+    return this.eventModel.find({
+      'city': { $regex: new RegExp(city, 'i') }
+    }).exec();
+  }
+  
+  
   private toEntity(doc: any): Event {
     const event = doc.toObject ? doc.toObject() : doc;
     const { _id, __v, ...rest } = event;
