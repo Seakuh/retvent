@@ -42,7 +42,7 @@ export const searchEventsByCity = async (city: string): Promise<Event[]> => {
     const response = await fetch(`${API_URL}events/search/city?query=${encodeURIComponent(city)}`);
     const data = await response.json();
     console.log('City search response:', data);
-    return data.events || [];
+    return data || [];
   } catch (error) {
     console.error('Error searching events by city:', error);
     return [];
