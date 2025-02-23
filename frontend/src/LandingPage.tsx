@@ -32,7 +32,7 @@ function LandingPage() {
     setSearchPerformed(true);
     try {
       const searchResults = await searchEventsByCity(keyword);
-      setEvents(searchResults);
+      setEvents(searchResults as Event[]);
     } catch (error) {
       console.error('Error searching events:', error);
     } finally {
@@ -72,13 +72,6 @@ function LandingPage() {
       return newFavorites;
     });
   };
-
-  const filteredEvents = events
-    .filter(event => !selectedCategory || event.category === selectedCategory)
-    .filter(event => !showFavorites || favorites.has(event.id));
-
-  console.log('Filtered events:', filteredEvents);
-  console.log('Events:', events);
 
   return (
     <div className="min-h-screen">
@@ -157,9 +150,9 @@ function LandingPage() {
         ) : searchPerformed && events.length === 0 ? (
           <div className="no-results">
             <div className="no-results-content">
-              <div className="no-results-icon">🎭</div>
+              <div className="no-results-icon">🚫</div>
               <h2>No Events Found</h2>
-              <p>We couldn't find any events in this city. Try searching for another location or check back later!</p>
+              <p>We couldn't find any events in this city</p>
             </div>
           </div>
         ) : (
