@@ -27,15 +27,17 @@ export const EventSchema = new Schema({
   likeIds: [{ type: String }],
   city: { type: String },
   location: {
-    city: { type: String },
-    address: { type: String },
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true
+    },
     coordinates: {
-      type: {
-        lat: Number,
-        lng: Number
-      },
-      index: '2dsphere'
-    }
+      type: [Number], // [longitude, latitude]
+      required: true
+    },
+    city: String,
+    formattedAddress: String
   }
 }, {
   timestamps: true,
@@ -49,4 +51,7 @@ EventSchema.pre('save', function(next) {
 
 // Create indexes
 EventSchema.index({ 'location.city': 1 });
-EventSchema.index({ title: 'text', description: 'text' }); 
+EventSchema.index({ title: 'text', description: 'text' });
+
+// Add a 2dsphere index for geospatial queries
+EventSchema.index({ 'location.coordinates': '2dsphere' }); 

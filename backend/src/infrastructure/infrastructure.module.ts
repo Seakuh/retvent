@@ -30,6 +30,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   imports: [
     CoreModule,
     AuthModule,
+    ConfigModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -70,6 +71,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     JwtAuthGuard,
     OwnerGuard,
     EventMapper,
+    ConfigService,
     {
       provide: 'IEventRepository',
       useClass: MongoEventRepository
@@ -97,7 +99,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     MongoEventRepository,
     MongoLocationRepository,
     EventMapper,
-    AuthModule
+    AuthModule,
+    GeolocationService,
+    ConfigService
   ],
 })
 export class InfrastructureModule {}

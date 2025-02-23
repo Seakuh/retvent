@@ -1,10 +1,67 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
+
+interface GeocodingResponse {
+  city: string;
+  formattedAddress: string;
+  country?: string;
+  state?: string;
+  postalCode?: string;
+}
 
 @Injectable()
 export class GeolocationService {
-  constructor(private readonly httpService: HttpService) {}
+  private readonly apiKey: string;
+  private readonly geocodingApiUrl: string = 'https://maps.googleapis.com/maps/api/geocode/json';
+
+  constructor(
+    private readonly httpService: HttpService,
+    private configService: ConfigService
+  ) {
+    this.apiKey = this.configService.get<string>('GOOGLE_MAPS_API_KEY');
+  }
+
+  async getReverseGeocoding(lat: number, lon: number): Promise<string> {
+    return 'test';
+    // Construct the Nominatim API URL with JSON format
+    // const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+    
+    // try {
+    //   // Send GET request with required headers for Nominatim
+    //   const response = await axios.get(url, {
+    //     headers: {
+    //       'User-Agent': 'EventApp/1.0', // Required by Nominatim
+    //       'Accept-Language': 'en' // Prefer English results
+    //     }
+    //   });
+      
+    //   const data = response.data;
+      
+    //   if (data && data.address) {
+    //     // Nominatim may return the city under different keys depending on the location
+    //     const { city, town, village, hamlet, suburb } = data.address;
+    //     return city || town || village || hamlet || suburb || 'City not found';
+    //   }
+      
+    //   return 'City not found';
+    // } catch (error) {
+    //   console.error('Error during reverse geocoding:', error);
+    //   return 'City not found'; // Return default value instead of throwing
+    // }
+  }
+
+  private extractAddressComponent(
+    components: any[],
+    type: string,
+  ): string | undefined {
+    const component = components.find(comp => 
+      comp.types.includes(type)
+    );
+    return component?.long_name;
+  }
 
   async getCoordinates(address: string) {
     try {

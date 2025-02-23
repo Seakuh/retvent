@@ -99,36 +99,66 @@ export class EventService {
     return this.eventRepository.removeLike(eventId, userId);
   }
 
-  async processEventImageUpload(image: Express.Multer.File, lat?: number, lon?: number): Promise<any> {
-     // 1. Bild auf dem Image-Server hochladen
-     console.info('Processing event image upload...');
-     const uploadedImageUrl = await this.imageService.uploadImage(image);
- 
-     // 2. Bild durch ChatGPT analysieren, um Event-Daten zu erhalten
-     console.info("Extract Object from Image...");
-     // const extractedText = await this.chatGptService.extractTextFromImage(uploadedImageUrl);
-     const event = await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
- 
-     // 3. lat/lon des Uploads per Geolocation-Service ermitteln (falls Location vorhanden ist)
-    //  const uploadLocation = event.location?.trim()
-    //    ? await this.geolocationService.getCoordinates(event.location)
-    //    : null;
- 
-     // 4. Event mit Bild-URL in MongoDB speichern
-     console.info("Save Event in MongoDB...");
-     const createdEvent = await this.eventRepository.create(
-      {
-        ...event,
-        location : {
-          coordinates: {
-            lat: lat,
-            lng: lon
-          }
-        },
-        imageUrl: uploadedImageUrl,
+  async processEventImageUpload(image: Express.Multer.File, lat?: number, lon?: number): Promise<Event> {
+    try {
+      console.info('Processing event image upload...');
+      
+      // 1. Upload image and get URL
+      const uploadedImageUrl = await this.imageService.uploadImage(image);
+      if (!uploadedImageUrl) {
+        throw new BadRequestException('Failed to upload image');
       }
-     );
-     return createdEvent;
+
+      // 2. Try to extract event data from image, but don't fail if it doesn't work
+      let extractedEventData = {};
+      try {
+        extractedEventData = await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
+      } catch (error) {
+        console.warn('Failed to extract event data from image:', error);
+      }
+
+      // 3. Get city from coordinates if available
+      let city = undefined;
+      let location = undefined;
+      
+      if (lat && lon) {
+        try {
+          city = await this.geolocationService.getReverseGeocoding(lat, lon);
+          
+          // Format location as GeoJSON
+          location = {
+            type: 'Point',
+            coordinates: [lon, lat], // MongoDB expects [longitude, latitude]
+            city,
+          };
+        } catch (error) {
+          console.warn('Failed to get city from coordinates:', error);
+          // Still save coordinates even if city lookup fails
+          location = {
+            type: 'Point',
+            coordinates: [lon, lat],
+          };
+        }
+      }
+
+      // 4. Create event with all available data
+      const eventData = {
+        ...extractedEventData,
+        imageUrl: uploadedImageUrl,
+        location,
+        city,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: 'pending'
+      };
+
+      const createdEvent = await this.eventRepository.create(eventData);
+      return createdEvent;
+      
+    } catch (error) {
+      console.error('Failed to process event image upload:', error);
+      throw new BadRequestException(`Failed to process event image: ${error.message}`);
+    }
   }
 
   async processEventImage(imageUrl: string, lat?: number, lon?: number): Promise<any> {

@@ -6,11 +6,7 @@ import { ImageService } from '../../infrastructure/services/image.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UpdateEventDto } from '../dtos/update-event.dto';
-import { EventUpdateHelper } from '../../application/helpers/event-update.helper';
-import { SearchByCityDto } from 'src/events/dto/search-by-city.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Events')
 @Controller('events')
 export class EventController {
   constructor(
