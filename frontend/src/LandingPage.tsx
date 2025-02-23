@@ -6,11 +6,8 @@ import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
 import { Event, ViewMode } from './types/event';
 import { Menu, Heart, Upload } from 'lucide-react';
 import { EventScanner } from './components/EventScanner/Eventscanner';
-import { fetchLatestEvents, fetchUserEvents } from './service';
+import { fetchLatestEvents, fetchUserEvents, searchEventsByCity } from './service';
 import { EventGallery } from './components/EventGallery/EventGallery';
-
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 
 function LandingPage() {
@@ -22,6 +19,7 @@ function LandingPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [showUploads, setShowUploads] = useState(false);
   const [userEvents, setUserEvents] = useState<Event[]>([]);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
   const loadUserEvents = async () => {
     const events = await fetchUserEvents();
@@ -31,12 +29,12 @@ function LandingPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const handleSearch = async (keyword: string) => {
     setLoading(true);
+    setSearchPerformed(true);
     try {
-      const response = await fetch(`${API_URL}/events/search?query=${keyword}`);
-      const data = await response.json();
-      //setEvents(data);
+      const searchResults = await searchEventsByCity(keyword);
+      setEvents(searchResults);
     } catch (error) {
-      console.error('Error fetching events:', error);
+      console.error('Error searching events:', error);
     } finally {
       setLoading(false);
     }
@@ -150,12 +148,23 @@ function LandingPage() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-pink"></div>
+          <div className="search-loading">
+            <div className="search-spinner">
+              <div className="search-spinner-inner"></div>
+              <div className="search-spinner-text">Searching events...</div>
+            </div>
+          </div>
+        ) : searchPerformed && events.length === 0 ? (
+          <div className="no-results">
+            <div className="no-results-content">
+              <div className="no-results-icon">🎭</div>
+              <h2>No Events Found</h2>
+              <p>We couldn't find any events in this city. Try searching for another location or check back later!</p>
+            </div>
           </div>
         ) : (
           <EventGallery
-            events={events} 
+            events={events}
             favorites={favorites}
             onToggleFavorite={toggleFavorite}
           />

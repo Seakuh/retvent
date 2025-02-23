@@ -35,3 +35,16 @@ import { Event, ViewMode } from './types/event';
     }
   };
   
+
+export const searchEventsByCity = async (city: string): Promise<Event[]> => {
+  try {
+    const response = await fetch(`${API_URL}events/search/city?query=${encodeURIComponent(city)}`);
+    const data = await response.json();
+    console.log('City search response:', data);
+    return data.events || [];
+  } catch (error) {
+    console.error('Error searching events by city:', error);
+    return [];
+  }
+};
+  

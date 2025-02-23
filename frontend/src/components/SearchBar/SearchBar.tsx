@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
 import './SearchBar.css';
 
 interface SearchBarProps {
@@ -14,7 +13,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     onSearch(searchTerm);
   };
 
-  return (
+  return (  
     <form onSubmit={handleSubmit} className="search-bar">
       <div className="search-input-container">
         <input
