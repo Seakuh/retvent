@@ -1,14 +1,15 @@
-import { Event, ViewMode } from './types/event';
+import { Event } from './types/event';
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 
   export const fetchLatestEvents = async (): Promise<Event[]> => {
     try {
-      const response = await fetch(`${API_URL}events/latest`);
+      const response = await fetch(`${API_URL}events/latest?limit=40`);
       const data = await response.json();
       console.log('API Response:', data); // Debug log
-      return data.events || []; // Stelle sicher, dass wir das richtige Feld zurückgeben
+      const events = data.events || [];
+      return events.reverse(); // Reverse the array before returning
     } catch (error) {
       console.error('Error in fetchLatestEvents:', error);
       return [];

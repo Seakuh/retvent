@@ -60,7 +60,7 @@ export const EventScanner: React.FC = () => {
       )}
 
       {/* Hochgeladenes Event in Fullscreen anzeigen */}
-      {uploadedEvent && <UploadedEventCard event={uploadedEvent} isUploading={isUploading} onClose={() => setUploadedEvent(null)} />}
+      {uploadedEvent && alert("Event uploaded successfully!")}
 
       {/* Error-Dialog anzeigen, wenn ein Fehler auftritt */}
       {error && <ErrorDialog message={error} onClose={() => setError(null)} />}
