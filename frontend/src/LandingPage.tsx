@@ -4,10 +4,11 @@ import { EventList } from './components/EventList/EventList';
 import { ViewToggle } from './components/ViewToggle/ViewToggle';
 import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
 import { Event, ViewMode } from './types/event';
-import { Menu, Heart, Upload } from 'lucide-react';
+import { Menu, Heart, Upload, LogIn } from 'lucide-react';
 import { EventScanner } from './components/EventScanner/Eventscanner';
 import { fetchLatestEvents, fetchUserEvents, searchEventsByCity } from './service';
 import { EventGallery } from './components/EventGallery/EventGallery';
+import { useNavigate } from 'react-router-dom';
 
 
 function LandingPage() {
@@ -20,6 +21,7 @@ function LandingPage() {
   const [showUploads, setShowUploads] = useState(false);
   const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const navigate = useNavigate();
 
   const loadUserEvents = async () => {
     const events = await fetchUserEvents();
@@ -94,7 +96,16 @@ function LandingPage() {
           </div>
           {showMenu && (
             <div className="absolute right-4 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 ">
-              {/* Show Favorites Button */}
+              {/* Login Button */}
+              <button
+                onClick={() => {
+                  navigate('/login');
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+              >
+                <LogIn size={20} />
+                <p>Login</p>
+              </button>
               <button
                 onClick={() => {
                   setShowFavorites(!showFavorites);
