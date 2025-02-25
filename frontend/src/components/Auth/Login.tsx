@@ -19,7 +19,7 @@ const Login: React.FC = () => {
 
     try {
       const response = await authService.login(formData);
-      localStorage.setItem('access_token', response.access_token); // Geändert zu access_token
+      localStorage.setItem('access_token', response.access_token);
       localStorage.setItem('user', JSON.stringify(response.user));
       navigate('/admin/dashboard');
     } catch (error) {

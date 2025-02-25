@@ -3,10 +3,10 @@ import { Routes, Route } from 'react-router-dom';
 import LandingPage from './LandingPage';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
+import Dashboard from './components/Admin/Dashboard';
 import AdminEvents from './components/Admin/AdminEvents';
 import CreateEvent from './components/Admin/CreateEvent';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
-import { AdminPage } from './components/AdminPage/AdminPage';
 import { EventDetail } from './components/EventDetail/EventDetail';
 
 const App: React.FC = () => {
@@ -18,9 +18,9 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/event/:eventId" element={<EventDetail />} />
-          <Route path="/admin" element={
+          <Route path="/admin/dashboard" element={
             <ProtectedRoute>
-              <AdminPage />
+              <Dashboard />
             </ProtectedRoute>
           } />
           <Route path="/admin/events" element={

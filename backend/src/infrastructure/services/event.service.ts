@@ -1,9 +1,7 @@
-import * as Tesseract from 'tesseract.js';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Event } from '../../core/domain/event';
-import { Multer } from 'multer';
 import { ChatGPTService } from './chatgpt.service';
 import { ImageService } from './image.service';
 import { EventRepository } from '../repositories/event.repository';
@@ -19,14 +17,9 @@ export class EventService {
     private readonly geolocationService: GeolocationService,
   ) { }
   async processEventImage(imageUrl: string, lat?: number, lon?: number) {
-    console.info('Processing event image:', imageUrl, lat, lon);
-    const uploadedImageUrl = await this.imageService.uploadImage(imageUrl);
-    const extractedText = await this.chatGptService.extractTextFromImage(uploadedImageUrl);
-    const event = await this.chatGptService.generateEventFromText(extractedText);
-    const createdEvent = await this.eventModel.create({ ...event, lat, lon, imageUrl: uploadedImageUrl });
-    return createdEvent;
+    
   }
-  async processEventImageUpload(image: Multer.File, uploadLat?: number, uploadLon?: number) {
+  async processEventImageUpload(image: Express.Multer.File, uploadLat?: number, uploadLon?: number) {
     // 1. Bild auf dem Image-Server hochladen
     console.info('Processing event image upload...');
     const uploadedImageUrl = await this.imageService.uploadImage(image);

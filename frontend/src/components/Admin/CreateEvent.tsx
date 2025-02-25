@@ -1,98 +1,142 @@
 import React, { useState } from 'react';
-import './Admin.css';
+import { useNavigate } from 'react-router-dom';
+import { EventService } from '../../services/event.service';
+import './CreateEvent.css';
 
 const CreateEvent: React.FC = () => {
+  const navigate = useNavigate();
+  const eventService = new EventService();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>('');
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string>('');
+  
   const [eventData, setEventData] = useState({
     title: '',
-    description: '',
     startDate: '',
     startTime: '',
-    city: '',
-    category: '',
+    location: '',
+    description: '',
     price: '',
-    ticketLink: ''
+    ticketUrl: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
+    setLoading(true);
+    setError('');
 
     try {
-      const response = await fetch('api/events/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(eventData)
-      });
-
-      if (response.ok) {
-        alert('Event created successfully! 🎉');
-        setEventData({
-          title: '',
-          description: '',
-          startDate: '',
-          startTime: '',
-          city: '',
-          category: '',
-          price: '',
-          ticketLink: ''
-        });
-      }
+      await eventService.createEvent(eventData, image || undefined);
+      navigate('/admin/events');
     } catch (error) {
-      console.error('Failed to create event:', error);
+      setError(error instanceof Error ? error.message : 'Failed to create event 😢');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleBack = () => {
+    navigate('/admin/dashboard');
   };
 
   return (
     <div className="create-event-container">
-      <h2>Create New Event 🎪</h2>
+      <div className="header-container">
+        <button onClick={handleBack} className="back-button">
+          ← Back to Dashboard
+        </button>
+        <h1>Create New Event 🎪</h1>
+      </div>
+      
+      {error && <div className="error-message">{error}</div>}
+      
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Event Title"
-          value={eventData.title}
-          onChange={(e) => setEventData({...eventData, title: e.target.value})}
-        />
-        <textarea
-          placeholder="Event Description"
-          value={eventData.description}
-          onChange={(e) => setEventData({...eventData, description: e.target.value})}
-        />
-        <input
-          type="date"
-          value={eventData.startDate}
-          onChange={(e) => setEventData({...eventData, startDate: e.target.value})}
-        />
-        <input
-          type="time"
-          value={eventData.startTime}
-          onChange={(e) => setEventData({...eventData, startTime: e.target.value})}
-        />
-        <input
-          type="text"
-          placeholder="City"
-          value={eventData.city}
-          onChange={(e) => setEventData({...eventData, city: e.target.value})}
-        />
-        <select
-          value={eventData.category}
-          onChange={(e) => setEventData({...eventData, category: e.target.value})}
-        >
-          <option value="">Select Category</option>
-          <option value="music">Music</option>
-          <option value="sports">Sports</option>
-          <option value="arts">Arts</option>
-          <option value="technology">Technology</option>
-        </select>
-        <input
-          type="text"
-          placeholder="Price"
-          value={eventData.price}
-          onChange={(e) => setEventData({...eventData, price: e.target.value})}
-        />
-        <button type="submit">Create Event 🚀</button>
+        <div className="form-grid">
+          <div className="form-left">
+            <div className="dropzone">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="file-input"
+              />
+              {preview ? (
+                <img src={preview} alt="Preview" className="image-preview" />
+              ) : (
+                <div className="dropzone-content">
+                  <p>Click to select an image 📸</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="form-right">
+            <input
+              type="text"
+              placeholder="Event Title"
+              value={eventData.title}
+              onChange={(e) => setEventData({...eventData, title: e.target.value})}
+              required
+            />
+
+            <div className="date-time-group">
+              <input
+                type="date"
+                value={eventData.startDate}
+                onChange={(e) => setEventData({...eventData, startDate: e.target.value})}
+                required
+              />
+              <input
+                type="time"
+                value={eventData.startTime}
+                onChange={(e) => setEventData({...eventData, startTime: e.target.value})}
+                required
+              />
+            </div>
+
+            <input
+              type="text"
+              placeholder="Location"
+              value={eventData.location}
+              onChange={(e) => setEventData({...eventData, location: e.target.value})}
+              required
+            />
+
+            <textarea
+              placeholder="Description"
+              value={eventData.description}
+              onChange={(e) => setEventData({...eventData, description: e.target.value})}
+              required
+            />
+
+            <input
+              type="text"
+              placeholder="Price (optional)"
+              value={eventData.price}
+              onChange={(e) => setEventData({...eventData, price: e.target.value})}
+            />
+
+            <input
+              type="url"
+              placeholder="Ticket URL (optional)"
+              value={eventData.ticketUrl}
+              onChange={(e) => setEventData({...eventData, ticketUrl: e.target.value})}
+            />
+
+            <button type="submit" disabled={loading} className="submit-button">
+              {loading ? 'Creating... ⏳' : 'Create Event 🚀'}
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   );
