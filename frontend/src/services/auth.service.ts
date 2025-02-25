@@ -25,7 +25,7 @@ export class AuthService {
 
   async login(credentials: LoginDto): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/login`, {
+      const response = await fetch(`${this.baseUrl}login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ export class AuthService {
 
   async register(userData: RegisterDto): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/register`, {
+      const response = await fetch(`${this.baseUrl}register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
