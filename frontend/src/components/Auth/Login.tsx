@@ -9,7 +9,7 @@ const Login: React.FC = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    isArtist: false
+    isArtist: true // Immer true für Artists
   });
   const [error, setError] = useState<string>('');
 
@@ -19,7 +19,7 @@ const Login: React.FC = () => {
 
     try {
       const response = await authService.login(formData);
-      localStorage.setItem('token', response.token);
+      localStorage.setItem('access_token', response.access_token); // Geändert zu access_token
       localStorage.setItem('user', JSON.stringify(response.user));
       navigate('/admin/dashboard');
     } catch (error) {
@@ -38,22 +38,15 @@ const Login: React.FC = () => {
             placeholder="Email"
             value={formData.email}
             onChange={(e) => setFormData({...formData, email: e.target.value})}
+            required
           />
           <input
             type="password"
             placeholder="Password"
             value={formData.password}
             onChange={(e) => setFormData({...formData, password: e.target.value})}
+            required
           />
-          <div className="checkbox-container">
-            <input
-              type="checkbox"
-              id="isArtist"
-              checked={formData.isArtist}
-              onChange={(e) => setFormData({...formData, isArtist: e.target.checked})}
-            />
-            <label htmlFor="isArtist">Login as Artist 🎨</label>
-          </div>
           <button type="submit">Login</button>
         </form>
         <p>

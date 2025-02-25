@@ -11,22 +11,15 @@ const Register: React.FC = () => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    isArtist: false
+    isArtist: true // Always an artist
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match! 🔐');
-      return;
-    }
-
     try {
-      const { confirmPassword, ...registerData } = formData;
-      await authService.register(registerData);
+      await authService.register(formData);
       navigate('/login');
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Registration failed 😢');
@@ -60,22 +53,6 @@ const Register: React.FC = () => {
             onChange={(e) => setFormData({...formData, password: e.target.value})}
             required
           />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-            required
-          />
-          <div className="checkbox-container">
-            <input
-              type="checkbox"
-              id="isArtist"
-              checked={formData.isArtist}
-              onChange={(e) => setFormData({...formData, isArtist: e.target.checked})}
-            />
-            <label htmlFor="isArtist">Register as Artist 🎨</label>
-          </div>
           <button type="submit">Register</button>
         </form>
         <p>

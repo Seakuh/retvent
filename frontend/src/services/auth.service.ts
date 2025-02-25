@@ -12,7 +12,7 @@ export interface RegisterDto {
 }
 
 export interface AuthResponse {
-  token: string;
+  access_token: string;
   user: {
     id: string;
     email: string;
@@ -21,11 +21,13 @@ export interface AuthResponse {
 }
 
 export class AuthService {
-  private baseUrl = 'https://api.event-scanner.com/auth/';
+  
+
+  private baseUrl = 'http://localhost:4000/auth';
 
   async login(credentials: LoginDto): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}login`, {
+      const response = await fetch(`${this.baseUrl}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -48,17 +50,12 @@ export class AuthService {
 
   async register(userData: RegisterDto): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}register`, {
+      const response = await fetch(`${this.baseUrl}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          username: userData.username,
-          email: userData.email,
-          password: userData.password,
-          isArtist: userData.isArtist
-        })
+        body: JSON.stringify(userData)
       });
 
       if (!response.ok) {
@@ -75,11 +72,11 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
     localStorage.removeItem('user');
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('access_token');
   }
 } 

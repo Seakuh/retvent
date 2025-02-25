@@ -17,7 +17,7 @@ const App: React.FC = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/event/:eventid" element={<EventDetail />} />
+          <Route path="/event/:eventId" element={<EventDetail />} />
           <Route path="/admin" element={
             <ProtectedRoute>
               <AdminPage />
@@ -33,6 +33,7 @@ const App: React.FC = () => {
               <CreateEvent />
             </ProtectedRoute>
           } />
+          <Route path="*" element={<LandingPage />} />
         </Routes>
       </main>
     </div>

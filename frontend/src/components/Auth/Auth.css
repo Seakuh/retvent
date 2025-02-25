@@ -8,6 +8,7 @@
 .auth-box {
   padding: 2rem;
   border-radius: 10px;
+  background-color: #f0f0f0;
   box-shadow: 0 0 20px rgba(0,0,0,0.1);
   width: 100%;
   max-width: 400px;
