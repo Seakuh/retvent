@@ -17,7 +17,6 @@ export class EventController {
   ) { }
 
   @Get('search/plattforms')
-
   async searchEventPlattforms(@Query('query') query: string, @Query('location') location?: string): Promise<any> {
     const params = { query, location };
     console.info('Searching for events with params:', params);
