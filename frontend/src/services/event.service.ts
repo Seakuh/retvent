@@ -11,7 +11,7 @@ export interface CreateEventDto {
 }
 
 export class EventService {
-  private baseUrl = import.meta.env.VITE_API_URL + '/events' || "http://localhost:4000" + '/events';
+  private baseUrl = import.meta.env.VITE_API_URL + 'events' || "http://localhost:4000" + 'events';
   private token = localStorage.getItem('access_token');
 
   private getHeaders(isFormData: boolean = false) {
