@@ -2,21 +2,24 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export const uploadEventImage = async (image: File) => {
   return new Promise<{ _id: string }>((resolve, reject) => {
-    // Nutzer-Position abrufen
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
 
-        console.log("User Location:", lat, lon);
-
         const formData = new FormData();
         formData.append("image", image);
-        formData.append("uploadLat", lat.toString());
-        formData.append("uploadLon", lon.toString());
+        
+        // Korrektes Location-Objekt für MongoDB erstellen
+        const location = {
+          type: "Point",
+          coordinates: [lon, lat] // MongoDB erwartet [longitude, latitude]
+        };
+        
+        formData.append("location", JSON.stringify(location));
 
         try {
-          const response = await fetch(`${API_URL}events/upload/event-image`, {
+          const response = await fetch(`${API_URL}/events/upload/event-image`, {
             method: "POST",
             body: formData,
           });

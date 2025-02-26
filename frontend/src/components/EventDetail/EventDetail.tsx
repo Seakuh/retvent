@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Event } from '../../types/event';
-import { Calendar, Clock, MapPin, Ticket } from 'lucide-react';
+import { Calendar, Clock, MapPin } from 'lucide-react';
 import './EventDetail.css';
 import TicketButton from '../Buttons/TicketButton';
 

@@ -21,14 +21,14 @@ export class EventController {
 
   }
 
-  @Post('upload/event-image')
-  @UseInterceptors(FileInterceptor('image'))
-  async uploadEventImage(
-    @UploadedFile() image: Multer.File,
-    @Body() body: { uploadLat?: number; uploadLon?: number },
-  ) {
-    return this.eventService.processEventImageUpload(image, body.uploadLat, body.uploadLon);
-  }
+  // @Post('upload/event-image')
+  // @UseInterceptors(FileInterceptor('image'))
+  // async uploadEventImage(
+  //   @UploadedFile() image: Express.Multer.File,
+  //   @Body() body: { uploadLat?: number; uploadLon?: number },
+  // ) {
+  //   return this.eventService.processEventImageUpload(image, body.uploadLat, body.uploadLon);
+  // }
 
 
   @Post('upload')
