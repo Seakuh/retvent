@@ -1,25 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EventService } from '../../services/event.service';
+import { LocationService, Location } from '../../services/location.service';
 import './CreateEvent.css';
 
 const CreateEvent: React.FC = () => {
   const navigate = useNavigate();
   const eventService = new EventService();
+  const locationService = new LocationService();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
+  const [locations, setLocations] = useState<Location[]>([]);
   
   const [eventData, setEventData] = useState({
     title: '',
     startDate: '',
     startTime: '',
-    location: '',
+    locationId: '',
     description: '',
     price: '',
     ticketUrl: ''
   });
+
+  useEffect(() => {
+    fetchLocations();
+  }, []);
+
+  const fetchLocations = async () => {
+    try {
+      const locationData = await locationService.getLocations();
+      setLocations(locationData);
+    } catch (error) {
+      setError('Failed to load locations 😢');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,13 +119,19 @@ const CreateEvent: React.FC = () => {
               />
             </div>
 
-            <input
-              type="text"
-              placeholder="Location"
-              value={eventData.location}
-              onChange={(e) => setEventData({...eventData, location: e.target.value})}
+            <select
+              value={eventData.locationId}
+              onChange={(e) => setEventData({...eventData, locationId: e.target.value})}
               required
-            />
+              className="location-select"
+            >
+              <option value="">Select Location 📍</option>
+              {locations.map(location => (
+                <option key={location.id} value={location.id}>
+                  {location.name} - {location.address}
+                </option>
+              ))}
+            </select>
 
             <textarea
               placeholder="Description"

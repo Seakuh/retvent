@@ -145,4 +145,25 @@ textarea {
   .create-event-container {
     padding: 1rem;
   }
+}
+
+.location-select {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.location-select:hover {
+  border-color: #000;
+}
+
+.location-select:focus {
+  border-color: #000;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
 } 

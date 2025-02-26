@@ -2,9 +2,7 @@ export interface CreateEventDto {
   title: string;
   startDate: string;
   startTime: string;
-  location: {
-    address: string;
-  };
+  locationId: string;
   description: string;
   price?: string;
   eventLat?: number;
@@ -29,14 +27,10 @@ export class EventService {
       if (image) {
         formData.append('image', image);
       }
-      
-      // Location als Objekt formatieren
-      const locationObj = { address: eventData.location };
-      
+
       // Daten vorbereiten
       const preparedData = {
         ...eventData,
-        location: locationObj,
         startTime: eventData.startTime // HH:mm Format
       };
 
@@ -49,7 +43,7 @@ export class EventService {
       // Nur ausgefüllte Felder anhängen
       Object.entries(preparedData).forEach(([key, value]) => {
         if (value !== undefined && value !== '') {
-          formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value.toString());
+          formData.append(key, value.toString());
         }
       });
 
