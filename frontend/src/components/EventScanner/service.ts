@@ -19,7 +19,7 @@ export const uploadEventImage = async (image: File) => {
         formData.append("location", JSON.stringify(location));
 
         try {
-          const response = await fetch(`${API_URL}/events/upload/event-image`, {
+          const response = await fetch(`${API_URL}events/upload/event-image`, {
             method: "POST",
             body: formData,
           });
