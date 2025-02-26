@@ -30,15 +30,15 @@ export const EventSchema = new Schema({
     type: {
       type: String,
       enum: ['Point'],
-      required: true
+      required: false
     },
     coordinates: {
       type: [Number], // [longitude, latitude]
-      required: true
+      required: false
     },
     city: String,
     formattedAddress: String
-  }
+  }     
 }, {
   timestamps: true,
   strict: true
