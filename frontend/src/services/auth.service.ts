@@ -23,7 +23,7 @@ export interface AuthResponse {
 export class AuthService {
   
 
-  private baseUrl = 'http://localhost:4000/auth';
+  private baseUrl = import.meta.env.VITE_API_URL + '/auth' || "http://localhost:4000" + '/auth';
 
   async login(credentials: LoginDto): Promise<AuthResponse> {
     try {
