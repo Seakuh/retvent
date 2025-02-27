@@ -1,15 +1,16 @@
-import { Schema, model } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-export const GroovecastSchema = new Schema({
-  title: { type: String },
-  description: { type: String },
-  imageUrl: { type: String, required: true },
-  audioUrl: { type: String },
-  duration: { type: Number },
-  url: { type: String, required: true },
-  genre: { type: String },
-  releaseDate: { type: Date },
-  artistId: { type: String }
-});
+@Schema()
+export class GrooveCast extends Document {
+  @Prop({ required: true })
+  soundcloudUrl: string;
 
-export const Groovecast = model('Groovecast', GroovecastSchema);
+  @Prop({ required: true })
+  season: number;
+
+  @Prop({ required: true })
+  imageUrl: string;
+}
+
+export const GroovecastSchema = SchemaFactory.createForClass(GrooveCast);
