@@ -60,6 +60,9 @@ jobs:
             echo 'JWT_SECRET=${{ secrets.JWT_SECRET }}' >> .env
             echo 'OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}' >> .env
             echo 'MEETUP_API_KEY=${{ secrets.MEETUP_API_KEY }}' >> .env
+            eco 'HETZNER_ACCESS_KEY'=${{secrets.HETZNER_ACCESS_KEY}} >> .env
+            eco 'HETZNER_SECRET_KEY'=${{secrets.HETZNER_ACCESS_KEY}} >> .env
+            eco 'HETZNER_BUCKET_NAME'=${{secrets.HETZNER_ACCESS_KEY}} >> .env)
             chmod 600 .env
             
             # Restart PM2 process
