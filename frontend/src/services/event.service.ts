@@ -2,7 +2,7 @@ export interface CreateEventDto {
   title: string;
   startDate: string;
   startTime: string;
-  locationId: string;
+  // locationId: string;
   description: string;
   price?: string;
   eventLat?: number;

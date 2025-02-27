@@ -12,30 +12,30 @@ const CreateEvent: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
-  const [locations, setLocations] = useState<Location[]>([]);
+  // const [locations, setLocations] = useState<Location[]>([]);
   
   const [eventData, setEventData] = useState({
     title: '',
     startDate: '',
     startTime: '',
-    locationId: '',
+    // locationId: '',
     description: '',
     price: '',
     ticketUrl: ''
   });
 
-  useEffect(() => {
-    fetchLocations();
-  }, []);
+  // useEffect(() => {
+  //   fetchLocations();
+  // }, []);
 
-  const fetchLocations = async () => {
-    try {
-      const locationData = await locationService.getLocations();
-      setLocations(locationData);
-    } catch (error) {
-      setError('Failed to load locations 😢');
-    }
-  };
+  // const fetchLocations = async () => {
+  //   try {
+  //     const locationData = await locationService.getLocations();
+  //     setLocations(locationData);
+  //   } catch (error) {
+  //     setError('Failed to load locations 😢');
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,7 +119,7 @@ const CreateEvent: React.FC = () => {
               />
             </div>
 
-            <select
+            {/* <select
               value={eventData.locationId}
               onChange={(e) => setEventData({...eventData, locationId: e.target.value})}
               required
@@ -131,7 +131,7 @@ const CreateEvent: React.FC = () => {
                   {location.name} - {location.address}
                 </option>
               ))}
-            </select>
+            </select> */}
 
             <textarea
               placeholder="Description"
