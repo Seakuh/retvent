@@ -53,15 +53,13 @@ jobs:
             npm install
             npm run build
             
-            # Create/Update .env file
+            # Create/Update .env file line by line
             echo 'Erstelle .env Datei...'
-            cat > .env << EOL
-            PORT=4000
-            MONGODB_URI=${{ secrets.MONGODB_URI }}
-            JWT_SECRET=${{ secrets.JWT_SECRET }}
-            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-            MEETUP_API_KEY=${{ secrets.MEETUP_API_KEY }}
-            EOL
+            echo 'PORT=4000' > .env
+            echo 'MONGODB_URI=${{ secrets.MONGODB_URI }}' >> .env
+            echo 'JWT_SECRET=${{ secrets.JWT_SECRET }}' >> .env
+            echo 'OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}' >> .env
+            echo 'MEETUP_API_KEY=${{ secrets.MEETUP_API_KEY }}' >> .env
             chmod 600 .env
             
             # Restart PM2 process
