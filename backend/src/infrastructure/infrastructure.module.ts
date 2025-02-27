@@ -26,6 +26,9 @@ import { OwnerGuard } from '../presentation/guards/owner.guard';
 import { EventMapper } from '../application/mappers/event.mapper';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
+import { GroovecastService } from './services/groovecast.service';
+import { MongoGrooveCastRepository } from './repositories/mongodb/groovecast.repository';
+import { GroovecastSchema } from './schemas/groovecast.schema';
 
 @Module({
   imports: [
@@ -50,7 +53,8 @@ import { GroovecastController } from 'src/presentation/controllers/groovecast.co
     MongooseModule.forFeature([
       { name: 'Event', schema: EventSchema },
       { name: 'Location', schema: LocationSchema },
-      { name: 'User', schema: UserSchema }
+      { name: 'User', schema: UserSchema },
+      { name: 'GrooveCast', schema: GroovecastSchema }
     ])
   ],
   controllers: [
@@ -69,6 +73,7 @@ import { GroovecastController } from 'src/presentation/controllers/groovecast.co
     MongoEventRepository,
     MongoLocationRepository,
     MongoUserRepository,
+    MongoGrooveCastRepository,
     JwtStrategy,
     JwtAuthGuard,
     OwnerGuard,
@@ -85,7 +90,8 @@ import { GroovecastController } from 'src/presentation/controllers/groovecast.co
     {
       provide: 'IUserRepository',
       useClass: MongoUserRepository,
-    }
+    },
+    GroovecastService
   ],
   exports: [
     EventService,
@@ -100,10 +106,12 @@ import { GroovecastController } from 'src/presentation/controllers/groovecast.co
     JwtModule,
     MongoEventRepository,
     MongoLocationRepository,
+    MongoGrooveCastRepository,
     EventMapper,
     AuthModule,
     GeolocationService,
-    ConfigService
+    ConfigService,
+    GroovecastService
   ],
 })
 export class InfrastructureModule {}

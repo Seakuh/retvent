@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Post, UploadedFile } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { GrooveCast } from "src/core/domain/GrooveCast";
 import { GroovecastService } from "src/infrastructure/services/groovecast.service";
 import { CreateGrooveCastDto } from "../dtos/create-groove-cast.dto";
-
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('groovecast')
 export class GroovecastController {
@@ -23,5 +23,6 @@ export class GroovecastController {
     @Body() groovecast: CreateGrooveCastDto): Promise<GrooveCast> {
     return this.groovecastService.create(groovecast, image);
   }
+
 
 }
