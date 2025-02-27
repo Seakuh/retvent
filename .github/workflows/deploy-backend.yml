@@ -21,6 +21,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
         working-directory: backend
+        
       - name: Build Backend
         run: npm run build
         working-directory: backend
@@ -35,33 +36,40 @@ jobs:
       - name: Deploy Backend via SSH
         run: |
           ssh root@37.27.41.23 "
+            # Debugging und Fehlerbehandlung
+            set -e
+            echo 'Starte Deployment...'
+
             # Navigate to correct directory
             cd /root/retvent/backend
             
             # Fetch latest changes and reset to master
+            echo 'Hole neueste Änderungen...'
             git fetch origin master
             git reset --hard origin/master
             
             # Install dependencies and build
+            echo 'Installiere Dependencies...'
             npm install
             npm run build
             
             # Create/Update .env file
-            echo "PORT=4000" > .env
-            echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
-            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
-            echo "MEETUP_API_KEY=${{ secrets.MEETUP_API_KEY }}" >> .env
+            echo 'Erstelle .env Datei...'
+            cat > .env << EOL
+            PORT=4000
+            MONGODB_URI=${{ secrets.MONGODB_URI }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            MEETUP_API_KEY=${{ secrets.MEETUP_API_KEY }}
+            EOL
+            chmod 600 .env
             
             # Restart PM2 process
-            echo pwd
+            echo 'Starte PM2 neu...'
             pm2 delete events-backend || true
-            pm2 start dist/main.js --name events-backend
+            pm2 start dist/main.js --name events-backend --watch
             pm2 save
-            
+
             # Check status
             pm2 status
-            
-            # Verify nginx configuration and restart
-            nginx -t && systemctl restart nginx || true
           "
