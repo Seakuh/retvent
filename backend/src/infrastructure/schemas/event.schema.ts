@@ -5,7 +5,7 @@ export const EventSchema = new Schema({
   description: { type: String },
   imageUrl: { type: String },
   startDate: { type: Date, required: true },
-  startTime: { type: String, required: true },
+  startTime: { type: String, required: false },
   hostId: { type: String },
   hostUsername: { type: String },
   locationId: { type: String },
@@ -30,15 +30,26 @@ export const EventSchema = new Schema({
     type: {
       type: String,
       enum: ['Point'],
-      required: false
+      required: false,
+      default: undefined // Damit bleibt es komplett optional
     },
     coordinates: {
       type: [Number], // [longitude, latitude]
-      required: false
+      required: false,
+      default: undefined
     },
-    city: String,
-    formattedAddress: String
-  }     
+    city: {
+      type: String,
+      required: false,
+      default: undefined
+    },
+    formattedAddress: {
+      type: String,
+      required: false,
+      default: undefined
+    }
+  }
+  
 }, {
   timestamps: true,
   strict: true

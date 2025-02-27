@@ -252,6 +252,25 @@ describe('Event Queries', () => {
     });
   });
 
+  it('should create an event without location', async () => {
+    const eventData = {
+      name: 'Test Event',
+      description: 'Test Description',
+      startDate: new Date(),
+      endDate: new Date(),
+      organizerId: 'test-organizer-id'
+      // location is omitted
+    };
+
+    const response = await request(ctx.app.getHttpServer())
+      .post('/events')
+      .send(eventData)
+      .expect(201);
+
+    expect(response.body).toBeDefined();
+    expect(response.body.location).toBeUndefined();
+  });
+
   afterAll(async () => {
     await ctx.app.close();
   });
