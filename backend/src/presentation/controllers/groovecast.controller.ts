@@ -19,10 +19,11 @@ export class GroovecastController {
   }
 
   @Post()
-  async create(@UploadedFile() image: Express.Multer.File,
-    @Body() groovecast: CreateGrooveCastDto): Promise<GrooveCast> {
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() groovecast: CreateGrooveCastDto
+  ): Promise<GrooveCast> {
     return this.groovecastService.create(groovecast, image);
   }
-
-
 }
