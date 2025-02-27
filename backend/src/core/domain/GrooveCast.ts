@@ -1,7 +1,6 @@
-export class GrooveCast{
-    id: string;
+export class GrooveCast {
     soundcloudUrl: string;
     season: number;
-    imageUrl: string
+    imageUrl: string;
 }
 
