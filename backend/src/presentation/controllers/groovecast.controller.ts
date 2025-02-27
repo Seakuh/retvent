@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UploadedFile } from "@nestjs/common";
 import { GrooveCast } from "src/core/domain/GrooveCast";
 import { GroovecastService } from "src/infrastructure/services/groovecast.service";
-import CreateGrooveCastDto from "../dtos/create-groove-cast.dto";
+import { CreateGrooveCastDto } from "../dtos/create-groove-cast.dto";
 
 
 @Controller('groovecast')
@@ -21,7 +21,7 @@ export class GroovecastController {
   @Post()
   async create(@UploadedFile() image: Express.Multer.File,
     @Body() groovecast: CreateGrooveCastDto): Promise<GrooveCast> {
-    return this.groovecastService.create(groovecast, image));
+    return this.groovecastService.create(groovecast, image);
   }
 
 }
