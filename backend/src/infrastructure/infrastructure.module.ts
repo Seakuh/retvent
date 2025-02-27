@@ -25,6 +25,7 @@ import { JwtAuthGuard } from '../presentation/guards/jwt-auth.guard';
 import { OwnerGuard } from '../presentation/guards/owner.guard';
 import { EventMapper } from '../application/mappers/event.mapper';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
 
 @Module({
   imports: [
@@ -55,7 +56,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   controllers: [
     AuthController,
     LocationController,
-    EventController
+    EventController,
+    GroovecastController
   ],
   providers: [
     EventService,

@@ -62,7 +62,7 @@ jobs:
             echo 'MEETUP_API_KEY=${{ secrets.MEETUP_API_KEY }}' >> .env
             echo 'HETZNER_ACCESS_KEY'=${{secrets.HETZNER_ACCESS_KEY}} >> .env
             echo 'HETZNER_SECRET_KEY'=${{secrets.HETZNER_ACCESS_KEY}} >> .env
-            echo 'HETZNER_BUCKET_NAME'=${{secrets.HETZNER_ACCESS_KEY}} >> .env)
+            echo 'HETZNER_BUCKET_NAME'=${{secrets.HETZNER_ACCESS_KEY}} >> .env
             chmod 600 .env
             
             # Restart PM2 process
