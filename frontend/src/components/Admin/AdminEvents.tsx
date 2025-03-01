@@ -13,6 +13,7 @@ interface Event {
   city: string;
   category: string;
   price: string;
+  imageUrl?: string;
 }
 
 const AdminEvents: React.FC = () => {
@@ -66,6 +67,11 @@ const AdminEvents: React.FC = () => {
         <div className="events-grid">
           {events.map((event) => (
             <div key={event.id} className="event-card">
+              {event.imageUrl && (
+                <div className="event-image">
+                  <img src={event.imageUrl} alt={event.title} />
+                </div>
+              )}
               <div className="event-content">
                 <h3>{event.title}</h3>
                 <p>{event.description}</p>

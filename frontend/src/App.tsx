@@ -8,6 +8,7 @@ import AdminEvents from './components/Admin/AdminEvents';
 import CreateEvent from './components/Admin/CreateEvent';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { EventDetail } from './components/EventDetail/EventDetail';
+import EditEvent from './components/Admin/EditEvent';
 
 const App: React.FC = () => {
   return (
@@ -31,6 +32,11 @@ const App: React.FC = () => {
           <Route path="/admin/events/create" element={
             <ProtectedRoute>
               <CreateEvent />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/events/edit/:eventId" element={
+            <ProtectedRoute>
+              <EditEvent />
             </ProtectedRoute>
           } />
           <Route path="*" element={<LandingPage />} />
