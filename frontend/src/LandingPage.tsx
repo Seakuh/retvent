@@ -42,6 +42,10 @@ function LandingPage() {
     }
   };
 
+  const handleOnUpload = () => {
+    navigate('/admin/events');
+  };
+
   useEffect(() => {
     const loadEvents = async () => {
       setLoading(true);
@@ -121,13 +125,13 @@ function LandingPage() {
               <button
                 onClick={() => {
                   setShowUploads(!showUploads);
-                  loadUserEvents(); // Lade Events des Nutzers
+                  handleOnUpload(); // Lade Events des Nutzers
                   setShowMenu(false);
                 }}
                 className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
               >
                 <Upload size={20} />
-                {showUploads ? "Hide My Uploads" : "My Uploads"}
+                {showUploads ? "Hide My Events" : "My Events"}
               </button>
             </div>
           )}
