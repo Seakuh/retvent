@@ -19,6 +19,11 @@ const Dashboard: React.FC = () => {
           <h3>Create Event 🎪</h3>
           <p>Add a new event</p>
         </Link>
+
+        <Link to="/" className="dashboard-card">
+          <h3>Event-Scanner 📷 </h3>
+          <p>Go to the Landing Page</p>
+        </Link>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { EventList } from './components/EventList/EventList';
 import { ViewToggle } from './components/ViewToggle/ViewToggle';
 import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
 import { Event, ViewMode } from './types/event';
-import { Menu, Heart, Upload, LogIn } from 'lucide-react';
+import { Menu, Heart, Upload, LogIn, Hexagon } from 'lucide-react';
 import { EventScanner } from './components/EventScanner/Eventscanner';
 import { fetchLatestEvents, fetchUserEvents, searchEventsByCity } from './service';
 import { EventGallery } from './components/EventGallery/EventGallery';
@@ -110,7 +110,7 @@ function LandingPage() {
                 <LogIn size={20} />
                 <p>Login</p>
               </button>
-              <button
+              {/* <button
                 onClick={() => {
                   setShowFavorites(!showFavorites);
                   setShowMenu(false);
@@ -119,7 +119,18 @@ function LandingPage() {
               >
                 <Heart size={20} />
                 {showFavorites ? "Show All Events" : "Show Favorites"}
+              </button> */}
+              <button
+                onClick={() => {
+                  navigate('/admin/dashboard');
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+              >
+                <Hexagon size={20} />
+
+                <h3>Dashboard</h3>
               </button>
+
 
               {/* My Uploads Button */}
               <button
