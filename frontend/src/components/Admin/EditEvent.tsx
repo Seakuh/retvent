@@ -11,6 +11,7 @@ interface EditEventDto {
   city: string;
   category: string;
   price: string;
+  imageUrl?: string;
 }
 
 const EditEvent: React.FC = () => {
@@ -18,6 +19,8 @@ const EditEvent: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const eventService = new EventService();
 
   const [formData, setFormData] = useState<EditEventDto>({
@@ -28,6 +31,7 @@ const EditEvent: React.FC = () => {
     city: '',
     category: '',
     price: '',
+    imageUrl: '',
   });
 
   useEffect(() => {
@@ -45,7 +49,11 @@ const EditEvent: React.FC = () => {
         city: event.city,
         category: event.category,
         price: event.price,
+        imageUrl: event.imageUrl,
       });
+      if (event.imageUrl) {
+        setImagePreview(event.imageUrl);
+      }
     } catch (err) {
       setError('Failed to fetch event details 😢');
     } finally {
@@ -61,16 +69,46 @@ const EditEvent: React.FC = () => {
     }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      await eventService.updateEvent(eventId!, formData);
+      const formDataToSend = new FormData();
+      
+      // Append all form fields
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== undefined && value !== '' && key !== 'imageUrl') {
+          formDataToSend.append(key, value.toString());
+        }
+      });
+
+      // Append new image if selected
+      if (selectedFile) {
+        formDataToSend.append('image', selectedFile);
+      }
+
+      await eventService.updateEvent(eventId!, formDataToSend);
       navigate('/admin/events');
     } catch (err) {
       setError('Failed to update event 😢');
     }
+  };
+
+  const handleBack = () => {
+    navigate('/admin/events');
   };
 
   if (loading) return <div className="loading">Loading event details... ⌛</div>;
@@ -78,8 +116,33 @@ const EditEvent: React.FC = () => {
 
   return (
     <div className="edit-event-container">
+         <button onClick={handleBack} className="back-button">
+          ← Back to Events
+        </button>
       <h2>Edit Event ✏️</h2>
       <form onSubmit={handleSubmit} className="edit-event-form">
+        <div className="image-upload-section">
+          <div className="current-image">
+            {imagePreview ? (
+              <img src={imagePreview} alt="Event preview" className="image-preview" />
+            ) : (
+              <div className="no-image">No image selected 🖼️</div>
+            )}
+          </div>
+          <div className="image-upload-controls">
+            <label htmlFor="image" className="image-upload-btn">
+              Choose New Image 📸
+            </label>
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden-input"
+            />
+          </div>
+        </div>
+
         <div className="form-group">
           <label htmlFor="title">Title 📝</label>
           <input

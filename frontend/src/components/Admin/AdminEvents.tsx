@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Trash2, Edit } from "lucide-react";
+import { Trash2, Edit, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./AdminEvents.css";
 import { AdminService } from "./admin.service";
@@ -54,12 +54,31 @@ const AdminEvents: React.FC = () => {
     navigate(`/admin/events/edit/${eventId}`);
   };
 
+  const handleShare = (event: Event) => {
+    const eventUrl = `https://event-scanner.com/event/${event.id}`;
+    const messageText = encodeURIComponent(
+      `🎉 Check out this event: ${event.title}\n` +
+      `📍 ${event.city}\n` +
+      `📅 ${event.startDate} at ${event.startTime}\n` +
+      `💰 ${event.price}\n\n` +
+      `${eventUrl}`
+    );
+    window.open(`https://wa.me/?text=${messageText}`, '_blank');
+  };
+
   if (loading) {
     return <div className="loading">Loading events...</div>;
   }
 
+  const handleBack = () => {
+    navigate('/admin/dashboard');
+  };
+
   return (
     <div className="admin-events-container">
+         <button onClick={handleBack} className="back-button">
+          ← Back to Dashboard
+        </button>
       <h2>My Events 📅</h2>
       {events.length === 0 ? (
         <p className="no-events">No events found.</p>
@@ -69,7 +88,7 @@ const AdminEvents: React.FC = () => {
             <div key={event.id} className="event-card">
               {event.imageUrl && (
                 <div className="event-image">
-                  <img src={event.imageUrl} alt={event.title} />
+                  <img src={event.imageUrl} alt={event.title}   />
                 </div>
               )}
               <div className="event-content">
@@ -83,6 +102,9 @@ const AdminEvents: React.FC = () => {
                 </div>
               </div>
               <div className="event-actions">
+                <button onClick={() => handleShare(event)} className="share-btn">
+                  <Share2 size={20} />
+                </button>
                 <button onClick={() => handleEdit(event.id)} className="edit-btn">
                   <Edit size={20} />
                 </button>

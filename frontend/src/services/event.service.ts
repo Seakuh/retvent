@@ -94,12 +94,12 @@ export class EventService {
     }
   }
 
-  async updateEvent(eventId: string, updateEventDto: Partial<Event>): Promise<Event> {
+  async updateEvent(eventId: string, formData: FormData): Promise<Event> {
     try {
       const response = await fetch(`${this.baseUrl}/${eventId}`, {
         method: 'PUT',
-        headers: this.getHeaders(),
-        body: JSON.stringify(updateEventDto)
+        headers: this.getHeaders(true),
+        body: formData
       });
 
       if (!response.ok) {
