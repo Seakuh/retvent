@@ -1,6 +1,6 @@
 // src/services/admin.service.tsx
 
-const API_BASE_URL = "http://api.event-scanner.com/";
+const API_BASE_URL = "https://api.event-scanner.com/";
 
 export class AdminService {
   private token: string | null;

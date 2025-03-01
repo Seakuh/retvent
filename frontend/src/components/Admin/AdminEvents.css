@@ -1,0 +1,81 @@
+/* src/components/AdminEvents.css */
+
+.admin-events-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 1rem;
+  }
+  
+  h2 {
+    text-align: center;
+  }
+  
+  .loading,
+  .no-events {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+  }
+  
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .event-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .event-content h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .event-content p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  .event-details {
+    font-size: 0.9rem;
+    color: #777;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+  }
+  
+  .event-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  .edit-btn,
+  .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: 0.3s;
+  }
+  
+  .edit-btn {
+    color: #007bff;
+  }
+  
+  .delete-btn {
+    color: #dc3545;
+  }
+  

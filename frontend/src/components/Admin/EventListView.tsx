@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Trash2, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import "./AdminEvents.css";
+import "./EventListView.css";
 import { AdminService } from "./admin.service";
 
 interface Event {
@@ -10,12 +10,9 @@ interface Event {
   description: string;
   startDate: string;
   startTime: string;
-  city: string;
-  category: string;
-  price: string;
 }
 
-const AdminEvents: React.FC = () => {
+export const EventListView: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -29,8 +26,7 @@ const AdminEvents: React.FC = () => {
     try {
       const id = JSON.parse(localStorage.getItem("user")!).id;
       const hostEvents = await adminService.getHostEvents(id);
-      console.log(hostEvents.events);
-      setEvents(hostEvents.events);
+      setEvents(hostEvents);
     } catch (error) {
       console.error("Failed to fetch events:", error);
     } finally {
@@ -58,38 +54,40 @@ const AdminEvents: React.FC = () => {
   }
 
   return (
-    <div className="admin-events-container">
+    <div className="event-list-container">
       <h2>My Events 📅</h2>
       {events.length === 0 ? (
         <p className="no-events">No events found.</p>
       ) : (
-        <div className="events-grid">
+        <ul className="event-list">
           {events.map((event) => (
-            <div key={event.id} className="event-card">
-              <div className="event-content">
+            <li key={event.id} className="event-item">
+              <div className="event-info">
                 <h3>{event.title}</h3>
                 <p>{event.description}</p>
                 <div className="event-details">
-                  <span>📍 {event.city}</span>
                   <span>📅 {event.startDate}</span>
                   <span>⏰ {event.startTime}</span>
-                  <span>💰 {event.price}</span>
                 </div>
               </div>
               <div className="event-actions">
-                <button onClick={() => handleEdit(event.id)} className="edit-btn">
+                <button
+                  onClick={() => handleEdit(event.id)}
+                  className="edit-btn"
+                >
                   <Edit size={20} />
                 </button>
-                <button onClick={() => handleDelete(event.id)} className="delete-btn">
+                <button
+                  onClick={() => handleDelete(event.id)}
+                  className="delete-btn"
+                >
                   <Trash2 size={20} />
                 </button>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
 };
-
-export default AdminEvents;

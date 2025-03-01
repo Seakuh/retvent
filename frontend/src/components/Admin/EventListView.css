@@ -1,0 +1,27 @@
+/* src/components/EventsListView.css */
+.events-list-view {
+    padding: 1rem;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .events-list-view h2 {
+    text-align: center;
+  }
+  
+  .event-item {
+    border: 1px solid #ccc;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 4px;
+    background: #f9f9f9;
+  }
+  
+  .event-item h3 {
+    margin: 0 0 0.5rem;
+  }
+  
+  .event-item p {
+    margin: 0 0 0.5rem;
+  }
+  
