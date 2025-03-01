@@ -23,10 +23,12 @@ interface EventResponse {
 }
 
 export const EventDetail: React.FC = () => {
-  const { eventid } = useParams<{ eventid: string }>();
+  const params = useParams();
+  const eventid = params.eventId;
   const [event, setEvent] = useState<EventResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchEvent = async () => {
