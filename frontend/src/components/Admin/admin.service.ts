@@ -1,24 +1,27 @@
+// src/services/admin.service.tsx
+
+const API_BASE_URL = "http://api.event-scanner.com/";
+
 export class AdminService {
   private token: string | null;
 
   constructor() {
-    this.token = localStorage.getItem('token');
+    this.token = localStorage.getItem("access_token");
   }
 
   private getHeaders() {
     return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.token}`
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.token}`,
     };
   }
 
-  async getHostEvents() {
+  async getHostEvents(hostId: string) {
     try {
-      const response = await fetch('api/events/host', {
-        headers: this.getHeaders()
+      const response = await fetch(`${API_BASE_URL}events/host/id/${hostId}`, {
+        headers: this.getHeaders(),
       });
-      
-      if (!response.ok) throw new Error('Failed to fetch events');
+      if (!response.ok) throw new Error("Failed to fetch events");
       return await response.json();
     } catch (error) {
       throw error;
@@ -27,12 +30,14 @@ export class AdminService {
 
   async deleteEvent(eventId: string) {
     try {
-      const response = await fetch(`api/events/${eventId}`, {
-        method: 'DELETE',
-        headers: this.getHeaders()
-      });
-      
-      if (!response.ok) throw new Error('Failed to delete event');
+      const response = await fetch(
+        `${API_BASE_URL}events/${eventId}`,
+        {
+          method: "DELETE",
+          headers: this.getHeaders(),
+        }
+      );
+      if (!response.ok) throw new Error("Failed to delete event");
       return true;
     } catch (error) {
       throw error;
@@ -41,16 +46,18 @@ export class AdminService {
 
   async updateEvent(eventId: string, eventData: any) {
     try {
-      const response = await fetch(`api/events/${eventId}`, {
-        method: 'PUT',
-        headers: this.getHeaders(),
-        body: JSON.stringify(eventData)
-      });
-      
-      if (!response.ok) throw new Error('Failed to update event');
+      const response = await fetch(
+        `${API_BASE_URL}events/${eventId}`,
+        {
+          method: "PUT",
+          headers: this.getHeaders(),
+          body: JSON.stringify(eventData),
+        }
+      );
+      if (!response.ok) throw new Error("Failed to update event");
       return await response.json();
     } catch (error) {
       throw error;
     }
   }
-} 
+}

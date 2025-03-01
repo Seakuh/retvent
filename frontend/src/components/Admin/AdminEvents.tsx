@@ -26,7 +26,9 @@ const AdminEvents: React.FC = () => {
 
   const fetchHostEvents = async () => {
     try {
-      const hostEvents = await adminService.getHostEvents();
+      const id = JSON.parse(localStorage.getItem("user")!).id;
+
+      const hostEvents = await adminService.getHostEvents(id);
       setEvents(hostEvents);
     } catch (error) {
       console.error('Failed to fetch events:', error);
@@ -65,13 +67,13 @@ const AdminEvents: React.FC = () => {
               </div>
             </div>
             <div className="event-actions">
-              <button 
+              <button
                 onClick={() => handleEdit(event.id)}
                 className="edit-btn"
               >
                 <Edit size={20} />
               </button>
-              <button 
+              <button
                 onClick={() => handleDelete(event.id)}
                 className="delete-btn"
               >

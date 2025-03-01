@@ -1,5 +1,9 @@
 .admin-events-container {
   padding: 2rem;
+  background-color: #007bff;
+  color: white;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .events-grid {
@@ -117,6 +121,8 @@
 
 .dashboard-container {
   padding: 2rem;
+  background-color: #007bff;
+  color: white;
   max-width: 1200px;
   margin: 0 auto;
 }
