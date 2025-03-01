@@ -23,7 +23,9 @@
     "seed": "ts-node src/infrastructure/seeds/seed.ts",
     "test:integration:watch": "jest --config jest.integration.config.js --runInBand --watch",
     "test:edit": "jest event-edit.spec.ts",
-    "test:edit:watch": "jest event-edit.spec.ts --watch"
+    "test:edit:watch": "jest event-edit.spec.ts --watch",
+    "test:organiser": "jest src/organiser --coverage",
+    "test:organiser:watch": "jest src/organiser --watch"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.750.0",
