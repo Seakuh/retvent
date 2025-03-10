@@ -14,7 +14,7 @@ export class Event implements IEvent {
   startTime: string;
   endDate?: Date;
   endTime?: string;
-  
+
   // Beziehungen
   hostId: string;
   hostUsername?: string;

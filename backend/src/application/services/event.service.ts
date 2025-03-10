@@ -137,35 +137,21 @@ export class EventService {
       }
 
       // 3. Get city from coordinates if available
-      let city = undefined;
-      let location = undefined;
-
-      if (lat && lon) {
-        try {
-          city = await this.geolocationService.getReverseGeocoding(lat, lon);
-
-          // Format location as GeoJSON
-          location = {
-            type: 'Point',
-            coordinates: [lon, lat], // MongoDB expects [longitude, latitude]
-            city,
-          };
-        } catch (error) {
-          console.warn('Failed to get city from coordinates:', error);
-          // Still save coordinates even if city lookup fails
-          location = {
-            type: 'Point',
-            coordinates: [lon, lat],
-          };
-        }
-      }
+      const location =
+        lat && lon
+          ? {
+              coordinates: {
+                lat,
+                lng: lon,
+              },
+            }
+          : undefined;
 
       // 4. Create event with all available data
       const eventData = {
         ...extractedEventData,
         imageUrl: uploadedImageUrl,
         location,
-        city,
         createdAt: new Date(),
         updatedAt: new Date(),
         status: 'pending',
