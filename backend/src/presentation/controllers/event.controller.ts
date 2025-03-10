@@ -1,11 +1,28 @@
-import { Body, Controller, Get, Param, Post, Query, Request, Put, Delete, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, BadRequestException, NotFoundException, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  InternalServerErrorException,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+  Query,
+  Request,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
 import { ImageService } from '../../infrastructure/services/image.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UpdateEventDto } from '../dtos/update-event.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('events')
 export class EventController {
@@ -13,18 +30,20 @@ export class EventController {
     // private readonly meetupService: MeetupService,
     private readonly eventService: EventService,
     private readonly eventMapper: EventMapper,
-    private readonly imageService: ImageService
-  ) { }
+    private readonly imageService: ImageService,
+  ) {}
 
   @Get('search/plattforms')
-  async searchEventPlattforms(@Query('query') query: string, @Query('location') location?: string): Promise<any> {
+  async searchEventPlattforms(
+    @Query('query') query: string,
+    @Query('location') location?: string,
+  ): Promise<any> {
     const params = { query, location };
     console.info('Searching for events with params:', params);
     // const meetupEvents = await this.meetupService.searchEvents(params);
     // const chatGPTEvents = await this.chatGPTService.searchEvents(params);
     // return [...meetupEvents, ...chatGPTEvents];
     // return [...meetupEvents];
-
   }
 
   @Post('upload/event-image')
@@ -33,9 +52,12 @@ export class EventController {
     @UploadedFile() image: Express.Multer.File,
     @Body() body: { uploadLat?: number; uploadLon?: number },
   ) {
-    return this.eventService.processEventImageUpload(image, body.uploadLat, body.uploadLon);
+    return this.eventService.processEventImageUpload(
+      image,
+      body.uploadLat,
+      body.uploadLon,
+    );
   }
-
 
   // @Post('upload')
   // async uploadEvent(@Body() body: { imageUrl: string; lat?: number; lon?: number }) {
@@ -43,21 +65,19 @@ export class EventController {
   // }
 
   @Post('upload/event')
-  async uploadEvent(@Body() body: {}) {
-
-  }
+  async uploadEvent(@Body() body: {}) {}
 
   @Get('search')
   async searchEvents(
     @Query('query') query?: string,
     @Query('city') city?: string,
     @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string
+    @Query('endDate') endDate?: string,
   ) {
     const searchParams = {
       query,
       city,
-      dateRange: startDate && endDate ? { startDate, endDate } : undefined
+      dateRange: startDate && endDate ? { startDate, endDate } : undefined,
     };
     return this.eventService.searchEvents(searchParams);
   }
@@ -65,7 +85,9 @@ export class EventController {
   @Get('search/city')
   async searchByCity(@Query('query') city: string) {
     if (!city || city.length < 2) {
-      throw new BadRequestException('City query must be at least 2 characters long');
+      throw new BadRequestException(
+        'City query must be at least 2 characters long',
+      );
     }
     return this.eventService.searchByCity(city);
   }
@@ -81,20 +103,19 @@ export class EventController {
   }
 
   /**
- * Gibt die neuesten 30 Events zurück, sortiert nach Erstellungsdatum.
- */
+   * Gibt die neuesten 30 Events zurück, sortiert nach Erstellungsdatum.
+   */
   @Get('latest')
   async getLatestEvents(@Query('limit') limit: number = 10) {
     const events = await this.eventService.findLatest(limit);
     return { events };
   }
 
-
   @Get('nearby')
   async getNearbyEvents(
     @Query('lat') lat: string,
     @Query('lon') lon: string,
-    @Query('distance') distance: string = '10'
+    @Query('distance') distance: string = '10',
   ) {
     const latNum = parseFloat(lat);
     const lonNum = parseFloat(lon);
@@ -117,7 +138,6 @@ export class EventController {
     return this.eventService.getUserFavorites(eventIds);
   }
 
-
   // HOST EVENTS ------------------------------------------------------
   @Get('host/:username')
   @UseGuards(JwtAuthGuard)
@@ -125,16 +145,21 @@ export class EventController {
     return this.eventService.findEventsByHost(username);
   }
 
+  @Get('host/:username/latest')
+  async getLatestEventsByHost(@Param('username') username: string) {
+    return this.eventService.findLatestEventsByHost(username);
+  }
+
   @Get('host/id/:hostId')
   async getEventsByHostId(
     @Param('hostId') hostId: string,
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10
+    @Query('limit') limit: number = 10,
   ) {
     const skip = (page - 1) * limit;
     const [events, total] = await Promise.all([
       this.eventService.findByHostId(hostId, skip, limit),
-      this.eventService.countByHostId(hostId)
+      this.eventService.countByHostId(hostId),
     ]);
 
     return {
@@ -143,8 +168,8 @@ export class EventController {
         total,
         page,
         limit,
-        pages: Math.ceil(total / limit)
-      }
+        pages: Math.ceil(total / limit),
+      },
     };
   }
 
@@ -155,7 +180,7 @@ export class EventController {
   async createEvent(
     @Request() req,
     @Body() eventData: CreateEventDto,
-    @UploadedFile() image?: Express.Multer.File
+    @UploadedFile() image?: Express.Multer.File,
   ) {
     const parsedData = this.eventMapper.toEntity(eventData, req.user.id);
     const event = await this.eventService.createEvent(parsedData, image);
@@ -209,12 +234,12 @@ export class EventController {
   async getEventsByCity(
     @Param('city') city: string,
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10
+    @Query('limit') limit: number = 10,
   ) {
     const skip = (page - 1) * limit;
     const [events, total] = await Promise.all([
       this.eventService.findByCity(city, skip, limit),
-      this.eventService.countByCity(city)
+      this.eventService.countByCity(city),
     ]);
 
     return {
@@ -223,15 +248,13 @@ export class EventController {
         total,
         page,
         limit,
-        pages: Math.ceil(total / limit)
-      }
+        pages: Math.ceil(total / limit),
+      },
     };
   }
 
   @Get('locations/popular')
-  async getPopularLocations(
-    @Query('limit') limit: number = 10
-  ) {
+  async getPopularLocations(@Query('limit') limit: number = 10) {
     return this.eventService.getPopularCities(limit);
   }
 
@@ -240,11 +263,11 @@ export class EventController {
   async updateEvent(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
-    @Request() req
+    @Request() req,
   ) {
     try {
       const event = await this.eventService.findById(id);
-      
+
       if (!event) {
         throw new NotFoundException('Event not found');
       }
@@ -264,13 +287,10 @@ export class EventController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async deleteEvent(
-    @Param('id') id: string,
-    @Request() req
-  ) {
+  async deleteEvent(@Param('id') id: string, @Request() req) {
     try {
       const event = await this.eventService.findById(id);
-      
+
       if (!event) {
         throw new NotFoundException('Event not found');
       }
@@ -292,4 +312,3 @@ export class EventController {
     }
   }
 }
-

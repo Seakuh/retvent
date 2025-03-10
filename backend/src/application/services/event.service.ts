@@ -1,10 +1,10 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
+import { GeolocationService } from 'src/infrastructure/services/geolocation.service';
+import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
 import { ImageService } from '../../infrastructure/services/image.service';
-import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
-import { GeolocationService } from 'src/infrastructure/services/geolocation.service';
-import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 @Injectable()
 export class EventService {
   constructor(
@@ -13,12 +13,15 @@ export class EventService {
     private readonly chatGptService: ChatGPTService,
     private readonly geolocationService: GeolocationService,
   ) {}
-  
-  
+
+  findLatestEventsByHost(username: string) {
+    return this.eventRepository.findLatestEventsByHost(username);
+  }
+
   searchByCity(city: string) {
     return this.eventRepository.searchByCity(city);
   }
-  
+
   async findAll(): Promise<Event[]> {
     return this.eventRepository.findAll();
   }
@@ -43,7 +46,11 @@ export class EventService {
     return this.eventRepository.findLatest(limit);
   }
 
-  async findByCategory(category: string, skip: number = 0, limit: number = 10): Promise<Event[]> {
+  async findByCategory(
+    category: string,
+    skip: number = 0,
+    limit: number = 10,
+  ): Promise<Event[]> {
     return this.eventRepository.findByCategory(category, skip, limit);
   }
 
@@ -51,7 +58,11 @@ export class EventService {
     return this.eventRepository.countByCategory(category);
   }
 
-  async findNearbyEvents(lat: number, lon: number, distance: number): Promise<Event[]> {
+  async findNearbyEvents(
+    lat: number,
+    lon: number,
+    distance: number,
+  ): Promise<Event[]> {
     return this.eventRepository.findNearbyEvents(lat, lon, distance);
   }
 
@@ -63,10 +74,13 @@ export class EventService {
     return this.eventRepository.create(eventData);
   }
 
-  async createEvent(eventData: Partial<Event>, image?: Express.Multer.File): Promise<Event> {
+  async createEvent(
+    eventData: Partial<Event>,
+    image?: Express.Multer.File,
+  ): Promise<Event> {
     try {
       let imageUrl = undefined;
-      
+
       if (image) {
         imageUrl = await this.imageService.uploadImage(image);
       }
@@ -74,7 +88,7 @@ export class EventService {
         ...eventData,
         imageUrl,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       return this.eventRepository.create(eventWithImage);
@@ -99,10 +113,14 @@ export class EventService {
     return this.eventRepository.removeLike(eventId, userId);
   }
 
-  async processEventImageUpload(image: Express.Multer.File, lat?: number, lon?: number): Promise<Event> {
+  async processEventImageUpload(
+    image: Express.Multer.File,
+    lat?: number,
+    lon?: number,
+  ): Promise<Event> {
     try {
       console.info('Processing event image upload...');
-      
+
       // 1. Upload image and get URL
       const uploadedImageUrl = await this.imageService.uploadImage(image);
       if (!uploadedImageUrl) {
@@ -112,7 +130,8 @@ export class EventService {
       // 2. Try to extract event data from image, but don't fail if it doesn't work
       let extractedEventData = {};
       try {
-        extractedEventData = await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
+        extractedEventData =
+          await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
       } catch (error) {
         console.warn('Failed to extract event data from image:', error);
       }
@@ -120,11 +139,11 @@ export class EventService {
       // 3. Get city from coordinates if available
       let city = undefined;
       let location = undefined;
-      
+
       if (lat && lon) {
         try {
           city = await this.geolocationService.getReverseGeocoding(lat, lon);
-          
+
           // Format location as GeoJSON
           location = {
             type: 'Point',
@@ -149,19 +168,24 @@ export class EventService {
         city,
         createdAt: new Date(),
         updatedAt: new Date(),
-        status: 'pending'
+        status: 'pending',
       };
 
       const createdEvent = await this.eventRepository.create(eventData);
       return createdEvent;
-      
     } catch (error) {
       console.error('Failed to process event image upload:', error);
-      throw new BadRequestException(`Failed to process event image: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to process event image: ${error.message}`,
+      );
     }
   }
 
-  async processEventImage(imageUrl: string, lat?: number, lon?: number): Promise<any> {
+  async processEventImage(
+    imageUrl: string,
+    lat?: number,
+    lon?: number,
+  ): Promise<any> {
     // Implementiere die Bildverarbeitung
     throw new BadRequestException('Not implemented yet');
   }
@@ -174,7 +198,11 @@ export class EventService {
     return this.eventRepository.searchEvents(params);
   }
 
-  async findByHostId(hostId: string, skip: number = 0, limit: number = 10): Promise<Event[]> {
+  async findByHostId(
+    hostId: string,
+    skip: number = 0,
+    limit: number = 10,
+  ): Promise<Event[]> {
     return this.eventRepository.findByHostId(hostId, skip, limit);
   }
 
@@ -182,7 +210,11 @@ export class EventService {
     return this.eventRepository.findByHostUsername(username);
   }
 
-  async findByCity(city: string, skip: number = 0, limit: number = 10): Promise<Event[]> {
+  async findByCity(
+    city: string,
+    skip: number = 0,
+    limit: number = 10,
+  ): Promise<Event[]> {
     return this.eventRepository.findByCity(city, skip, limit);
   }
 
@@ -190,12 +222,13 @@ export class EventService {
     return this.eventRepository.countByCity(city);
   }
 
-  async getPopularCities(limit: number = 10): Promise<{ city: string; count: number }[]> {
+  async getPopularCities(
+    limit: number = 10,
+  ): Promise<{ city: string; count: number }[]> {
     return this.eventRepository.getPopularCities(limit);
   }
 
   async countByHostId(hostId: string): Promise<number> {
     return this.eventRepository.countByHostId(hostId);
   }
-
-} 
+}
