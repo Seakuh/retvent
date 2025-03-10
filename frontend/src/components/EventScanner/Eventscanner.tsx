@@ -1,11 +1,10 @@
+import { Upload } from "lucide-react";
 import React, { useRef, useState } from "react";
+import { Navigate } from "react-router-dom";
+import ErrorDialog from "../ErrorDialog/ErrorDialog";
+import { UploadAnimation } from "../UploadAnimation/UploadAnimation";
 import "./Eventscanner.css";
 import { uploadEventImage } from "./service";
-import UploadedEventCard from "../UploadedEventCard/UploadedEventCard";
-import ErrorDialog from "../ErrorDialog/ErrorDialog";
-import { Upload } from "lucide-react";
-import { Navigate } from "react-router-dom";
-import { UploadAnimation } from "../UploadAnimation/UploadAnimation";
 
 export const EventScanner: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -14,42 +13,54 @@ export const EventScanner: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files && event.target.files.length > 0) {
       const image = event.target.files[0];
 
       setIsUploading(true);
-      setProgress(0);
+      setProgress(25);
       setError(null);
 
+      // Funktion zur zufälligen Progress-Erhöhung zwischen 2 und 5
+      const getRandomProgress = () => Math.floor(Math.random() * 4) + 5; // 2 bis 5
+
+      // Progress in einem separaten Interval hochzählen
+      let isUploading = true;
+
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 95 || !isUploading) {
+            return prev; // Nicht über 95% hinausgehen, um Platz für den finalen Sprung zu lassen
+          }
+          return Math.min(prev + getRandomProgress(), 95);
+        });
+      }, 300); // Alle 300ms den Progress zufällig erhöhen
+
       try {
-        // Erst nach kurzer Verzögerung auf 75% springen
-        setTimeout(() => setProgress(75), 300);
-        
         const eventResponse = await uploadEventImage(image);
 
         if (!eventResponse) {
-          setError("Das Bild konnte nicht erkannt werden. Bitte versuche es mit einem anderen Bild.");
+          setError(
+            "Das Bild konnte nicht erkannt werden. Bitte versuche es mit einem anderen Bild."
+          );
         } else {
-          // Progress bis 100 und dann erst Navigation
-          await new Promise<void>((resolve) => {
-            const interval = setInterval(() => {
-              setProgress(prev => {
-                if (prev >= 100) {
-                  clearInterval(interval);
-                  resolve();
-                  return 100;
-                }
-                return prev + 5;
-              });
-            }, 200); // Langsamerer Intervall für smoothere Animation
-          });
-          
+          isUploading = false; // Beende die Progress-Animation
+          clearInterval(interval); // Interval stoppen
+
+          // Schnell auf 100% setzen für eine realistische Animation
+          setProgress(100);
+
           setUploadedEvent(eventResponse);
         }
       } catch (err) {
-        setError("Es gab ein Problem beim Hochladen des Bildes. Versuche es später erneut.");
+        setError(
+          "Es gab ein Problem beim Hochladen des Bildes. Versuche es später erneut."
+        );
       } finally {
+        isUploading = false;
+        clearInterval(interval);
         setIsUploading(false);
       }
     }
@@ -63,7 +74,10 @@ export const EventScanner: React.FC = () => {
 
   return (
     <div className="event-scanner">
-      <button className="retro-button flex items-center gap-2" onClick={triggerFileInput}>
+      <button
+        className="retro-button flex items-center gap-2"
+        onClick={triggerFileInput}
+      >
         <Upload size={35} />
         Upload Event
       </button>
@@ -72,7 +86,8 @@ export const EventScanner: React.FC = () => {
         accept="image/*"
         ref={fileInputRef}
         style={{ display: "none" }}
-        onChange={handleFileChange} />
+        onChange={handleFileChange}
+      />
       {/* Upload Progressbar */}
       {isUploading && (
         <UploadAnimation isUploading={isUploading} progress={progress} />
