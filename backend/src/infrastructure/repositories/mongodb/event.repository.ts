@@ -11,7 +11,7 @@ export class MongoEventRepository implements IEventRepository {
   findLatestEventsByHost(username: string) {
     return this.eventModel
       .find({
-        hostUsername: username,
+        id: username,
       })
       .sort({ createdAt: -1 })
       .limit(1)
