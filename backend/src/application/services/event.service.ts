@@ -151,7 +151,7 @@ export class EventService {
       const eventData = {
         ...extractedEventData,
         imageUrl: uploadedImageUrl,
-        location,
+        location: location,
         createdAt: new Date(),
         updatedAt: new Date(),
         status: 'pending',
