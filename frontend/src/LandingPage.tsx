@@ -1,15 +1,19 @@
-import { useEffect, useState } from 'react';
-import { SearchBar } from './components/SearchBar/SearchBar';
-import { EventList } from './components/EventList/EventList';
-import { ViewToggle } from './components/ViewToggle/ViewToggle';
-import { CategoryFilter } from './components/CategoryFilter/CategoryFilter';
-import { Event, ViewMode } from './types/event';
-import { Menu, Heart, Upload, LogIn, Hexagon } from 'lucide-react';
-import { EventScanner } from './components/EventScanner/Eventscanner';
-import { fetchLatestEvents, fetchUserEvents, searchEventsByCity } from './service';
-import { EventGallery } from './components/EventGallery/EventGallery';
-import { useNavigate } from 'react-router-dom';
-
+import { Hexagon, LogIn, Menu, Upload } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
+import { EventGallery } from "./components/EventGallery/EventGallery";
+import { EventList } from "./components/EventList/EventList";
+import { EventScanner } from "./components/EventScanner/Eventscanner";
+import { MapView } from "./components/MapView/MapView";
+import { SearchBar } from "./components/SearchBar/SearchBar";
+import { ViewToggle } from "./components/ViewToggle/ViewToggle";
+import {
+  fetchLatestEvents,
+  fetchUserEvents,
+  searchEventsByCity,
+} from "./service";
+import { Event, ViewMode } from "./types/event";
 
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -17,7 +21,7 @@ function LandingPage() {
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showFavorites, setShowFavorites] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [showUploads, setShowUploads] = useState(false);
   const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
@@ -36,14 +40,14 @@ function LandingPage() {
       const searchResults = await searchEventsByCity(keyword);
       setEvents(searchResults as Event[]);
     } catch (error) {
-      console.error('Error searching events:', error);
+      console.error("Error searching events:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleOnUpload = () => {
-    navigate('/admin/events');
+    navigate("/admin/events");
   };
 
   useEffect(() => {
@@ -51,11 +55,11 @@ function LandingPage() {
       setLoading(true);
       try {
         const latestEvents = await fetchLatestEvents();
-        console.log('Raw API response:', latestEvents);
+        console.log("Raw API response:", latestEvents);
         if (Array.isArray(latestEvents) && latestEvents.length > 0) {
           setEvents(latestEvents.reverse());
         } else {
-          console.warn('Received empty or invalid events array:', latestEvents);
+          console.warn("Received empty or invalid events array:", latestEvents);
         }
       } catch (err) {
         console.error("Fehler beim Laden der Events:", err);
@@ -68,7 +72,7 @@ function LandingPage() {
   }, []);
 
   const toggleFavorite = (eventId: string) => {
-    setFavorites(prev => {
+    setFavorites((prev) => {
       const newFavorites = new Set(prev);
       if (newFavorites.has(eventId)) {
         newFavorites.delete(eventId);
@@ -77,6 +81,10 @@ function LandingPage() {
       }
       return newFavorites;
     });
+  };
+
+  const handleMarkerClick = (event: Event) => {
+    navigate(`/event/${event._id}`);
   };
 
   return (
@@ -103,7 +111,7 @@ function LandingPage() {
               {/* Login Button */}
               <button
                 onClick={() => {
-                  navigate('/login');
+                  navigate("/login");
                 }}
                 className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
               >
@@ -122,7 +130,7 @@ function LandingPage() {
               </button> */}
               <button
                 onClick={() => {
-                  navigate('/admin/dashboard');
+                  navigate("/admin/dashboard");
                 }}
                 className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
               >
@@ -130,7 +138,6 @@ function LandingPage() {
 
                 <h3>Dashboard</h3>
               </button>
-
 
               {/* My Uploads Button */}
               <button
@@ -146,8 +153,6 @@ function LandingPage() {
               </button>
             </div>
           )}
-
-
         </div>
       </header>
 
@@ -181,6 +186,8 @@ function LandingPage() {
               <p>We couldn't find any events in this city</p>
             </div>
           </div>
+        ) : viewMode === "map" ? (
+          <MapView onMarkerClick={handleMarkerClick} />
         ) : (
           <EventGallery
             events={events}
@@ -191,14 +198,18 @@ function LandingPage() {
 
         {showUploads && (
           <div className="mt-4">
-            <h2 className="text-xl font-bold text-white">Meine hochgeladenen Events</h2>
+            <h2 className="text-xl font-bold text-white">
+              Meine hochgeladenen Events
+            </h2>
             {userEvents.length === 0 ? (
               <p className="text-white">Keine hochgeladenen Events gefunden.</p>
             ) : (
               <EventList
                 events={userEvents}
                 onToggleFavorite={toggleFavorite}
-                onAddToCalendar={(event) => console.log('Add to calendar:', event)}
+                onAddToCalendar={(event) =>
+                  console.log("Add to calendar:", event)
+                }
                 favorites={favorites}
               />
             )}
@@ -210,4 +221,3 @@ function LandingPage() {
 }
 
 export default LandingPage;
-

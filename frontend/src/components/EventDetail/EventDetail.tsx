@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { Calendar, Clock, MapPin } from 'lucide-react';
-import './EventDetail.css';
-import TicketButton from '../Buttons/TicketButton';
+import axios from "axios";
+import { Calendar, Clock, MapPin } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import TicketButton from "../Buttons/TicketButton";
+import "./EventDetail.css";
 
-const DEFAULT_IMAGE = 'https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png';
+const DEFAULT_IMAGE =
+  "https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png";
 
 interface Location {
   city: string;
@@ -29,17 +30,18 @@ export const EventDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const fetchEvent = async () => {
       if (!eventid) return;
-      
+
       try {
-        const response = await axios.get(`https://api.event-scanner.com/events/byId?id=${eventid}`);
-        console.log('API Response:', response.data);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}events/byId?id=${eventid}`
+        );
+        console.log("API Response:", response.data);
         setEvent(response.data);
       } catch (error) {
-        console.error('Failed to fetch event:', error);
+        console.error("Failed to fetch event:", error);
       } finally {
         setLoading(false);
       }
@@ -63,9 +65,9 @@ export const EventDetail: React.FC = () => {
   return (
     <div className="event-detail">
       <div className="event-hero">
-        <img 
-          src={event.imageUrl || DEFAULT_IMAGE} 
-          alt={event.title} 
+        <img
+          src={event.imageUrl || DEFAULT_IMAGE}
+          alt={event.title}
           className="event-image"
         />
         <button onClick={() => navigate(-1)} className="back-button">
@@ -75,7 +77,7 @@ export const EventDetail: React.FC = () => {
 
       <div className="event-content">
         <h1 className="event-title">{event.title}</h1>
-        
+
         <div className="event-info-section">
           {event.date && (
             <div className="event-info">
@@ -102,9 +104,7 @@ export const EventDetail: React.FC = () => {
 
         {event.price && (
           <div className="event-info-section">
-            <div className="event-price">
-              Ticket Price: {event.price}
-            </div>
+            <div className="event-price">Ticket Price: {event.price}</div>
           </div>
         )}
 
@@ -116,4 +116,4 @@ export const EventDetail: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};
