@@ -2,6 +2,7 @@ import { Upload } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import ErrorDialog from "../ErrorDialog/ErrorDialog";
+import { ProcessingAnimation } from "../ProcessingAnimation/ProcessingAnimation";
 import { UploadAnimation } from "../UploadAnimation/UploadAnimation";
 import "./Eventscanner.css";
 import { uploadEventImage } from "./service";
@@ -12,7 +13,7 @@ export const EventScanner: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-
+  const [isProcessing, setIsProcessing] = useState(false);
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -32,6 +33,7 @@ export const EventScanner: React.FC = () => {
       const interval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 95 || !isUploading) {
+            setIsProcessing(true);
             return prev; // Nicht über 95% hinausgehen, um Platz für den finalen Sprung zu lassen
           }
           return Math.min(prev + getRandomProgress(), 95);
@@ -62,6 +64,7 @@ export const EventScanner: React.FC = () => {
         isUploading = false;
         clearInterval(interval);
         setIsUploading(false);
+        setIsProcessing(false);
       }
     }
   };
@@ -92,7 +95,7 @@ export const EventScanner: React.FC = () => {
       {isUploading && (
         <UploadAnimation isUploading={isUploading} progress={progress} />
       )}
-
+      {isProcessing && <ProcessingAnimation />}
       {/* Hochgeladenes Event in Fullscreen anzeigen */}
       {uploadedEvent && <Navigate to={`/event/${uploadedEvent.id}`} />}
 
