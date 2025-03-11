@@ -54,25 +54,27 @@ export class ChatGPTService {
             content: [
               {
                 type: 'text',
-                text: `Lies den Inhalt dieses Event-Flyers und extrahiere die wichtigsten Informationen. Interpretiere die Beschreibung, um sinnvolle Details in das Event-Objekt einzufügen.
+                text: `Extract the key information from the provided event flyer and generate a structured JSON object based on the following rules:
 
-**Extraktionsregeln:**
-- Extrahiere folgende Informationen:
-  - **Titel (title)**: Name des Events
-  - **Beschreibung (description)**: Zusammenfassung, die den Flyer-Text interpretiert und wesentliche Informationen zusammenfasst
-  - **Startdatum (startDate)**: Im Format YYYY-MM-DD sollte  es kein start datum geben setze es auf heute
-  - **Startzeit (startTime)**: Im Format HH:mm sollte es keine start zeit geben setze es auf 8:00
-  - **Bild-URL (imageUrl)**: Falls vorhanden, extrahiere das Hauptbild des Flyers
-  - **Stadt (city)**: Ort des Events
-  - **Kategorie (category)**: Falls das Event einem bestimmten Genre oder Typ zugeordnet werden kann (z. B. Konzert, Ausstellung, Workshop)
-  - **Eintrittspreis (price)**: Falls vorhanden, gib den Preis an
-  - **Ticket-Link (ticketLink)**: Falls angegeben, extrahiere die URL für Ticketkäufe
-  - **Line-Up (lineup)**: Falls Künstler oder Sprecher erwähnt werden, extrahiere ihre Namen mit ggf. Rollen und Startzeiten
-  - **Social Media Links (socialMediaLinks)**: Falls Social Media Links vorhanden sind, extrahiere Instagram, Facebook oder Twitter
+### Extraction Rules:
+- **Title (title)**: Extract the event name.
+- **Description (description)**: Summarize the event flyer text concisely, capturing essential details.
+- **Start Date (startDate)**: If no date is provided, set it to today's date in YYYY-MM-DD format.
+- **Start Time (startTime)**: If no time is mentioned, default to "08:00" in HH:mm format.
+- **Image URL (imageUrl)**: Extract the main image URL if available; otherwise, leave it empty.
+- **City (city)**: Identify the event's location (city).
+- **Category (category)**: Assign one single category that best describes the event (e.g., "Concert", "Exhibition", "Workshop"). Avoid slashes (/) or multiple categories.
+- **Price (price)**: Extract the ticket price as a decimal number (e.g., "15.00") or a meaningful label if not found (e.g., "Free", "N/A").
+- **Ticket Link (ticketLink)**: Extract the URL for ticket purchases if available; otherwise, leave it empty.
+- **Line-Up (lineup)**: If performers or speakers are listed, extract their names, roles, and scheduled start times.
+- **Social Media Links (socialMediaLinks)**: Extract Instagram, Facebook, and Twitter links. If a platform-specific link is missing, use the general platform URL as a fallback.
+  - **Fallbacks:**
+    - Instagram → "https://www.instagram.com"
+    - Facebook → "https://www.facebook.com"
+    - Twitter → "https://www.twitter.com"
+- **Tags (tags)**: Always include **five** relevant tags based on the event’s theme.
 
-Falls eine Information nicht vorhanden ist, setze sinnvolle Platzhalter.
-
-**Antwortformat (JSON):**
+### Response Format (JSON):
 {
   "title": "string",
   "description": "string",
@@ -94,9 +96,13 @@ Falls eine Information nicht vorhanden ist, setze sinnvolle Platzhalter.
     "instagram": "string",
     "facebook": "string",
     "twitter": "string"
-  }
-}`,
+  },
+  "tags": ["string", "string", "string", "string", "string"]
+}
+
+Analyze the flyer carefully, ensuring accurate data extraction and logical fallback values. Ensure proper JSON formatting, and validate all fields before returning the result.`,
               },
+
               { type: 'image_url', image_url: { url: imageUrl } },
             ],
           },
