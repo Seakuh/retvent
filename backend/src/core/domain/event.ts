@@ -15,6 +15,10 @@ export class Event implements IEvent {
   endDate?: Date;
   endTime?: string;
 
+  coordinates?: {
+    lat?: number;
+    lng?: number;
+  };
   // Beziehungen
   hostId: string;
   hostUsername?: string;
@@ -43,6 +47,10 @@ export class Event implements IEvent {
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
+
+  // upload location
+  uploadLat?: number;
+  uploadLon?: number;
 
   constructor(data: Partial<IEvent>) {
     Object.assign(this, data);

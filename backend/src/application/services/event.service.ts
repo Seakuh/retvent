@@ -136,22 +136,12 @@ export class EventService {
         console.warn('Failed to extract event data from image:', error);
       }
 
-      // 3. Get city from coordinates if available
-      const location =
-        lat && lon
-          ? {
-              coordinates: {
-                lat,
-                lng: lon,
-              },
-            }
-          : undefined;
-
       // 4. Create event with all available data
       const eventData = {
         ...extractedEventData,
         imageUrl: uploadedImageUrl,
-        location: location,
+        uploadLat: lat,
+        uploadLon: lon,
         createdAt: new Date(),
         updatedAt: new Date(),
         status: 'pending',

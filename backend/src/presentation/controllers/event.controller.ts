@@ -50,12 +50,19 @@ export class EventController {
   @UseInterceptors(FileInterceptor('image'))
   async uploadEventImage(
     @UploadedFile() image: Express.Multer.File,
-    @Body() body: { uploadLat?: number; uploadLon?: number },
+    @Body() body: { location: string },
   ) {
+    // Location-String zu Objekt parsen
+    const locationData = JSON.parse(body.location);
+
+    // Koordinaten extrahieren
+    const lonFromBodyCoordinates = locationData.coordinates[0]; // 13.385728
+    const latFromBodyCoordinates = locationData.coordinates[1]; // 52.5041664
+
     return this.eventService.processEventImageUpload(
       image,
-      body.uploadLat,
-      body.uploadLon,
+      lonFromBodyCoordinates,
+      latFromBodyCoordinates,
     );
   }
 
