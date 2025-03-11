@@ -318,13 +318,15 @@ export class MongoEventRepository implements IEventRepository {
           $near: {
             $geometry: {
               type: 'Point',
-              coordinates: [lat, lon],
+              coordinates: [lon, lat],
             },
             $maxDistance: distance * 1000, // Convert km to meters
           },
         },
       })
       .exec();
+
+    console.log(events);
     return events.map((event) => this.toEntity(event));
   }
 }
