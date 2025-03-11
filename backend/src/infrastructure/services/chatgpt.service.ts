@@ -60,8 +60,8 @@ export class ChatGPTService {
 - Extrahiere folgende Informationen:
   - **Titel (title)**: Name des Events
   - **Beschreibung (description)**: Zusammenfassung, die den Flyer-Text interpretiert und wesentliche Informationen zusammenfasst
-  - **Startdatum (startDate)**: Im Format YYYY-MM-DD
-  - **Startzeit (startTime)**: Im Format HH:mm
+  - **Startdatum (startDate)**: Im Format YYYY-MM-DD sollte  es kein start datum geben setze es auf heute
+  - **Startzeit (startTime)**: Im Format HH:mm sollte es keine start zeit geben setze es auf 8:00
   - **Bild-URL (imageUrl)**: Falls vorhanden, extrahiere das Hauptbild des Flyers
   - **Stadt (city)**: Ort des Events
   - **Kategorie (category)**: Falls das Event einem bestimmten Genre oder Typ zugeordnet werden kann (z. B. Konzert, Ausstellung, Workshop)
