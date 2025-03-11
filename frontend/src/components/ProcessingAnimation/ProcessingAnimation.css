@@ -6,6 +6,7 @@
   border-top-color: #fff;
   animation: scan 1s infinite linear;
   position: relative;
+  z-index: 1001;
 }
 
 .scanning-circle::after {
