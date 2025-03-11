@@ -2,6 +2,7 @@ import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
 import { Event } from "../../types/event";
 import "./MapView.css";
 
@@ -23,6 +24,7 @@ const customIcon = new Icon({
 });
 
 export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
+  const navigate = useNavigate();
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
@@ -56,6 +58,10 @@ export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
     }
   };
 
+  const handleEventClick = (event: Event) => {
+    navigate(`/event/${event.id}`);
+  };
+
   return (
     <MapContainer
       center={userLocation ?? [52.520008, 13.404954]}
@@ -76,7 +82,7 @@ export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
           key={event._id}
           position={[event.latitude ?? 52.520008, event.longitude ?? 13.404954]}
           icon={customIcon}
-          eventHandlers={{ click: () => onMarkerClick(event) }}
+          eventHandlers={{ click: () => handleEventClick(event) }}
         >
           <Popup>
             <div className="event-popup">
