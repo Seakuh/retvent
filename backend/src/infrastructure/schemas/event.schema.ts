@@ -20,6 +20,7 @@ export const EventSchema = new Schema(
         startTime: { type: String },
       }),
     ],
+    email: { type: String },
     uploadLat: { type: Number },
     uploadLon: { type: Number },
     socialMediaLinks: {

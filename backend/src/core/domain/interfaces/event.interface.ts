@@ -22,6 +22,7 @@ export interface IEvent {
   likeIds?: string[];
   createdAt: Date;
   updatedAt: Date;
+  email?: string;
   location?: {
     city?: string;
     address?: string;

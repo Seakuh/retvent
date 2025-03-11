@@ -32,6 +32,8 @@ export class Event implements IEvent {
   website?: string;
   likeIds?: string[];
 
+  email?: string;
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;

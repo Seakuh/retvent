@@ -1,5 +1,5 @@
-import { Event } from '../domain/event';
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
+import { Event } from '../domain/event';
 export interface IEventRepository {
   findById(id: string): Promise<Event | null>;
   findByLocationId(locationId: string): Promise<Event[]>;
@@ -14,4 +14,4 @@ export interface IEventRepository {
   removeArtist(eventId: string, artistId: string): Promise<Event | null>;
   updateEvent(id: string, eventData: UpdateEventDto): Promise<Event | null>;
   findByHostId(hostId: string): Promise<Event[]>;
-} 
+}

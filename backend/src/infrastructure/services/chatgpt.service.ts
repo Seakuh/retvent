@@ -73,6 +73,7 @@ export class ChatGPTService {
     - Facebook → "https://www.facebook.com"
     - Twitter → "https://www.twitter.com"
 - **Tags (tags)**: Always include **five** relevant tags based on the event’s theme.
+- **Email (email)**: Extract the email address from the event flyer.
 
 ### Response Format (JSON):
 {
@@ -97,7 +98,8 @@ export class ChatGPTService {
     "facebook": "string",
     "twitter": "string"
   },
-  "tags": ["string", "string", "string", "string", "string"]
+  "tags": ["string", "string", "string", "string", "string"],
+  "email": "string"
 }
 
 Analyze the flyer carefully, ensuring accurate data extraction and logical fallback values. Ensure proper JSON formatting, and validate all fields before returning the result.`,
