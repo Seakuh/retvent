@@ -14,11 +14,6 @@ export class Event implements IEvent {
   startTime: string;
   endDate?: Date;
   endTime?: string;
-
-  coordinates?: {
-    lat?: number;
-    lng?: number;
-  };
   // Beziehungen
   hostId: string;
   hostUsername?: string;
@@ -36,14 +31,7 @@ export class Event implements IEvent {
   tags?: string[];
   website?: string;
   likeIds?: string[];
-  location?: {
-    city?: string;
-    address?: string;
-    coordinates?: {
-      lat?: number;
-      lng?: number;
-    };
-  };
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;

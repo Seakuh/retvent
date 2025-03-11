@@ -144,6 +144,12 @@ export class EventService {
         uploadLon: lon,
         createdAt: new Date(),
         updatedAt: new Date(),
+        location: {
+          coordinates: {
+            lat: lat,
+            lon: lon,
+          },
+        },
         status: 'pending',
       };
 

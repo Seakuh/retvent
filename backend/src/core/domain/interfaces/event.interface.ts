@@ -23,11 +23,11 @@ export interface IEvent {
   createdAt: Date;
   updatedAt: Date;
   location?: {
-    city?: string; 
+    city?: string;
     address?: string;
     coordinates?: {
       lat?: number;
-      lng?: number;
+      lon?: number;
     };
   };
-} 
+}

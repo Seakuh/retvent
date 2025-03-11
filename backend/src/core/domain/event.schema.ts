@@ -1,5 +1,5 @@
 // event.schema.ts
-import { Schema, Document, model } from 'mongoose';
+import { Document, model, Schema } from 'mongoose';
 
 export interface IEvent extends Document {
   title: string;
@@ -26,46 +26,57 @@ export interface IEvent extends Document {
   tags?: string[];
   website?: string;
   likeIds?: string[];
+  location?: {
+    city?: string;
+    address?: string;
+    coordinates?: {
+      lat?: number;
+      lon?: number;
+    };
+  };
 }
 
 // Event Schema Definition
-const EventSchema = new Schema<IEvent>({
-  title: { type: String, required: true },
-  description: { type: String },
-  imageUrl: { type: String },
-  startDate: { type: Date, required: true },
-  startTime: { type: String, required: true },
-  hostId: { type: String },
-  hostUsername: { type: String },
-  locationId: { type: String },
-  category: { type: String },
-  price: { type: Schema.Types.Mixed }, // String oder Number
-  ticketLink: { type: String },
-  lineup: [
-    {
-      name: { type: String, required: false },
-      role: { type: String, required: false },
-      startTime: { type: String, required: false }
-    }
-  ],
-  socialMediaLinks: {
-    instagram: { type: String },
-    facebook: { type: String },
-    twitter: { type: String }
+const EventSchema = new Schema<IEvent>(
+  {
+    title: { type: String, required: true },
+    description: { type: String },
+    imageUrl: { type: String },
+    startDate: { type: Date, required: true },
+    startTime: { type: String, required: true },
+    hostId: { type: String },
+    hostUsername: { type: String },
+    locationId: { type: String },
+    category: { type: String },
+    price: { type: Schema.Types.Mixed }, // String oder Number
+    ticketLink: { type: String },
+    lineup: [
+      {
+        name: { type: String, required: false },
+        role: { type: String, required: false },
+        startTime: { type: String, required: false },
+      },
+    ],
+    socialMediaLinks: {
+      instagram: { type: String },
+      facebook: { type: String },
+      twitter: { type: String },
+    },
+    tags: [{ type: String }],
+    website: { type: String },
+    likeIds: [{ type: String }],
   },
-  tags: [{ type: String }],
-  website: { type: String },
-  likeIds: [{ type: String }]
-}, {
-  timestamps: true,
-  strict: true
-});
+  {
+    timestamps: true,
+    strict: true,
+  },
+);
 
 // Index für Performance bei Geo-Queries
-EventSchema.index({ "location.coordinates": "2dsphere" });
+EventSchema.index({ 'location.coordinates': '2dsphere' });
 
 // Pre-Hook für Debugging
-EventSchema.pre('save', function(next) {
+EventSchema.pre('save', function (next) {
   console.log('Saving event:', this.toObject());
   next();
 });

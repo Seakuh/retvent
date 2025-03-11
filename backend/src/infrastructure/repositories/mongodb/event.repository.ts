@@ -59,13 +59,19 @@ export class MongoEventRepository implements IEventRepository {
         JSON.stringify(eventData, null, 2),
       );
 
-      // Clean undefined values
-      const cleanData = Object.fromEntries(
-        Object.entries(eventData).filter(([_, v]) => v !== undefined),
-      );
+      const eventDataWithLocation = {
+        ...eventData,
+        location: {
+          type: 'Point',
+          coordinates: [
+            eventData.uploadLat, // longitude
+            eventData.uploadLon, // latitude
+          ],
+        },
+      };
 
       // Create new event document
-      const event = new this.eventModel(cleanData);
+      const event = new this.eventModel(eventDataWithLocation);
 
       // Save and wait for result
       const savedEvent = await event.save();
@@ -312,7 +318,7 @@ export class MongoEventRepository implements IEventRepository {
           $near: {
             $geometry: {
               type: 'Point',
-              coordinates: [lon, lat],
+              coordinates: [lat, lon],
             },
             $maxDistance: distance * 1000, // Convert km to meters
           },
