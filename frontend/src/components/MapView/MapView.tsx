@@ -46,7 +46,7 @@ export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
   const loadNearbyEvents = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `${API_URL}/events/nearby?lat=${lat}&lon=${lon}&maxDistance=10`
+        `${API_URL}events/nearby?lat=${lat}&lon=${lon}&maxDistance=10`
       );
       if (!response.ok) throw new Error("Failed to fetch events");
       const data = await response.json();
