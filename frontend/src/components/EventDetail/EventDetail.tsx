@@ -1,5 +1,5 @@
 import { CalendarPlus, Share2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
 import TicketButton from "../Buttons/TicketButton";
@@ -19,6 +19,39 @@ export const EventDetail: React.FC = () => {
   const { event, loading, error } = useEvent(eventId);
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (event) {
+      // Update meta tags for social sharing
+      const updateMetaTags = () => {
+        // Update title
+        document
+          .querySelector('meta[property="og:title"]')
+          ?.setAttribute("content", event.title);
+
+        // Update description
+        const description =
+          event.description || `${event.title} - Event in ${event.city}`;
+        document
+          .querySelector('meta[property="og:description"]')
+          ?.setAttribute("content", description);
+
+        // Update image
+        if (event.imageUrl) {
+          document
+            .querySelector('meta[property="og:image"]')
+            ?.setAttribute("content", event.imageUrl);
+        }
+
+        // Update URL
+        document
+          .querySelector('meta[property="og:url"]')
+          ?.setAttribute("content", window.location.href);
+      };
+
+      updateMetaTags();
+    }
+  }, [event]);
 
   const handleAddToCalendar = () => {
     if (!event?.startDate) return;
