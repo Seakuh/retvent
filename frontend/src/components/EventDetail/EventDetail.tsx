@@ -79,15 +79,19 @@ export const EventDetail: React.FC = () => {
   const handleWhatsAppShare = () => {
     if (!event) return;
 
-    const message = `🎉 ${event.title}\n📅 ${new Date(
-      event.startDate || ""
-    ).toLocaleDateString("de-DE")}\n${
+    const message = `Hey - i just found this event on event--scanner\n\n🎉 ${
+      event.title
+    }\n📅 ${new Date(event.startDate || "").toLocaleDateString("de-DE")}\n${
       event.startTime ? `⏰ ${event.startTime}\n` : ""
-    }📍 ${event.city || ""}\n${
-      event.category ? `🏷️ ${event.category}\n` : ""
-    }\n🔗 ${window.location.href}`;
+    }📍 ${event.city || ""}\n🔗 ${window.location.href}`;
 
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    // WhatsApp erlaubt das Teilen von Text und einem Bild in einem Link
+    const whatsappUrl = event.imageUrl
+      ? `https://wa.me/?text=${encodeURIComponent(
+          message
+        )}&image=${encodeURIComponent(event.imageUrl)}`
+      : `https://wa.me/?text=${encodeURIComponent(message)}`;
+
     window.open(whatsappUrl, "_blank");
   };
 
