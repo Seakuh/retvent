@@ -15,8 +15,8 @@
   background-image: var(--event-background-image);
   background-size: cover;
   background-position: center;
-  filter: blur(20px);
-  opacity: 0.4;
+  filter: blur(1.1rem);
+  opacity: 0.5;
   z-index: -1;
 }
 
@@ -100,11 +100,11 @@
 
 .event-basic-info {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   gap: 4rem;
   margin: -2rem auto 2rem;
   padding: 1.5rem;
-  background: rgba(0, 0, 0, 0.5);
+  background:black;
   backdrop-filter: blur(10px);
   border-radius: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -131,6 +131,23 @@
   display: flex;
   flex-direction: column;
 }
+
+.artist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.artist-search-link {
+  color: var(--color-neon-blue);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.artist-search-link:hover {
+  color: var(--color-neon-purple);
+  transform: translateY(-2px);
+}
+
 .lineup-artist-name{
   color: white !important;
   font-size: 5rem;
@@ -427,7 +444,6 @@
 .skeleton-hero {
   width: 100%;
   height: 60vh;
-  @extend .skeleton-base;
 }
 
 .skeleton-content {
@@ -448,7 +464,6 @@
 .skeleton-info-item {
   width: 150px;
   height: 60px;
-  @extend .skeleton-base;
 }
 
 .skeleton-description {
