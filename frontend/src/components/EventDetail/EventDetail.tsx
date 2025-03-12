@@ -76,23 +76,41 @@ export const EventDetail: React.FC = () => {
     window.open(googleCalendarUrl, "_blank");
   };
 
-  const handleWhatsAppShare = () => {
+  const handleWhatsAppShare = async () => {
     if (!event) return;
 
-    const message = `Hey - i just found this event on event--scanner\n\n🎉 ${
+    const message = `Hey - i just found this on event--scanner\n\nlet us join the event 🎉 ${
       event.title
     }\n📅 ${new Date(event.startDate || "").toLocaleDateString("de-DE")}\n${
       event.startTime ? `⏰ ${event.startTime}\n` : ""
     }📍 ${event.city || ""}\n🔗 ${window.location.href}`;
 
-    // WhatsApp erlaubt das Teilen von Text und einem Bild in einem Link
-    const whatsappUrl = event.imageUrl
-      ? `https://wa.me/?text=${encodeURIComponent(
-          message
-        )}&image=${encodeURIComponent(event.imageUrl)}`
-      : `https://wa.me/?text=${encodeURIComponent(message)}`;
+    try {
+      // Zuerst das Bild herunterladen
+      if (event.imageUrl) {
+        const response = await fetch(event.imageUrl);
+        const blob = await response.blob();
+        const file = new File([blob], "event-image.jpg", {
+          type: "image/jpeg",
+        });
 
-    window.open(whatsappUrl, "_blank");
+        // Share API mit Bild und Text aufrufen
+        await navigator.share({
+          text: message,
+          files: [file],
+        });
+      } else {
+        // Fallback ohne Bild
+        await navigator.share({
+          text: message,
+        });
+      }
+    } catch (error) {
+      console.error("Error sharing event:", error);
+      // Fallback zur alten Methode wenn Web Share API nicht verfügbar
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, "_blank");
+    }
   };
 
   if (loading) {
