@@ -28,10 +28,24 @@
     background-image: var(--event-background-image);
     background-size: cover;
     background-position: center;
-    filter: blur(1.1rem);
-    opacity: 0.5;
+    filter: blur(1.4rem);
+    opacity: 0.7;
     z-index: -1;
+    animation: moveBackground 15s linear infinite;
+
   }
+  @keyframes moveBackground {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 50% 50%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+  
   
   .event-content {
     max-width: 1200px;
