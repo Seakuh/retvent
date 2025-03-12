@@ -64,7 +64,7 @@ export const MapView: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="loading">Lade Events...</div>;
+    return <div className="loading">Loading map...</div>;
   }
 
   return (
