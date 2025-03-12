@@ -8,11 +8,7 @@ import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { MapView } from "./components/MapView/MapView";
 import { SearchBar } from "./components/SearchBar/SearchBar";
 import { ViewToggle } from "./components/ViewToggle/ViewToggle";
-import {
-  fetchLatestEvents,
-  fetchUserEvents,
-  searchEventsByCity,
-} from "./service";
+import { fetchLatestEvents, searchEventsByCity } from "./service";
 import { Event, ViewMode } from "./types/event";
 
 function LandingPage() {
@@ -20,19 +16,18 @@ function LandingPage() {
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [showFavorites, setShowFavorites] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [showUploads, setShowUploads] = useState(false);
   const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const loadUserEvents = async () => {
-    const events = await fetchUserEvents();
-    setUserEvents(events);
-  };
+  // const loadUserEvents = async () => {
+  //   const events = await fetchUserEvents();
+  //   setUserEvents(events);
+  // };
 
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const handleSearch = async (keyword: string) => {
     setLoading(true);
     setSearchPerformed(true);

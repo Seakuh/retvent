@@ -1,119 +1,88 @@
-import axios from "axios";
-import { Calendar, Clock, MapPin } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import TicketButton from "../Buttons/TicketButton";
+import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
+import { ImageModal } from "../ImageModal/ImageModal";
+import { EventBasicInfo } from "./components/EventBasicInfo";
+import { EventDescription } from "./components/EventDescription";
+import { EventDetailError } from "./components/EventDetailError";
+import { EventDetailSkeleton } from "./components/EventDetailSkeleton";
+import { EventHero } from "./components/EventHero";
+import { EventLineup } from "./components/EventLineup";
+import { EventLocation } from "./components/EventLocation";
 import "./EventDetail.css";
-
-const DEFAULT_IMAGE =
-  "https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png";
-
-interface Location {
-  city: string;
-  // add other location properties if needed
-}
-
-interface EventResponse {
-  title: string;
-  imageUrl?: string;
-  date?: string;
-  location?: Location;
-  description?: string;
-  price?: string;
-  ticketLink?: string;
-}
+import Social from "./Social/Social";
 
 export const EventDetail: React.FC = () => {
-  const params = useParams();
-  const eventid = params.eventId;
-  const [event, setEvent] = useState<EventResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { eventId } = useParams();
+  const { event, loading, error } = useEvent(eventId);
+  const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchEvent = async () => {
-      if (!eventid) return;
-
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}events/byId?id=${eventid}`
-        );
-        console.log("API Response:", response.data);
-        setEvent(response.data);
-      } catch (error) {
-        console.error("Failed to fetch event:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvent();
-  }, [eventid]);
-
   if (loading) {
-    return (
-      <div className="loading-spinner">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <EventDetailSkeleton />;
   }
 
-  if (!event) {
-    return <div className="error-message">Event not found 😢</div>;
+  if (error || !event) {
+    return <EventDetailError message={error?.message} />;
   }
 
   return (
     <div className="event-detail">
-      <div className="event-hero">
-        <img
-          src={event.imageUrl || DEFAULT_IMAGE}
-          alt={event.title}
-          className="event-image"
-        />
-        <button onClick={() => navigate(-1)} className="back-button">
-          ← Back
-        </button>
-      </div>
-
-      <div className="event-content">
+      <EventHero
+        imageUrl={event.imageUrl}
+        title={event.title}
+        onImageClick={() => setShowImageModal(true)}
+      />
+      <button className="back-button" onClick={() => navigate("/")}>
+        ← Back
+      </button>
+      <div className="event-title-container">
         <h1 className="event-title">{event.title}</h1>
+      </div>
+      <div className="event-content">
+        <EventBasicInfo
+          startDate={event.startDate || ""}
+          startTime={event.startTime}
+          city={event.city}
+          category={event.category}
+        />
 
-        <div className="event-info-section">
-          {event.date && (
-            <div className="event-info">
-              <Calendar size={24} />
-              <span>{new Date(event.date).toLocaleDateString()}</span>
-              <Clock size={24} />
-              <span>{new Date(event.date).toLocaleTimeString()}</span>
-            </div>
-          )}
+        <EventDescription
+          title={event.title}
+          description={event.description}
+          price={event.price}
+          ticketLink={event.ticketLink}
+        />
 
-          {event.location && (
-            <div className="event-info">
-              <MapPin size={24} />
-              <span>{event.location.city}</span>
-            </div>
-          )}
-        </div>
-
-        {event.description && (
-          <div className="event-info-section">
-            <p className="event-description">{event.description}</p>
-          </div>
+        {event.lineup && event.lineup.length > 0 && (
+          <EventLineup lineup={event.lineup} />
         )}
 
-        {event.price && (
-          <div className="event-info-section">
-            <div className="event-price">Ticket Price: {event.price}</div>
-          </div>
-        )}
+        <Social
+          instagram={event.socialMediaLinks?.instagram}
+          facebook={event.socialMediaLinks?.facebook}
+          // tiktok={event.socialMediaLinks?.tiktok}
+          // youtube={event.socialMediaLinks?.youtube}
+          // soundCloud={event.socialMediaLinks?.soundCloud}
+        />
 
-        {event.ticketLink && (
-          <div className="ticket-button-container">
-            <TicketButton href={event.ticketLink}></TicketButton>
-          </div>
+        {event.uploadLat && event.uploadLon && (
+          <EventLocation
+            lat={event.uploadLat}
+            lon={event.uploadLon}
+            title={event.title}
+          />
         )}
       </div>
+
+      {showImageModal && (
+        <ImageModal
+          imageUrl={event.imageUrl || ""}
+          onClose={() => setShowImageModal(false)}
+        />
+      )}
     </div>
   );
 };
+
+// Unterkomponenten in separaten Dateien:
