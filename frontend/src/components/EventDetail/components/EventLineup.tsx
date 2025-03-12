@@ -20,7 +20,7 @@ export const EventLineup: React.FC<{ lineup: LineupArtist[] }> = ({
               <h3 className="lineup-artist-name">{artist.name}</h3>
               <a
                 href={`https://www.google.com/search?q=${encodeURIComponent(
-                  artist.name
+                  artist.name + " DJ"
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
