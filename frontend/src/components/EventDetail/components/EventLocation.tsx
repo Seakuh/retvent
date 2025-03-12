@@ -13,7 +13,6 @@ export const EventLocation: React.FC<EventLocationProps> = ({
   title,
 }) => (
   <div className="event-location">
-    <h3 className="section-headline">📍 Spotted</h3>
     <MapContainer center={[lat, lon]} zoom={13} className="event-map">
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

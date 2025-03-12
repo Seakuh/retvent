@@ -1,3 +1,4 @@
+import { CalendarPlus, Share2 } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
@@ -19,6 +20,45 @@ export const EventDetail: React.FC = () => {
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
 
+  const handleAddToCalendar = () => {
+    if (!event?.startDate) return;
+
+    const formatDate = (date: string) => {
+      return date.replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    };
+
+    const startDate = new Date(event.startDate);
+    const endDate = new Date(startDate);
+    endDate.setHours(endDate.getHours() + 2);
+
+    // Format: YYYYMMDDTHHMMSSZ
+    const formattedStart = formatDate(startDate.toISOString());
+    const formattedEnd = formatDate(endDate.toISOString());
+
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+      event.title
+    )}&dates=${formattedStart}/${formattedEnd}&details=${encodeURIComponent(
+      event.description || ""
+    )}&location=${encodeURIComponent(event.city || "")}`;
+
+    window.open(googleCalendarUrl, "_blank");
+  };
+
+  const handleWhatsAppShare = () => {
+    if (!event) return;
+
+    const message = `🎉 ${event.title}\n📅 ${new Date(
+      event.startDate || ""
+    ).toLocaleDateString("de-DE")}\n${
+      event.startTime ? `⏰ ${event.startTime}\n` : ""
+    }📍 ${event.city || ""}\n${
+      event.category ? `🏷️ ${event.category}\n` : ""
+    }\n🔗 ${window.location.href}`;
+
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+  };
+
   if (loading) {
     return <EventDetailSkeleton />;
   }
@@ -36,6 +76,23 @@ export const EventDetail: React.FC = () => {
         } as React.CSSProperties
       }
     >
+      <div className="share-buttons">
+        <button
+          onClick={handleAddToCalendar}
+          className="share-button"
+          title="Zum Kalender hinzufügen"
+        >
+          <CalendarPlus className="h-5 w-5" />
+        </button>
+        <button
+          onClick={handleWhatsAppShare}
+          className="share-button"
+          title="Via WhatsApp teilen"
+        >
+          <Share2 className="h-5 w-5" />
+        </button>
+      </div>
+
       <EventHero
         imageUrl={event.imageUrl}
         title={event.title}
@@ -49,7 +106,7 @@ export const EventDetail: React.FC = () => {
       </div>
       <div className="event-content">
         <EventBasicInfo
-          startDate={event.startDate || ""}
+          startDate={event.startDate?.toString() || ""}
           startTime={event.startTime}
           city={event.city}
           category={event.category}

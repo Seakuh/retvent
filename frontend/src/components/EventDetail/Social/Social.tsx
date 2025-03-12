@@ -18,7 +18,7 @@ const Social: React.FC<SocialProps> = ({
 }) => {
   return (
     <section id="social" className={styles.social}>
-      <h2 className="section-headline">Social</h2>
+      {/* <h2 className="section-headline">Social</h2> */}
       <div className={styles.socialLinks}>
         {instagram && (
           <a
