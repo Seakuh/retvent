@@ -3,14 +3,10 @@ import "leaflet/dist/leaflet.css";
 import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
-import { Event } from "../../types/event";
+import { Event } from "../../utils";
 import "./MapView.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-
-interface MapViewProps {
-  onMarkerClick: (event: Event) => void;
-}
 
 const customIcon = new Icon({
   iconUrl:
@@ -23,12 +19,13 @@ const customIcon = new Icon({
   shadowSize: [41, 41],
 });
 
-export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
+export const MapView: React.FC = () => {
   const navigate = useNavigate();
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
   const [events, setEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -47,20 +44,28 @@ export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
 
   const loadNearbyEvents = async (lat: number, lon: number) => {
     try {
+      setIsLoading(true);
       const response = await fetch(
         `${API_URL}events/nearby?lat=${lat}&lon=${lon}&maxDistance=10`
       );
       if (!response.ok) throw new Error("Failed to fetch events");
       const data = await response.json();
+      console.log("Received events from server:", data);
       setEvents(data);
     } catch (error) {
       console.error("Error loading events:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleEventClick = (event: Event) => {
     navigate(`/event/${event.id}`);
   };
+
+  if (isLoading) {
+    return <div className="loading">Lade Events...</div>;
+  }
 
   return (
     <MapContainer
@@ -74,51 +79,39 @@ export const MapView: React.FC<MapViewProps> = ({ onMarkerClick }) => {
       />
       {userLocation && (
         <Marker position={userLocation} icon={customIcon}>
-          <Popup>📍 You</Popup>
+          <Popup>📍</Popup>
         </Marker>
       )}
-      {events.map((event) => (
-        <Marker
-          key={event._id}
-          position={[event.latitude ?? 52.520008, event.longitude ?? 13.404954]}
-          icon={customIcon}
-          eventHandlers={{ click: () => handleEventClick(event) }}
-        >
-          <Popup>
-            <div className="event-popup">
-              <img
-                src={event.imageUrl}
-                alt={event.name}
-                className="event-popup-image"
-                style={{
-                  width: "200px",
-                  height: "150px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
-              />
-              <h3>{event.name}</h3>
-              <p>{new Date(event.date).toLocaleDateString()}</p>
-              <p>{event.location}</p>
-              <button
-                onClick={() => onMarkerClick(event)}
-                className="view-details-button"
-                style={{
-                  background: "var(--color-neon-blue)",
-                  color: "white",
-                  padding: "8px 16px",
-                  borderRadius: "4px",
-                  border: "none",
-                  cursor: "pointer",
-                  marginTop: "8px",
-                }}
-              >
-                Details anzeigen
-              </button>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+      {events.map((event) => {
+        const position: [number, number] = [
+          event.uploadLon ?? 52.520008,
+          event.uploadLat ?? 13.404954,
+        ];
+        return (
+          <Marker key={event.id} position={position} icon={customIcon}>
+            <Popup>
+              <div className="event-popup">
+                <img
+                  src={event.imageUrl}
+                  alt={event.title}
+                  className="event-popup-image"
+                  style={{
+                    width: "200px",
+                    height: "150px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    backgroundColor: "var(--color-neon-blue)",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => handleEventClick(event)}
+                />
+                <h3>{event.title}</h3>
+                <p>{new Date(event.startDate ?? "").toLocaleDateString()}</p>
+              </div>
+            </Popup>
+          </Marker>
+        );
+      })}
     </MapContainer>
   );
 };

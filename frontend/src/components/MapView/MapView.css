@@ -17,7 +17,6 @@
 
 .event-popup p {
   font-size: 0.875rem;
-  color: #666;
   margin: 0.25rem 0;
 }
 
@@ -27,6 +26,7 @@
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 0.5rem;
+  background-color: var(--color-neon-blue);
 }
 
 .view-details-button:hover {
@@ -45,8 +45,4 @@
 .leaflet-popup-content {
   margin: 0.5rem;
   min-width: 200px;
-}
-
-.leaflet-popup-tip {
-  background: rgba(255, 255, 255, 0.95);
 }
