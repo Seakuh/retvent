@@ -87,26 +87,69 @@ export const MapView: React.FC = () => {
           event.uploadLon ?? 52.520008,
           event.uploadLat ?? 13.404954,
         ];
+
+        const formatDate = (date: Date | string | undefined | null) => {
+          if (!date) return "";
+          const dateObj = typeof date === "string" ? new Date(date) : date;
+          return dateObj.toLocaleDateString("de-DE", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          });
+        };
+
+        const truncateTitle = (title: string, maxLength: number = 30) => {
+          return title.length > maxLength
+            ? `${title.substring(0, maxLength)}...`
+            : title;
+        };
+
         return (
           <Marker key={event.id} position={position} icon={customIcon}>
-            <Popup>
-              <div className="event-popup">
+            <Popup className="event-popup-container">
+              <div
+                className="event-popup"
+                style={{
+                  width: "200px",
+                  padding: "8px",
+                  borderRadius: "8px",
+                  backgroundColor: "white",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                }}
+              >
                 <img
                   src={event.imageUrl}
                   alt={event.title}
                   className="event-popup-image"
                   style={{
-                    width: "200px",
+                    width: "100%",
                     height: "150px",
                     objectFit: "cover",
                     borderRadius: "8px",
-                    backgroundColor: "var(--color-neon-blue)",
                     cursor: "pointer",
+                    marginBottom: "8px",
                   }}
                   onClick={() => handleEventClick(event)}
                 />
-                <h3>{event.title}</h3>
-                <p>{new Date(event.startDate ?? "").toLocaleDateString()}</p>
+                <h3
+                  style={{
+                    margin: "8px 0",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    lineHeight: "1.2",
+                  }}
+                >
+                  {truncateTitle(event.title)}
+                </h3>
+                <p
+                  style={{
+                    margin: "4px 0",
+                    fontSize: "12px",
+                    color: "#666",
+                  }}
+                >
+                  {formatDate(event.startDate)}
+                </p>
               </div>
             </Popup>
           </Marker>
