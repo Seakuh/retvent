@@ -31,7 +31,7 @@
     filter: blur(1.4rem);
     opacity: 0.7;
     z-index: -1;
-    animation: moveBackground 15s linear infinite;
+    animation: moveBackground 300s linear infinite;
 
   }
   @keyframes moveBackground {
@@ -96,10 +96,6 @@
     transition: transform 0.3s ease;
   }
   
-  .event-hero:hover .event-hero-image {
-    transform: scale(1.05);
-  }
-  
   .event-hero-overlay {
     position: absolute;
     bottom: 0;
@@ -153,7 +149,7 @@
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
     color: white;
-    padding: 0.75rem;
+    padding: .9rem;
     border-radius: 9999px;
     display: flex;
     align-items: center;
@@ -162,6 +158,12 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     border: none;
     cursor: pointer;
+  }
+
+  .share-button:hover {
+    transform: scale(1.1);
+    background: var(--color-neon-blue);
+    box-shadow: 0 4px 12px rgba(var(--color-neon-blue-rgb), 0.3);
   }
   
   @media (max-width: 768px) {
