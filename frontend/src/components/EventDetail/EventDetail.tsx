@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
+import TicketButton from "../Buttons/TicketButton";
 import { ImageModal } from "../ImageModal/ImageModal";
 import { EventBasicInfo } from "./components/EventBasicInfo";
 import { EventDescription } from "./components/EventDescription";
@@ -27,7 +28,14 @@ export const EventDetail: React.FC = () => {
   }
 
   return (
-    <div className="event-detail">
+    <div
+      className="event-detail"
+      style={
+        {
+          "--event-background-image": `url(${event.imageUrl})`,
+        } as React.CSSProperties
+      }
+    >
       <EventHero
         imageUrl={event.imageUrl}
         title={event.title}
@@ -53,6 +61,7 @@ export const EventDetail: React.FC = () => {
           price={event.price}
           ticketLink={event.ticketLink}
         />
+        <TicketButton href={event.ticketLink || ""} />
 
         {event.lineup && event.lineup.length > 0 && (
           <EventLineup lineup={event.lineup} />

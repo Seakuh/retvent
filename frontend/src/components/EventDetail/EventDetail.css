@@ -5,6 +5,21 @@
   flex-direction: column;
 }
 
+.event-detail::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--event-background-image);
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px);
+  opacity: 0.4;
+  z-index: -1;
+}
+
 .section-headline{
   font-size: 2rem;
   font-weight: bold;
@@ -50,7 +65,6 @@
   padding: 2rem;
   font-size: 3rem;
   font-weight: bold;
-  background: linear-gradient(transparent, rgb(0, 0, 0));
   color: white;
 }
 
@@ -82,7 +96,6 @@
 .event-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
 .event-basic-info {
@@ -119,12 +132,18 @@
   flex-direction: column;
 }
 .lineup-artist-name{
+  color: white !important;
   font-size: 5rem;
   font-weight: bold;
 }
 
+.artist-role{
+  color: gray;
+}
+
 .lineup-artist {
   background: black;
+  padding: .5rem;
 }
 
 .event-map {
@@ -229,12 +248,13 @@
   margin: 2rem 0;
   padding: 2rem;
   background: black;
-  color: white;
+  color: white !important;
   border-radius: 1rem;
   backdrop-filter: blur(10px);
 }
 
 .event-description {
+  color: white !important;
   font-size: 1.1rem;
   line-height: 1.6;
 }
