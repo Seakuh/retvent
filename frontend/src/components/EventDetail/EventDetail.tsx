@@ -10,7 +10,6 @@ import { EventDetailError } from "./components/EventDetailError";
 import { EventDetailSkeleton } from "./components/EventDetailSkeleton";
 import { EventHero } from "./components/EventHero";
 import { EventLineup } from "./components/EventLineup";
-import { EventLocation } from "./components/EventLocation";
 import GenreSlider from "./components/GenreSlider/GenreSlider";
 import "./EventDetail.css";
 import Social from "./Social/Social";
@@ -168,13 +167,13 @@ export const EventDetail: React.FC = () => {
           // soundCloud={event.socialMediaLinks?.soundCloud}
         />
 
-        {event.uploadLat && event.uploadLon && (
+        {/* {event.uploadLat && event.uploadLon && (
           <EventLocation
             lat={event.uploadLat}
             lon={event.uploadLon}
             title={event.title}
           />
-        )}
+        )} */}
       </div>
 
       {showImageModal && (
