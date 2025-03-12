@@ -50,7 +50,6 @@ function LandingPage() {
       setLoading(true);
       try {
         const latestEvents = await fetchLatestEvents();
-        console.log("Raw API response:", latestEvents);
         if (Array.isArray(latestEvents) && latestEvents.length > 0) {
           setEvents(latestEvents.reverse());
         } else {
