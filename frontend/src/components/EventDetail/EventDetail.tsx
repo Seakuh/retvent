@@ -11,9 +11,9 @@ import { EventDetailSkeleton } from "./components/EventDetailSkeleton";
 import { EventHero } from "./components/EventHero";
 import { EventLineup } from "./components/EventLineup";
 import { EventLocation } from "./components/EventLocation";
+import GenreSlider from "./components/GenreSlider/GenreSlider";
 import "./EventDetail.css";
 import Social from "./Social/Social";
-
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
   const { event, loading, error } = useEvent(eventId);
@@ -134,6 +134,9 @@ export const EventDetail: React.FC = () => {
       <button className="back-button" onClick={() => navigate("/")}>
         ← Back
       </button>
+      {event.tags && event.tags.length > 0 && (
+        <GenreSlider genres={event.tags} />
+      )}
       <div className="event-title-container">
         <h1 className="event-title">{event.title}</h1>
       </div>

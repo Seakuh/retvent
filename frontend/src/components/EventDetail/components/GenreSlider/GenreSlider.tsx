@@ -1,13 +1,11 @@
-import React from 'react';
-import styles from './GenreSlider.module.css';
+import React from "react";
+import styles from "./GenreSlider.module.css";
 
-const GenreSlider: React.FC = () => {
-  const genres = [
-    'Techno', 'House', 'Deep House', 'Progressive', 
-    'Melodic Techno', 'Minimal', 'Tech House', 'Tribal',
-    'Organic House', 'Afro House', 'Electronic', 'Dance'
-  ];
+export interface GenreSliderProps {
+  genres: string[];
+}
 
+const GenreSlider: React.FC<GenreSliderProps> = ({ genres }) => {
   return (
     <div className={styles.sliderContainer}>
       <div className={styles.slider}>
@@ -24,4 +22,4 @@ const GenreSlider: React.FC = () => {
   );
 };
 
-export default GenreSlider; 
+export default GenreSlider;

@@ -66,10 +66,6 @@
     padding: 1rem;
     margin-left: 0rem;
     font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(45deg, var(--color-neon-blue), var(--color-neon-purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
   }
   
   .lineup-artist-name {
