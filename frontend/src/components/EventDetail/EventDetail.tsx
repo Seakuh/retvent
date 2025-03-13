@@ -12,6 +12,7 @@ import { EventHero } from "./components/EventHero";
 import { EventLineup } from "./components/EventLineup";
 import GenreSlider from "./components/GenreSlider/GenreSlider";
 import "./EventDetail.css";
+import { handleWhatsAppShare } from "./service";
 import Social from "./Social/Social";
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
@@ -74,43 +75,6 @@ export const EventDetail: React.FC = () => {
     )}&location=${encodeURIComponent(event.city || "")}`;
 
     window.open(googleCalendarUrl, "_blank");
-  };
-
-  const handleWhatsAppShare = async () => {
-    if (!event) return;
-
-    const message = `Hey - i just found this on event--scanner\n\nlet us join the event 🎉 ${
-      event.title
-    }\n📅 ${new Date(event.startDate || "").toLocaleDateString("de-DE")}\n${
-      event.startTime ? `⏰ ${event.startTime}\n` : ""
-    }📍 ${event.city || ""}\n🔗 ${window.location.href}`;
-
-    try {
-      // Zuerst das Bild herunterladen
-      if (event.imageUrl) {
-        const response = await fetch(event.imageUrl);
-        const blob = await response.blob();
-        const file = new File([blob], "event-image.jpg", {
-          type: "image/jpeg",
-        });
-
-        // Share API mit Bild und Text aufrufen
-        await navigator.share({
-          text: message,
-          files: [file],
-        });
-      } else {
-        // Fallback ohne Bild
-        await navigator.share({
-          text: message,
-        });
-      }
-    } catch (error) {
-      console.error("Error sharing event:", error);
-      // Fallback zur alten Methode wenn Web Share API nicht verfügbar
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, "_blank");
-    }
   };
 
   if (loading) {
