@@ -86,9 +86,13 @@ function LandingPage() {
       <header className="glass-effect sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-md" />
-              <h1 className="text-3xl font-bold text-white neon-text"></h1>
+            <div className="flex items-center gap-3 cursor-pointer">
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="w-8 h-8 rounded-md"
+                onClick={() => navigate("/")}
+              />
             </div>
             <div className="flex items-center gap-4">
               <ViewToggle view={viewMode} onViewChange={setViewMode} />
