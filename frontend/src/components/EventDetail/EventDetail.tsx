@@ -159,7 +159,15 @@ export const EventDetail: React.FC = () => {
         <GenreSlider genres={event.tags} />
       )}
       <div className="event-title-container">
-        <h1 className="event-title">{event.title}</h1>
+        <a
+          href={`https://www.google.com/search?q=${encodeURIComponent(
+            event.title + " event"
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <h1 className="event-title">{event.title}</h1>
+        </a>
       </div>
       <div className="event-content">
         <EventBasicInfo
