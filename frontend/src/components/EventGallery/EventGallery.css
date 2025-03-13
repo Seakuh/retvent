@@ -12,6 +12,7 @@
 
 .image-card:hover {
   transform: scale(1.1);
+  cursor: pointer;
   transition: transform 0.3s ease;
   box-shadow: 0 0 15px var(--color-neon-pink);
 }
