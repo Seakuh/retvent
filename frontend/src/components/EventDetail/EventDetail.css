@@ -66,8 +66,10 @@
     padding: 1rem;
     margin-left: 0rem;
     font-weight: bold;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
   }
-  
   .lineup-artist-name {
     color: white !important;
     font-size: 5rem;
