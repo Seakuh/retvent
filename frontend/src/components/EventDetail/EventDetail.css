@@ -65,7 +65,7 @@
     font-size: 4rem;
     padding: 1rem;
     margin-left: 0rem;
-    text-align: center;
+    text-align: left;
     font-weight: bold;
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -152,7 +152,7 @@
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
     color: white;
-    padding: 1rem;
+    padding: .9rem;
     border-radius: 9999px;
     display: flex;
     align-items: center;

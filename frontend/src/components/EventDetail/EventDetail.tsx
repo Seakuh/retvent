@@ -100,14 +100,14 @@ export const EventDetail: React.FC = () => {
           className="share-button"
           title="Zum Kalender hinzufügen"
         >
-          <CalendarPlus className="h-7 w-7" />
+          <CalendarPlus className="h-5 w-5" />
         </button>
         <button
           onClick={handleWhatsAppShare}
           className="share-button"
           title="Via WhatsApp teilen"
         >
-          <Share2 className="h-7 w-7" />
+          <Share2 className="h-5 w-5" />
         </button>
       </div>
 
