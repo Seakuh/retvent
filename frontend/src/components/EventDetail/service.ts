@@ -11,31 +11,52 @@ export const handleWhatsAppShare = async (event: Event) => {
 
   try {
     if (event.imageUrl) {
+      // **Bild über Image-Element laden (Vermeidung von CORS-Problemen)**
       const image = new Image();
-      image.crossOrigin = "anonymous"; // Falls das Bild extern ist
+      image.crossOrigin = "anonymous"; // Falls CORS erlaubt wird
       image.src = event.imageUrl;
 
       image.onload = async () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
         if (!ctx) return;
 
-        // Bildgröße setzen (mit zusätzlichem Platz für Blur)
-        const blurSize = 20; // Größe des Blur-Rahmens
-        canvas.width = image.width + blurSize * 2;
-        canvas.height = image.height + blurSize * 2;
+        const width = image.width;
+        const height = image.height;
 
-        // Hintergrund weichzeichnen
-        ctx.shadowColor = "rgba(0, 0, 0, 0.5)"; // Schattenfarbe
-        ctx.shadowBlur = blurSize; // Weichzeichnung
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
+        canvas.width = width;
+        canvas.height = height;
 
-        // Bild in der Mitte platzieren
-        ctx.drawImage(image, blurSize, blurSize, image.width, image.height);
+        // **Hauptbild rendern**
+        ctx.drawImage(image, 0, 0, width, height);
 
-        // Bild als Blob exportieren
+        // **Verlauf unten hinzufügen (linearer Gradient)**
+        const gradientHeight = height * 0.3; // Verlauf nimmt unteren 30% ein
+        const gradient = ctx.createLinearGradient(
+          0,
+          height - gradientHeight,
+          0,
+          height
+        );
+        gradient.addColorStop(0, "rgba(0, 0, 0, 0)"); // Start transparent
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0.8)"); // Ende schwarz
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, height - gradientHeight, width, gradientHeight);
+
+        // **Text hinzufügen**
+        ctx.fillStyle = "white";
+        ctx.font = "bold 36px Arial";
+        ctx.textAlign = "center";
+
+        // **Titel**
+        ctx.fillText(event.title, width / 2, height - gradientHeight + 40);
+
+        // **Stadt**
+        ctx.font = "italic 28px Arial";
+        ctx.fillText(event.city || "", width / 2, height - gradientHeight + 80);
+
+        // **Bild in Blob umwandeln & teilen**
         canvas.toBlob(async (blob) => {
           if (blob) {
             const file = new File([blob], "event-image.jpg", {
