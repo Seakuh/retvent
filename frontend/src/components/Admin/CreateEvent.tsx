@@ -1,27 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { EventService } from '../../services/event.service';
-import { LocationService, Location } from '../../services/location.service';
-import './CreateEvent.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { EventService } from "../../services/event.service";
+import { LocationService } from "../../services/location.service";
+import { categories } from "../../utils";
+import "./CreateEvent.css";
 
 const CreateEvent: React.FC = () => {
   const navigate = useNavigate();
   const eventService = new EventService();
   const locationService = new LocationService();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>('');
+  const [preview, setPreview] = useState<string>("");
   // const [locations, setLocations] = useState<Location[]>([]);
-  
+
   const [eventData, setEventData] = useState({
-    title: '',
-    startDate: '',
-    startTime: '',
-    // locationId: '',
-    description: '',
-    price: '',
-    ticketUrl: ''
+    title: "",
+    startDate: "",
+    startTime: "",
+    description: "",
+    price: "",
+    ticketUrl: "",
+    category: "",
+    city: "",
+    website: "",
+    email: "",
   });
 
   // useEffect(() => {
@@ -40,13 +44,15 @@ const CreateEvent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       await eventService.createEvent(eventData, image || undefined);
-      navigate('/admin/events');
+      navigate("/admin/events");
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to create event 😢');
+      setError(
+        error instanceof Error ? error.message : "Failed to create event 😢"
+      );
     } finally {
       setLoading(false);
     }
@@ -61,7 +67,7 @@ const CreateEvent: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate('/admin/dashboard');
+    navigate("/admin/dashboard");
   };
 
   return (
@@ -72,9 +78,9 @@ const CreateEvent: React.FC = () => {
         </button>
         <h1>Create New Event 🎪</h1>
       </div>
-      
+
       {error && <div className="error-message">{error}</div>}
-      
+
       <form onSubmit={handleSubmit}>
         <div className="form-grid">
           <div className="form-left">
@@ -100,7 +106,9 @@ const CreateEvent: React.FC = () => {
               type="text"
               placeholder="Event Title"
               value={eventData.title}
-              onChange={(e) => setEventData({...eventData, title: e.target.value})}
+              onChange={(e) =>
+                setEventData({ ...eventData, title: e.target.value })
+              }
               required
             />
 
@@ -108,54 +116,89 @@ const CreateEvent: React.FC = () => {
               <input
                 type="date"
                 value={eventData.startDate}
-                onChange={(e) => setEventData({...eventData, startDate: e.target.value})}
-                required
+                onChange={(e) =>
+                  setEventData({ ...eventData, startDate: e.target.value })
+                }
               />
               <input
                 type="time"
                 value={eventData.startTime}
-                onChange={(e) => setEventData({...eventData, startTime: e.target.value})}
-                required
+                onChange={(e) =>
+                  setEventData({ ...eventData, startTime: e.target.value })
+                }
               />
             </div>
 
-            {/* <select
-              value={eventData.locationId}
-              onChange={(e) => setEventData({...eventData, locationId: e.target.value})}
-              required
-              className="location-select"
+            <select
+              value={eventData.category}
+              onChange={(e) =>
+                setEventData({ ...eventData, category: e.target.value })
+              }
+              className="category-select"
             >
-              <option value="">Select Location 📍</option>
-              {locations.map(location => (
-                <option key={location.id} value={location.id}>
-                  {location.name} - {location.address}
+              <option value="">Select Category (optional) 🏷️</option>
+              {categories.map((category) => (
+                <option key={category.name} value={category.name}>
+                  {category.emoji} {category.name}
                 </option>
               ))}
-            </select> */}
+            </select>
+
+            <input
+              type="text"
+              placeholder="City (optional)"
+              value={eventData.city}
+              onChange={(e) =>
+                setEventData({ ...eventData, city: e.target.value })
+              }
+            />
 
             <textarea
-              placeholder="Description"
+              placeholder="Description (optional)"
               value={eventData.description}
-              onChange={(e) => setEventData({...eventData, description: e.target.value})}
-              required
+              onChange={(e) =>
+                setEventData({ ...eventData, description: e.target.value })
+              }
             />
 
             <input
               type="text"
               placeholder="Price (optional)"
               value={eventData.price}
-              onChange={(e) => setEventData({...eventData, price: e.target.value})}
+              onChange={(e) =>
+                setEventData({ ...eventData, price: e.target.value })
+              }
             />
 
             <input
               type="url"
               placeholder="Ticket URL (optional)"
               value={eventData.ticketUrl}
-              onChange={(e) => setEventData({...eventData, ticketUrl: e.target.value})}
+              onChange={(e) =>
+                setEventData({ ...eventData, ticketUrl: e.target.value })
+              }
+            />
+
+            <input
+              type="url"
+              placeholder="Website (optional)"
+              value={eventData.website}
+              onChange={(e) =>
+                setEventData({ ...eventData, website: e.target.value })
+              }
+            />
+
+            <input
+              type="email"
+              placeholder="Contact Email (optional)"
+              value={eventData.email}
+              onChange={(e) =>
+                setEventData({ ...eventData, email: e.target.value })
+              }
             />
 
             <button type="submit" disabled={loading} className="submit-button">
-              {loading ? 'Creating... ⏳' : 'Create Event 🚀'}
+              {loading ? "Creating... ⏳" : "Create Event 🚀"}
             </button>
           </div>
         </div>
@@ -164,4 +207,4 @@ const CreateEvent: React.FC = () => {
   );
 };
 
-export default CreateEvent; 
+export default CreateEvent;
