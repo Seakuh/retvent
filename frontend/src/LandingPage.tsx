@@ -1,5 +1,5 @@
 import { Hexagon, LogIn, Menu, Upload } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { EventGallery } from "./components/EventGallery/EventGallery";
@@ -10,18 +10,19 @@ import { SearchBar } from "./components/SearchBar/SearchBar";
 import { ViewToggle } from "./components/ViewToggle/ViewToggle";
 import { fetchLatestEvents, searchEventsByCity } from "./service";
 import { Event, ViewMode } from "./types/event";
+import { UserContext } from "./UserContext/UserContext";
 
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [showUploads, setShowUploads] = useState(false);
   const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { viewMode, setViewMode } = useContext(UserContext);
 
   // const loadUserEvents = async () => {
   //   const events = await fetchUserEvents();

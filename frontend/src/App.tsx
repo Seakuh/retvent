@@ -9,16 +9,18 @@ import CreateEvent from './components/Admin/CreateEvent';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { EventDetail } from './components/EventDetail/EventDetail';
 import EditEvent from './components/Admin/EditEvent';
+import { UserContextProvider } from './UserContext/UserContextProvider';
 
 const App: React.FC = () => {
   return (
     <div className="app">
-      <main>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/event/:eventId" element={<EventDetail />} />
+      <UserContextProvider>
+        <main>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/event/:eventId" element={<EventDetail />} />
           <Route path="/admin/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
@@ -42,6 +44,7 @@ const App: React.FC = () => {
           <Route path="*" element={<LandingPage />} />
         </Routes>
       </main>
+      </UserContextProvider>
     </div>
   );
 };
