@@ -147,6 +147,7 @@ export class EventController {
     @Query('lat') lat: string,
     @Query('lon') lon: string,
     @Query('distance') distance: string = '10',
+    @Query('limit') limit: number = 30,
   ) {
     const latNum = parseFloat(lat);
     const lonNum = parseFloat(lon);
@@ -156,7 +157,35 @@ export class EventController {
       throw new BadRequestException('Invalid coordinates');
     }
 
-    return this.eventService.findNearbyEvents(latNum, lonNum, distanceNum);
+    return this.eventService.findNearbyEvents(
+      latNum,
+      lonNum,
+      distanceNum,
+      limit,
+    );
+  }
+
+  @Get('nearby/map')
+  async getNearbyEventsForMap(
+    @Query('lat') lat: string,
+    @Query('lon') lon: string,
+    @Query('distance') distance: string = '10',
+    @Query('limit') limit: number = 30,
+  ) {
+    const latNum = parseFloat(lat);
+    const lonNum = parseFloat(lon);
+    const distanceNum = parseFloat(distance);
+
+    if (isNaN(latNum) || isNaN(lonNum)) {
+      throw new BadRequestException('Invalid coordinates');
+    }
+
+    return this.eventService.findNearbyEventsForMap(
+      latNum,
+      lonNum,
+      distanceNum,
+      limit,
+    );
   }
 
   @Get('favorites')

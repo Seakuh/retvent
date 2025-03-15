@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { GeolocationService } from 'src/infrastructure/services/geolocation.service';
+import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
@@ -35,6 +36,7 @@ export class EventService {
   }
 
   async getEventsByIds(ids: string[]): Promise<Event[]> {
+    console.log('Getting events by ids:', ids);
     return this.eventRepository.getUserFavorites(ids);
   }
 
@@ -62,8 +64,23 @@ export class EventService {
     lat: number,
     lon: number,
     distance: number,
+    limit: number,
   ): Promise<Event[]> {
-    return this.eventRepository.findNearbyEvents(lat, lon, distance);
+    return this.eventRepository.findNearbyEvents(lat, lon, distance, limit);
+  }
+
+  async findNearbyEventsForMap(
+    lat: number,
+    lon: number,
+    distance: number,
+    limit: number,
+  ): Promise<MapEventDto[]> {
+    return this.eventRepository.findNearbyEventsForMap(
+      lat,
+      lon,
+      distance,
+      limit,
+    );
   }
 
   async getUserFavorites(eventIds: string[]): Promise<Event[]> {

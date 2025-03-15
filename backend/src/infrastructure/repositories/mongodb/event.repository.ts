@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event } from '../../../core/domain/event';
 import { IEventRepository } from '../../../core/repositories/event.repository.interface';
@@ -85,6 +86,52 @@ export class MongoEventRepository implements IEventRepository {
       console.error('Error saving event:', error);
       throw error;
     }
+  }
+
+  private toMapEntity(doc: any): MapEventDto {
+    const event = doc.toObject ? doc.toObject() : doc;
+    return {
+      id: event._id.toString(),
+      title: event.title,
+      imageUrl: event.imageUrl,
+      location: event.location,
+      startDate: event.startDate,
+    };
+  }
+
+  async findNearbyEventsForMap(
+    lat: number,
+    lon: number,
+    distance: number,
+    limit: number,
+  ): Promise<MapEventDto[]> {
+    // Rückgabetyp geändert
+    const events = await this.eventModel
+      .find(
+        {
+          'location.coordinates': {
+            $near: {
+              $geometry: {
+                type: 'Point',
+                coordinates: [lon, lat],
+              },
+              $maxDistance: distance * 1000,
+            },
+          },
+        },
+        {
+          _id: 1,
+          title: 1,
+          imageUrl: 1,
+          location: 1,
+          startDate: 1,
+        },
+      )
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .exec();
+
+    return events.map((event) => this.toMapEntity(event)); // Verwende toMapEntity statt toEntity
   }
 
   async createEventFromFormData(eventData: Partial<Event>): Promise<Event> {
@@ -335,6 +382,7 @@ export class MongoEventRepository implements IEventRepository {
     lat: number,
     lon: number,
     distance: number,
+    limit: number,
   ): Promise<Event[]> {
     const events = await this.eventModel
       .find({
@@ -348,6 +396,8 @@ export class MongoEventRepository implements IEventRepository {
           },
         },
       })
+      .limit(limit)
+      .sort({ createdAt: -1 })
       .exec();
 
     console.log(events);
