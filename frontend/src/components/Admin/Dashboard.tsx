@@ -1,9 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Admin.css";
 
 const Dashboard: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -11,30 +12,45 @@ const Dashboard: React.FC = () => {
     window.location.href = "/";
   };
 
+  const handleBack = () => {
+    navigate("/");
+  };
+
   return (
     <div className="dashboard-container">
-      <h1>Welcome, {user.username} 👋</h1>
+      <button onClick={handleBack} className="back-button">
+        ← Event Scanner
+      </button>
+      <h1>Welcome back, {user.username} ✨</h1>
 
       <div className="dashboard-grid">
         <Link to="/admin/events" className="dashboard-card">
-          <h3>My Events 📅</h3>
-          <p>Manage your events</p>
+          <span className="emoji">🎪</span>
+          <h3>My Events</h3>
+          <p>Manage your event portfolio</p>
         </Link>
+
         <Link to="/admin/events/create" className="dashboard-card">
-          <h3>Create Event 🎪</h3>
-          <p>Add a new event</p>
+          <span className="emoji">✨</span>
+          <h3>Create Event</h3>
+          <p>Host your next amazing event</p>
         </Link>
+
         <Link to="/liked" className="dashboard-card">
-          <h3>Liked Events 💖</h3>
-          <p>View your liked events</p>
+          <span className="emoji">❤️</span>
+          <h3>Favorites</h3>
+          <p>View your starred events</p>
         </Link>
-        <Link to="/" className="dashboard-card">
-          <h3>Event-Scanner 📷 </h3>
-          <p>Go to the Landing Page</p>
-        </Link>
+
         <Link to="/" className="dashboard-card" onClick={handleLogout}>
-          <h3>Logout 🔒</h3>
-          <p>Logout from your account</p>
+          <span className="emoji">👋</span>
+          <h3>Sign Out</h3>
+          <p>See you next time!</p>
+        </Link>
+        <Link to="/" className="dashboard-card homepage-card">
+          <span className="emoji">🎯</span>
+          <h3>Discover Events</h3>
+          <p>Explore amazing events on our homepage</p>
         </Link>
       </div>
     </div>
