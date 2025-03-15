@@ -1,31 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User, UserProvider } from "./UserContext";
 
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [favoriteEventIds, setFavoriteEventIds] = useState<string[]>(() => {
+    const saved = localStorage.getItem("favoriteEventIds");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
+  }, [favoriteEventIds]);
 
   const addFavorite = (eventId: string) => {
-    if (!user) return;
-
-    setUser({
-      ...user,
-      favoriteEventIds: [...new Set([...user.favoriteEventIds, eventId])],
-    });
+    setFavoriteEventIds((prev) => [...new Set([...prev, eventId])]);
   };
 
   const removeFavorite = (eventId: string) => {
-    if (!user) return;
-
-    setUser({
-      ...user,
-      favoriteEventIds: user.favoriteEventIds.filter((id) => id !== eventId),
-    });
+    setFavoriteEventIds((prev) => prev.filter((id) => id !== eventId));
   };
 
   const isFavorite = (eventId: string): boolean => {
-    return user?.favoriteEventIds.includes(eventId) ?? false;
+    return favoriteEventIds.includes(eventId);
   };
 
   return (
@@ -33,6 +31,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         user,
         setUser,
+        favoriteEventIds,
         addFavorite,
         removeFavorite,
         isFavorite,

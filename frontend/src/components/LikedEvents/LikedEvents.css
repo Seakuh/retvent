@@ -1,0 +1,24 @@
+.liked-events-container{
+  display: flex;
+  color: white;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.liked-events-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.liked-events-title {
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+

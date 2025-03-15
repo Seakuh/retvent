@@ -1,4 +1,4 @@
-import { Hexagon, LogIn, Menu, Upload } from "lucide-react";
+import { Heart, Hexagon, LogIn, Menu, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
@@ -135,6 +135,15 @@ function LandingPage() {
                 <Hexagon size={20} />
 
                 <h3>Dashboard</h3>
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/liked");
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+              >
+                <Heart size={20} />
+                <p>Liked Events</p>
               </button>
 
               {/* My Uploads Button */}

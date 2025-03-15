@@ -178,6 +178,11 @@
     background-color: #ff3333;
   }
   
+  .share-button.active svg {
+    fill: white;
+    stroke: white;
+  }
+  
   @media (max-width: 768px) {
     .share-buttons {
       position: fixed;
