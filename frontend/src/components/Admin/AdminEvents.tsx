@@ -1,5 +1,5 @@
+import { Edit, Eye, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Trash2, Edit, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./AdminEvents.css";
 import { AdminService } from "./admin.service";
@@ -41,6 +41,7 @@ const AdminEvents: React.FC = () => {
 
   const handleDelete = async (eventId: string) => {
     if (window.confirm("Are you sure you want to delete this event? 🗑️")) {
+      console.log("Delete event", eventId);
       try {
         await adminService.deleteEvent(eventId);
         setEvents(events.filter((event) => event.id !== eventId));
@@ -51,19 +52,22 @@ const AdminEvents: React.FC = () => {
   };
 
   const handleEdit = (eventId: string) => {
+    console.log("Edit event", eventId);
     navigate(`/admin/events/edit/${eventId}`);
   };
 
-  const handleShare = (event: Event) => {
-    const eventUrl = `https://event-scanner.com/event/${event.id}`;
-    const messageText = encodeURIComponent(
-      `🎉 Check out this event: ${event.title}\n` +
-      `📍 ${event.city}\n` +
-      `📅 ${event.startDate} at ${event.startTime}\n` +
-      `💰 ${event.price}\n\n` +
-      `${eventUrl}`
-    );
-    window.open(`https://wa.me/?text=${messageText}`, '_blank');
+  const handleWatch = (event: Event) => {
+    console.log("Watch event", event);
+    navigate(`/event/${event.id}`);
+    // const eventUrl = `https://event-scanner.com/event/${event.id}`;
+    // const messageText = encodeURIComponent(
+    //   `🎉 Check out this event: ${event.title}\n` +
+    //     `📍 ${event.city}\n` +
+    //     `📅 ${event.startDate} at ${event.startTime}\n` +
+    //     `💰 ${event.price}\n\n` +
+    //     `${eventUrl}`
+    // );
+    // window.open(`https://wa.me/?text=${messageText}`, "_blank");
   };
 
   if (loading) {
@@ -71,14 +75,14 @@ const AdminEvents: React.FC = () => {
   }
 
   const handleBack = () => {
-    navigate('/admin/dashboard');
+    navigate("/admin/dashboard");
   };
 
   return (
     <div className="admin-events-container">
-         <button onClick={handleBack} className="back-button">
-          ← Back to Dashboard
-        </button>
+      <button onClick={handleBack} className="back-button">
+        ← Back to Dashboard
+      </button>
       <h2>My Events 📅</h2>
       {events.length === 0 ? (
         <p className="no-events">No events found.</p>
@@ -88,27 +92,29 @@ const AdminEvents: React.FC = () => {
             <div key={event.id} className="event-card">
               {event.imageUrl && (
                 <div className="event-image">
-                  <img src={event.imageUrl} alt={event.title}   />
+                  <img src={event.imageUrl} alt={event.title} />
                 </div>
               )}
               <div className="event-content">
                 <h3>{event.title}</h3>
-                <p>{event.description}</p>
-                <div className="event-details">
-                  <span>📍 {event.city}</span>
-                  <span>📅 {event.startDate}</span>
-                  <span>⏰ {event.startTime}</span>
-                  <span>💰 {event.price}</span>
-                </div>
               </div>
               <div className="event-actions">
-                <button onClick={() => handleShare(event)} className="share-btn">
-                  <Share2 size={20} />
+                <button
+                  onClick={() => handleWatch(event)}
+                  className="watch-btn"
+                >
+                  <Eye size={20} />
                 </button>
-                <button onClick={() => handleEdit(event.id)} className="edit-btn">
+                <button
+                  onClick={() => handleEdit(event.id)}
+                  className="edit-btn"
+                >
                   <Edit size={20} />
                 </button>
-                <button onClick={() => handleDelete(event.id)} className="delete-btn">
+                <button
+                  onClick={() => handleDelete(event.id)}
+                  className="delete-btn"
+                >
                   <Trash2 size={20} />
                 </button>
               </div>

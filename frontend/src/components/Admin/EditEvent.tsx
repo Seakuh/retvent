@@ -4,35 +4,6 @@ import { EventService } from "../../services/event.service";
 import { categories, Event } from "../../utils";
 import "./EditEvent.css";
 
-interface EditEventDto {
-  title?: string;
-  description?: string;
-  startDate?: string;
-  startTime?: string;
-  endDate?: string;
-  endTime?: string;
-  city?: string;
-  category?: string;
-  price?: string;
-  imageUrl?: string;
-  ticketLink?: string;
-  website?: string;
-  email?: string;
-  hostId?: string;
-  hostUsername?: string;
-  locationId?: string;
-  lineup?: Array<{ name: string; role?: string; startTime?: string }>;
-  socialMediaLinks?: {
-    instagram?: string;
-    facebook?: string;
-    twitter?: string;
-  };
-  tags?: string[];
-  likeIds?: string[];
-  uploadLat?: number;
-  uploadLon?: number;
-}
-
 const EditEvent: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();

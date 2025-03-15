@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Admin.css";
-
 const Dashboard: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
@@ -9,7 +8,7 @@ const Dashboard: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("access_token");
-    window.location.href = "/";
+    navigate("/");
   };
 
   const handleBack = () => {

@@ -12,21 +12,6 @@
   margin-top: 2rem;
 }
 
-.event-card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.event-content h3 {
-  margin: 0 0 1rem 0;
-  color: white;
-}
-
 .event-details {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -36,19 +21,9 @@
 
 .event-details span {
   font-size: 0.9rem;
-  color: #666;
 }
 
-.event-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-}
-
-.edit-btn, .delete-btn {
+.edit-btn, .delete-btn, .watch-btn {
   padding: 0.5rem;
   border: none;
   border-radius: 5px;
@@ -61,6 +36,11 @@
   color: white;
 }
 
+.watch-btn {
+  background: #28a745;
+  color: white;
+}
+
 .delete-btn {
   background: #dc3545;
   color: white;
@@ -68,6 +48,10 @@
 
 .edit-btn:hover {
   background: #0056b3;
+}
+
+.watch-btn:hover {
+  background: #218838;
 }
 
 .delete-btn:hover {
@@ -161,7 +145,7 @@
 
 .dashboard-card:hover {
   transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 40px blue;
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(255, 255, 255, 1);
 }

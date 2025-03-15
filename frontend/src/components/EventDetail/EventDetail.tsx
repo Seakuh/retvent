@@ -116,7 +116,7 @@ export const EventDetail: React.FC = () => {
         title={event.title}
         onImageClick={() => setShowImageModal(true)}
       />
-      <button className="back-button" onClick={() => navigate("/")}>
+      <button className="back-button" onClick={() => navigate(-1)}>
         ← Back
       </button>
       {event.tags && event.tags.length > 0 && (
