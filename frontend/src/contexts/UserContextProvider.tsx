@@ -5,6 +5,11 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [favoriteEventIds, setFavoriteEventIds] = useState<string[]>(() => {
     const saved = localStorage.getItem("favoriteEventIds");
     return saved ? JSON.parse(saved) : [];
@@ -12,7 +17,8 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
-  }, [favoriteEventIds]);
+    localStorage.setItem("viewMode", viewMode);
+  }, [favoriteEventIds, viewMode]);
 
   const addFavorite = (eventId: string) => {
     setFavoriteEventIds((prev) => [...new Set([...prev, eventId])]);
@@ -26,6 +32,20 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     return favoriteEventIds.includes(eventId);
   };
 
+  const adjustUserLocation = (
+    userLocation: {
+      latitude: number;
+      longitude: number;
+    } | null
+  ) => {
+    setUserLocation(userLocation);
+  };
+
+  const switchViewMode = (viewMode: "list" | "map") => {
+    localStorage.setItem("viewMode", viewMode);
+    setViewMode(viewMode);
+  };
+
   return (
     <UserProvider
       value={{
@@ -35,6 +55,10 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
         addFavorite,
         removeFavorite,
         isFavorite,
+        viewMode,
+        switchViewMode,
+        userLocation,
+        adjustUserLocation,
       }}
     >
       {children}
