@@ -1,14 +1,15 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import LandingPage from './LandingPage';
-import Login from './components/Auth/Login';
-import Register from './components/Auth/Register';
-import Dashboard from './components/Admin/Dashboard';
-import AdminEvents from './components/Admin/AdminEvents';
-import CreateEvent from './components/Admin/CreateEvent';
-import ProtectedRoute from './components/Auth/ProtectedRoute';
-import { EventDetail } from './components/EventDetail/EventDetail';
-import EditEvent from './components/Admin/EditEvent';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import LandingPage from "./LandingPage";
+import AdminEvents from "./components/Admin/AdminEvents";
+import CreateEvent from "./components/Admin/CreateEvent";
+import Dashboard from "./components/Admin/Dashboard";
+import EditEvent from "./components/Admin/EditEvent";
+import Login from "./components/Auth/Login";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import Register from "./components/Auth/Register";
+import { EventDetail } from "./components/EventDetail/EventDetail";
+import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 
 const App: React.FC = () => {
   return (
@@ -19,26 +20,39 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/event/:eventId" element={<EventDetail />} />
-          <Route path="/admin/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/events" element={
-            <ProtectedRoute>
-              <AdminEvents />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/events/create" element={
-            <ProtectedRoute>
-              <CreateEvent />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/events/edit/:eventId" element={
-            <ProtectedRoute>
-              <EditEvent />
-            </ProtectedRoute>
-          } />
+          <Route path="/liked" element={<LikedEvents />} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/events"
+            element={
+              <ProtectedRoute>
+                <AdminEvents />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/events/create"
+            element={
+              <ProtectedRoute>
+                <CreateEvent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/events/edit/:eventId"
+            element={
+              <ProtectedRoute>
+                <EditEvent />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<LandingPage />} />
         </Routes>
       </main>

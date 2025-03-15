@@ -1,5 +1,5 @@
+import { Edit, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Trash2, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./EventListView.css";
 import { AdminService } from "./admin.service";
@@ -64,7 +64,7 @@ export const EventListView: React.FC = () => {
             <li key={event.id} className="event-item">
               <div className="event-info">
                 <h3>{event.title}</h3>
-                <p>{event.description}</p>
+                {/* <p>{event.description}</p> */}
                 <div className="event-details">
                   <span>📅 {event.startDate}</span>
                   <span>⏰ {event.startTime}</span>

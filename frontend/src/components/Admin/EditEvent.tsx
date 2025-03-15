@@ -1,17 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { EventService } from '../../services/event.service';
-import './EditEvent.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { EventService } from "../../services/event.service";
+import { categories, Event } from "../../utils";
+import "./EditEvent.css";
 
 interface EditEventDto {
-  title: string;
-  description: string;
-  startDate: string;
-  startTime: string;
-  city: string;
-  category: string;
-  price: string;
+  title?: string;
+  description?: string;
+  startDate?: string;
+  startTime?: string;
+  endDate?: string;
+  endTime?: string;
+  city?: string;
+  category?: string;
+  price?: string;
   imageUrl?: string;
+  ticketLink?: string;
+  website?: string;
+  email?: string;
+  hostId?: string;
+  hostUsername?: string;
+  locationId?: string;
+  lineup?: Array<{ name: string; role?: string; startTime?: string }>;
+  socialMediaLinks?: {
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+  };
+  tags?: string[];
+  likeIds?: string[];
+  uploadLat?: number;
+  uploadLon?: number;
 }
 
 const EditEvent: React.FC = () => {
@@ -23,15 +42,27 @@ const EditEvent: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const eventService = new EventService();
 
-  const [formData, setFormData] = useState<EditEventDto>({
-    title: '',
-    description: '',
-    startDate: '',
-    startTime: '',
-    city: '',
-    category: '',
-    price: '',
-    imageUrl: '',
+  const [formData, setFormData] = useState<Event>({
+    title: "",
+    description: "",
+    startDate: "",
+    startTime: "",
+    endDate: "",
+    endTime: "",
+    city: "",
+    category: "",
+    price: "",
+    imageUrl: "",
+    ticketLink: "",
+    website: "",
+    email: "",
+    tags: [],
+    socialMediaLinks: {
+      instagram: "",
+      facebook: "",
+      twitter: "",
+    },
+    lineup: [],
   });
 
   useEffect(() => {
@@ -42,31 +73,58 @@ const EditEvent: React.FC = () => {
     try {
       const event = await eventService.getEventById(eventId!);
       setFormData({
-        title: event.title,
-        description: event.description,
-        startDate: event.startDate,
-        startTime: event.startTime,
-        city: event.city,
-        category: event.category,
-        price: event.price,
-        imageUrl: event.imageUrl,
+        title: event.title || "",
+        description: event.description || "",
+        startDate: event.startDate || "",
+        startTime: event.startTime || "",
+        endDate: event.endDate || "",
+        endTime: event.endTime || "",
+        city: event.city || "",
+        category: event.category || "",
+        price: event.price || "",
+        imageUrl: event.imageUrl || "",
+        ticketLink: event.ticketLink || "",
+        website: event.website || "",
+        email: event.email || "",
+        tags: event.tags || [],
+        socialMediaLinks: {
+          instagram: event.socialMediaLinks?.instagram || "",
+          facebook: event.socialMediaLinks?.facebook || "",
+          twitter: event.socialMediaLinks?.twitter || "",
+        },
+        lineup: event.lineup || [],
       });
       if (event.imageUrl) {
         setImagePreview(event.imageUrl);
       }
     } catch (err) {
-      setError('Failed to fetch event details 😢');
+      setError("Failed to fetch event details 😢");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    if (name.startsWith("social.")) {
+      const socialNetwork = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        socialMediaLinks: {
+          ...prev.socialMediaLinks,
+          [socialNetwork]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,50 +139,77 @@ const EditEvent: React.FC = () => {
     }
   };
 
+  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const tags = e.target.value.split(",").map((tag) => tag.trim());
+    setFormData((prev) => ({
+      ...prev,
+      tags,
+    }));
+  };
+
+  const handleLineupChange = (index: number, field: string, value: string) => {
+    setFormData((prev) => {
+      const newLineup = [...(prev.lineup || [])];
+      newLineup[index] = {
+        ...newLineup[index],
+        [field]: value,
+      };
+      return {
+        ...prev,
+        lineup: newLineup,
+      };
+    });
+  };
+
+  const addLineupMember = () => {
+    setFormData((prev) => ({
+      ...prev,
+      lineup: [...(prev.lineup || []), { name: "", role: "", startTime: "" }],
+    }));
+  };
+
+  const removeLineupMember = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      lineup: prev.lineup?.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const formDataToSend = new FormData();
-      
-      // Append all form fields
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== undefined && value !== '' && key !== 'imageUrl') {
-          formDataToSend.append(key, value.toString());
-        }
-      });
-
-      // Append new image if selected
-      if (selectedFile) {
-        formDataToSend.append('image', selectedFile);
-      }
-
-      await eventService.updateEvent(eventId!, formDataToSend);
-      navigate('/admin/events');
+      await eventService.updateEvent(eventId!, formData);
+      navigate("/admin/events");
     } catch (err) {
-      setError('Failed to update event 😢');
+      setError("Failed to update event 😢");
     }
   };
 
   const handleBack = () => {
-    navigate('/admin/events');
+    navigate("/admin/events");
   };
 
-  if (loading) return <div className="loading">Loading event details... ⌛</div>;
+  if (loading)
+    return <div className="loading">Loading event details... ⌛</div>;
   if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="edit-event-container">
-         <button onClick={handleBack} className="back-button">
-          ← Back to Events
-        </button>
+      <button onClick={handleBack} className="back-button">
+        ← Back to Events
+      </button>
       <h2>Edit Event ✏️</h2>
       <form onSubmit={handleSubmit} className="edit-event-form">
         <div className="image-upload-section">
           <div className="current-image">
             {imagePreview ? (
-              <img src={imagePreview} alt="Event preview" className="image-preview" />
+              <img
+                src={imagePreview}
+                alt="Event preview"
+                className="image-preview"
+              />
             ) : (
               <div className="no-image">No image selected 🖼️</div>
             )}
@@ -151,7 +236,6 @@ const EditEvent: React.FC = () => {
             name="title"
             value={formData.title}
             onChange={handleInputChange}
-            required
           />
         </div>
 
@@ -162,58 +246,53 @@ const EditEvent: React.FC = () => {
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            required
           />
         </div>
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="startDate">Date 📅</label>
+            <label htmlFor="startDate">Start Date 📅</label>
             <input
               type="date"
               id="startDate"
               name="startDate"
               value={formData.startDate}
               onChange={handleInputChange}
-              required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="startTime">Time ⏰</label>
+            <label htmlFor="startTime">Start Time ⏰</label>
             <input
               type="time"
               id="startTime"
               name="startTime"
               value={formData.startTime}
               onChange={handleInputChange}
-              required
             />
           </div>
         </div>
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="city">City 🏙️</label>
+            <label htmlFor="endDate">End Date 📅</label>
             <input
-              type="text"
-              id="city"
-              name="city"
-              value={formData.city}
+              type="date"
+              id="endDate"
+              name="endDate"
+              value={formData.endDate}
               onChange={handleInputChange}
-              required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="price">Price 💰</label>
+            <label htmlFor="endTime">End Time ⏰</label>
             <input
-              type="text"
-              id="price"
-              name="price"
-              value={formData.price}
+              type="time"
+              id="endTime"
+              name="endTime"
+              value={formData.endTime}
               onChange={handleInputChange}
-              required
             />
           </div>
         </div>
@@ -225,19 +304,177 @@ const EditEvent: React.FC = () => {
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            required
           >
             <option value="">Select a category</option>
-            <option value="music">Music 🎵</option>
-            <option value="sports">Sports ⚽</option>
-            <option value="arts">Arts 🎨</option>
-            <option value="food">Food 🍔</option>
-            <option value="other">Other 📦</option>
+            {categories.map((category) => (
+              <option key={category.name} value={category.name}>
+                {category.emoji} {category.name}
+              </option>
+            ))}
           </select>
         </div>
 
+        <div className="form-group">
+          <label htmlFor="city">City 🏙️</label>
+          <input
+            type="text"
+            id="city"
+            name="city"
+            value={formData.city}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="price">Price 💰</label>
+          <input
+            type="text"
+            id="price"
+            name="price"
+            value={formData.price}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="ticketLink">Ticket Link 🎟️</label>
+          <input
+            type="url"
+            id="ticketLink"
+            name="ticketLink"
+            value={formData.ticketLink}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="website">Website 🌐</label>
+          <input
+            type="url"
+            id="website"
+            name="website"
+            value={formData.website}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="email">Contact Email 📧</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="tags">Tags 🏷️ (comma-separated)</label>
+          <input
+            type="text"
+            id="tags"
+            name="tags"
+            value={formData.tags?.join(", ")}
+            onChange={handleTagsChange}
+            placeholder="music, party, live"
+          />
+        </div>
+
+        <div className="social-media-section">
+          <h3>Social Media Links 📱</h3>
+          <div className="form-group">
+            <label htmlFor="social.instagram">Instagram</label>
+            <input
+              type="url"
+              id="social.instagram"
+              name="social.instagram"
+              value={formData.socialMediaLinks?.instagram}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="social.facebook">Facebook</label>
+            <input
+              type="url"
+              id="social.facebook"
+              name="social.facebook"
+              value={formData.socialMediaLinks?.facebook}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="social.twitter">Twitter</label>
+            <input
+              type="url"
+              id="social.twitter"
+              name="social.twitter"
+              value={formData.socialMediaLinks?.twitter}
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
+
+        <div className="lineup-section">
+          <h3>Lineup 🎭</h3>
+          <button
+            type="button"
+            onClick={addLineupMember}
+            className="add-lineup-btn"
+          >
+            Add Performer +
+          </button>
+          {formData.lineup?.map((member, index) => (
+            <div key={index} className="lineup-member">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Name</label>
+                  <input
+                    type="text"
+                    value={member.name}
+                    onChange={(e) =>
+                      handleLineupChange(index, "name", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Role</label>
+                  <input
+                    type="text"
+                    value={member.role}
+                    onChange={(e) =>
+                      handleLineupChange(index, "role", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Start Time</label>
+                  <input
+                    type="time"
+                    value={member.startTime}
+                    onChange={(e) =>
+                      handleLineupChange(index, "startTime", e.target.value)
+                    }
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeLineupMember(index)}
+                  className="remove-lineup-btn"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className="form-actions">
-          <button type="button" onClick={() => navigate('/admin/events')} className="cancel-btn">
+          <button
+            type="button"
+            onClick={() => navigate("/admin/events")}
+            className="cancel-btn"
+          >
             Cancel ❌
           </button>
           <button type="submit" className="save-btn">
@@ -249,4 +486,4 @@ const EditEvent: React.FC = () => {
   );
 };
 
-export default EditEvent; 
+export default EditEvent;

@@ -47,9 +47,9 @@ export interface Event {
   // Bild URL
   imageUrl?: string;
   // Zeitliche Daten
-  startDate?: Date;
+  startDate?: Date | string;
   startTime?: string;
-  endDate?: Date;
+  endDate?: Date | string;
   endTime?: string;
   // Beziehungen
   hostId?: string;
@@ -68,7 +68,6 @@ export interface Event {
   tags?: string[];
   website?: string;
   likeIds?: string[];
-
   email?: string;
 
   // Timestamps

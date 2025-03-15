@@ -32,28 +32,28 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Netzwerkanfragen abfangen
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Cache-First Strategie
-      if (response) {
-        return response;
-      }
+// // Netzwerkanfragen abfangen
+// self.addEventListener("fetch", (event) => {
+//   event.respondWith(
+//     caches.match(event.request).then((response) => {
+//       // Cache-First Strategie
+//       if (response) {
+//         return response;
+//       }
 
-      return fetch(event.request).then((response) => {
-        // Nur valide Responses cachen
-        if (!response || response.status !== 200 || response.type !== "basic") {
-          return response;
-        }
+//       return fetch(event.request).then((response) => {
+//         // Nur valide Responses cachen
+//         if (!response || response.status !== 200 || response.type !== "basic") {
+//           return response;
+//         }
 
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
+//         const responseToCache = response.clone();
+//         caches.open(CACHE_NAME).then((cache) => {
+//           cache.put(event.request, responseToCache);
+//         });
 
-        return response;
-      });
-    })
-  );
-});
+//         return response;
+//       });
+//     })
+//   );
+// });
