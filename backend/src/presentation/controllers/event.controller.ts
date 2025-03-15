@@ -283,9 +283,6 @@ export class EventController {
     @Request() req,
   ) {
     try {
-      console.log('Raw Body:', req.body); // Zeigt, was wirklich ankommt
-      console.log('DTO:', updateEventDto); // Zeigt, ob es korrekt instanziiert wird
-
       const event = await this.eventService.findById(id);
 
       if (!event) {
@@ -296,8 +293,6 @@ export class EventController {
         throw new ForbiddenException('You can only edit your own events');
       }
 
-      console.log('Update Event - Event:', event);
-      console.log('Update Event - Update event data:', updateEventDto);
       return this.eventService.update(id, updateEventDto);
     } catch (error) {
       if (error.name === 'CastError' || error.kind === 'ObjectId') {

@@ -111,7 +111,6 @@ export class UpdateEventDto {
   price?: string;
 
   @IsOptional()
-  @IsUrl()
   ticketLink?: string;
 
   @IsOptional()
