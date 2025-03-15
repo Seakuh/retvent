@@ -78,3 +78,15 @@ export interface Event {
   uploadLat?: number;
   uploadLon?: number;
 }
+
+export interface MapEvent {
+  id: string;
+  title: string;
+  imageUrl: string;
+  location: {
+    type: string;
+    coordinates: number[];
+    city?: string;
+  };
+  startDate: Date;
+}
