@@ -19,10 +19,10 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
-import { ImageService } from '../../infrastructure/services/image.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { UploadGuard } from '../guards/upload.guard';
 
 @Controller('events')
 export class EventController {
@@ -30,7 +30,6 @@ export class EventController {
     // private readonly meetupService: MeetupService,
     private readonly eventService: EventService,
     private readonly eventMapper: EventMapper,
-    private readonly imageService: ImageService,
   ) {}
 
   @Get('search/plattforms')
@@ -56,8 +55,8 @@ export class EventController {
     const locationData = JSON.parse(body.location);
 
     // Koordinaten extrahieren
-    const lonFromBodyCoordinates = locationData.coordinates[0]; // 13.385728
-    const latFromBodyCoordinates = locationData.coordinates[1]; // 52.5041664
+    const lonFromBodyCoordinates = locationData.coordinates[0];
+    const latFromBodyCoordinates = locationData.coordinates[1];
 
     return this.eventService.processEventImageUpload(
       image,
@@ -66,13 +65,38 @@ export class EventController {
     );
   }
 
-  // @Post('upload')
-  // async uploadEvent(@Body() body: { imageUrl: string; lat?: number; lon?: number }) {
-  //   return this.eventService.processEventImage(body.imageUrl, body.lat, body.lon);
-  // }
+  @Post('v2/upload/event-image')
+  @UseGuards(UploadGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadEventImageV2(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() body: { location: string },
+    @Request() req,
+  ) {
+    console.log('V2 Upload - Request received');
+    console.log('V2 Upload - Auth user:', req.user);
+    console.log('V2 Upload - Headers:', req.headers);
 
-  @Post('upload/event')
-  async uploadEvent(@Body() body: {}) {}
+    try {
+      // Location-String zu Objekt parsen
+      const locationData = JSON.parse(body.location);
+      console.log('V2 Upload - Location data:', locationData);
+
+      // Koordinaten extrahieren
+      const lonFromBodyCoordinates = locationData.coordinates[0];
+      const latFromBodyCoordinates = locationData.coordinates[1];
+
+      return this.eventService.processEventImageUpload(
+        image,
+        lonFromBodyCoordinates,
+        latFromBodyCoordinates,
+        req.user.id,
+      );
+    } catch (error) {
+      console.error('V2 Upload - Error:', error);
+      throw error;
+    }
+  }
 
   @Get('search')
   async searchEvents(
@@ -189,7 +213,8 @@ export class EventController {
     @Body() eventData: CreateEventDto,
     @UploadedFile() image?: Express.Multer.File,
   ) {
-    const parsedData = this.eventMapper.toEntity(eventData, req.user.id);
+    const parsedData = this.eventMapper.toEntity(eventData, req.user.sub);
+    console.log('Create Event - Parsed data:', parsedData);
     const event = await this.eventService.createEvent(parsedData, image);
     return event;
   }
@@ -221,21 +246,6 @@ export class EventController {
   async getAllEvents() {
     return this.eventService.findAll();
   }
-
-  // PUBLIC EVENT CREATION ------------------------------------------------------
-  // @Post('create/public')
-  // @UseInterceptors(FileInterceptor('image'))
-  // async createPublicEvent(
-  //   @Body() eventData: CreateEventDto,
-  //   @UploadedFile() image?: Express.Multer.File
-  // ) {
-  //   const parsedData = this.eventMapper.toEntity({
-  //     ...eventData,
-  //   }, 'public'  // Default public username
-  //   );
-
-  //   return await this.eventService.createEvent(parsedData, image);
-  // }
 
   @Get('location/:city')
   async getEventsByCity(
@@ -273,16 +283,21 @@ export class EventController {
     @Request() req,
   ) {
     try {
+      console.log('Raw Body:', req.body); // Zeigt, was wirklich ankommt
+      console.log('DTO:', updateEventDto); // Zeigt, ob es korrekt instanziiert wird
+
       const event = await this.eventService.findById(id);
 
       if (!event) {
         throw new NotFoundException('Event not found');
       }
 
-      if (event.hostId !== req.user.id) {
+      if (event.hostId !== req.user.sub) {
         throw new ForbiddenException('You can only edit your own events');
       }
 
+      console.log('Update Event - Event:', event);
+      console.log('Update Event - Update event data:', updateEventDto);
       return this.eventService.update(id, updateEventDto);
     } catch (error) {
       if (error.name === 'CastError' || error.kind === 'ObjectId') {
@@ -301,8 +316,11 @@ export class EventController {
       if (!event) {
         throw new NotFoundException('Event not found');
       }
+      console.log('Delete Event - Event:', event);
+      console.log('Delete Event - Request user:', req.user);
+      console.log('Delete Event - Event hostId:', event.hostId);
 
-      if (event.hostId !== req.user.id) {
+      if (event.hostId !== req.user.sub) {
         throw new ForbiddenException('You can only delete your own events');
       }
 

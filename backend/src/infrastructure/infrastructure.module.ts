@@ -1,34 +1,34 @@
-import { Module } from '@nestjs/common';
-import { AuthModule } from './modules/auth.module';
-import { CoreModule } from '../core/core.module';
-import { MongooseModule } from '@nestjs/mongoose';
 import { HttpModule } from '@nestjs/axios';
-import { EventService } from '../application/services/event.service';
-import { ChatGPTService } from './services/chatgpt.service';
-import { ImageService } from './services/image.service';
-import { GeolocationService } from './services/geolocation.service';
-import { EventSchema } from './schemas/event.schema';
-import { LocationSchema } from './schemas/location.schema';
-import { UserSchema } from './schemas/user.schema';
-import { MongoEventRepository } from './repositories/mongodb/event.repository';
-import { LocationService } from '../application/services/location.service';
-import { AuthService } from './services/auth.service';
-import { AuthController } from '../presentation/controllers/auth.controller';
-import { LocationController } from '../presentation/controllers/location.controller';
-import { EventController } from '../presentation/controllers/event.controller';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './auth/jwt.strategy';
-import { MongoLocationRepository } from './repositories/mongodb/location.repository';
-import { MongoUserRepository } from './repositories/mongodb/user.repository';
+import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
+import { EventMapper } from '../application/mappers/event.mapper';
+import { EventService } from '../application/services/event.service';
+import { LocationService } from '../application/services/location.service';
+import { CoreModule } from '../core/core.module';
+import { AuthController } from '../presentation/controllers/auth.controller';
+import { EventController } from '../presentation/controllers/event.controller';
+import { LocationController } from '../presentation/controllers/location.controller';
 import { JwtAuthGuard } from '../presentation/guards/jwt-auth.guard';
 import { OwnerGuard } from '../presentation/guards/owner.guard';
-import { EventMapper } from '../application/mappers/event.mapper';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
-import { GroovecastService } from './services/groovecast.service';
+import { AuthModule } from './modules/auth.module';
+import { MongoEventRepository } from './repositories/mongodb/event.repository';
 import { MongoGrooveCastRepository } from './repositories/mongodb/groovecast.repository';
+import { MongoLocationRepository } from './repositories/mongodb/location.repository';
+import { MongoUserRepository } from './repositories/mongodb/user.repository';
+import { EventSchema } from './schemas/event.schema';
 import { GroovecastSchema } from './schemas/groovecast.schema';
+import { LocationSchema } from './schemas/location.schema';
+import { UserSchema } from './schemas/user.schema';
+import { AuthService } from './services/auth.service';
+import { ChatGPTService } from './services/chatgpt.service';
+import { GeolocationService } from './services/geolocation.service';
+import { GroovecastService } from './services/groovecast.service';
+import { ImageService } from './services/image.service';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -40,7 +40,7 @@ import { GroovecastSchema } from './schemas/groovecast.schema';
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGODB_URI'),
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
       }),
       inject: [ConfigService],
     }),
@@ -54,14 +54,14 @@ import { GroovecastSchema } from './schemas/groovecast.schema';
       { name: 'Event', schema: EventSchema },
       { name: 'Location', schema: LocationSchema },
       { name: 'User', schema: UserSchema },
-      { name: 'GrooveCast', schema: GroovecastSchema }
-    ])
+      { name: 'GrooveCast', schema: GroovecastSchema },
+    ]),
   ],
   controllers: [
     AuthController,
     LocationController,
     EventController,
-    GroovecastController
+    GroovecastController,
   ],
   providers: [
     EventService,
@@ -81,17 +81,17 @@ import { GroovecastSchema } from './schemas/groovecast.schema';
     ConfigService,
     {
       provide: 'IEventRepository',
-      useClass: MongoEventRepository
+      useClass: MongoEventRepository,
     },
     {
       provide: 'ILocationRepository',
-      useClass: MongoLocationRepository
+      useClass: MongoLocationRepository,
     },
     {
       provide: 'IUserRepository',
       useClass: MongoUserRepository,
     },
-    GroovecastService
+    GroovecastService,
   ],
   exports: [
     EventService,
@@ -111,7 +111,7 @@ import { GroovecastSchema } from './schemas/groovecast.schema';
     AuthModule,
     GeolocationService,
     ConfigService,
-    GroovecastService
+    GroovecastService,
   ],
 })
 export class InfrastructureModule {}

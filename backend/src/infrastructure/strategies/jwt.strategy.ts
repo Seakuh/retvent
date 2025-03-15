@@ -1,23 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private configService: ConfigService) {
+    const jwtSecret =
+      configService.get<string>('JWT_SECRET') || 'SuperSichererSchluessel';
+    console.log('JWT Strategy - Using secret:', jwtSecret);
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET,
+      secretOrKey: jwtSecret,
     });
   }
 
   async validate(payload: any) {
-    return {
-      id: payload.sub,
-      email: payload.email,
-      username: payload.username
-    };
+    try {
+      console.log('JWT Strategy - Received token payload:', payload);
+
+      if (!payload) {
+        console.log('JWT Strategy - No payload found');
+        throw new UnauthorizedException('Invalid token payload');
+      }
+
+      if (!payload.sub) {
+        console.log('JWT Strategy - No sub (user id) found in payload');
+        throw new UnauthorizedException('Invalid token structure');
+      }
+
+      const user = {
+        id: payload.sub,
+        email: payload.email,
+        username: payload.username,
+      };
+
+      console.log('JWT Strategy - Validated user:', user);
+      return user;
+    } catch (error) {
+      console.error('JWT Strategy - Validation error:', error);
+      throw new UnauthorizedException('Token validation failed');
+    }
   }
-} 
+}

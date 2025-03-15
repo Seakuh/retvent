@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEventDto } from '../../presentation/dtos/create-event.dto';
 import { Event } from '../../core/domain/event';
+import { CreateEventDto } from '../../presentation/dtos/create-event.dto';
 
 @Injectable()
 export class EventMapper {
@@ -9,7 +9,9 @@ export class EventMapper {
       ...dto,
       startDate: new Date(`${dto.startDate}T${dto.startTime}:00`),
       hostId: hostId,
-      socialMediaLinks: this.parseJsonField<Event['socialMediaLinks']>(dto.socialMediaLinks),
+      socialMediaLinks: this.parseJsonField<Event['socialMediaLinks']>(
+        dto.socialMediaLinks,
+      ),
       tags: this.parseJsonField<string[]>(dto.tags),
       price: dto.price ? dto.price : undefined,
       lineup: this.parseJsonField<Event['lineup']>(dto.lineup),
@@ -18,15 +20,17 @@ export class EventMapper {
       createdAt: new Date(),
       updatedAt: new Date(),
       city: dto.city,
-      location: dto.city ? {
-        city: dto.city,
-        address: dto.location?.address,
-        coordinates: dto.location?.coordinates
-      } : undefined,
+      location: dto.city
+        ? {
+            city: dto.city,
+            address: dto.location?.address,
+            coordinates: dto.location?.coordinates,
+          }
+        : undefined,
     };
 
     return Object.fromEntries(
-      Object.entries(mappedEvent).filter(([_, v]) => v !== undefined)
+      Object.entries(mappedEvent).filter(([_, v]) => v !== undefined),
     );
   }
 
@@ -40,4 +44,4 @@ export class EventMapper {
     }
     return field as T;
   }
-} 
+}

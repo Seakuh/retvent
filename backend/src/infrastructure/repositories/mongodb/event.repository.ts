@@ -87,6 +87,30 @@ export class MongoEventRepository implements IEventRepository {
     }
   }
 
+  async createEventFromFormData(eventData: Partial<Event>): Promise<Event> {
+    try {
+      console.log(
+        'Creating event with data:',
+        JSON.stringify(eventData, null, 2),
+      );
+
+      // Create new event document
+      const event = new this.eventModel(eventData);
+
+      // Save and wait for result
+      const savedEvent = await event.save();
+      console.log(
+        'Saved event:',
+        JSON.stringify(savedEvent.toObject(), null, 2),
+      );
+
+      return this.toEntity(savedEvent);
+    } catch (error) {
+      console.error('Error saving event:', error);
+      throw error;
+    }
+  }
+
   async update(id: string, eventData: UpdateEventDto): Promise<Event | null> {
     const updated = await this.eventModel
       .findByIdAndUpdate(id, eventData, { new: true })

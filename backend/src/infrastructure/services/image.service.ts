@@ -1,6 +1,5 @@
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
-import { Express } from 'express';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,7 +11,8 @@ export class ImageService {
   constructor(private configService: ConfigService) {
     const accessKey = this.configService.get<string>('HETZNER_ACCESS_KEY');
     const secretKey = this.configService.get<string>('HETZNER_SECRET_KEY');
-    this.bucketName = this.configService.get<string>('HETZNER_BUCKET_NAME') || 'imagebucket';
+    this.bucketName =
+      this.configService.get<string>('HETZNER_BUCKET_NAME') || 'imagebucket';
 
     if (!accessKey || !secretKey) {
       console.error('Missing Hetzner credentials');
@@ -32,7 +32,7 @@ export class ImageService {
   async uploadImage(image: Express.Multer.File): Promise<string> {
     try {
       if (process.env.NODE_ENV === 'test') {
-        return 'https://test-image-url.com/test.jpg';
+        return 'https://hel1.your-objectstorage.com/imagebucket/events/2edf0ca5-be33-4fa9-9ac3-28da8094e6fa.jpg';
       }
 
       const fileExtension = image.originalname.split('.').pop() || 'jpg';
@@ -41,7 +41,7 @@ export class ImageService {
       console.log('Uploading image with credentials:', {
         bucket: this.bucketName,
         fileName,
-        contentType: image.mimetype
+        contentType: image.mimetype,
       });
 
       const command = new PutObjectCommand({
@@ -62,6 +62,4 @@ export class ImageService {
   }
 
   // async uploadImagToBucket(image: Express.Multer.File): Promise<string> {
-    
-
 }

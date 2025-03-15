@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { LocationService } from '../../application/services/location.service';
 
 @Injectable()
@@ -17,4 +17,4 @@ export class OwnerGuard implements CanActivate {
 
     return location.ownerId === userId;
   }
-} 
+}

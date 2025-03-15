@@ -1,7 +1,15 @@
-import { Controller, Post, Body, BadRequestException, UseGuards, Headers, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Headers,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from '../../infrastructure/services/auth.service';
-import { RegisterUserDto } from '../dtos/register-user.dto';
 import { LoginDto } from '../dtos/login.dto';
+import { RegisterUserDto } from '../dtos/register-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('auth')
@@ -36,4 +44,4 @@ export class AuthController {
     await this.authService.logout(token);
     return { message: 'Erfolgreich ausgeloggt' };
   }
-} 
+}

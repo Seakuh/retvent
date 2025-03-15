@@ -91,7 +91,7 @@ export class EventService {
         updatedAt: new Date(),
       };
 
-      return this.eventRepository.create(eventWithImage);
+      return this.eventRepository.createEventFromFormData(eventWithImage);
     } catch (error) {
       throw new BadRequestException(`Failed to create event: ${error.message}`);
     }
@@ -117,6 +117,7 @@ export class EventService {
     image: Express.Multer.File,
     lat?: number,
     lon?: number,
+    userId?: string,
   ): Promise<Event> {
     try {
       console.info('Processing event image upload...');
@@ -151,6 +152,7 @@ export class EventService {
           },
         },
         status: 'pending',
+        hostId: userId || 'public', // Setze hostId auf userId wenn vorhanden, sonst 'public'
       };
 
       const createdEvent = await this.eventRepository.create(eventData);

@@ -1,8 +1,13 @@
-import {
-  IsString, IsOptional, IsArray, IsUrl, ValidateNested,
-  IsNumber, Matches, IsDateString, IsObject
-} from 'class-validator';
 import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUrl,
+  ValidateNested,
+} from 'class-validator';
 
 class SocialMediaLinksDto {
   @IsUrl()
@@ -49,64 +54,107 @@ class LocationDto {
 }
 
 export class UpdateEventDto {
-  @IsString()
   @IsOptional()
-  title: string;
+  @IsString()
+  id?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsString()
   description?: string;
 
-  @IsDateString()
   @IsOptional()
-  startDate: string;
+  @IsUrl()
+  imageUrl?: string;
 
-  @IsString()
   @IsOptional()
-  @Matches(/^\d{2}:\d{2}$/, {
-    message: 'startTime must be in format HH:mm'
-  })
-  startTime: string;
+  @IsString()
+  startDate?: string | Date;
 
-  @IsString()
   @IsOptional()
+  @IsString()
+  startTime?: string;
+
+  @IsOptional()
+  @IsString()
+  endDate?: string | Date;
+
+  @IsOptional()
+  @IsString()
+  endTime?: string;
+
+  @IsOptional()
+  @IsString()
+  hostId?: string;
+
+  @IsOptional()
+  @IsString()
+  hostUsername?: string;
+
+  @IsOptional()
+  @IsString()
   city?: string;
 
-  @IsObject()
   @IsOptional()
-  @ValidateNested()
-  @Type(() => LocationDto)
-  location?: LocationDto;
-
   @IsString()
-  @IsOptional()
   locationId?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   category?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   price?: string;
 
-  @IsString()
   @IsOptional()
+  @IsUrl()
   ticketLink?: string;
 
-  @IsString()
   @IsOptional()
-  lineup?: string;
+  @IsArray()
+  lineup?: Array<{ name: string; role?: string; startTime?: string }>;
 
-  @IsString()
   @IsOptional()
-  socialMediaLinks?: string;
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
 
-  @IsString()
-  @IsOptional()
-  tags?: string;
-
-  @IsString()
   @IsOptional()
   website?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  likeIds?: string[];
+
+  @IsOptional()
+  email?: string;
+
+  @IsOptional()
+  createdAt?: Date;
+
+  @IsOptional()
+  updatedAt?: Date;
+
+  @IsOptional()
+  @IsNumber()
+  uploadLat?: number;
+
+  @IsOptional()
+  @IsNumber()
+  uploadLon?: number;
+
+  @IsOptional()
+  @IsObject()
+  socialMediaLinks?: {
+    instagram?: string;
+
+    facebook?: string;
+
+    twitter?: string;
+  };
 }
