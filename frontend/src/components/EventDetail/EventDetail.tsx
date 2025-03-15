@@ -1,6 +1,7 @@
-import { CalendarPlus, Share2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { CalendarPlus, Heart, Share2 } from "lucide-react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
 import TicketButton from "../Buttons/TicketButton";
 import { ImageModal } from "../ImageModal/ImageModal";
@@ -14,11 +15,13 @@ import GenreSlider from "./components/GenreSlider/GenreSlider";
 import "./EventDetail.css";
 import { handleWhatsAppShare } from "./service";
 import Social from "./Social/Social";
+
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
   const { event, loading, error } = useEvent(eventId);
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
+  const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
 
   useEffect(() => {
     if (event) {
@@ -85,6 +88,16 @@ export const EventDetail: React.FC = () => {
     return <EventDetailError message={error?.message} />;
   }
 
+  function handleFavoriteClick(): void {
+    if (!eventId) return;
+
+    if (isFavorite(eventId)) {
+      removeFavorite(eventId);
+    } else {
+      addFavorite(eventId);
+    }
+  }
+
   return (
     <div
       className="event-detail"
@@ -108,6 +121,23 @@ export const EventDetail: React.FC = () => {
           title="Via WhatsApp teilen"
         >
           <Share2 className="h-5 w-5" />
+        </button>
+        <button
+          className={`share-button ${
+            isFavorite(eventId || "") ? "active" : ""
+          }`}
+          onClick={handleFavoriteClick}
+          title={
+            isFavorite(eventId || "")
+              ? "Von Favoriten entfernen"
+              : "Zu Favoriten hinzufügen"
+          }
+        >
+          <Heart
+            className={`h-5 w-5 ${
+              isFavorite(eventId || "") ? "fill-current" : ""
+            }`}
+          />
         </button>
       </div>
 

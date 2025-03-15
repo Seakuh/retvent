@@ -169,6 +169,15 @@
     box-shadow: 0 4px 12px rgba(var(--color-neon-blue-rgb), 0.3);
   }
   
+  .share-button.active {
+    background-color: #ff4b4b;
+    color: white;
+  }
+  
+  .share-button.active:hover {
+    background-color: #ff3333;
+  }
+  
   @media (max-width: 768px) {
     .share-buttons {
       position: fixed;
