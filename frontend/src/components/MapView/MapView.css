@@ -49,8 +49,8 @@
 
 .pulse {
   border-radius: 50%;
-  height: 3rem;
-  width: 3rem;
+  height: 14px;
+  width: 14px;
   position: absolute;
   left: -7px;
   top: -7px;
@@ -61,8 +61,8 @@
 .pulse:after {
   content: "";
   border-radius: 50%;
-  height: 5rem;
-  width: 5rem;
+  height: 40px;
+  width: 40px;
   position: absolute;
   margin: -13px 0 0 -13px;
   animation: pulsate 1.5s ease-out;
