@@ -81,7 +81,10 @@ export class EventService {
     try {
       const response = await fetch(`${this.baseUrl}/${eventId}`, {
         method: "PUT",
-        headers: this.getHeaders(true),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.token}`,
+        },
         body: JSON.stringify(event),
       });
 
