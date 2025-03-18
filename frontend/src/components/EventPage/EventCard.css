@@ -34,6 +34,9 @@
 
 .event-card-title {
   font-size: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: bold;
   color: white;
   margin-bottom: 0.5rem;
@@ -62,7 +65,7 @@
 
 .event-card-container:hover {
   transform: translateY(-4px);
-  box-shadow: 0 0 20px rgba(0, 180, 255, 0.5);
+  box-shadow: 0 0 20px var(--color-neon-blue);
 }
 
 .event-card-views-container {

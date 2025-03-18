@@ -10,13 +10,13 @@ export const EventSection = ({ title, events }: EventSectionProps) => {
   return (
     <>
       <h1 className="section-title">{title}</h1>
-      <ul className="event-list">
+      <div className="event-list-container">
         {events.map((event) => (
-          <li key={event.id + title}>
+          <div className="event-card-list-item" key={event.id + title}>
             <EventCard event={event} />
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </>
   );
 };

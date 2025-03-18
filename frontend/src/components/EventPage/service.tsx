@@ -36,3 +36,12 @@ export const fetchAllEvents = async () => {
   console.log("response", response);
   return response.json();
 };
+
+export const fetchPopularEvents = async (lat: number, lon: number) => {
+  const response = await fetch(
+    `${
+      import.meta.env.VITE_API_URL
+    }events/popular/nearby?lat=${lat}&lon=${lon}&distance=100&limit=40`
+  );
+  return response.json();
+};

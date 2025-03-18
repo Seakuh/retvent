@@ -18,24 +18,30 @@ const getRandomSize = () => {
   return sizes[randomIndex];
 };
 
-export const EventGallery: React.FC<EventGalleryProps> = ({ events }) => {
+export const EventGallery: React.FC<EventGalleryProps> = ({
+  events,
+  title,
+}) => {
   const navigate = useNavigate();
 
   return (
-    <div className="gallery-grid">
-      {events.map((event) => (
-        <div
-          key={event.id}
-          className={`image-card`}
-          onClick={() => navigate(`/event/${event.id}`)}
-        >
-          <img
-            src={event.imageUrl || DEFAULT_IMAGE}
-            alt={event.title}
-            loading="lazy"
-          />
-        </div>
-      ))}
-    </div>
+    <>
+      <div className="section-title">{title}</div>
+      <div className="gallery-grid">
+        {events.map((event) => (
+          <div
+            key={event.id}
+            className={`image-card`}
+            onClick={() => navigate(`/event/${event.id}`)}
+          >
+            <img
+              src={event.imageUrl || DEFAULT_IMAGE}
+              alt={event.title}
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    </>
   );
 };

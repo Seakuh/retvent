@@ -1,4 +1,12 @@
 
+.event-list-container {
+  display: flex;
+  padding: 1rem;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+}
+
 .section-title {
   font-size: 3rem;
   font-weight: 600;
@@ -7,14 +15,13 @@
   margin-left: 1rem;
 }
 
-.event-list {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  gap: 1rem;
-}
 
+::-webkit-scrollbar {
+  display: none;
+
+}
 
 .event-card:hover {
   transform: translateY(-4px);
 }
+

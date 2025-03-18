@@ -5,6 +5,7 @@ import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { EventGallery } from "./components/EventGallery/EventGallery";
 import { EventList } from "./components/EventList/EventList";
 import { EventPage } from "./components/EventPage/EventPage";
+import { EventSection } from "./components/EventPage/EventSection";
 import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { MapView } from "./components/MapView/MapView";
 import { SearchBar } from "./components/SearchBar/SearchBar";
@@ -14,7 +15,8 @@ import {
   fetchLatestEvents,
   searchEventsByCity,
 } from "./service";
-import { Event, ViewMode } from "./types/event";
+import { ViewMode } from "./types/event";
+import { Event } from "./utils";
 
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -222,7 +224,12 @@ function LandingPage() {
           <EventPage />
         ) : (
           <div>
+            <EventSection
+              title="Popular"
+              events={events.sort((a, b) => (b.views || 0) - (a.views || 0))}
+            />
             <EventGallery
+              title={selectedCategory}
               events={events}
               favorites={favorites}
               onToggleFavorite={toggleFavorite}

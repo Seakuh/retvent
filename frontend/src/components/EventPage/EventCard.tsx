@@ -16,7 +16,6 @@ export const EventCard = ({ event }: { event: Event }) => {
       })
       .toUpperCase();
   };
-
   return (
     <div
       onClick={() => {
