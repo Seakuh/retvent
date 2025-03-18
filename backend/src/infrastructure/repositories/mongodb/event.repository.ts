@@ -279,11 +279,11 @@ export class MongoEventRepository implements IEventRepository {
     skip: number = 0,
     limit: number = 10,
   ): Promise<Event[]> {
-    console.log(`Finding events for category: ${category}`); // Debug log
     const events = await this.eventModel
-      .find({ category })
+      .find({ category: { $regex: new RegExp(`^${category}$`, 'i') } })
       .skip(skip)
       .limit(limit)
+      .sort({ createdAt: -1 })
       .exec();
     console.log(`Found ${events.length} events`); // Debug log
     return events.map((event) => this.toEntity(event));
