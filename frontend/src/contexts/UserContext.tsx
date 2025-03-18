@@ -7,6 +7,10 @@ export interface User {
 
 type UserContextType = {
   user: User | null;
+  location: {
+    latitude: number;
+    longitude: number;
+  } | null;
   setUser: (user: User | null) => void;
   favoriteEventIds: string[];
   addFavorite: (eventId: string) => void;
@@ -29,6 +33,7 @@ type UserContextType = {
 export const UserContext = createContext<UserContextType>({
   user: null,
   setUser: () => {},
+  location: null,
   favoriteEventIds: [],
   addFavorite: () => {},
   removeFavorite: () => {},

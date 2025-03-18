@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { EventGallery } from "./components/EventGallery/EventGallery";
 import { EventList } from "./components/EventList/EventList";
+import { EventPage } from "./components/EventPage/EventPage";
 import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { MapView } from "./components/MapView/MapView";
 import { SearchBar } from "./components/SearchBar/SearchBar";
@@ -51,7 +52,7 @@ function LandingPage() {
     if (selectedCategory === "All") {
       fetchLatestEvents().then((events) => {
         console.log("fetching all events", events);
-        setEvents(events);
+        setEvents(events.reverse());
       });
     } else if (selectedCategory) {
       fetchEventsByCategory(selectedCategory).then((events) => {
@@ -194,7 +195,6 @@ function LandingPage() {
           <div className="flex justify-between items-center">
             <SearchBar onSearch={handleSearch} />
           </div>
-
           <CategoryFilter
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
@@ -218,12 +218,16 @@ function LandingPage() {
           </div>
         ) : viewMode === "map" ? (
           <MapView onMarkerClick={handleMarkerClick} />
+        ) : selectedCategory === "Home" ? (
+          <EventPage />
         ) : (
-          <EventGallery
-            events={events}
-            favorites={favorites}
-            onToggleFavorite={toggleFavorite}
-          />
+          <div>
+            <EventGallery
+              events={events}
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+            />
+          </div>
         )}
 
         {showUploads && (

@@ -1,33 +1,44 @@
-import { useEffect, useState } from "react";
-import { Event } from "../../utils";
+import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
+import { UserContext } from "../../contexts/UserContext";
 import { EventSection } from "./EventSection";
-import { fetchNearbyEvents, fetchNewEvents } from "./service";
+import {
+  fetchAllEvents,
+  fetchFavoriteEvents,
+  fetchNearbyEvents,
+  fetchNewEvents,
+} from "./service";
+
 export const EventPage = () => {
-  const [nearbyEvents, setNearbyEvents] = useState<Event[]>([]);
-  const [newEvents, setNewEvents] = useState<Event[]>([]);
-  const [favoriteEvents, setFavoriteEvents] = useState<Event[]>([]);
+  const { location } = useContext(UserContext);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      const events = await fetchNearbyEvents();
-      setNearbyEvents(events);
-    };
-    fetchEvents();
-  }, []);
+  const { data: nearbyEvents = [] } = useQuery({
+    queryKey: ["nearbyEvents"],
+    queryFn: () =>
+      fetchNearbyEvents(location!.latitude, location!.longitude, true),
+  });
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      const events = await fetchNewEvents();
-      setNewEvents(events);
-    };
-    fetchEvents();
-  }, []);
+  const { data: newEvents = [] } = useQuery({
+    queryKey: ["newEvents"],
+    queryFn: fetchNewEvents,
+  });
+
+  const { data: favoriteEvents = [] } = useQuery({
+    queryKey: ["favoriteEvents"],
+    queryFn: () => fetchFavoriteEvents([]),
+  });
+
+  const { data: allEvents = [] } = useQuery({
+    queryKey: ["allEvents"],
+    queryFn: () => fetchAllEvents(),
+  });
 
   return (
     <div>
-      <EventSection title="Nearby Events" events={nearbyEvents} />
-      <EventSection title="New Events" events={newEvents} />
-      <EventSection title="Favorite Events" events={favoriteEvents} />
+      <EventSection title="Nearby" events={nearbyEvents} />
+      <EventSection title="New" events={newEvents} />
+      <EventSection title="Favorite" events={favoriteEvents} />
+      <EventSection title="All" events={allEvents} />
     </div>
   );
 };
