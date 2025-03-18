@@ -8,6 +8,7 @@
 
 .image-card {
   overflow: hidden;
+  margin: .3rem;
 }
 
 .image-card:hover {
