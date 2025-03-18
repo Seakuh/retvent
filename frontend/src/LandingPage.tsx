@@ -1,4 +1,4 @@
-import { Heart, Hexagon, LogIn, Menu, Upload } from "lucide-react";
+import { Heart, Hexagon, LogIn, Menu, Plus, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
@@ -76,7 +76,6 @@ function LandingPage() {
         setLoading(false);
       }
     };
-
     loadEvents();
   }, []);
 
@@ -121,16 +120,6 @@ function LandingPage() {
           </div>
           {showMenu && (
             <div className="absolute right-4 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 ">
-              {/* Login Button */}
-              <button
-                onClick={() => {
-                  navigate("/login");
-                }}
-                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-              >
-                <LogIn size={20} />
-                <p>Login</p>
-              </button>
               {/* <button
                 onClick={() => {
                   setShowFavorites(!showFavorites);
@@ -153,6 +142,15 @@ function LandingPage() {
               </button>
               <button
                 onClick={() => {
+                  navigate("/admin/events/create");
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+              >
+                <Plus size={20} />
+                <p>Create Event</p>
+              </button>
+              <button
+                onClick={() => {
                   navigate("/liked");
                 }}
                 className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
@@ -172,6 +170,16 @@ function LandingPage() {
               >
                 <Upload size={20} />
                 {showUploads ? "Hide My Events" : "My Events"}
+              </button>
+              {/* Login Button */}
+              <button
+                onClick={() => {
+                  navigate("/login");
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+              >
+                <LogIn size={20} />
+                <p>Login</p>
               </button>
             </div>
           )}
