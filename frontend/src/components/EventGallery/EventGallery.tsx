@@ -1,9 +1,10 @@
-import React from 'react';
-import { Event } from '../../types/event';
-import { useNavigate } from 'react-router-dom';
-import './EventGallery.css';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Event } from "../../types/event";
+import "./EventGallery.css";
 
-const DEFAULT_IMAGE = 'https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png';
+const DEFAULT_IMAGE =
+  "https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png";
 
 interface EventGalleryProps {
   events: Event[];
@@ -12,7 +13,7 @@ interface EventGalleryProps {
 }
 
 const getRandomSize = () => {
-  const sizes = ['', 'wide', 'tall', 'large'];
+  const sizes = ["", "wide", "tall", "large"];
   const randomIndex = Math.floor(Math.random() * sizes.length);
   return sizes[randomIndex];
 };
@@ -25,7 +26,7 @@ export const EventGallery: React.FC<EventGalleryProps> = ({ events }) => {
       {events.map((event) => (
         <div
           key={event.id}
-          className={`image-card ${getRandomSize()}`}
+          className={`image-card`}
           onClick={() => navigate(`/event/${event.id}`)}
         >
           <img
@@ -37,4 +38,4 @@ export const EventGallery: React.FC<EventGalleryProps> = ({ events }) => {
       ))}
     </div>
   );
-}; 
+};

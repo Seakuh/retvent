@@ -47,8 +47,8 @@ function LandingPage() {
     navigate("/admin/events");
   };
 
-  // if category is selected, fetch events by category
   useEffect(() => {
+    console.log("selectedCategory", selectedCategory);
     if (selectedCategory === "All") {
       fetchLatestEvents().then((events) => {
         console.log("fetching all events", events);
