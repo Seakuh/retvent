@@ -8,7 +8,11 @@ import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { MapView } from "./components/MapView/MapView";
 import { SearchBar } from "./components/SearchBar/SearchBar";
 import { ViewToggle } from "./components/ViewToggle/ViewToggle";
-import { fetchLatestEvents, searchEventsByCity } from "./service";
+import {
+  fetchEventsByCategory,
+  fetchLatestEvents,
+  searchEventsByCity,
+} from "./service";
 import { Event, ViewMode } from "./types/event";
 
 function LandingPage() {
@@ -22,11 +26,6 @@ function LandingPage() {
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
-
-  // const loadUserEvents = async () => {
-  //   const events = await fetchUserEvents();
-  //   setUserEvents(events);
-  // };
 
   const handleSearch = async (keyword: string) => {
     setLoading(true);
@@ -44,6 +43,20 @@ function LandingPage() {
   const handleOnUpload = () => {
     navigate("/admin/events");
   };
+
+  // if category is selected, fetch events by category
+  useEffect(() => {
+    if (selectedCategory === null) {
+      fetchLatestEvents().then((events) => {
+        setEvents(events);
+      });
+    }
+    if (selectedCategory) {
+      fetchEventsByCategory(selectedCategory).then((events) => {
+        setEvents(events);
+      });
+    }
+  }, [selectedCategory]);
 
   useEffect(() => {
     const loadEvents = async () => {
