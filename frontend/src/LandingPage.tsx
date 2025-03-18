@@ -24,7 +24,9 @@ function LandingPage() {
   const [showUploads, setShowUploads] = useState(false);
   const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    "All"
+  );
   const navigate = useNavigate();
 
   const handleSearch = async (keyword: string) => {
@@ -46,12 +48,12 @@ function LandingPage() {
 
   // if category is selected, fetch events by category
   useEffect(() => {
-    if (selectedCategory === null) {
+    if (selectedCategory === "All") {
       fetchLatestEvents().then((events) => {
+        console.log("fetching all events", events);
         setEvents(events);
       });
-    }
-    if (selectedCategory) {
+    } else if (selectedCategory) {
       fetchEventsByCategory(selectedCategory).then((events) => {
         setEvents(events);
       });

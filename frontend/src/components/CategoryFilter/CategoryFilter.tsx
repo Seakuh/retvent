@@ -8,6 +8,12 @@ interface Category {
 
 const categories = [
   { name: "Music", emoji: "🎵" },
+  { name: "Concert", emoji: "🎤" },
+  { name: "Exhibition", emoji: "🖼️" },
+  { name: "Workshop", emoji: "🔧" },
+  { name: "Konzert", emoji: "🎤" },
+  { name: "Kunst", emoji: "🎨" },
+  { name: "Event", emoji: "🎉" },
   { name: "Party", emoji: "🎉" },
   { name: "Sports", emoji: "⚽" },
   { name: "Art", emoji: "🎨" },
@@ -24,6 +30,7 @@ const categories = [
   { name: "Books", emoji: "📖" },
   { name: "Movies", emoji: "🎬" },
   { name: "Science", emoji: "🔬" },
+  { name: "Nightlife", emoji: "🌃" },
   { name: "Finance", emoji: "💰" },
   { name: "Health", emoji: "🏥" },
   { name: "DIY & Crafting", emoji: "✂️" },
@@ -45,6 +52,15 @@ const categories = [
   { name: "Esports", emoji: "🎮🏆" },
 ];
 
+// Zuerst erstellen wir ein Mapping-Objekt aus dem vordefinierten categories Array
+const categoryEmojiMap = categories.reduce(
+  (acc, category) => ({
+    ...acc,
+    [category.name]: category.emoji,
+  }),
+  {} as Record<string, string>
+);
+
 interface CategoryFilterProps {
   selectedCategory: string | null;
   onCategoryChange: (category: string | null) => void;
@@ -62,14 +78,19 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         `${import.meta.env.VITE_API_URL}events/categories`
       );
       const data = await response.json();
-      // remove null values
       const filteredCategories = data.filter(
         (category: string) => category !== null
       );
-      // remove duplicates and empty strings
-      const uniqueCategories = filteredCategories.filter(
-        (category: string) => category !== ""
-      );
+      const uniqueCategories = filteredCategories
+        .filter((category: string) => category !== "")
+        .map(
+          (category: string) =>
+            category.charAt(0).toUpperCase() + category.slice(1)
+        )
+        .filter(
+          (category: string, index: number, self: string[]) =>
+            self.indexOf(category) === index
+        );
       setCategories(uniqueCategories);
     };
     fetchCategories();
@@ -79,7 +100,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     <div className="category-filter">
       <button
         className={`category-button ${!selectedCategory ? "active" : ""}`}
-        onClick={() => onCategoryChange(null)}
+        onClick={() => onCategoryChange("All")}
       >
         🌟 All
       </button>
@@ -91,7 +112,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
           }`}
           onClick={() => onCategoryChange(category)}
         >
-          {category}
+          {categoryEmojiMap[category] || "❓"} {category}
         </button>
       ))}
     </div>
