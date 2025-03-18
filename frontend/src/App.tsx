@@ -1,3 +1,4 @@
+import { QueryClient } from "@tanstack/react-query";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import LandingPage from "./LandingPage";
@@ -11,6 +12,22 @@ import Register from "./components/Auth/Register";
 import { EventDetail } from "./components/EventDetail/EventDetail";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import { UserContextProvider } from "./contexts/UserContextProvider";
+import { eventService } from "./services/api";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Global Defaults
+      staleTime: 2 * 60 * 1000,
+      cacheTime: 15 * 60 * 1000,
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Prefetching wichtiger Daten beim App-Start
+queryClient.prefetchQuery(["events", null], () => eventService.getEvents());
 
 const App: React.FC = () => {
   return (
