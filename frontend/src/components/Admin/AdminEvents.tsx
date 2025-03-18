@@ -83,7 +83,7 @@ const AdminEvents: React.FC = () => {
       <button onClick={handleBack} className="back-button">
         ← Back to Dashboard
       </button>
-      <h2>My Events 📅</h2>
+      <h2 className="admin-events-title">My Events 📅</h2>
       {events.length === 0 ? (
         <p className="no-events">No events found.</p>
       ) : (
@@ -91,11 +91,11 @@ const AdminEvents: React.FC = () => {
           {events.map((event) => (
             <div key={event.id} className="event-card">
               {event.imageUrl && (
-                <div className="event-image">
+                <div className="admin-event-image">
                   <img src={event.imageUrl} alt={event.title} />
                 </div>
               )}
-              <div className="event-content">
+              <div className="admin-event-content">
                 <h3>{event.title}</h3>
               </div>
               <div className="event-actions">

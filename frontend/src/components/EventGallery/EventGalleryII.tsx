@@ -19,9 +19,17 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
   const navigate = useNavigate();
 
   // Sortiere Events nach Startdatum (aufsteigend)
-  const sortedEvents = [...events].sort(
-    (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-  );
+  // filter out past events
+  const sortedEvents = [...events]
+    .filter((event) => {
+      if (!event.startDate) return false;
+      const startDate = new Date(event.startDate);
+      return startDate > new Date();
+    })
+    .sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+    );
 
   // Gruppiere Events nach Datum
   const groupedEvents: Record<string, Event[]> = sortedEvents.reduce(

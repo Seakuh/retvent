@@ -51,11 +51,16 @@
   gap: 0.3rem;
 }
 
-.event-card-date,
+.event-card-date {
+  color: #bbb;
+  font-size: 0.9rem;
+}
+
 .event-card-location-container {
   color: var(--color-neon-blue);
   font-size: 0.9rem;
 }
+
 
 .event-card-location-container {
   display: flex;
