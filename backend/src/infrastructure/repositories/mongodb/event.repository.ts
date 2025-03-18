@@ -9,6 +9,31 @@ import { IEventRepository } from '../../../core/repositories/event.repository.in
 export class MongoEventRepository implements IEventRepository {
   constructor(@InjectModel('Event') private eventModel: Model<Event>) {}
 
+  async getCategories(
+    limit: number = 20,
+  ): Promise<{ category: string; count: number }[]> {
+    const categories = await this.eventModel
+      .aggregate([
+        {
+          $group: {
+            _id: '$category',
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { count: -1 } },
+        { $limit: limit },
+        {
+          $project: {
+            _id: 0,
+            name: '$_id',
+          },
+        },
+      ])
+      .exec();
+
+    return categories.map((category) => category.name);
+  }
+
   findLatestEventsByHost(username: string) {
     return this.eventModel
       .find({

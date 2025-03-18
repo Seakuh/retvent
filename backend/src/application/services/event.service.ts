@@ -15,6 +15,9 @@ export class EventService {
     private readonly geolocationService: GeolocationService,
   ) {}
 
+  getCategories() {
+    return this.eventRepository.getCategories();
+  }
   findLatestEventsByHost(username: string) {
     return this.eventRepository.findLatestEventsByHost(username);
   }

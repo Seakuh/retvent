@@ -113,6 +113,11 @@ export class EventController {
     return this.eventService.searchEvents(searchParams);
   }
 
+  @Get('categories')
+  async getCategories() {
+    return this.eventService.getCategories();
+  }
+
   @Get('search/city')
   async searchByCity(@Query('query') city: string) {
     if (!city || city.length < 2) {
@@ -252,7 +257,7 @@ export class EventController {
   async getEventsByCategory(
     @Param('category') category: string,
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
+    @Query('limit') limit: number = 30,
   ) {
     const skip = (page - 1) * limit;
     const [events, total] = await Promise.all([
