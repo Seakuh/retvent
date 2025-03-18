@@ -3,12 +3,34 @@
   gap: 0.5rem;
   padding: 1rem;
   overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  overflow-y: hidden;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  scroll-behavior: smooth;
 }
 
 .category-filter::-webkit-scrollbar {
-  display: none;
+  height: 8px;
+  background: transparent;
+}
+
+.category-filter::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.category-filter::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.category-filter::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
+
+.category-filter:active {
+  cursor: grabbing;
 }
 
 .category-button {

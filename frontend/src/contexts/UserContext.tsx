@@ -12,6 +12,18 @@ type UserContextType = {
   addFavorite: (eventId: string) => void;
   removeFavorite: (eventId: string) => void;
   isFavorite: (eventId: string) => boolean;
+  viewMode: "list" | "map";
+  switchViewMode: (viewMode: "list" | "map") => void;
+  userLocation: {
+    latitude: number;
+    longitude: number;
+  } | null;
+  adjustUserLocation: (
+    userLocation: {
+      latitude: number;
+      longitude: number;
+    } | null
+  ) => void;
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -21,6 +33,10 @@ export const UserContext = createContext<UserContextType>({
   addFavorite: () => {},
   removeFavorite: () => {},
   isFavorite: () => false,
+  viewMode: "list",
+  switchViewMode: () => {},
+  userLocation: null,
+  adjustUserLocation: () => {},
 });
 
 export const UserProvider = UserContext.Provider;
