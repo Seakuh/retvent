@@ -4,6 +4,7 @@ import {
   fetchNearbyEvents,
   fetchNewEvents,
 } from "./service";
+import { fetchEventsByCategory } from "../../service";
 export const EventPage = () => {
   const { user } = useUser();
   const [nearbyEvents, setNearbyEvents] = useState<Event[]>([]);
@@ -26,13 +27,6 @@ export const EventPage = () => {
     fetchEvents();
   }, []);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      const events = await fetchFavoriteEvents();
-      setFavoriteEvents(events);
-    };
-    fetchEvents();
-  }, []);
 
   return (
     <div>
