@@ -25,8 +25,8 @@ export const EventPage = () => {
 
   return (
     <div>
-      <EventSection title="Popular" events={popularEvents} />
-      <EventSection title="Favorite" events={favoriteEvents} />
+      <EventSection title="Nearby" events={popularEvents} />
+      <EventSection title="Favorites" events={favoriteEvents} />
     </div>
   );
 };

@@ -67,10 +67,9 @@
     margin-left: 0rem;
     text-align: left;
     font-weight: bold;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    hyphens: auto;
   }
+
+
   .lineup-artist-name {
     color: white !important;
     font-size: 5rem;
@@ -198,6 +197,16 @@
     .share-button:hover {
       transform: scale(1.1);
     }
+    .event-title {
+      font-size: 2rem;
+      margin-left: 0rem;
+      text-align: left;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      hyphens: auto;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
   }
   
   /* =============================================================
@@ -211,6 +220,7 @@
   
   .event-basic-info {
     display: flex;
+    width: 100%;
     justify-content: space-around;
     gap: 4rem;
     margin: -2rem auto 2rem;
