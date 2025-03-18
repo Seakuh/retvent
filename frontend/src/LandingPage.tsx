@@ -1,5 +1,5 @@
 import { Heart, Hexagon, LogIn, Menu, Upload } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { EventGallery } from "./components/EventGallery/EventGallery";
@@ -8,13 +8,9 @@ import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { MapView } from "./components/MapView/MapView";
 import { SearchBar } from "./components/SearchBar/SearchBar";
 import { ViewToggle } from "./components/ViewToggle/ViewToggle";
-import { UserContext } from "./contexts/UserContext";
-import {
-  fetchEventsByCategory,
-  fetchLatestEvents,
-  searchEventsByCity,
-} from "./service";
+import { fetchLatestEvents, searchEventsByCity } from "./service";
 import { Event, ViewMode } from "./types/event";
+
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +22,7 @@ function LandingPage() {
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
-  const userContext = useContext(UserContext);
+
   // const loadUserEvents = async () => {
   //   const events = await fetchUserEvents();
   //   setUserEvents(events);
@@ -45,24 +41,11 @@ function LandingPage() {
     }
   };
 
-  useEffect(() => {
-    console.log("selectedCategory", selectedCategory);
-    const loadUserEvents = async () => {
-      const events = await fetchEventsByCategory(selectedCategory);
-      setEvents(events);
-    };
-    loadUserEvents();
-  }, [selectedCategory]);
-
   const handleOnUpload = () => {
     navigate("/admin/events");
   };
 
   useEffect(() => {
-    const viewMode = localStorage.getItem("viewMode");
-    if (viewMode) {
-      userContext.switchViewMode(viewMode as ViewMode);
-    }
     const loadEvents = async () => {
       setLoading(true);
       try {
@@ -98,11 +81,6 @@ function LandingPage() {
     navigate(`/event/${event._id}`);
   };
 
-  function toggleViewMode(view: ViewMode): void {
-    userContext.switchViewMode(view);
-    setViewMode(view);
-  }
-
   return (
     <div className="min-h-screen">
       <header className="glass-effect sticky top-0 z-50">
@@ -117,7 +95,7 @@ function LandingPage() {
               />
             </div>
             <div className="flex items-center gap-4">
-              <ViewToggle view={viewMode} onViewChange={toggleViewMode} />
+              <ViewToggle view={viewMode} onViewChange={setViewMode} />
               <button
                 onClick={() => setShowMenu(!showMenu)}
                 className="p-2 rounded-lg glass-effect text-white"
@@ -248,3 +226,5 @@ function LandingPage() {
     </div>
   );
 }
+
+export default LandingPage;

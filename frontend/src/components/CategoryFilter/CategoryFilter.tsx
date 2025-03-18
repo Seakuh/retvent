@@ -66,7 +66,11 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       const filteredCategories = data.filter(
         (category: string) => category !== null
       );
-      setCategories(filteredCategories);
+      // remove duplicates and empty strings
+      const uniqueCategories = filteredCategories.filter(
+        (category: string) => category !== ""
+      );
+      setCategories(uniqueCategories);
     };
     fetchCategories();
   }, []);

@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-  fetchFavoriteEvents,
-  fetchNearbyEvents,
-  fetchNewEvents,
-} from "./service";
-import { fetchEventsByCategory } from "../../service";
+import { Event } from "../../utils";
+import { EventSection } from "./EventSection";
+import { fetchNearbyEvents, fetchNewEvents } from "./service";
 export const EventPage = () => {
-  const { user } = useUser();
   const [nearbyEvents, setNearbyEvents] = useState<Event[]>([]);
   const [newEvents, setNewEvents] = useState<Event[]>([]);
   const [favoriteEvents, setFavoriteEvents] = useState<Event[]>([]);
@@ -27,27 +23,11 @@ export const EventPage = () => {
     fetchEvents();
   }, []);
 
-
   return (
     <div>
-      <h1 className="section-title">Nearby Events</h1>
-      <ul>
-        {nearbyEvents.map((event) => (
-          <li key={event.id}>{event.name}</li>
-        ))}
-      </ul>
-      <h1 className="section-title">New Events</h1>
-      <ul>
-        {newEvents.map((event) => (
-          <li key={event.id}>{event.name}</li>
-        ))}
-      </ul>
-      <h1 className="section-title">Favorite Events</h1>
-      <ul>
-        {favoriteEvents.map((event) => (
-          <li key={event.id}>{event.name}</li>
-        ))}
-      </ul>
+      <EventSection title="Nearby Events" events={nearbyEvents} />
+      <EventSection title="New Events" events={newEvents} />
+      <EventSection title="Favorite Events" events={favoriteEvents} />
     </div>
   );
 };
