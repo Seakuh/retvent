@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./CategoryFilter.css";
 
 interface Category {
@@ -13,7 +13,7 @@ const categories = [
   { name: "Workshop", emoji: "🔧" },
   { name: "Konzert", emoji: "🎤" },
   { name: "Kunst", emoji: "🎨" },
-  { name: "Event", emoji: "🎉" },
+  { name: "Event", emoji: "" },
   { name: "Party", emoji: "🎉" },
   { name: "Sports", emoji: "⚽" },
   { name: "Art", emoji: "🎨" },
@@ -50,6 +50,44 @@ const categories = [
   { name: "Parenting", emoji: "👶" },
   { name: "Space", emoji: "🚀" },
   { name: "Esports", emoji: "🎮🏆" },
+  { name: "Film", emoji: "🎬" },
+  { name: "Demonstration", emoji: "👩‍🎤" },
+  { name: "Community", emoji: "👥" },
+  { name: "Healthcare", emoji: "🏥" },
+  { name: "Science", emoji: "🔬" },
+  { name: "Parade", emoji: "👯‍♀️" },
+  { name: "Fashion Show", emoji: "👗" },
+  { name: "Art Show", emoji: "🖼️" },
+  { name: "Food Festival", emoji: "🍔" },
+  { name: "Music Festival", emoji: "🎵" },
+  { name: "Film Festival", emoji: "🎬" },
+  { name: "Comedy Festival", emoji: "😂" },
+  { name: "Market", emoji: "🛍️" },
+  { name: "Festival", emoji: "🎪" },
+  { name: "Party", emoji: "🎉" },
+  { name: "Sports", emoji: "⚽" },
+  { name: "Art", emoji: "🎨" },
+  { name: "Food", emoji: "🍔" },
+  { name: "Gaming", emoji: "🎮" },
+  { name: "Theater", emoji: "🎭" },
+  { name: "Dance", emoji: "💃" },
+  { name: "Fashion Show", emoji: "👗" },
+  { name: "Art Show", emoji: "🖼️" },
+  { name: "Food Festival", emoji: "🍔" },
+  { name: "Music Festival", emoji: "🎵" },
+  { name: "Service", emoji: "💼" },
+  { name: "Workshop", emoji: "🔧" },
+  { name: "Konzert", emoji: "🎤" },
+  { name: "Kunst", emoji: "🎨" },
+  { name: "Event", emoji: "🎉" },
+  { name: "Party", emoji: "🎉" },
+  { name: "Rave", emoji: "💃" },
+  { name: "Club", emoji: "🎉" },
+  { name: "Bar", emoji: "🍸" },
+  { name: "Pub", emoji: "🍻" },
+  { name: "Club", emoji: "🎉" },
+  { name: "Bar", emoji: "🍸" },
+  { name: "Pub", emoji: "🍻" },
 ];
 
 // Zuerst erstellen wir ein Mapping-Objekt aus dem vordefinierten categories Array
@@ -71,6 +109,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onCategoryChange,
 }) => {
   const [categories, setCategories] = useState<string[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -96,8 +135,24 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      container.scrollLeft += e.deltaY;
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
+
   return (
-    <div className="category-filter">
+    <div className="category-filter" ref={containerRef}>
       <button
         className={`category-button ${!selectedCategory ? "active" : ""}`}
         onClick={() => onCategoryChange("All")}
