@@ -20,10 +20,11 @@ export const fetchEventsByCategory = async (
 ): Promise<Event[]> => {
   try {
     const response = await fetch(
-      `${API_URL}events/category?category=${selectedCategory}`
+      `${import.meta.env.VITE_API_URL}events/category/${selectedCategory}`
     );
+
     const data = await response.json();
-    return data || [];
+    return data.events || [];
   } catch (error) {
     console.error("Error fetching events by category:", error);
     return [];
