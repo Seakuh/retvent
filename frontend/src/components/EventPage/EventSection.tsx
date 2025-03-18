@@ -9,7 +9,7 @@ interface EventSectionProps {
 export const EventSection = ({ title, events }: EventSectionProps) => {
   return (
     <>
-      <h1 className="section-title">{title}</h1>
+      {/* <h1 className="section-title">{title}</h1> */}
       <div className="event-list-container">
         {events.map((event) => (
           <div className="event-card-list-item" key={event.id + title}>

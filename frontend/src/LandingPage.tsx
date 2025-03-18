@@ -2,7 +2,7 @@ import { Heart, Hexagon, LogIn, Menu, Plus, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
-import { EventGallery } from "./components/EventGallery/EventGallery";
+import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventList } from "./components/EventList/EventList";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
@@ -230,7 +230,7 @@ function LandingPage() {
                 .sort((a, b) => (b.views || 0) - (a.views || 0))
                 .slice(0, 4)}
             />
-            <EventGallery
+            <EventGalleryII
               title={selectedCategory}
               events={events}
               favorites={favorites}
