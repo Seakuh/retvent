@@ -1,16 +1,20 @@
+import { Eye, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Event } from "../../utils";
 import "./EventCard.css";
+
 export const EventCard = ({ event }: { event: Event }) => {
   const navigate = useNavigate();
 
-  const toDateString = (date: string) => {
-    const dateObj = new Date(date);
-    return dateObj.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
+  const formatDate = (date: string) => {
+    const d = new Date(date);
+    return d
+      .toLocaleDateString("en-US", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+      })
+      .toUpperCase();
   };
 
   return (
@@ -28,8 +32,20 @@ export const EventCard = ({ event }: { event: Event }) => {
         />
       </div>
       <div className="event-card-info-container">
-        <h3>{event.title}</h3>
-        <p>{toDateString(event.startDate)}</p>
+        <span className="event-card-date">
+          {formatDate(event.startDate as string)}
+        </span>
+        <h3 className="event-card-title">{event.title}</h3>
+        <div className="event-card-details">
+          <div className="event-card-location-container">
+            <MapPin size={16} />
+            <p>{event.city || "TBA"}</p>
+          </div>
+          <div className="event-card-views-container">
+            <Eye size={16} />
+            <p>{event.views || 0}</p>
+          </div>
+        </div>
       </div>
     </div>
   );

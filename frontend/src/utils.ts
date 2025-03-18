@@ -77,6 +77,9 @@ export interface Event {
   // upload location
   uploadLat?: number;
   uploadLon?: number;
+
+  // views
+  views?: number;
 }
 
 export interface MapEvent {

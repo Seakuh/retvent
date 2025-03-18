@@ -43,7 +43,7 @@ export const EventPage = () => {
       <EventSection title="Nearby" events={nearbyEvents} />
       {/* <EventSection title="Today" events={newEvents.events} /> */}
       {/* <EventSection title="New" events={newEvents.events} /> */}
-      {/* <EventSection title="Favorite" events={favoriteEvents} /> */}
+      <EventSection title="Favorite" events={favoriteEvents} />
       {/* <EventSection title="All" events={allEvents} /> */}
     </div>
   );
