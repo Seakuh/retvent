@@ -8,6 +8,44 @@ import { IEventRepository } from '../../../core/repositories/event.repository.in
 @Injectable()
 export class MongoEventRepository implements IEventRepository {
   constructor(@InjectModel('Event') private eventModel: Model<Event>) {}
+  async findTodayEvents(): Promise<Event[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const events = await this.eventModel
+      .find({ startDate: { $gte: today } })
+      .exec();
+    return events.map((event) => this.toEntity(event));
+  }
+
+  async getPopularEventsByCategory(category: string, limit: number) {
+    const events = await this.eventModel
+      .find({ category })
+      .sort({ views: -1 })
+      .limit(limit)
+      .exec();
+    return events.map((event) => this.toEntity(event));
+  }
+
+  async getPopularEventsNearby(lat: number, lon: number, limit: number) {
+    // get event with most views
+    const events = await this.eventModel
+      .find({
+        'location.coordinates': {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [lon, lat],
+            },
+            $maxDistance: 100000,
+          },
+        },
+      })
+      .sort({ views: -1 })
+      .limit(limit)
+      .exec();
+    return events.map((event) => this.toEntity(event));
+  }
 
   async getCategories(
     limit: number = 20,
@@ -64,8 +102,30 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async findById(id: string): Promise<Event | null> {
+    // Zuerst prüfen wir, ob das Event existiert und ob es ein views Feld hat
     const event = await this.eventModel.findById(id).exec();
-    return event ? this.toEntity(event) : null;
+
+    if (!event) {
+      return null;
+    }
+
+    // Wenn das Event existiert, erhöhen wir die Views
+    const updatedEvent = await this.eventModel
+      .findByIdAndUpdate(
+        id,
+        {
+          $inc: { views: 1 }, // Erhöht views um 1
+        },
+        {
+          new: true, // Gibt das aktualisierte Dokument zurück
+          // Wenn views nicht existiert, wird es mit 0 initialisiert und dann um 1 erhöht
+          setDefaultsOnInsert: true,
+        },
+      )
+      .exec();
+
+    console.log('Updated Event:', updatedEvent);
+    return updatedEvent ? this.toEntity(updatedEvent) : null;
   }
 
   async findByLocationId(locationId: string): Promise<Event[]> {
@@ -87,6 +147,7 @@ export class MongoEventRepository implements IEventRepository {
 
       const eventDataWithLocation = {
         ...eventData,
+        views: 0,
         location: {
           type: 'Point',
           coordinates: [
@@ -424,8 +485,6 @@ export class MongoEventRepository implements IEventRepository {
       .limit(limit)
       .sort({ createdAt: -1 })
       .exec();
-
-    console.log(events);
     return events.map((event) => this.toEntity(event));
   }
 }

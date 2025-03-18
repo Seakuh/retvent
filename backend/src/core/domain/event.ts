@@ -42,6 +42,8 @@ export class Event implements IEvent {
   uploadLat?: number;
   uploadLon?: number;
 
+  views?: number;
+
   constructor(data: Partial<IEvent>) {
     Object.assign(this, data);
   }

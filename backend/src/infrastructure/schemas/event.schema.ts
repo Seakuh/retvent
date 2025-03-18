@@ -29,6 +29,7 @@ export const EventSchema = new Schema(
       twitter: { type: String },
     },
     tags: [{ type: String }],
+    views: { type: Number, default: 0 },
     website: { type: String },
     likeIds: [{ type: String }],
     city: { type: String },

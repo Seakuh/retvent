@@ -15,6 +15,14 @@ export class EventService {
     private readonly geolocationService: GeolocationService,
   ) {}
 
+  getPopularEventsNearby(lat: number, lon: number, limit: number) {
+    return this.eventRepository.getPopularEventsNearby(lat, lon, limit);
+  }
+
+  getPopularEventsByCategory(category: string, limit: number) {
+    return this.eventRepository.getPopularEventsByCategory(category, limit);
+  }
+
   getCategories() {
     return this.eventRepository.getCategories();
   }
@@ -117,6 +125,10 @@ export class EventService {
     }
   }
 
+  async findTodayEvents(): Promise<Event[]> {
+    return this.eventRepository.findTodayEvents();
+  }
+
   async update(id: string, eventData: UpdateEventDto): Promise<Event | null> {
     return this.eventRepository.update(id, eventData);
   }
@@ -140,8 +152,6 @@ export class EventService {
     userId?: string,
   ): Promise<Event> {
     try {
-      console.info('Processing event image upload...');
-
       // 1. Upload image and get URL
       const uploadedImageUrl = await this.imageService.uploadImage(image);
       if (!uploadedImageUrl) {

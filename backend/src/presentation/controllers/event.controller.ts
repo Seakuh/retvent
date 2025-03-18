@@ -32,6 +32,24 @@ export class EventController {
     private readonly eventMapper: EventMapper,
   ) {}
 
+  // get popular events number, @Query('lon') lon: number, @Query('limit') limit: number = 10) {
+  @Get('popular/nearby')
+  async getPopularEventsNearby(
+    @Query('lat') lat: number,
+    @Query('lon') lon: number,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.eventService.getPopularEventsNearby(lat, lon, limit);
+  }
+
+  @Get('popular/category')
+  async getPopularEventsByCategory(
+    @Query('category') category: string,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.eventService.getPopularEventsByCategory(category, limit);
+  }
+
   @Get('search/plattforms')
   async searchEventPlattforms(
     @Query('query') query: string,
@@ -73,14 +91,9 @@ export class EventController {
     @Body() body: { location: string },
     @Request() req,
   ) {
-    console.log('V2 Upload - Request received');
-    console.log('V2 Upload - Auth user:', req.user);
-    console.log('V2 Upload - Headers:', req.headers);
-
     try {
       // Location-String zu Objekt parsen
       const locationData = JSON.parse(body.location);
-      console.log('V2 Upload - Location data:', locationData);
 
       // Koordinaten extrahieren
       const lonFromBodyCoordinates = locationData.coordinates[0];
@@ -145,6 +158,11 @@ export class EventController {
   async getLatestEvents(@Query('limit') limit: number = 10) {
     const events = await this.eventService.findLatest(limit);
     return { events };
+  }
+
+  @Get('today')
+  async getTodayEvents() {
+    return this.eventService.findTodayEvents();
   }
 
   @Get('nearby')
