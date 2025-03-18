@@ -1,1 +1,20 @@
 
+.section-title {
+  font-size: 3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: white;
+  margin-left: 1rem;
+}
+
+.event-list {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+}
+
+
+.event-card:hover {
+  transform: translateY(-4px);
+}

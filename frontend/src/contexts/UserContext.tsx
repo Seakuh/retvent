@@ -1,16 +1,18 @@
-import { createContext } from "react";
+import { createContext, ReactNode, useState } from "react";
 
 export interface User {
   id: string;
   email: string;
 }
 
-type UserContextType = {
+export interface Location {
+  latitude: number;
+  longitude: number;
+}
+
+interface UserContextType {
   user: User | null;
-  location: {
-    latitude: number;
-    longitude: number;
-  } | null;
+  location: Location | null;
   setUser: (user: User | null) => void;
   favoriteEventIds: string[];
   addFavorite: (eventId: string) => void;
@@ -28,12 +30,13 @@ type UserContextType = {
       longitude: number;
     } | null
   ) => void;
-};
+  setLocation: (location: Location) => void;
+}
 
 export const UserContext = createContext<UserContextType>({
   user: null,
-  setUser: () => {},
   location: null,
+  setUser: () => {},
   favoriteEventIds: [],
   addFavorite: () => {},
   removeFavorite: () => {},
@@ -42,6 +45,15 @@ export const UserContext = createContext<UserContextType>({
   switchViewMode: () => {},
   userLocation: null,
   adjustUserLocation: () => {},
+  setLocation: () => {},
 });
 
-export const UserProvider = UserContext.Provider;
+export const UserProvider = ({ children }: { children: ReactNode }) => {
+  const [location, setLocation] = useState<Location | null>(null);
+
+  return (
+    <UserContext.Provider value={{ location, setLocation }}>
+      {children}
+    </UserContext.Provider>
+  );
+};

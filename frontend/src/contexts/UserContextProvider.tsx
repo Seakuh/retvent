@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { User, UserProvider } from "./UserContext";
+import { Location, User, UserContext } from "./UserContext";
 
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -14,6 +14,18 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     const saved = localStorage.getItem("favoriteEventIds");
     return saved ? JSON.parse(saved) : [];
   });
+  const [location, setLocation] = useState<Location | null>(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      });
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
@@ -47,8 +59,10 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <UserProvider
+    <UserContext.Provider
       value={{
+        location,
+        setLocation,
         user,
         setUser,
         favoriteEventIds,
@@ -62,6 +76,6 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
       }}
     >
       {children}
-    </UserProvider>
+    </UserContext.Provider>
   );
 };

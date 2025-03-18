@@ -10,7 +10,7 @@ import {
 } from "./service";
 
 export const EventPage = () => {
-  const { location } = useContext(UserContext);
+  const { location, favoriteEventIds } = useContext(UserContext);
 
   const { data: nearbyEvents = [] } = useQuery({
     queryKey: ["nearbyEvents"],
@@ -25,7 +25,7 @@ export const EventPage = () => {
 
   const { data: favoriteEvents = [] } = useQuery({
     queryKey: ["favoriteEvents"],
-    queryFn: () => fetchFavoriteEvents([]),
+    queryFn: () => fetchFavoriteEvents(favoriteEventIds),
   });
 
   const { data: allEvents = [] } = useQuery({
@@ -33,12 +33,19 @@ export const EventPage = () => {
     queryFn: () => fetchAllEvents(),
   });
 
+  console.log("allEvents", allEvents);
+  console.log("favoriteEvents", favoriteEvents);
+  console.log("newEvents", newEvents);
+  console.log("nearbyEvents", nearbyEvents);
+
   return (
     <div>
       <EventSection title="Nearby" events={nearbyEvents} />
-      <EventSection title="New" events={newEvents} />
-      <EventSection title="Favorite" events={favoriteEvents} />
-      <EventSection title="All" events={allEvents} />
+      <EventSection title="Today" events={newEvents.events} />
+
+      <EventSection title="New" events={newEvents.events} />
+      {/* <EventSection title="Favorite" events={favoriteEvents} /> */}
+      {/* <EventSection title="All" events={allEvents} /> */}
     </div>
   );
 };
