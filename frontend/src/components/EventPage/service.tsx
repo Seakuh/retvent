@@ -22,6 +22,9 @@ export const fetchNewEvents = async () => {
 };
 
 export const fetchFavoriteEvents = async (ids: string[]) => {
+  if (ids.length === 0) {
+    return [];
+  }
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}events/byIds?ids=${ids.join(",")}`
   );
