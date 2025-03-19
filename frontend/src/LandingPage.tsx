@@ -8,7 +8,6 @@ import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
 import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { MapView } from "./components/MapView/MapView";
-import { SearchBar } from "./components/SearchBar/SearchBar";
 import { ViewToggle } from "./components/ViewToggle/ViewToggle";
 import {
   fetchEventsByCategory,
@@ -194,9 +193,9 @@ function LandingPage() {
           <div>
             <EventScanner />
           </div>
-          <div className="flex justify-between items-center">
+          {/* <div className="flex justify-between items-center">
             <SearchBar onSearch={handleSearch} />
-          </div>
+          </div> */}
           <CategoryFilter
             selectedCategory={selectedCategory}
             onCategoryChange={setSelectedCategory}
@@ -220,7 +219,7 @@ function LandingPage() {
           </div>
         ) : viewMode === "map" ? (
           <MapView onMarkerClick={handleMarkerClick} />
-        ) : selectedCategory === "Home" ? (
+        ) : selectedCategory === "Start" ? (
           <EventPage />
         ) : (
           <div>

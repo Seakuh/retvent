@@ -155,11 +155,11 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     <div className="category-filter" ref={containerRef}>
       <button
         className={`category-button ${
-          selectedCategory === "Home" ? "active" : ""
+          selectedCategory === "Start" ? "active" : ""
         }`}
-        onClick={() => onCategoryChange("Home")}
+        onClick={() => onCategoryChange("Start")}
       >
-        🏠Home
+        🏠Start
       </button>
       <button
         className={`category-button ${
