@@ -226,9 +226,7 @@ function LandingPage() {
           <div>
             <EventSection
               title="Popular"
-              events={events
-                .sort((a, b) => (b.views || 0) - (a.views || 0))
-                .slice(0, 4)}
+              events={events.sort((a, b) => (b.views || 0) - (a.views || 0))}
             />
             <EventGalleryII
               title={selectedCategory}

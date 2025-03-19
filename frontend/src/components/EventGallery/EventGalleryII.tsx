@@ -65,7 +65,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
                     loading="lazy"
                   />
                 </div>
-                <div className="event-info">
+                <div className="miniature-event-info">
                   <h2 className="event-info-date">
                     {formatDate(event.startDate as string)}
                   </h2>
