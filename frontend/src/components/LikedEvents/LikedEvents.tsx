@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Heart } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -11,7 +12,9 @@ export const LikedEvents: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
+  const handleBack = () => {
+    navigate(-1);
+  };
   useEffect(() => {
     const fetchLikedEvents = async () => {
       if (!favoriteEventIds.length) {
@@ -51,11 +54,19 @@ export const LikedEvents: React.FC = () => {
   }
 
   if (events.length === 0) {
-    return <div>Sie haben noch keine Events favorisiert.</div>;
+    return (
+      <>
+        <button onClick={handleBack} className="back-button">
+          ← Back
+        </button>
+        <div className="no-liked-events">
+          <Heart size={100} />
+          You have not liked any events yet. <br></br>Go back and like some
+          events :)
+        </div>
+      </>
+    );
   }
-  const handleBack = () => {
-    navigate(-1);
-  };
 
   return (
     <div className="liked-events-container">
