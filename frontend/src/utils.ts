@@ -34,7 +34,7 @@ export const categories = [
   { name: "Environment", emoji: "🌍" },
   { name: "Parenting", emoji: "👶" },
   { name: "Space", emoji: "🚀" },
-  { name: "Esports", emoji: "🎮🏆" },
+  { name: "Esports", emoji: "🎮" },
 ];
 
 export interface Event {
