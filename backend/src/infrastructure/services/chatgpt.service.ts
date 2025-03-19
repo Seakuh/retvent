@@ -46,6 +46,8 @@ export class ChatGPTService {
     imageUrl: string,
   ): Promise<Partial<Event> | null> => {
     try {
+      const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+
       const response = await this.openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
@@ -55,6 +57,10 @@ export class ChatGPTService {
               {
                 type: 'text',
                 text: `Extract the key information from the provided event flyer and generate a structured JSON object based on the following rules:
+
+                ### **Current Date:**  
+Today's date is **${today}**. If the flyer does not mention a date, use this as the event start date in the format YYYY-MM-DD.
+
 
 ### Extraction Rules:
 - **Title (title)**: Extract the event name.
@@ -86,6 +92,11 @@ export class ChatGPTService {
   "category": "string",
   "price": "string",
   "ticketLink": "string",
+  "address": {
+    "street": "string",
+    "houseNumber": "string",
+    "city": "string"
+  },
   "lineup": [
     {
       "name": "string",

@@ -10,6 +10,12 @@ export const EventSchema = new Schema(
     hostId: { type: String },
     hostUsername: { type: String },
     locationId: { type: String },
+    locationName: { type: String },
+    address: {
+      street: { type: String },
+      houseNumber: { type: String },
+      city: { type: String },
+    },
     category: { type: String },
     price: Schema.Types.Mixed,
     ticketLink: { type: String },

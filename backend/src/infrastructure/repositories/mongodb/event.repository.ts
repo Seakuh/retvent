@@ -19,8 +19,11 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async getPopularEventsByCategory(category: string, limit: number) {
+    // get event with most views in the future
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const events = await this.eventModel
-      .find({ category })
+      .find({ category, startDate: { $gte: today } })
       .sort({ views: -1 })
       .limit(limit)
       .exec();
