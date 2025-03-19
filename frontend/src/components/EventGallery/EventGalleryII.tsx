@@ -1,7 +1,7 @@
 import { Eye, MapPin } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Event, formatDate } from "../../utils";
+import { Event, emptyEvent, formatDate } from "../../utils";
 import "./EventGalleryII.css";
 
 const DEFAULT_IMAGE =
@@ -18,73 +18,120 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  // Sortiere Events nach Startdatum (aufsteigend)
-  // filter out past events
-  const sortedEvents = [...events]
-    .filter((event) => {
-      if (!event.startDate) return false;
+  // Optimierte Sortierung und Filterung in einem Durchlauf
+  const { upcomingEvents, pastEvents } = events.reduce(
+    (acc, event) => {
+      if (!event.startDate) return acc;
       const startDate = new Date(event.startDate);
-      return startDate > new Date();
-    })
-    .sort(
-      (a, b) =>
-        new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-    );
+      const now = new Date();
+
+      if (startDate > now) {
+        acc.upcomingEvents.push(event);
+      } else {
+        acc.pastEvents.push(event);
+      }
+      return acc;
+    },
+    { upcomingEvents: [] as Event[], pastEvents: [] as Event[] }
+  );
+
+  // Sortiere die Events nach Datum
+  upcomingEvents.sort(
+    (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+  );
+  pastEvents.sort(
+    (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+  ); // Absteigend für Past Events
 
   // Gruppiere Events nach Datum
-  const groupedEvents: Record<string, Event[]> = sortedEvents.reduce(
-    (acc, event) => {
+  const groupEvents = (events: Event[]): Record<string, Event[]> => {
+    return events.reduce((acc, event) => {
       const eventDate = formatDate(event.startDate as string);
       if (!acc[eventDate]) {
         acc[eventDate] = [];
       }
       acc[eventDate].push(event);
       return acc;
-    },
-    {} as Record<string, Event[]>
+    }, {} as Record<string, Event[]>);
+  };
+
+  const groupedUpcomingEvents = groupEvents(upcomingEvents);
+  const groupedPastEvents = groupEvents(pastEvents);
+
+  const EventListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
+    event,
+    isPast,
+  }) => (
+    <div
+      key={event.id}
+      className={`event-list-item ${isPast ? "past-event" : ""}`}
+      onClick={() => !isPast && navigate(`/event/${event.id}`)}
+    >
+      <div className="event-thumbnail">
+        <img
+          src={event.imageUrl || DEFAULT_IMAGE}
+          alt={event.title}
+          loading="lazy"
+        />
+      </div>
+      <div className="miniature-event-info">
+        <h2 className="event-info-date">
+          {formatDate(event.startDate as string)}
+        </h2>
+        <h1 className="event-info-title-headline">{event.title}</h1>
+        <div className="event-meta-container">
+          <span className="location">
+            <MapPin size={16} />
+            {event.city || "TBA"}
+          </span>
+          <span className="views">
+            <Eye size={16} />
+            {event.views}
+          </span>
+        </div>
+      </div>
+    </div>
   );
 
   return (
     <>
       {/* <h1 className="section-title">{title}</h1> */}
+      <h2 className="section-title">Upcoming Events</h2>
       <div className="event-list">
-        {Object.entries(groupedEvents).map(([date, eventsForDate]) => (
-          <div key={date} className="event-date-section">
-            <h2 className="event-date-heading">{date}</h2>
-            <br />
-            {eventsForDate.map((event) => (
-              <div
-                key={event.id}
-                className="event-list-item"
-                onClick={() => navigate(`/event/${event.id}`)}
-              >
-                <div className="event-thumbnail">
-                  <img
-                    src={event.imageUrl || DEFAULT_IMAGE}
-                    alt={event.title}
-                    loading="lazy"
-                  />
+        {Object.keys(groupedUpcomingEvents).length > 0 ? (
+          <>
+            {Object.entries(groupedUpcomingEvents).map(
+              ([date, eventsForDate]) => (
+                <div key={date} className="event-date-section">
+                  <h2 className="event-date-heading">{date}</h2>
+                  <br />
+                  {eventsForDate.map((event) => (
+                    <EventListItem key={event.id} event={event} />
+                  ))}
                 </div>
-                <div className="miniature-event-info">
-                  <h2 className="event-info-date">
-                    {formatDate(event.startDate as string)}
-                  </h2>
-                  <h1 className="event-info-title-headline">{event.title}</h1>
-                  <div className="event-meta-container">
-                    <span className="location">
-                      <MapPin size={16} />
-                      {event.city || "TBA"}
-                    </span>
-                    <span className="views">
-                      <Eye size={16} />
-                      {event.views}
-                    </span>
-                  </div>
-                </div>
+              )
+            )}
+          </>
+        ) : (
+          <EventListItem event={emptyEvent} />
+        )}
+      </div>
+      {/* Past Events */}
+      <h2 className="section-title">Past Events</h2>
+      <div className="event-list">
+        {Object.keys(groupedPastEvents).length > 0 && (
+          <>
+            {Object.entries(groupedPastEvents).map(([date, eventsForDate]) => (
+              <div key={date} className="event-date-section">
+                <h2 className="event-date-heading">{date}</h2>
+                <br />
+                {eventsForDate.map((event) => (
+                  <EventListItem key={event.id} event={event} isPast={true} />
+                ))}
               </div>
             ))}
-          </div>
-        ))}
+          </>
+        )}
       </div>
     </>
   );

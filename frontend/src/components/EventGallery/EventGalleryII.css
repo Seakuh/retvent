@@ -102,6 +102,11 @@
 .location {
     color: var(--color-neon-blue);
 }
+.event-list-item.past-event {
+    opacity: 0.5;
+    cursor: default;
+  }
+
 
 /* Mobile Anpassungen */
 @media (max-width: 600px) {
