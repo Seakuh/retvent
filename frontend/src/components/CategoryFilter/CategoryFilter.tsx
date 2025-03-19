@@ -1,11 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./CategoryFilter.css";
 
-interface Category {
-  name: string;
-  emoji: string;
-}
-
 const categories = [
   { name: "Music", emoji: "🎵" },
   { name: "Concert", emoji: "🎤" },
@@ -13,7 +8,7 @@ const categories = [
   { name: "Workshop", emoji: "🔧" },
   { name: "Konzert", emoji: "🎤" },
   { name: "Kunst", emoji: "🎨" },
-  { name: "Event", emoji: "" },
+  { name: "Event", emoji: "📅" },
   { name: "Party", emoji: "🎉" },
   { name: "Sports", emoji: "⚽" },
   { name: "Art", emoji: "🎨" },
@@ -79,7 +74,6 @@ const categories = [
   { name: "Workshop", emoji: "🔧" },
   { name: "Konzert", emoji: "🎤" },
   { name: "Kunst", emoji: "🎨" },
-  { name: "Event", emoji: "🎉" },
   { name: "Party", emoji: "🎉" },
   { name: "Rave", emoji: "💃" },
   { name: "Club", emoji: "🎉" },
