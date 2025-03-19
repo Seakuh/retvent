@@ -12,12 +12,6 @@ interface EventGalleryProps {
   onToggleFavorite: (eventId: string) => void;
 }
 
-const getRandomSize = () => {
-  const sizes = ["", "wide", "tall", "large"];
-  const randomIndex = Math.floor(Math.random() * sizes.length);
-  return sizes[randomIndex];
-};
-
 export const EventGallery: React.FC<EventGalleryProps> = ({
   events,
   title,
