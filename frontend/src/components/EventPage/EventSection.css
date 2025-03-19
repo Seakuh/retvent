@@ -29,6 +29,17 @@
   scroll-snap-align: start;
 }
 
+.event-section-calendar-container {
+  color: white;
+  justify-content: center;
+}
+
+.event-section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 @media (max-width: 768px) {
   .event-list-container {
     gap: 0.5rem;

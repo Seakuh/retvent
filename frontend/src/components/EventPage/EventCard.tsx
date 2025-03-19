@@ -35,6 +35,13 @@ export const EventCard = ({ event }: { event: Event }) => {
           {formatDate(event.startDate as string)}
         </span>
         <h3 className="event-card-title">{event.title}</h3>
+        {/* <div className="event-card-tag-bubbles">
+          {event.tags?.map((tag) => (
+            <div className="event-card-tag-bubble" key={tag}>
+              {tag}
+            </div>
+          ))}
+        </div> */}
         <div className="event-card-details">
           <div className="event-card-location-container">
             <MapPin size={16} />

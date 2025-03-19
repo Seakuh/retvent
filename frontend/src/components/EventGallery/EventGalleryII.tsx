@@ -70,6 +70,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
                     {formatDate(event.startDate as string)}
                   </h2>
                   <h1 className="event-info-title-headline">{event.title}</h1>
+
                   <div className="event-meta-container">
                     <span className="location">
                       <MapPin size={16} />
