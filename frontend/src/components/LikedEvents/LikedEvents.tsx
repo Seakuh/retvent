@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { Event } from "../../utils";
+import { EventGalleryII } from "../EventGallery/EventGalleryII";
 import "./LikedEvents.css";
 
 export const LikedEvents: React.FC = () => {
@@ -73,23 +74,8 @@ export const LikedEvents: React.FC = () => {
       <button onClick={handleBack} className="back-button">
         ← Back
       </button>
-      <h1 className="liked-events-title">❤️ Your favorite events</h1>
-
-      <div className="liked-events-list">
-        {events.map((event) => (
-          <div
-            onClick={() => navigate(`/event/${event.id}`)}
-            className="liked-events-item"
-            key={event.id}
-          >
-            <img
-              className="liked-events-image"
-              src={event.imageUrl}
-              alt={event.title}
-            />
-          </div>
-        ))}
-      </div>
+      <h1 className="section-title">❤️</h1>
+      <EventGalleryII events={events} title="Liked Events" key={events[0].id} />
     </div>
   );
 };
