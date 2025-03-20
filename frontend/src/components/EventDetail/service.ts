@@ -5,12 +5,18 @@ export const handleWhatsAppShare = async (eventToShare: Event) => {
   if (!eventToShare) return;
   const message = `
   *${eventToShare.title}*\n
-  📍${eventToShare.city || "N/A"}\n
-  📅${eventToShare.startDate || "N/A"}
-  🕒 ${eventToShare.startTime || ""}
-  \n
-  \n
+  📍 ${eventToShare.city || "N/A"}\n
+  📅 ${formatDate(eventToShare.startDate?.toString() || "")}\n
+  🕒 ${eventToShare.startTime?.toString() || ""}\n
   ${`https://event-scanner.com/event/${eventToShare.id}`}`;
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
   window.open(whatsappUrl, "_blank");
+};
+
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 };
