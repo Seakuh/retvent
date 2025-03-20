@@ -1,6 +1,6 @@
 import { CalendarPlus, Heart, Share2 } from "lucide-react";
-import React, { useContext, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import React, { useContext, useEffect, useState } from "react";
+import DocumentMeta from "react-document-meta";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
@@ -23,6 +23,50 @@ export const EventDetail: React.FC = () => {
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Falls die Seite nicht ganz oben startet
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (event) {
+      // Titel setzen
+      document.title = event.title;
+
+      // Meta-Tags setzen
+      const metaTags = {
+        description: event.description,
+        "og:title": event.title,
+        "og:description": event.description,
+        "og:image": event.imageUrl,
+        "og:url": `https://event-scanner.com/event/${eventId}`,
+        "og:type": "website",
+        "twitter:card": "summary_large_image",
+        "twitter:title": event.title,
+        "twitter:description": event.description,
+        "twitter:image": event.imageUrl,
+      };
+
+      // Bestehende Meta-Tags aktualisieren oder neue erstellen
+      Object.entries(metaTags).forEach(([name, content]) => {
+        let meta =
+          document.querySelector(`meta[property="${name}"]`) ||
+          document.querySelector(`meta[name="${name}"]`);
+
+        if (!meta) {
+          meta = document.createElement("meta");
+          if (name.startsWith("og:") || name.startsWith("twitter:")) {
+            meta.setAttribute("property", name);
+          } else {
+            meta.setAttribute("name", name);
+          }
+          document.head.appendChild(meta);
+        }
+
+        meta.setAttribute("content", content || "");
+      });
+    }
+  }, [event, eventId]);
 
   const handleAddToCalendar = () => {
     if (!event?.startDate) return;
@@ -66,149 +110,151 @@ export const EventDetail: React.FC = () => {
     }
   }
 
+  const meta = {
+    title: event?.title,
+    description: event?.description,
+    meta: {
+      "og:title": event?.title,
+      "og:description": event?.description,
+      "og:image": event?.imageUrl,
+      "og:url": `https://event-scanner.com/event/${eventId}`,
+      "og:type": "website",
+      "twitter:card": "summary_large_image",
+      "twitter:title": event?.title,
+      "twitter:description": event?.description,
+      "twitter:image": event?.imageUrl,
+      "og:image:width": "1200",
+      "og:image:height": "630",
+    },
+  };
+
+  console.log(meta);
+
   return (
-    <div
-      className="event-detail"
-      style={
-        {
-          "--event-background-image": `url(${event.imageUrl})`,
-        } as React.CSSProperties
-      }
-    >
-      <Helmet>
-        <title>{event.title}</title>
-        <meta name="title" content={event.title} />
-        <meta name="description" content={event.description || ""} />
-
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={event.title} />
-        <meta property="og:description" content={event.description || ""} />
-        <meta property="og:image" content={event.imageUrl || ""} />
-        <meta property="og:url" content={window.location.href} />
-
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content={event.title} />
-        <meta
-          property="twitter:description"
-          content={event.description || ""}
-        />
-        <meta property="twitter:image" content={event.imageUrl || ""} />
-      </Helmet>
-      <div className="share-buttons">
-        <button
-          onClick={handleAddToCalendar}
-          className="share-button"
-          title="Zum Kalender hinzufügen"
-        >
-          <CalendarPlus className="h-5 w-5" />
-        </button>
-        <button
-          onClick={handleWhatsAppShare}
-          className="share-button"
-          title="Via WhatsApp teilen"
-        >
-          <Share2 className="h-5 w-5" />
-        </button>
-        <button
-          className={`share-button ${
-            isFavorite(eventId || "") ? "active" : ""
-          }`}
-          onClick={handleFavoriteClick}
-          title={
-            isFavorite(eventId || "")
-              ? "Von Favoriten entfernen"
-              : "Zu Favoriten hinzufügen"
-          }
-        >
-          <Heart
-            className={`h-5 w-5 ${
-              isFavorite(eventId || "") ? "fill-current" : ""
-            }`}
-          />
-        </button>
-      </div>
-
-      <EventHero
-        imageUrl={event.imageUrl}
-        title={event.title}
-        onImageClick={() => setShowImageModal(true)}
-      />
-      <button
-        className="back-button"
-        onClick={() => {
-          if (window.history.length > 1) {
-            navigate(-1);
-          } else {
-            if (event.category) {
-              navigate(`/category/${event.category}`);
-            } else {
-              navigate("/");
-            }
-          }
-        }}
+    <>
+      <DocumentMeta {...meta} />
+      <div
+        className="event-detail"
+        style={
+          {
+            "--event-background-image": `url(${event.imageUrl})`,
+          } as React.CSSProperties
+        }
       >
-        ← Back
-      </button>
-      {event.tags && event.tags.length > 0 && (
-        <GenreSlider genres={event.tags} />
-      )}
-      <div className="event-title-container">
-        <a
-          href={`https://www.google.com/search?q=${encodeURIComponent(
-            event.title + " event"
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h1 className="event-title">{event.title}</h1>
-        </a>
-      </div>
-      <div className="event-content">
-        <EventBasicInfo
-          startDate={event.startDate?.toString() || ""}
-          startTime={event.startTime}
-          city={event.city}
-          category={event.category}
-        />
+        <div className="share-buttons">
+          <button
+            onClick={handleAddToCalendar}
+            className="share-button"
+            title="Zum Kalender hinzufügen"
+          >
+            <CalendarPlus className="h-5 w-5" />
+          </button>
+          <button
+            onClick={() => handleWhatsAppShare(event)}
+            className="share-button"
+            title="Via WhatsApp teilen"
+          >
+            <Share2 className="h-5 w-5" />
+          </button>
+          <button
+            className={`share-button ${
+              isFavorite(eventId || "") ? "active" : ""
+            }`}
+            onClick={handleFavoriteClick}
+            title={
+              isFavorite(eventId || "")
+                ? "Von Favoriten entfernen"
+                : "Zu Favoriten hinzufügen"
+            }
+          >
+            <Heart
+              className={`h-5 w-5 ${
+                isFavorite(eventId || "") ? "fill-current" : ""
+              }`}
+            />
+          </button>
+        </div>
 
-        <EventDescription
+        <EventHero
+          imageUrl={event.imageUrl}
           title={event.title}
-          description={event.description}
-          price={event.price}
-          ticketLink={event.ticketLink}
+          onImageClick={() => setShowImageModal(true)}
         />
-        <TicketButton href={event.ticketLink || ""} />
-
-        {event.lineup && event.lineup.length > 0 && (
-          <EventLineup lineup={event.lineup} />
+        <button
+          className="back-button"
+          onClick={() => {
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              if (event.category) {
+                navigate(`/category/${event.category}`);
+              } else {
+                navigate("/");
+              }
+            }
+          }}
+        >
+          ← Back
+        </button>
+        {event.tags && event.tags.length > 0 && (
+          <GenreSlider genres={event.tags} />
         )}
-
-        <Social
-          instagram={event.socialMediaLinks?.instagram}
-          facebook={event.socialMediaLinks?.facebook}
-          // tiktok={event.socialMediaLinks?.tiktok}
-          // youtube={event.socialMediaLinks?.youtube}
-          // soundCloud={event.socialMediaLinks?.soundCloud}
-        />
-
-        {/* {event.uploadLat && event.uploadLon && (
-          <EventLocation
-            lat={event.uploadLat}
-            lon={event.uploadLon}
-            title={event.title}
+        <div className="event-title-container">
+          <a
+            href={`https://www.google.com/search?q=${encodeURIComponent(
+              event.title + " event"
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <h1 className="event-title">{event.title}</h1>
+          </a>
+        </div>
+        <div className="event-content">
+          <EventBasicInfo
+            startDate={event.startDate?.toString() || ""}
+            startTime={event.startTime}
+            city={event.city}
+            category={event.category}
           />
-        )} */}
-      </div>
 
-      {showImageModal && (
-        <ImageModal
-          imageUrl={event.imageUrl || ""}
-          onClose={() => setShowImageModal(false)}
+          <EventDescription
+            title={event.title}
+            description={event.description}
+            price={event.price}
+            ticketLink={event.ticketLink}
+          />
+          <TicketButton href={event.ticketLink || ""} />
+
+          {event.lineup && event.lineup.length > 0 && (
+            <EventLineup lineup={event.lineup} />
+          )}
+
+          <Social
+            instagram={event.socialMediaLinks?.instagram}
+            facebook={event.socialMediaLinks?.facebook}
+            // tiktok={event.socialMediaLinks?.tiktok}
+            // youtube={event.socialMediaLinks?.youtube}
+            // soundCloud={event.socialMediaLinks?.soundCloud}
+          />
+
+          {/* {event.uploadLat && event.uploadLon && (
+        <EventLocation
+          lat={event.uploadLat}
+          lon={event.uploadLon}
+          title={event.title}
         />
-      )}
-    </div>
+      )} */}
+        </div>
+
+        {showImageModal && (
+          <ImageModal
+            imageUrl={event.imageUrl || ""}
+            onClose={() => setShowImageModal(false)}
+          />
+        )}
+      </div>
+    </>
   );
 };
 
