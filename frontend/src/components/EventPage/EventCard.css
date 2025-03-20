@@ -88,3 +88,9 @@
 .event-date {
   display: none;
 }
+
+
+.hover-effect {
+  transform: translateY(-4px);
+  box-shadow: 0 0 20px var(--color-neon-blue);
+}

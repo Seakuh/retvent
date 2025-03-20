@@ -21,7 +21,7 @@ export const EventCard = ({ event }: { event: Event }) => {
       onClick={() => {
         navigate(`/event/${event.id}`);
       }}
-      className="event-card-container"
+      className={`event-card-container card-${event.id}`}
     >
       <div className="event-card-image-container">
         <img

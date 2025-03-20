@@ -1,12 +1,10 @@
 import { divIcon, Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { MapEvent } from "../../utils";
 import "./MapView.css";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const customIcon = new Icon({
   iconUrl:
@@ -123,189 +121,120 @@ const userLocationIcon = divIcon({
 //   return null;
 // };
 
-export const MapView: React.FC = () => {
-  const navigate = useNavigate();
-  const [userLocation, setUserLocation] = useState<[number, number]>([
-    52.520008, 13.404954,
-  ]);
-  const [events, setEvents] = useState<MapEvent[]>([]);
-  const [isUpdatingEvents, setIsUpdatingEvents] = useState(false);
+export interface MapViewProps {
+  events: MapEvent[];
+  selectedEvent: MapEvent | null;
+  userLocation: [number, number];
+  onEventSelect: (event: MapEvent) => void;
+}
 
+export const MapView: React.FC<MapViewProps> = ({
+  events,
+  selectedEvent,
+  userLocation,
+  onEventSelect,
+}) => {
+  const navigate = useNavigate();
+  const [map, setMap] = useState<any>(null);
+
+  // Wenn sich selectedEvent ändert, zentriere die Karte auf das Event
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log("position", position.coords);
-        const { latitude, longitude } = position.coords;
-        console.log("latitude", latitude);
-        console.log("longitude", longitude);
-        setUserLocation([latitude, longitude]);
-        loadNearbyEvents(latitude, longitude, true); // Initial load mit 300 Events
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        const defaultLocation: [number, number] = [52.520008, 13.404954];
-        setUserLocation(defaultLocation);
-        loadNearbyEvents(defaultLocation[0], defaultLocation[1], true); // Initial load mit 300 Events
-      }
-    );
-  }, []); // Nur beim ersten Laden ausführen
+    if (map && selectedEvent) {
+      const position: [number, number] = [
+        selectedEvent.location.coordinates[1],
+        selectedEvent.location.coordinates[0],
+      ];
+      map.setView(position, 15);
+    }
+  }, [selectedEvent, map]);
 
   const handleEventClick = (event: MapEvent) => {
-    navigate(`/event/${event.id}`);
+    onEventSelect(event);
   };
-
-  const loadNearbyEvents = useCallback(
-    async (lat: number, lon: number, isInitial: boolean = false) => {
-      try {
-        setIsUpdatingEvents(true);
-        const response = await fetch(
-          `${API_URL}events/nearby/map?lat=${lat}&lon=${lon}&distance=${100}&limit=${100}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch events");
-        const newEvents: MapEvent[] = await response.json();
-        if (newEvents.length === 0) {
-          return;
-        }
-        setEvents(newEvents);
-        setIsUpdatingEvents(false);
-      } catch (error) {
-        console.error("Error loading events:", error);
-        setIsUpdatingEvents(false);
-      }
-    },
-    []
-  );
-
-  //       setEvents((prevEvents) => {
-  //         const existingIds = new Set(prevEvents.map((e) => e.id));
-  //         const uniqueNewEvents = newEvents.filter(
-  //           (event) => !existingIds.has(event.id)
-  //         );
-  //         return isInitial ? newEvents : [...prevEvents, ...uniqueNewEvents];
-  //       });
-  //     } catch (error) {
-  //       console.error("Error loading events:", error);
-  //     } finally {
-  //       setIsUpdatingEvents(false);
-  //       if (isInitial) {
-  //         isInitialLoad.current = false;
-  //       }
-  //     }
-  //   },
-  //   []
-  // );
-
-  // const handleViewportChange = useCallback(
-  //   (center: [number, number]) => {
-  //     setMapCenter(center);
-  //     if (!isInitialLoad.current) {
-  //       loadNearbyEvents(center[0], center[1], false);
-  //     }
-  //   },
-  //   [loadNearbyEvents]
-  // );
 
   return (
     <div className="map-wrapper">
-      {isUpdatingEvents && (
-        <div
-          style={{
-            position: "absolute",
-            top: "10px",
-            right: "10px",
-            background: "rgba(255, 255, 255, 0.9)",
-            padding: "8px",
-            borderRadius: "4px",
-            zIndex: 1000,
-            fontSize: "14px",
-          }}
-        >
-          Aktualisiere Events...
-        </div>
-      )}
       <MapContainer
         center={userLocation}
         zoom={15}
         className="map-container"
         zoomControl={true}
         scrollWheelZoom={true}
+        ref={setMap}
       >
-        {/* <MapController onViewportChange={handleViewportChange} /> */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {userLocation && (
-          <Marker position={userLocation} icon={userLocationIcon}>
-            <Popup>Dein Standort</Popup>
-          </Marker>
-        )}
+        <Marker position={userLocation} icon={userLocationIcon}>
+          <Popup>Dein Standort</Popup>
+        </Marker>
         {events.map((event) => {
           const position: [number, number] = [
             event.location.coordinates[1],
             event.location.coordinates[0],
           ];
 
-          const formatDate = (date: Date | string | undefined | null) => {
-            if (!date) return "";
-            const dateObj = typeof date === "string" ? new Date(date) : date;
-            return dateObj.toLocaleDateString("de-DE", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            });
-          };
-
-          const truncateTitle = (title: string, maxLength: number = 30) => {
-            return title.length > maxLength
-              ? `${title.substring(0, maxLength)}...`
-              : title;
-          };
+          // Spezielles Styling für ausgewähltes Event
+          const isSelected = selectedEvent?.id === event.id;
+          const markerIcon = isSelected
+            ? new Icon({ ...customIcon.options, className: "selected-marker" })
+            : customIcon;
 
           return (
-            <Marker key={event.id} position={position} icon={customIcon}>
-              <Popup className="event-popup-container">
-                <div
-                  className="event-popup"
-                  style={{
-                    width: "200px",
-                    padding: "8px",
-                    borderRadius: "8px",
-                    backgroundColor: "white",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                  }}
-                >
-                  <img
-                    src={`${event.imageUrl}?width=150&format=webp`} // WebP reduziert Größe erheblich
-                    alt={event.title}
-                    className="event-popup-image"
-                    style={{
-                      width: "100%",
-                      height: "150px",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      marginBottom: "8px",
-                    }}
-                    onClick={() => handleEventClick(event)}
-                  />
-                  <h3
-                    style={{
-                      margin: "8px 0",
-                      fontSize: "14px",
-                      fontWeight: "600",
-                      lineHeight: "1.2",
-                    }}
-                  >
-                    {truncateTitle(event.title)}
-                  </h3>
-                  <p>{formatDate(event.startDate)}</p>
-                </div>
-              </Popup>
+            <Marker
+              key={event.id}
+              position={position}
+              icon={markerIcon}
+              eventHandlers={{
+                click: () => handleEventClick(event),
+              }}
+            >
+              {/* <EventPopup
+                event={event}
+                onEventClick={() => navigate(`/event/${event.id}`)}
+              /> */}
             </Marker>
           );
         })}
       </MapContainer>
     </div>
+  );
+};
+
+// Separate Popup-Komponente für bessere Übersichtlichkeit
+const EventPopup: React.FC<{
+  event: MapEvent;
+  onEventClick: () => void;
+}> = ({ event, onEventClick }) => {
+  const formatDate = (date: Date | string | undefined | null) => {
+    if (!date) return "";
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toLocaleDateString("de-DE", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const truncateTitle = (title: string, maxLength: number = 30) => {
+    return title.length > maxLength
+      ? `${title.substring(0, maxLength)}...`
+      : title;
+  };
+
+  return (
+    <Popup className="event-popup-container">
+      <div className="event-popup">
+        <img
+          src={`${event.imageUrl}?width=150&format=webp`}
+          alt={event.title}
+          className="event-popup-image"
+          onClick={onEventClick}
+        />
+        <h3>{truncateTitle(event.title)}</h3>
+        <p>{formatDate(event.startDate)}</p>
+      </div>
+    </Popup>
   );
 };

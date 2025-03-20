@@ -85,3 +85,15 @@
     opacity: 0;
   }
 }
+
+.selected-marker {
+  filter: hue-rotate(120deg);
+  transform: scale(1.2);
+  z-index: 1000 !important;
+}
+
+.event-card.selected {
+  border: 2px solid #007bff;
+  box-shadow: 0 0 10px rgba(0,123,255,0.3);
+  transform: scale(1.02);
+}

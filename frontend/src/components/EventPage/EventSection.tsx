@@ -4,9 +4,16 @@ import "./EventSection.css";
 interface EventSectionProps {
   title: string;
   events: Event[];
+  selectedEvent?: Event | null;
+  onEventSelect?: (event: Event) => void;
 }
 
-export const EventSection = ({ title, events }: EventSectionProps) => {
+export const EventSection = ({
+  title,
+  events,
+  selectedEvent,
+  onEventSelect,
+}: EventSectionProps) => {
   const emptyEvent = {
     id: "",
     title: "No events found",
