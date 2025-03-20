@@ -6,7 +6,6 @@ export const fetchLatestEvents = async (): Promise<Event[]> => {
   try {
     const response = await fetch(`${API_URL}events/latest?limit=40`);
     const data = await response.json();
-    console.log("API Response:", data); // Debug log
     const events = data.events || [];
     return events.reverse(); // Reverse the array before returning
   } catch (error) {
@@ -19,6 +18,7 @@ export const fetchEventsByCategory = async (
   selectedCategory: string | null
 ): Promise<Event[]> => {
   try {
+    console.log("Fetching events by category:", selectedCategory);
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}events/category/${selectedCategory}`
     );

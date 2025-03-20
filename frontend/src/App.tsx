@@ -41,6 +41,7 @@ const App: React.FC = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/event/:eventId" element={<EventDetail />} />
               <Route path="/liked" element={<LikedEvents />} />
+              <Route path="/category/:category" element={<LandingPage />} />
               <Route
                 path="/admin/dashboard"
                 element={

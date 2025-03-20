@@ -1,6 +1,6 @@
 import { Heart, Hexagon, LogIn, Menu, Plus, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventList } from "./components/EventList/EventList";
@@ -20,6 +20,8 @@ import { Event } from "./utils";
 
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -31,6 +33,7 @@ function LandingPage() {
     "All"
   );
   const navigate = useNavigate();
+  const params = useParams();
 
   const handleSearch = async (keyword: string) => {
     setLoading(true);
@@ -49,29 +52,43 @@ function LandingPage() {
     navigate("/admin/events");
   };
 
-  useEffect(() => {
-    console.log("selectedCategory", selectedCategory);
-    if (selectedCategory === "All") {
-      fetchLatestEvents().then((events) => {
-        console.log("fetching all events", events);
-        setEvents(events.reverse());
-      });
-    } else if (selectedCategory) {
-      fetchEventsByCategory(selectedCategory).then((events) => {
-        setEvents(events);
-      });
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    if (category === "All") {
+      searchParams.delete("category");
+    } else {
+      searchParams.set("category", category);
     }
-  }, [selectedCategory]);
+    setSearchParams(searchParams);
+  };
 
   useEffect(() => {
+    // Prüfe erst URL-Parameter
+    const queryParamCategory = searchParams.get("category");
+    // Prüfe dann Route-Parameter
+    const routeParamCategory = params.category;
+
+    const categoryToUse = queryParamCategory || routeParamCategory;
+
+    if (categoryToUse) {
+      setSelectedCategory(categoryToUse);
+      // Wenn die Kategorie über Route-Parameter kam, setzen wir auch die SearchParams
+      if (routeParamCategory && !queryParamCategory) {
+        searchParams.set("category", routeParamCategory);
+        setSearchParams(searchParams);
+      }
+    }
+
     const loadEvents = async () => {
       setLoading(true);
       try {
-        const latestEvents = await fetchLatestEvents();
-        if (Array.isArray(latestEvents) && latestEvents.length > 0) {
-          setEvents(latestEvents.reverse());
-        } else {
-          console.warn("Received empty or invalid events array:", latestEvents);
+        const events =
+          categoryToUse && categoryToUse !== "All"
+            ? await fetchEventsByCategory(categoryToUse)
+            : await fetchLatestEvents();
+
+        if (Array.isArray(events) && events.length > 0) {
+          setEvents(events.reverse());
         }
       } catch (err) {
         console.error("Fehler beim Laden der Events:", err);
@@ -79,8 +96,9 @@ function LandingPage() {
         setLoading(false);
       }
     };
+
     loadEvents();
-  }, []);
+  }, [searchParams, params.category]);
 
   const toggleFavorite = (eventId: string) => {
     setFavorites((prev) => {
@@ -199,7 +217,7 @@ function LandingPage() {
           </div>
           <CategoryFilter
             selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
+            onCategoryChange={handleCategoryChange}
           />
         </div>
 
