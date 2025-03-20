@@ -96,7 +96,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
   return (
     <>
       {/* <h1 className="section-title">{title}</h1> */}
-      <h2 className="section-title">Upcoming Events</h2>
+      <h2 className="section-title">Upcoming</h2>
       <div className="event-list">
         {Object.keys(groupedUpcomingEvents).length > 0 ? (
           <>
@@ -117,7 +117,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
         )}
       </div>
       {/* Past Events */}
-      <h2 className="section-title">Past Events</h2>
+      <h2 className="section-title">Past</h2>
       <div className="event-list">
         {Object.keys(groupedPastEvents).length > 0 && (
           <>
