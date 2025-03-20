@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
+import { MapView } from "../MapView/MapView";
 import { EventSection } from "./EventSection";
 import { fetchFavoriteEvents, fetchPopularEvents } from "./service";
 
@@ -26,6 +27,7 @@ export const EventPage = () => {
   return (
     <div>
       <EventSection title="Nearby" events={popularEvents} />
+      <MapView />
       <EventSection title="Favorites" events={favoriteEvents} />
     </div>
   );

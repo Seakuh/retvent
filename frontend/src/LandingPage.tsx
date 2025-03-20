@@ -7,7 +7,7 @@ import { EventList } from "./components/EventList/EventList";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
 import { EventScanner } from "./components/EventScanner/Eventscanner";
-import { MapView } from "./components/MapView/MapView";
+import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import { SearchBar } from "./components/SearchBar/SearchBar";
 import { ViewToggle } from "./components/ViewToggle/ViewToggle";
 import {
@@ -233,7 +233,7 @@ function LandingPage() {
             </div>
           </div>
         ) : viewMode === "map" ? (
-          <MapView onMarkerClick={handleMarkerClick} />
+          <LikedEvents />
         ) : selectedCategory === "Home" ? (
           <EventPage />
         ) : (
