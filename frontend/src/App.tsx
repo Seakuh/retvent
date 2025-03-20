@@ -27,7 +27,7 @@ const queryClient = new QueryClient({
 });
 
 // Prefetching wichtiger Daten beim App-Start
-queryClient.prefetchQuery(["events", null], () => eventService.getEvents());
+queryClient.prefetchQuery(["events"], () => eventService.getEvents());
 
 const App: React.FC = () => {
   return (
