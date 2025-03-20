@@ -1,6 +1,6 @@
 import { CalendarPlus, Heart, Share2 } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
-import DocumentMeta from "react-document-meta";
+import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
@@ -27,46 +27,6 @@ export const EventDetail: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0); // Falls die Seite nicht ganz oben startet
   }, [location.pathname]);
-
-  useEffect(() => {
-    if (event) {
-      // Titel setzen
-      document.title = event.title;
-
-      // Meta-Tags setzen
-      const metaTags = {
-        description: event.description,
-        "og:title": event.title,
-        "og:description": event.description,
-        "og:image": event.imageUrl,
-        "og:url": `https://event-scanner.com/event/${eventId}`,
-        "og:type": "website",
-        "twitter:card": "summary_large_image",
-        "twitter:title": event.title,
-        "twitter:description": event.description,
-        "twitter:image": event.imageUrl,
-      };
-
-      // Bestehende Meta-Tags aktualisieren oder neue erstellen
-      Object.entries(metaTags).forEach(([name, content]) => {
-        let meta =
-          document.querySelector(`meta[property="${name}"]`) ||
-          document.querySelector(`meta[name="${name}"]`);
-
-        if (!meta) {
-          meta = document.createElement("meta");
-          if (name.startsWith("og:") || name.startsWith("twitter:")) {
-            meta.setAttribute("property", name);
-          } else {
-            meta.setAttribute("name", name);
-          }
-          document.head.appendChild(meta);
-        }
-
-        meta.setAttribute("content", content || "");
-      });
-    }
-  }, [event, eventId]);
 
   const handleAddToCalendar = () => {
     if (!event?.startDate) return;
@@ -110,29 +70,36 @@ export const EventDetail: React.FC = () => {
     }
   }
 
-  const meta = {
-    title: event?.title,
-    description: event?.description,
-    meta: {
-      "og:title": event?.title,
-      "og:description": event?.description,
-      "og:image": event?.imageUrl,
-      "og:url": `https://event-scanner.com/event/${eventId}`,
-      "og:type": "website",
-      "twitter:card": "summary_large_image",
-      "twitter:title": event?.title,
-      "twitter:description": event?.description,
-      "twitter:image": event?.imageUrl,
-      "og:image:width": "1200",
-      "og:image:height": "630",
-    },
+  const HelmetMeta = () => {
+    console.log(event);
+    return (
+      <Helmet>
+        <title>{event.title}</title>
+        <meta name="description" content={event.description} />
+        <meta property="og:title" content={event.title} />
+        <meta property="og:description" content={event.description} />
+        <meta property="og:image" content={event.imageUrl} />
+        <meta
+          property="og:url"
+          content={`https://event-scanner.com/event/${eventId}`}
+        />
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content={event.title} />
+        <meta property="twitter:description" content={event.description} />
+        <meta property="twitter:image" content={event.imageUrl} />
+        <meta property="og:image:alt" content={event.title} />
+        <meta
+          property="twitter:url"
+          content={`https://event-scanner.com/event/${eventId}`}
+        />
+      </Helmet>
+    );
   };
 
-  console.log(meta);
-
   return (
-    <>
-      <DocumentMeta {...meta} />
+    <div>
+      {event && <HelmetMeta />}
       <div
         className="event-detail"
         style={
@@ -254,7 +221,7 @@ export const EventDetail: React.FC = () => {
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

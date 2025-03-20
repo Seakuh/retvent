@@ -5,8 +5,8 @@ export const handleWhatsAppShare = async (eventToShare: Event) => {
   if (!eventToShare) return;
   const message = `
   *${eventToShare.title}*\n
-  📍 ${eventToShare.city || "N/A"}\n
-  📅 ${formatDate(eventToShare.startDate?.toString() || "")}\n
+  📍 ${eventToShare.city || "N/A"}
+  📅 ${formatDate(eventToShare.startDate?.toString() || "")}
   🕒 ${eventToShare.startTime?.toString() || ""}\n
   ${`https://event-scanner.com/event/${eventToShare.id}`}`;
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
