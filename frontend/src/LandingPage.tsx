@@ -62,8 +62,7 @@ function LandingPage() {
   }, []);
 
   const handleSearch = async (searchTerm: string) => {
-    // Hier implementierst du deine Suchlogik
-    console.log("Searching for:", searchTerm);
+    setSelectedCategory("All");
     setLoading(true);
     setSearchPerformed(true);
     try {
