@@ -1,6 +1,6 @@
 import { divIcon, Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { MapEvent } from "../../utils";
@@ -125,29 +125,26 @@ const userLocationIcon = divIcon({
 
 export const MapView: React.FC = () => {
   const navigate = useNavigate();
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(
-    null
-  );
-  const [mapCenter, setMapCenter] = useState<[number, number]>([
+  const [userLocation, setUserLocation] = useState<[number, number]>([
     52.520008, 13.404954,
   ]);
   const [events, setEvents] = useState<MapEvent[]>([]);
   const [isUpdatingEvents, setIsUpdatingEvents] = useState(false);
-  const isInitialLoad = useRef(true);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log("position", position.coords);
         const { latitude, longitude } = position.coords;
+        console.log("latitude", latitude);
+        console.log("longitude", longitude);
         setUserLocation([latitude, longitude]);
-        setMapCenter([latitude, longitude]);
         loadNearbyEvents(latitude, longitude, true); // Initial load mit 300 Events
       },
       (error) => {
         console.error("Geolocation error:", error);
         const defaultLocation: [number, number] = [52.520008, 13.404954];
         setUserLocation(defaultLocation);
-        setMapCenter(defaultLocation);
         loadNearbyEvents(defaultLocation[0], defaultLocation[1], true); // Initial load mit 300 Events
       }
     );
@@ -227,8 +224,8 @@ export const MapView: React.FC = () => {
         </div>
       )}
       <MapContainer
-        center={mapCenter}
-        zoom={13}
+        center={userLocation}
+        zoom={15}
         className="map-container"
         zoomControl={true}
         scrollWheelZoom={true}
