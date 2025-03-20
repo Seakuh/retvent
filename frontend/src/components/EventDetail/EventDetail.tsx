@@ -71,7 +71,6 @@ export const EventDetail: React.FC = () => {
   }
 
   const HelmetMeta = () => {
-    console.log(event);
     return (
       <Helmet>
         <title>{event.title}</title>
