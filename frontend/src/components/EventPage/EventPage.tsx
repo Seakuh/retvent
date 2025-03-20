@@ -21,7 +21,7 @@ export const EventPage = () => {
   const loadNearbyEvents = useCallback(async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        `${API_URL}events/nearby/map?lat=${lat}&lon=${lon}&distance=${100}&limit=${100}`
+        `${API_URL}events/nearby?lat=${lat}&lon=${lon}&distance=${100}&limit=${100}`
       );
       if (!response.ok) throw new Error("Failed to fetch events");
       const events: Event[] = await response.json();
@@ -43,6 +43,9 @@ export const EventPage = () => {
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
       element.classList.add("hover-effect");
+      setTimeout(() => {
+        element.classList.remove("hover-effect");
+      }, 2000);
     }
   };
 
