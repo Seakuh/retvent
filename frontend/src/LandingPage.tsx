@@ -1,4 +1,12 @@
-import { Heart, Hexagon, LogIn, Menu, Plus, Upload } from "lucide-react";
+import {
+  Heart,
+  Hexagon,
+  LogIn,
+  Menu,
+  Plus,
+  Search,
+  Upload,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
@@ -8,12 +16,12 @@ import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
 import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
-import { SearchBar } from "./components/SearchBar/SearchBar";
+import SearchModal from "./components/SearchModal/SearchModal";
 import { ViewToggle } from "./components/ViewToggle/ViewToggle";
 import {
   fetchEventsByCategory,
   fetchLatestEvents,
-  searchEventsByCity,
+  searchEventsByKeyword,
 } from "./service";
 import { ViewMode } from "./types/event";
 import { Event } from "./utils";
@@ -32,15 +40,19 @@ function LandingPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     "All"
   );
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
-  const handleSearch = async (keyword: string) => {
+  const handleSearch = async (searchTerm: string) => {
+    // Hier implementierst du deine Suchlogik
+    console.log("Searching for:", searchTerm);
     setLoading(true);
     setSearchPerformed(true);
     try {
-      const searchResults = await searchEventsByCity(keyword);
+      const searchResults = await searchEventsByKeyword(searchTerm);
       setEvents(searchResults as Event[]);
+      setIsSearchOpen(false);
     } catch (error) {
       console.error("Error searching events:", error);
     } finally {
@@ -108,10 +120,6 @@ function LandingPage() {
     });
   };
 
-  const handleMarkerClick = (event: Event) => {
-    navigate(`/event/${event._id}`);
-  };
-
   return (
     <div className="min-h-screen">
       <header className="glass-effect sticky top-0 z-50">
@@ -126,6 +134,12 @@ function LandingPage() {
               />
             </div>
             <div className="flex items-center gap-4">
+              <button
+                className="search-icon"
+                onClick={() => setIsSearchOpen(true)}
+              >
+                <Search size={24} color="white" />
+              </button>
               <ViewToggle view={viewMode} onViewChange={setViewMode} />
               <button
                 onClick={() => setShowMenu(!showMenu)}
@@ -137,16 +151,6 @@ function LandingPage() {
           </div>
           {showMenu && (
             <div className="absolute right-4 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 ">
-              {/* <button
-                onClick={() => {
-                  setShowFavorites(!showFavorites);
-                  setShowMenu(false);
-                }}
-                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-              >
-                <Heart size={20} />
-                {showFavorites ? "Show All Events" : "Show Favorites"}
-              </button> */}
               <button
                 onClick={() => {
                   navigate("/admin/dashboard");
@@ -154,7 +158,6 @@ function LandingPage() {
                 className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
               >
                 <Hexagon size={20} />
-
                 <h3>Dashboard</h3>
               </button>
               <button
@@ -175,7 +178,6 @@ function LandingPage() {
                 <Heart size={20} />
                 <p>Liked Events</p>
               </button>
-
               {/* My Uploads Button */}
               <button
                 onClick={() => {
@@ -207,9 +209,6 @@ function LandingPage() {
         <div className="px-4 py-6">
           <div>
             <EventScanner />
-          </div>
-          <div className="flex justify-between items-center">
-            <SearchBar onSearch={handleSearch} />
           </div>
           <CategoryFilter
             selectedCategory={selectedCategory}
@@ -271,6 +270,11 @@ function LandingPage() {
           </div>
         )}
       </main>
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onSearch={handleSearch}
+      />
     </div>
   );
 }

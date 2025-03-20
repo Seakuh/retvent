@@ -64,3 +64,18 @@ export const searchEventsByCity = async (city: string): Promise<Event[]> => {
     return [];
   }
 };
+
+export const searchEventsByKeyword = async (
+  keyword: string
+): Promise<Event[]> => {
+  try {
+    const response = await fetch(
+      `${API_URL}events/search/?query=${encodeURIComponent(keyword)}`
+    );
+    const data = await response.json();
+    return data || [];
+  } catch (error) {
+    console.error("Error searching events by keyword:", error);
+    return [];
+  }
+};
