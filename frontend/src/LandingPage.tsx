@@ -54,11 +54,7 @@ function LandingPage() {
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-    if (category === "All") {
-      searchParams.delete("category");
-    } else {
-      searchParams.set("category", category);
-    }
+    searchParams.set("category", category);
     setSearchParams(searchParams);
   };
 
