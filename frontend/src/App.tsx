@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { Route, Routes } from "react-router-dom";
 import LandingPage from "./LandingPage";
 import AdminEvents from "./components/Admin/AdminEvents";
@@ -31,55 +32,57 @@ queryClient.prefetchQuery(["events", null], () => eventService.getEvents());
 
 const App: React.FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <UserContextProvider>
-        <div className="app">
-          <main>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/event/:eventId" element={<EventDetail />} />
-              <Route path="/liked" element={<LikedEvents />} />
-              <Route path="/category/:category" element={<LandingPage />} />
-              <Route
-                path="/admin/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/events"
-                element={
-                  <ProtectedRoute>
-                    <AdminEvents />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/events/create"
-                element={
-                  <ProtectedRoute>
-                    <CreateEvent />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/events/edit/:eventId"
-                element={
-                  <ProtectedRoute>
-                    <EditEvent />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<LandingPage />} />
-            </Routes>
-          </main>
-        </div>
-      </UserContextProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <UserContextProvider>
+          <div className="app">
+            <main>
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/event/:eventId" element={<EventDetail />} />
+                <Route path="/liked" element={<LikedEvents />} />
+                <Route path="/category/:category" element={<LandingPage />} />
+                <Route
+                  path="/admin/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/events"
+                  element={
+                    <ProtectedRoute>
+                      <AdminEvents />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/events/create"
+                  element={
+                    <ProtectedRoute>
+                      <CreateEvent />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/events/edit/:eventId"
+                  element={
+                    <ProtectedRoute>
+                      <EditEvent />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<LandingPage />} />
+              </Routes>
+            </main>
+          </div>
+        </UserContextProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 };
 

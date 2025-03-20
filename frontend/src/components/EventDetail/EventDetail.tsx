@@ -1,5 +1,6 @@
 import { CalendarPlus, Heart, Share2 } from "lucide-react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
@@ -22,39 +23,6 @@ export const EventDetail: React.FC = () => {
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
-
-  useEffect(() => {
-    if (event) {
-      // Update meta tags for social sharing
-      const updateMetaTags = () => {
-        // Update title
-        document
-          .querySelector('meta[property="og:title"]')
-          ?.setAttribute("content", event.title);
-
-        // Update description
-        const description =
-          event.description || `${event.title} - Event in ${event.city}`;
-        document
-          .querySelector('meta[property="og:description"]')
-          ?.setAttribute("content", description);
-
-        // Update image
-        if (event.imageUrl) {
-          document
-            .querySelector('meta[property="og:image"]')
-            ?.setAttribute("content", event.imageUrl);
-        }
-
-        // Update URL
-        document
-          .querySelector('meta[property="og:url"]')
-          ?.setAttribute("content", window.location.href);
-      };
-
-      updateMetaTags();
-    }
-  }, [event]);
 
   const handleAddToCalendar = () => {
     if (!event?.startDate) return;
@@ -107,6 +75,27 @@ export const EventDetail: React.FC = () => {
         } as React.CSSProperties
       }
     >
+      <Helmet>
+        <title>{event.title}</title>
+        <meta name="title" content={event.title} />
+        <meta name="description" content={event.description || ""} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={event.title} />
+        <meta property="og:description" content={event.description || ""} />
+        <meta property="og:image" content={event.imageUrl || ""} />
+        <meta property="og:url" content={window.location.href} />
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content={event.title} />
+        <meta
+          property="twitter:description"
+          content={event.description || ""}
+        />
+        <meta property="twitter:image" content={event.imageUrl || ""} />
+      </Helmet>
       <div className="share-buttons">
         <button
           onClick={handleAddToCalendar}
