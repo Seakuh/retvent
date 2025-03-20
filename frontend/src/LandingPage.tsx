@@ -44,6 +44,23 @@ function LandingPage() {
   const navigate = useNavigate();
   const params = useParams();
 
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Öffne Search Modal bei Strg+L
+      if (e.ctrlKey && e.key.toLowerCase() === "l") {
+        e.preventDefault(); // Verhindert das Standard-Browser-Verhalten
+        setIsSearchOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    // Cleanup beim Unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
+
   const handleSearch = async (searchTerm: string) => {
     // Hier implementierst du deine Suchlogik
     console.log("Searching for:", searchTerm);
@@ -224,11 +241,10 @@ function LandingPage() {
             </div>
           </div>
         ) : searchPerformed && events.length === 0 ? (
-          <div className="no-results">
-            <div className="no-results-content">
-              <div className="no-results-icon">🚫</div>
-              <h2>No Events Found</h2>
-              <p>We couldn't find any events in this city</p>
+          <div className="no-results mt-10">
+            <div className="no-results-content text-center flex flex-col items-center justify-center">
+              <div className="no-results-icon text-7xl">🚫</div>
+              <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
             </div>
           </div>
         ) : viewMode === "map" ? (

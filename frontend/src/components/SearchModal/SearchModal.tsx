@@ -45,6 +45,9 @@ const SearchModal: React.FC<SearchModalProps> = ({
             if (e.key === "Enter") {
               onSearch(searchTerm);
             }
+            if (e.key === "Escape") {
+              onClose();
+            }
           }}
         />
       </div>
