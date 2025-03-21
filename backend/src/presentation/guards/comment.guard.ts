@@ -9,7 +9,6 @@ export class CommentGuard extends OptionalJwtAuthGuard implements CanActivate {
     // Versuche den JWT Token zu validieren
     const result = await super.canActivate(context);
 
-    // Wenn kein Token vorhanden ist oder ungültig ist, setze userId auf 'public'
     if (!request.user) {
       request.user = { id: 'public' };
     }
