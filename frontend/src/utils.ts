@@ -1,3 +1,4 @@
+export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 export const categories = [
   { name: "Music", emoji: "🎵" },
   { name: "Party", emoji: "🎉" },
@@ -94,6 +95,28 @@ export interface Event {
   views?: number;
 }
 
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  profilePictureUrl: string;
+  uploads: number;
+  events: Event[];
+  uploadedEvents: Event[];
+  likedEvents: Event[];
+  dislikedEvents: Event[];
+  comments: Comment[];
+  likes: number;
+}
+
+export interface Comment {
+  id?: string;
+  content?: string;
+  eventId?: string;
+  userId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 export interface MapEvent {
   id: string;
   title: string;

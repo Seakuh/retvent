@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
 import TicketButton from "../Buttons/TicketButton";
+import CommentSection from "../Comment/CommentSection";
 import { ImageModal } from "../ImageModal/ImageModal";
 import { EventBasicInfo } from "./components/EventBasicInfo";
 import { EventDescription } from "./components/EventDescription";
@@ -211,6 +212,7 @@ export const EventDetail: React.FC = () => {
           title={event.title}
         />
       )} */}
+          <CommentSection eventId={eventId || ""} />
         </div>
 
         {showImageModal && (
