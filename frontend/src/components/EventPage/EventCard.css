@@ -80,6 +80,13 @@
   gap: 0.5rem;
 }
 
+.event-card-comments-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: grey;
+}
+
 /* Entferne die nicht mehr benötigten alten Styles */
 .event-image,
 .event-image img,
@@ -93,4 +100,15 @@
 .hover-effect {
   transform: translateY(-4px);
   box-shadow: 0 0 20px var(--color-neon-blue);
+}
+
+
+
+.event-card-community-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  gap: 0.5rem;
 }

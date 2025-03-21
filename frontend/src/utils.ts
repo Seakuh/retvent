@@ -93,6 +93,9 @@ export interface Event {
 
   // views
   views?: number;
+
+  // comments
+  commentCount?: number;
 }
 
 export interface User {

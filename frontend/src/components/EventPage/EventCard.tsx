@@ -1,4 +1,4 @@
-import { Eye, MapPin } from "lucide-react";
+import { Eye, MapPin, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Event } from "../../utils";
 import "./EventCard.css";
@@ -40,9 +40,15 @@ export const EventCard = ({ event }: { event: Event }) => {
             <MapPin size={16} />
             <p>{event.city || "TBA"}</p>
           </div>
-          <div className="event-card-views-container">
-            <Eye size={16} />
-            <p>{event.views || 0}</p>
+          <div className="event-card-community-container">
+            <div className="event-card-comments-container">
+              <MessageCircle size={16} />
+              <p>{event.commentCount || 0}</p>
+            </div>
+            <div className="event-card-views-container">
+              <Eye size={16} />
+              <p>{event.views || 0}</p>
+            </div>
           </div>
         </div>
       </div>
