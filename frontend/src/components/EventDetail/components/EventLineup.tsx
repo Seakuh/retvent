@@ -11,8 +11,8 @@ export const EventLineup: React.FC<{ lineup: LineupArtist[] }> = ({
   lineup,
 }) => (
   <div className="event-lineup">
-    <h2 className="section-headline">Lineup</h2>
     <div className="lineup-grid">
+      <h2 className="section-headline">Lineup</h2>
       {lineup.map((artist) => (
         <div key={artist._id} className="lineup-artist">
           <div className="lineup-artist-info">
