@@ -2,6 +2,7 @@ import { Eye, MapPin } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Event, emptyEvent, formatDate } from "../../utils";
+import { EventSection } from "../EventPage/EventSection";
 import "./EventGalleryII.css";
 
 const DEFAULT_IMAGE =
@@ -109,13 +110,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
       {todayEvents.length > 0 && (
         <>
           <h2 className="section-title">Today</h2>
-          <div className="event-list">
-            <div className="event-date-section">
-              {todayEvents.map((event) => (
-                <EventListItem key={event.id} event={event} />
-              ))}
-            </div>
-          </div>
+          <EventSection events={todayEvents} />
         </>
       )}
       <h2 className="section-title">Upcoming</h2>

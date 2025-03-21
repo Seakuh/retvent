@@ -2,7 +2,7 @@ import { Event } from "../../utils";
 import { EventCard } from "./EventCard";
 import "./EventSection.css";
 interface EventSectionProps {
-  title: string;
+  title?: string;
   events: Event[];
   selectedEvent?: Event | null;
   onEventSelect?: (event: Event) => void;
@@ -24,7 +24,7 @@ export const EventSection = ({
   };
   return (
     <>
-      <h1 className="section-title">{title}</h1>
+      <h1 className="section-title-event-section">{title}</h1>
       <div className="event-list-container">
         {events.length === 0 ? (
           <div className="event-card-list-item">
