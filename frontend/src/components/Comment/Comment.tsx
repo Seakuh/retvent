@@ -14,8 +14,8 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
   const [replyText, setReplyText] = useState("");
 
   const handleSubmitReply = () => {
-    if (replyText.trim()) {
-      onReply(comment._id!, replyText);
+    if (replyText.trim() && comment._id) {
+      onReply(comment._id, replyText);
       setReplyText("");
       setIsReplying(false);
     }
@@ -25,15 +25,25 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
   const canReply = depth < maxDepth;
 
   return (
-    <div className="comment-component-container">
-      <div className="comment-text">{comment.text}</div>
+    <div
+      className="comment-component-container"
+      style={{ marginLeft: `${depth * 20}px` }}
+    >
+      <div className="comment-content">
+        <div className="comment-text">{comment.text}</div>
+        <div className="comment-meta">
+          <span className="comment-user">{comment.userId}</span>
+          <span className="comment-separator">•</span>
+          <span className="comment-date">{comment.createdAt}</span>
+        </div>
+      </div>
 
       {canReply && (
         <button
           className="comment-reply-button"
           onClick={() => setIsReplying(!isReplying)}
         >
-          {isReplying ? "Cancel" : "Reply"}
+          {isReplying ? "Abbrechen" : "Antworten"}
         </button>
       )}
 
@@ -42,7 +52,7 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
           <CommentTextField
             commentText={replyText}
             setCommentText={setReplyText}
-            handleAddComment={() => handleSubmitReply()}
+            handleAddComment={handleSubmitReply}
           />
         </div>
       )}
@@ -51,7 +61,7 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
         <div className="nested-comments">
           {comment.replies.map((reply) => (
             <Comment
-              key={reply.id}
+              key={reply._id}
               comment={reply}
               onReply={onReply}
               depth={depth + 1}

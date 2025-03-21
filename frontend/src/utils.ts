@@ -111,14 +111,12 @@ export interface User {
 
 export interface Comment {
   _id?: string;
-  id?: string;
-  text?: string;
-  replies?: Comment[];
-  parentId?: string;
-  eventId?: string;
+  text: string;
+  createdAt?: string;
   userId?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  eventId: string;
+  parentId?: string | null;
+  replies?: Comment[];
 }
 
 export interface MapEvent {
@@ -151,4 +149,42 @@ export const emptyEvent: Event = {
     "https://hel1.your-objectstorage.com/imagebucket/events/8d703697-caf7-4438-abda-4ccd8e5939e9.png",
   startDate: new Date(),
   description: "",
+};
+
+interface CommentWithReplies extends Comment {
+  replies: CommentWithReplies[];
+}
+
+export const buildCommentTree = (comments: Comment[]): CommentWithReplies[] => {
+  // Erstelle eine Map für schnellen Zugriff auf Kommentare
+  const commentMap = new Map<string | null | undefined, CommentWithReplies>();
+
+  // Initialisiere alle Kommentare mit einem leeren replies-Array
+  comments.forEach((comment) => {
+    if (comment._id) {
+      commentMap.set(comment._id, { ...comment, replies: [] });
+    }
+  });
+
+  const rootComments: CommentWithReplies[] = [];
+
+  // Baue die Baumstruktur auf
+  comments.forEach((comment) => {
+    if (!comment._id) return;
+
+    const commentWithReplies = commentMap.get(comment._id)!;
+
+    if (comment.parentId) {
+      // Wenn es eine Antwort ist, füge sie zum parent-Kommentar hinzu
+      const parentComment = commentMap.get(comment.parentId);
+      if (parentComment) {
+        parentComment.replies.push(commentWithReplies);
+      }
+    } else {
+      // Wenn es ein Root-Kommentar ist, füge ihn zur Root-Liste hinzu
+      rootComments.push(commentWithReplies);
+    }
+  });
+
+  return rootComments;
 };
