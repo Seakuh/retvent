@@ -10,6 +10,7 @@ import { EventService } from '../application/services/event.service';
 import { LocationService } from '../application/services/location.service';
 import { UserService } from '../application/services/user.service';
 import { CoreModule } from '../core/core.module';
+import { BcryptService } from '../core/services/bcrypt.service';
 import { AuthController } from '../presentation/controllers/auth.controller';
 import { EventController } from '../presentation/controllers/event.controller';
 import { LocationController } from '../presentation/controllers/location.controller';

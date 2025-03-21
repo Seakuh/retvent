@@ -21,4 +21,7 @@ export class UserPageDto {
 
   @IsArray()
   events: Event[];
+
+  @IsArray()
+  comments: Comment[];
 }

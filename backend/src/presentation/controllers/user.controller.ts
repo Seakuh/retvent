@@ -12,7 +12,7 @@ import { UserService } from '../../application/services/user.service';
 import { User } from '../../core/domain/user';
 import { BcryptService } from '../../core/services/bcrypt.service';
 import { User as UserDecorator } from '../decorators/user.decorator';
-import { UpdateUserDto } from '../dtos/update-user.dto';
+import { UpdateUserDto } from '../dtos/update-user.dto.';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 @Controller('users')
 export class UserController {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateUserDto } from 'src/presentation/dtos/update-user.dto';
+import { UpdateUserDto } from 'src/presentation/dtos/update-user.dto.';
 import { MongoUserRepository } from '../../infrastructure/repositories/mongodb/user.repository';
 
 @Injectable()
