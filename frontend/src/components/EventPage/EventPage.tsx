@@ -2,8 +2,10 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { Event } from "../../utils";
 import { MapView } from "../MapView/MapView";
+import "./EventPage.css";
 import { EventSection } from "./EventSection";
 import { fetchFavoriteEvents } from "./service";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export const EventPage = () => {
@@ -80,22 +82,26 @@ export const EventPage = () => {
 
   return (
     <div>
-      <EventSection
-        title="Nearby"
-        events={nearbyEvents}
-        selectedEvent={selectedNearbyEvent}
-        onEventSelect={setSelectedNearbyEvent}
-        className="nearby-section"
-      />
-      <MapView
-        events={nearbyEvents}
-        selectedEvent={selectedNearbyEvent}
-        userLocation={[
-          location?.latitude || 52.520008,
-          location?.longitude || 13.404954,
-        ]}
-        onEventSelect={handleEventSelect}
-      />
+      <h1 className="section-title">Nearby</h1>
+      <div className="nearby-section-container">
+        <EventSection
+          events={nearbyEvents}
+          selectedEvent={selectedNearbyEvent}
+          onEventSelect={setSelectedNearbyEvent}
+          className="nearby-section"
+        />
+      </div>
+      <div className="map-view-container">
+        <MapView
+          events={nearbyEvents}
+          selectedEvent={selectedNearbyEvent}
+          userLocation={[
+            location?.latitude || 52.520008,
+            location?.longitude || 13.404954,
+          ]}
+          onEventSelect={handleEventSelect}
+        />
+      </div>
       <EventSection title="Favorites" events={favoriteEvents} />
     </div>
   );
