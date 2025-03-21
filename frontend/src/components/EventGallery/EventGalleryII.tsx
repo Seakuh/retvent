@@ -19,20 +19,30 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
   const navigate = useNavigate();
 
   // Optimierte Sortierung und Filterung in einem Durchlauf
-  const { upcomingEvents, pastEvents } = events.reduce(
+  const { upcomingEvents, todayEvents, pastEvents } = events.reduce(
     (acc, event) => {
       if (!event.startDate) return acc;
       const startDate = new Date(event.startDate);
       const now = new Date();
 
-      if (startDate > now) {
+      // Setze Uhrzeiten auf Mitternacht für Datumsvergleich
+      const startDateOnly = new Date(startDate.setHours(0, 0, 0, 0));
+      const nowDateOnly = new Date(now.setHours(0, 0, 0, 0));
+
+      if (startDateOnly.getTime() === nowDateOnly.getTime()) {
+        acc.todayEvents.push(event);
+      } else if (startDate > now) {
         acc.upcomingEvents.push(event);
       } else {
         acc.pastEvents.push(event);
       }
       return acc;
     },
-    { upcomingEvents: [] as Event[], pastEvents: [] as Event[] }
+    {
+      upcomingEvents: [] as Event[],
+      todayEvents: [] as Event[],
+      pastEvents: [] as Event[],
+    }
   );
 
   // Sortiere die Events nach Datum
@@ -96,6 +106,18 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
   return (
     <>
       {/* <h1 className="section-title">{title}</h1> */}
+      {todayEvents.length > 0 && (
+        <>
+          <h2 className="section-title">Today</h2>
+          <div className="event-list">
+            <div className="event-date-section">
+              {todayEvents.map((event) => (
+                <EventListItem key={event.id} event={event} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
       <h2 className="section-title">Upcoming</h2>
       <div className="event-list">
         {Object.keys(groupedUpcomingEvents).length > 0 ? (
