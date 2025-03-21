@@ -98,6 +98,15 @@ interface CategoryFilterProps {
   onCategoryChange: (category: string | null) => void;
 }
 
+// Cache-Dauer in Millisekunden (z.B. 24 Stunden)
+const CACHE_DURATION = 24 * 60 * 60 * 1000;
+
+// Cache-Struktur
+interface CachedCategories {
+  categories: string[];
+  timestamp: number;
+}
+
 export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   selectedCategory,
   onCategoryChange,
@@ -106,27 +115,74 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}events/categories`
-      );
-      const data = await response.json();
-      const filteredCategories = data.filter(
-        (category: string) => category !== null
-      );
-      const uniqueCategories = filteredCategories
-        .filter((category: string) => category !== "")
-        .map(
-          (category: string) =>
-            category.charAt(0).toUpperCase() + category.slice(1)
-        )
-        .filter(
-          (category: string, index: number, self: string[]) =>
-            self.indexOf(category) === index
+    const fetchAndCacheCategories = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}events/categories`
         );
-      setCategories(uniqueCategories);
+        const data = await response.json();
+        const filteredCategories = data
+          .filter((category: string) => category !== null && category !== "")
+          .map(
+            (category: string) =>
+              category.charAt(0).toUpperCase() + category.slice(1)
+          )
+          .filter(
+            (category: string, index: number, self: string[]) =>
+              self.indexOf(category) === index
+          );
+
+        // Cache speichern
+        const cacheData: CachedCategories = {
+          categories: filteredCategories,
+          timestamp: Date.now(),
+        };
+        localStorage.setItem("eventCategories", JSON.stringify(cacheData));
+
+        setCategories(filteredCategories);
+      } catch (error) {
+        console.error("Fehler beim Laden der Kategorien:", error);
+        // Bei Fehler: Versuche Cache zu laden
+        loadCachedCategories();
+      }
     };
-    fetchCategories();
+
+    const loadCachedCategories = () => {
+      const cachedData = localStorage.getItem("eventCategories");
+      if (cachedData) {
+        const { categories: cachedCategories, timestamp }: CachedCategories =
+          JSON.parse(cachedData);
+        setCategories(cachedCategories);
+      }
+    };
+
+    const checkAndUpdateCategories = () => {
+      const cachedData = localStorage.getItem("eventCategories");
+
+      if (!cachedData) {
+        // Kein Cache vorhanden: Neue Daten laden
+        fetchAndCacheCategories();
+        return;
+      }
+
+      const { timestamp }: CachedCategories = JSON.parse(cachedData);
+      const isExpired = Date.now() - timestamp > CACHE_DURATION;
+
+      if (isExpired) {
+        // Cache ist abgelaufen: Neue Daten laden
+        fetchAndCacheCategories();
+      } else {
+        // Cache ist noch gültig: Cached Daten laden
+        loadCachedCategories();
+      }
+    };
+
+    checkAndUpdateCategories();
+
+    // Optional: Periodisches Update im Hintergrund
+    const intervalId = setInterval(checkAndUpdateCategories, CACHE_DURATION);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
