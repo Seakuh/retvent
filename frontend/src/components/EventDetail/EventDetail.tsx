@@ -191,12 +191,20 @@ export const EventDetail: React.FC = () => {
             price={event.price}
             ticketLink={event.ticketLink}
           />
-          <TicketButton href={event.ticketLink || ""} />
 
           {event.lineup && event.lineup.length > 0 && (
             <EventLineup lineup={event.lineup} />
           )}
 
+          {/* {event.uploadLat && event.uploadLon && (
+        <EventLocation
+        lat={event.uploadLat}
+        lon={event.uploadLon}
+        title={event.title}
+        />
+        )} */}
+          <CommentSection eventId={eventId || ""} />
+          <TicketButton href={event.ticketLink || ""} />
           <Social
             instagram={event.socialMediaLinks?.instagram}
             facebook={event.socialMediaLinks?.facebook}
@@ -204,15 +212,6 @@ export const EventDetail: React.FC = () => {
             // youtube={event.socialMediaLinks?.youtube}
             // soundCloud={event.socialMediaLinks?.soundCloud}
           />
-
-          {/* {event.uploadLat && event.uploadLon && (
-        <EventLocation
-          lat={event.uploadLat}
-          lon={event.uploadLon}
-          title={event.title}
-        />
-      )} */}
-          <CommentSection eventId={eventId || ""} />
         </div>
 
         {showImageModal && (

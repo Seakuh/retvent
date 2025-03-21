@@ -1,13 +1,13 @@
 .comment-component-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;    
   color: white;
   position: relative;
 }
 
 .comment-text {
   font-weight: 500;
+  font-size: 16px;
   color: white;
   padding: 10px;
   border-radius: 4px;
@@ -48,13 +48,33 @@
 .comment-reply-button {
   align-self: flex-start;
   background: transparent;
-  color: white;
+  color: var(--color-neon-blue);
   padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
+  margin-left: 8px;
+  margin-top: -1rem;
 }
 
 .comment-reply-button:hover {
   background: color(var(--primary-color));
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: left;
+  align-items: right;
+  gap: 5px;
+}
+
+.comment-content {
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.comment-date {
+  font-size: 12px;
+  margin-left: 10px;
+  margin-bottom: -10px;
 }
