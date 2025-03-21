@@ -37,6 +37,18 @@ export const categories = [
   { name: "Esports", emoji: "🎮🏆" },
 ];
 
+// Cache-Durations in Millisekunden
+// 24 Stunden
+export const CACHE_DURATION_24 = 24 * 60 * 60 * 1000;
+// 12 Stunden
+export const CACHE_DURATION_12 = 12 * 60 * 60 * 1000;
+// 6 Stunden
+export const CACHE_DURATION_6 = 6 * 60 * 60 * 1000;
+// 3 Stunden
+export const CACHE_DURATION_3 = 3 * 60 * 60 * 1000;
+// 1 Stunde
+export const CACHE_DURATION_1 = 60 * 60 * 1000;
+
 export interface Event {
   // ID
   id?: string;

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { CACHE_DURATION_3 } from "../../utils";
 import "./CategoryFilter.css";
 
 const categories = [
@@ -99,7 +100,6 @@ interface CategoryFilterProps {
 }
 
 // Cache-Dauer in Millisekunden (z.B. 24 Stunden)
-const CACHE_DURATION = 24 * 60 * 60 * 1000;
 
 // Cache-Struktur
 interface CachedCategories {
@@ -166,7 +166,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       }
 
       const { timestamp }: CachedCategories = JSON.parse(cachedData);
-      const isExpired = Date.now() - timestamp > CACHE_DURATION;
+      const isExpired = Date.now() - timestamp > CACHE_DURATION_3;
 
       if (isExpired) {
         // Cache ist abgelaufen: Neue Daten laden
@@ -180,7 +180,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     checkAndUpdateCategories();
 
     // Optional: Periodisches Update im Hintergrund
-    const intervalId = setInterval(checkAndUpdateCategories, CACHE_DURATION);
+    const intervalId = setInterval(checkAndUpdateCategories, CACHE_DURATION_3);
 
     return () => clearInterval(intervalId);
   }, []);
