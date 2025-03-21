@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 10px;
   color: white;
+  margin-bottom: 10px;
 }
 
 .comment-textfield {

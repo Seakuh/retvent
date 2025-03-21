@@ -34,7 +34,9 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
         <div className="comment-meta">
           <span className="comment-user">{comment.userId}</span>
           <span className="comment-separator">•</span>
-          <span className="comment-date">{comment.createdAt}</span>
+          <span className="comment-date">
+            {comment.createdAt?.toLocaleString()}
+          </span>
         </div>
       </div>
 
@@ -43,7 +45,7 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
           className="comment-reply-button"
           onClick={() => setIsReplying(!isReplying)}
         >
-          {isReplying ? "Abbrechen" : "Antworten"}
+          {isReplying ? "cancel" : "reply"}
         </button>
       )}
 
