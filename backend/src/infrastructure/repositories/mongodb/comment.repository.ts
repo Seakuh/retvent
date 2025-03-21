@@ -10,7 +10,10 @@ export class MongoCommentRepository implements ICommentRepository {
   constructor(
     @InjectModel(DomainComment.name)
     private commentModel: Model<DomainComment>,
-  ) {}
+  ) {
+    // Erstelle Index für schnelle Zählung
+    this.commentModel.collection.createIndex({ eventId: 1 });
+  }
 
   createCommentToEvent(
     eventId: string,
@@ -46,5 +49,21 @@ export class MongoCommentRepository implements ICommentRepository {
 
   async findByEventId(eventId: string): Promise<DomainComment[]> {
     return this.commentModel.find({ eventId });
+  }
+
+  async countCommentsByEventId(eventId: string): Promise<number> {
+    return this.commentModel.countDocuments({ eventId });
+  }
+
+  async findByEventIdWithCount(eventId: string) {
+    const [comments, total] = await Promise.all([
+      this.commentModel.find({ eventId }).sort({ createdAt: -1 }).lean(),
+      this.commentModel.countDocuments({ eventId }),
+    ]);
+
+    return {
+      comments,
+      total,
+    };
   }
 }

@@ -8,6 +8,38 @@ import { IEventRepository } from '../../../core/repositories/event.repository.in
 @Injectable()
 export class MongoEventRepository implements IEventRepository {
   constructor(@InjectModel('Event') private eventModel: Model<Event>) {}
+
+  private async addCommentCountToEvents(events: any[]): Promise<Event[]> {
+    const eventIds = events.map((event) => event._id);
+    const commentCounts = await this.eventModel.aggregate([
+      {
+        $match: { _id: { $in: eventIds } },
+      },
+      {
+        $lookup: {
+          from: 'comments',
+          localField: '_id',
+          foreignField: 'eventId',
+          as: 'comments',
+        },
+      },
+      {
+        $addFields: {
+          commentCount: { $size: '$comments' },
+        },
+      },
+    ]);
+
+    const commentCountMap = new Map(
+      commentCounts.map((event) => [event._id.toString(), event.commentCount]),
+    );
+
+    return events.map((event) => ({
+      ...this.toEntity(event),
+      commentCount: commentCountMap.get(event._id.toString()) || 0,
+    }));
+  }
+
   async findTodayEvents(): Promise<Event[]> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -15,11 +47,10 @@ export class MongoEventRepository implements IEventRepository {
     const events = await this.eventModel
       .find({ startDate: { $gte: today } })
       .exec();
-    return events.map((event) => this.toEntity(event));
+    return this.addCommentCountToEvents(events);
   }
 
   async getPopularEventsByCategory(category: string, limit: number) {
-    // get event with most views in the future
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const events = await this.eventModel
@@ -27,7 +58,7 @@ export class MongoEventRepository implements IEventRepository {
       .sort({ views: -1 })
       .limit(limit)
       .exec();
-    return events.map((event) => this.toEntity(event));
+    return this.addCommentCountToEvents(events);
   }
 
   async getPopularEventsNearby(lat: number, lon: number, limit: number) {
@@ -105,30 +136,42 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async findById(id: string): Promise<Event | null> {
-    // Zuerst prüfen wir, ob das Event existiert und ob es ein views Feld hat
     const event = await this.eventModel.findById(id).exec();
 
     if (!event) {
       return null;
     }
 
-    // Wenn das Event existiert, erhöhen wir die Views
     const updatedEvent = await this.eventModel
       .findByIdAndUpdate(
         id,
-        {
-          $inc: { views: 1 }, // Erhöht views um 1
-        },
-        {
-          new: true, // Gibt das aktualisierte Dokument zurück
-          // Wenn views nicht existiert, wird es mit 0 initialisiert und dann um 1 erhöht
-          setDefaultsOnInsert: true,
-        },
+        { $inc: { views: 1 } },
+        { new: true, setDefaultsOnInsert: true },
       )
       .exec();
 
-    console.log('Updated Event:', updatedEvent);
-    return updatedEvent ? this.toEntity(updatedEvent) : null;
+    if (!updatedEvent) {
+      return null;
+    }
+
+    const [eventWithComments] = await this.eventModel.aggregate([
+      { $match: { _id: updatedEvent._id } },
+      {
+        $lookup: {
+          from: 'comments',
+          localField: '_id',
+          foreignField: 'eventId',
+          as: 'comments',
+        },
+      },
+      {
+        $addFields: {
+          commentCount: { $size: '$comments' },
+        },
+      },
+    ]);
+
+    return this.toEntity(eventWithComments);
   }
 
   async findByLocationId(locationId: string): Promise<Event[]> {
@@ -335,7 +378,7 @@ export class MongoEventRepository implements IEventRepository {
       .sort({ createdAt: -1 })
       .limit(limit)
       .exec();
-    return events.map((event) => this.toEntity(event));
+    return this.addCommentCountToEvents(events);
   }
 
   async findByCategory(
@@ -349,8 +392,7 @@ export class MongoEventRepository implements IEventRepository {
       .limit(limit)
       .sort({ createdAt: -1 })
       .exec();
-    console.log(`Found ${events.length} events`); // Debug log
-    return events.map((event) => this.toEntity(event));
+    return this.addCommentCountToEvents(events);
   }
 
   async countByCategory(category: string): Promise<number> {
@@ -489,5 +531,56 @@ export class MongoEventRepository implements IEventRepository {
       .sort({ createdAt: -1 })
       .exec();
     return events.map((event) => this.toEntity(event));
+  }
+
+  async findAllWithCommentCount() {
+    return this.eventModel.aggregate([
+      {
+        $lookup: {
+          from: 'comments',
+          localField: '_id',
+          foreignField: 'eventId',
+          as: 'comments',
+        },
+      },
+      {
+        $addFields: {
+          commentCount: { $size: '$comments' },
+        },
+      },
+      {
+        $project: {
+          comments: 0, // Entferne das comments Array aus dem Ergebnis
+        },
+      },
+    ]);
+  }
+
+  async findByIdWithCommentCount(id: string) {
+    const [event] = await this.eventModel.aggregate([
+      {
+        $match: { _id: id },
+      },
+      {
+        $lookup: {
+          from: 'comments',
+          localField: '_id',
+          foreignField: 'eventId',
+          as: 'comments',
+        },
+      },
+      {
+        $addFields: {
+          commentCount: { $size: '$comments' },
+        },
+      },
+      {
+        $project: {
+          comments: 0, // Entferne das comments Array aus dem Ergebnis
+        },
+      },
+    ]);
+
+    return event;
   }
 }

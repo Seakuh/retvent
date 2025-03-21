@@ -34,12 +34,14 @@ export class EventService {
     return this.eventRepository.searchByCity(city);
   }
 
-  async findAll(): Promise<Event[]> {
-    return this.eventRepository.findAll();
+  async findAll() {
+    const events = await this.eventRepository.findAllWithCommentCount();
+    return events.map((event) => this.toEntity(event));
   }
 
-  async findById(id: string): Promise<Event | null> {
-    return this.eventRepository.findById(id);
+  async findById(id: string) {
+    const event = await this.eventRepository.findByIdWithCommentCount(id);
+    return event ? this.toEntity(event) : null;
   }
 
   async getEventById(id: string): Promise<Event | null> {
@@ -244,5 +246,10 @@ export class EventService {
 
   async countByHostId(hostId: string): Promise<number> {
     return this.eventRepository.countByHostId(hostId);
+  }
+
+  private toEntity(event: any): Event {
+    // Implementiere die Umwandlung von event-formatierten Daten in ein Event-Objekt
+    throw new Error('Method not implemented');
   }
 }
