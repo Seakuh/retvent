@@ -1,0 +1,63 @@
+.comment-component-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;    
+  color: white;
+  position: relative;
+}
+
+.comment-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.nested-comments {
+  margin-left: 20px;
+  border-left: 2px solid #e0e0e0;
+  padding-left: 10px;
+  position: relative;
+}
+
+.nested-comments::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.reply-form {
+  margin-left: 40px;
+  position: relative;
+}
+
+.reply-form::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: -10px;
+  height: calc(100% + 10px);
+  width: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.comment-reply-button {
+  align-self: flex-start;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comment-reply-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

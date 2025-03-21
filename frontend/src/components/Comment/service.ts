@@ -1,9 +1,23 @@
 import { API_URL, Comment } from "../../utils";
 
+// Hilfsfunktion für die Headers
+const getHeaders = () => {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+};
+
 export const fetchComments = async (eventId: string) => {
   try {
     console.log("Fetching comments for event:", eventId);
-    const response = await fetch(`${API_URL}comments/${eventId}`);
+    const response = await fetch(`${API_URL}comments/${eventId}`, {
+      headers: getHeaders(),
+    });
     return response.json();
   } catch (error) {
     console.error("Error fetching comments:", error);
@@ -12,17 +26,26 @@ export const fetchComments = async (eventId: string) => {
 };
 
 export const createCommentToEvent = async (comment: Comment) => {
-  const response = await fetch(`${API_URL}comments`, {
+  console.log("createCommentToEvent", comment);
+
+  return await fetch(`${API_URL}comments/event/${comment.eventId}`, {
     method: "POST",
-    body: JSON.stringify(comment),
+    headers: getHeaders(),
+    body: JSON.stringify({
+      text: comment.text,
+      parentId: comment.parentId,
+    }),
   });
-  return response.json();
 };
 
 export const updateComment = async (comment: Comment) => {
   const response = await fetch(`${API_URL}/comments/${comment.id}`, {
     method: "PUT",
-    body: JSON.stringify(comment),
+    headers: getHeaders(),
+    body: JSON.stringify({
+      text: comment.text,
+      parentId: comment.parentId,
+    }),
   });
   return response.json();
 };
@@ -30,6 +53,7 @@ export const updateComment = async (comment: Comment) => {
 export const deleteComment = async (commentId: string) => {
   const response = await fetch(`${API_URL}comments/${commentId}`, {
     method: "DELETE",
+    headers: getHeaders(),
   });
   return response.json();
 };
@@ -37,7 +61,9 @@ export const deleteComment = async (commentId: string) => {
 export const getCommentsByEventId = async (eventId: string) => {
   try {
     console.log("Fetching comments for event:", eventId);
-    const response = await fetch(`${API_URL}comments/event/${eventId}`);
+    const response = await fetch(`${API_URL}comments/event/${eventId}`, {
+      headers: getHeaders(),
+    });
     return response.json();
   } catch (error) {
     console.error("Error fetching comments:", error);
@@ -46,6 +72,8 @@ export const getCommentsByEventId = async (eventId: string) => {
 };
 
 export const getCommentsByUserId = async (userId: string) => {
-  const response = await fetch(`${API_URL}comments/user/${userId}`);
+  const response = await fetch(`${API_URL}comments/user/${userId}`, {
+    headers: getHeaders(),
+  });
   return response.json();
 };

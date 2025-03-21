@@ -110,13 +110,17 @@ export interface User {
 }
 
 export interface Comment {
+  _id?: string;
   id?: string;
-  content?: string;
+  text?: string;
+  replies?: Comment[];
+  parentId?: string;
   eventId?: string;
   userId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
+
 export interface MapEvent {
   id: string;
   title: string;
