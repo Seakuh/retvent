@@ -1,10 +1,23 @@
-import { Controller, Post, Put, Body, Param, UseGuards, Get, Delete, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { LocationService } from '../../application/services/location.service';
-import { CreateLocationDto, UpdateLocationDto } from '../../core/dto/location.dto';
+import { User } from '../../core/domain/user';
+import {
+  CreateLocationDto,
+  UpdateLocationDto,
+} from '../../core/dto/location.dto';
+import { User as UserDecorator } from '../decorators/user.decorator';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { OwnerGuard } from '../guards/owner.guard';
-import { User as UserDecorator } from '../decorators/user.decorator';
-import { User } from '../../core/domain/user';
 
 @Controller('locations')
 export class LocationController {
@@ -14,7 +27,7 @@ export class LocationController {
   @UseGuards(JwtAuthGuard)
   async createLocation(
     @Body() createLocationDto: CreateLocationDto,
-    @UserDecorator() user: User
+    @UserDecorator() user: User,
   ) {
     return this.locationService.createLocation(createLocationDto, user.id);
   }
@@ -24,7 +37,7 @@ export class LocationController {
   async updateLocation(
     @Param('id') id: string,
     @Body() updateLocationDto: UpdateLocationDto,
-    @UserDecorator() user: User
+    @UserDecorator() user: User,
   ) {
     return this.locationService.updateLocation(id, updateLocationDto, user.id);
   }
@@ -37,10 +50,7 @@ export class LocationController {
 
   @Post(':id/like')
   @UseGuards(JwtAuthGuard)
-  async likeLocation(
-    @Param('id') id: string,
-    @UserDecorator() user: User
-  ) {
+  async likeLocation(@Param('id') id: string, @UserDecorator() user: User) {
     return this.locationService.likeLocation(id, user.id);
   }
 
@@ -70,4 +80,4 @@ export class LocationController {
   async unfollowLocation(@Param('id') id: string, @Req() req: any) {
     return this.locationService.unfollowLocation(id, req.user.id);
   }
-} 
+}

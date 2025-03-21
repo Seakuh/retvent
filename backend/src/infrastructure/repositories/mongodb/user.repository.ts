@@ -7,15 +7,13 @@ import { UserDocument } from '../../schemas/user.schema';
 
 @Injectable()
 export class MongoUserRepository implements IUserRepository {
-  constructor(
-    @InjectModel('User') private userModel: Model<UserDocument>
-  ) {}
+  constructor(@InjectModel('User') private userModel: Model<UserDocument>) {}
 
   private toEntity(doc: UserDocument): User {
     const { _id, ...rest } = doc.toObject();
     return new User({
       id: _id.toString(),
-      ...rest
+      ...rest,
     });
   }
 
@@ -29,9 +27,12 @@ export class MongoUserRepository implements IUserRepository {
     return user ? this.toEntity(user) : null;
   }
 
-  async findByEmailOrUsername(email: string, username: string): Promise<User | null> {
+  async findByEmailOrUsername(
+    email: string,
+    username: string,
+  ): Promise<User | null> {
     const user = await this.userModel.findOne({
-      $or: [{ email }, { username }]
+      $or: [{ email }, { username }],
     });
     return user ? this.toEntity(user) : null;
   }
@@ -58,44 +59,53 @@ export class MongoUserRepository implements IUserRepository {
       .findByIdAndUpdate(
         userId,
         { $addToSet: { likedEventIds: eventId } },
-        { new: true }
+        { new: true },
       )
       .exec();
     return updated ? this.toEntity(updated) : null;
   }
 
-  async removeLikedEvent(userId: string, eventId: string): Promise<User | null> {
+  async removeLikedEvent(
+    userId: string,
+    eventId: string,
+  ): Promise<User | null> {
     const updated = await this.userModel
       .findByIdAndUpdate(
         userId,
         { $pull: { likedEventIds: eventId } },
-        { new: true }
+        { new: true },
       )
       .exec();
     return updated ? this.toEntity(updated) : null;
   }
 
-  async addFollowedLocation(userId: string, locationId: string): Promise<User | null> {
+  async addFollowedLocation(
+    userId: string,
+    locationId: string,
+  ): Promise<User | null> {
     const updated = await this.userModel
       .findByIdAndUpdate(
         userId,
         { $addToSet: { followedLocationIds: locationId } },
-        { new: true }
+        { new: true },
       )
       .exec();
     return updated ? this.toEntity(updated) : null;
   }
 
-  async removeFollowedLocation(userId: string, locationId: string): Promise<User | null> {
+  async removeFollowedLocation(
+    userId: string,
+    locationId: string,
+  ): Promise<User | null> {
     const updated = await this.userModel
       .findByIdAndUpdate(
         userId,
         { $pull: { followedLocationIds: locationId } },
-        { new: true }
+        { new: true },
       )
       .exec();
     return updated ? this.toEntity(updated) : null;
   }
 
   // Ähnliche Implementierungen für Location-Following...
-} 
+}

@@ -23,8 +23,8 @@ export class EventService {
     return this.eventRepository.getPopularEventsByCategory(category, limit);
   }
 
-  getCategories() {
-    return this.eventRepository.getCategories();
+  async getCategories() {
+    return await this.eventRepository.getCategories();
   }
   findLatestEventsByHost(username: string) {
     return this.eventRepository.findLatestEventsByHost(username);

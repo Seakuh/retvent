@@ -8,6 +8,7 @@ import { GroovecastController } from 'src/presentation/controllers/groovecast.co
 import { EventMapper } from '../application/mappers/event.mapper';
 import { EventService } from '../application/services/event.service';
 import { LocationService } from '../application/services/location.service';
+import { UserService } from '../application/services/user.service';
 import { CoreModule } from '../core/core.module';
 import { AuthController } from '../presentation/controllers/auth.controller';
 import { EventController } from '../presentation/controllers/event.controller';
@@ -29,7 +30,6 @@ import { GeolocationService } from './services/geolocation.service';
 import { GroovecastService } from './services/groovecast.service';
 import { ImageService } from './services/image.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
-
 @Module({
   imports: [
     CoreModule,
@@ -79,6 +79,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     OwnerGuard,
     EventMapper,
     ConfigService,
+    BcryptService,
+    UserService,
     {
       provide: 'IEventRepository',
       useClass: MongoEventRepository,
@@ -112,6 +114,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     GeolocationService,
     ConfigService,
     GroovecastService,
+    BcryptService,
+    UserService,
   ],
 })
 export class InfrastructureModule {}

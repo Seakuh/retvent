@@ -1,6 +1,5 @@
-import { IUser } from './interfaces/user.interface';
 import { Event } from './event';
-import { Location } from './location';
+import { IUser } from './interfaces/user.interface';
 
 // User-Entität, die das IUser-Interface implementiert
 export class User implements IUser {
@@ -10,8 +9,9 @@ export class User implements IUser {
   password?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  events?: Event[];
 
   constructor(partial: Partial<IUser>) {
     Object.assign(this, partial);
   }
-} 
+}
