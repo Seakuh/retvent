@@ -8,8 +8,9 @@
   clip-path: inset(40% 0 0 0); /* Variante 2: schneidet 20% von oben ab */
   object-fit: cover;
   margin-top: -15rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  overflow: hidden;
 }
 
 .map-view-container {
