@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserDto {
   @IsString()
@@ -25,25 +25,25 @@ export class UpdateUserDto {
   @IsOptional()
   website?: string;
 
-  @IsString()
-  @IsOptional()
-  socialMediaLinks?: SocialMediaLinksDto;
+  // @IsString()
+  // @IsOptional()
+  // socialMediaLinks?: SocialMediaLinksDto;
 
   @IsString()
   @IsOptional()
   imageUrl?: string;
 }
 
-class SocialMediaLinksDto {
-  @IsUrl()
-  @IsOptional()
-  instagram?: string;
+// export class SocialMediaLinksDto {
+//   @IsUrl()
+//   @IsOptional()
+//   instagram?: string;
 
-  @IsUrl()
-  @IsOptional()
-  facebook?: string;
+//   @IsUrl()
+//   @IsOptional()
+//   facebook?: string;
 
-  @IsUrl()
-  @IsOptional()
-  twitter?: string;
-}
+//   @IsUrl()
+//   @IsOptional()
+//   twitter?: string;
+// }

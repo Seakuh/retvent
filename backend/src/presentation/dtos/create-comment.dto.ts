@@ -5,12 +5,6 @@ export class CreateCommentDto {
   text: string;
 
   @IsMongoId()
-  userId: string;
-
-  @IsMongoId()
-  eventId: string;
-
-  @IsMongoId()
   @IsOptional()
   parentId?: string;
 }

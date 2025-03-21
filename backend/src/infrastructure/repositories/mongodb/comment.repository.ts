@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CreateCommentDto } from 'src/presentation/dtos/create-comment.dto';
 import { Comment as DomainComment } from '../../../core/domain/comment';
 import { ICommentRepository } from '../../../core/repositories/comment.repository.interface';
 
@@ -11,6 +12,18 @@ export class MongoCommentRepository implements ICommentRepository {
     private commentModel: Model<DomainComment>,
   ) {}
 
+  createCommentToEvent(
+    eventId: string,
+    comment: CreateCommentDto,
+    userId: string,
+  ) {
+    return this.commentModel.create({
+      ...comment,
+      eventId,
+      userId,
+      createdAt: new Date(),
+    });
+  }
   async findById(id: string): Promise<DomainComment | null> {
     return this.commentModel.findById(id);
   }
