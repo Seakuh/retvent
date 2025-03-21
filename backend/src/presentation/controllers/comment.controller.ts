@@ -41,11 +41,6 @@ export class CommentController {
     @Body() comment: CreateCommentDto,
     @Req() req: any,
   ) {
-    console.log('Received comment data:', comment);
-    console.log('Event ID:', eventId);
-    console.log('User:', req.user);
-    console.log('Parent ID:', comment.parentId);
-
     if (!comment || typeof comment.text !== 'string') {
       throw new BadRequestException('Der Kommentar muss einen Text enthalten');
     }
