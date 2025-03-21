@@ -29,7 +29,6 @@ import { Event } from "./utils";
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -43,6 +42,7 @@ function LandingPage() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -167,6 +167,13 @@ function LandingPage() {
           </div>
           {showMenu && (
             <div className="absolute right-4 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 ">
+              {user && (
+                <div className="text-white text-sm px-4 py-2 mb-2 overflow-hidden">
+                  {user.email}
+                  <br />
+                  {user.userName}
+                </div>
+              )}
               <button
                 onClick={() => {
                   navigate("/admin/dashboard");
