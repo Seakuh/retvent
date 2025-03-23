@@ -102,6 +102,11 @@
   box-shadow: 0 0 20px var(--color-neon-blue);
 }
 
+.comment-user-image {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+}
 
 
 .event-card-community-container {
@@ -111,4 +116,9 @@
   align-items: center;
   overflow: hidden;
   gap: 0.5rem;
+}
+
+.comment-user-container {
+  display: flex;
+  flex-direction: row;
 }

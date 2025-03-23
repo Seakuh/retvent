@@ -1,4 +1,5 @@
 import { useState } from "react";
+import userpicture from "../../../public/user_picture.png";
 import { Comment as CommentType } from "../../utils";
 import "./Comment.css";
 import CommentTextField from "./CommentTextField";
@@ -43,25 +44,28 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
       className="comment-component-container"
       style={{ marginLeft: `${depth * 20}px` }}
     >
-      <div className="comment-content">
-        <div className="comment-meta">
-          {/* <span className="comment-user">{comment.userId}</span> */}
-          {/* <span className="comment-separator">•</span> */}
-          <span className="comment-date">
-            {toLocaleString(comment.createdAt)}
-          </span>
-        </div>
-        <div className="comment-text">{comment.text}</div>
-      </div>
+      <div className="comment-user-container">
+        <img src={userpicture} alt="Profile" className="comment-user-image" />
+        <div className="comment-content">
+          <div className="comment-meta">
+            {/* <span className="comment-user">{comment.userId}</span> */}
+            {/* <span className="comment-separator">•</span> */}
+            <span className="comment-date">
+              {toLocaleString(comment.createdAt)}
+            </span>
+          </div>
+          <div className="comment-text">{comment.text}</div>
 
-      {canReply && (
-        <button
-          className="comment-reply-button"
-          onClick={() => setIsReplying(!isReplying)}
-        >
-          {isReplying ? "cancel" : "reply"}
-        </button>
-      )}
+          {canReply && (
+            <button
+              className="comment-reply-button"
+              onClick={() => setIsReplying(!isReplying)}
+            >
+              {isReplying ? "cancel" : "reply"}
+            </button>
+          )}
+        </div>
+      </div>
 
       {isReplying && (
         <div className="reply-form">
