@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
-import TicketButton from "../Buttons/TicketButton";
 import CommentSection from "../Comment/CommentSection";
 import { ImageModal } from "../ImageModal/ImageModal";
 import { EventBasicInfo } from "./components/EventBasicInfo";
@@ -16,7 +15,6 @@ import { EventLineup } from "./components/EventLineup";
 import GenreSlider from "./components/GenreSlider/GenreSlider";
 import "./EventDetail.css";
 import { handleWhatsAppShare } from "./service";
-import Social from "./Social/Social";
 
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
@@ -203,14 +201,14 @@ export const EventDetail: React.FC = () => {
         title={event.title}
         />
         )} */}
-          <TicketButton href={event.ticketLink || ""} />
+          {/* <TicketButton href={event.ticketLink || ""} />
           <Social
             instagram={event.socialMediaLinks?.instagram}
             facebook={event.socialMediaLinks?.facebook}
             // tiktok={event.socialMediaLinks?.tiktok}
             // youtube={event.socialMediaLinks?.youtube}
             // soundCloud={event.socialMediaLinks?.soundCloud}
-          />
+          /> */}
         </div>
 
         {showImageModal && (
