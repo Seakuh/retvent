@@ -1,4 +1,4 @@
-import { Eye, MapPin } from "lucide-react";
+import { Eye, MapPin, MessageCircle } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Event, emptyEvent, formatDate } from "../../utils";
@@ -95,10 +95,16 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
             <MapPin size={16} />
             {event.city || "TBA"}
           </span>
-          <span className="views">
-            <Eye size={16} />
-            {event.views}
-          </span>
+          <div className="event-meta-container-right">
+            <span className="comments">
+              <MessageCircle size={16} />
+              {event.commentCount}
+            </span>
+            <span className="views">
+              <Eye size={16} />
+              {event.views}
+            </span>
+          </div>
         </div>
       </div>
     </div>
