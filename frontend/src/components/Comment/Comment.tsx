@@ -45,7 +45,9 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
       style={{ marginLeft: `${depth * 20}px` }}
     >
       <div className="comment-user-container">
-        <img src={userpicture} alt="Profile" className="comment-user-image" />
+        <div className="comment-user-image-wrapper">
+          <img src={userpicture} alt="Profile" className="comment-user-image" />
+        </div>
         <div className="comment-content">
           <div className="comment-meta">
             {/* <span className="comment-user">{comment.userId}</span> */}

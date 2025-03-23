@@ -78,3 +78,23 @@
   margin-left: 10px;
   margin-bottom: -10px;
 }
+
+.comment-user-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.comment-user-image-wrapper {
+  padding-top: 1.5rem;
+}
+
+.comment-user-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.comment-content {
+  flex: 1;
+}
