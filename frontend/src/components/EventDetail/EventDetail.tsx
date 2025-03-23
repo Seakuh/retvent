@@ -203,7 +203,6 @@ export const EventDetail: React.FC = () => {
         title={event.title}
         />
         )} */}
-          <CommentSection eventId={eventId || ""} />
           <TicketButton href={event.ticketLink || ""} />
           <Social
             instagram={event.socialMediaLinks?.instagram}
@@ -221,6 +220,7 @@ export const EventDetail: React.FC = () => {
           />
         )}
       </div>
+      <CommentSection eventId={eventId || ""} />
     </div>
   );
 };

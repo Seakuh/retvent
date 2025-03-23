@@ -1,9 +1,11 @@
 .comment-section {
-    margin: 2rem 0;
     padding: 2rem;
     background: black;
     color: white !important;
-    border-radius: 1rem;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+
+
     -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    overflow-x: auto;
 }
