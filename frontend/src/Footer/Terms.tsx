@@ -1,6 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 export const Terms = () => {
+  const navigate = useNavigate();
   return (
-    <div className=" terms-container max-w-3xl mx-auto p-6 text-sm leading-relaxed text-white">
+    <div className="mt-20 terms-container max-w-3xl mx-auto p-6 text-sm leading-relaxed text-white">
+      <button onClick={() => navigate(-1)} className="back-button">
+        ← Back
+      </button>
       <h1 className="text-2xl font-bold mb-6">
         Terms of Use for the EventScanner Platform
       </h1>

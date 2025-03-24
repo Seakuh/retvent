@@ -1,6 +1,21 @@
+import { useNavigate } from "react-router-dom";
+
 export const Privacy = () => {
+  const navigate = useNavigate();
   return (
-    <div className="max-w-3xl mx-auto p-6 text-sm text-white leading-relaxed">
+    <div className="mt-20 max-w-3xl mx-auto p-6 text-sm text-white leading-relaxed">
+      <button
+        onClick={() => {
+          if (window.history.length > 1) {
+            navigate(-1);
+          } else {
+            navigate("/");
+          }
+        }}
+        className="back-button"
+      >
+        ← Back
+      </button>
       <h1 className="text-2xl font-bold mb-6">Privacy Policy</h1>
 
       <p className="mb-4">

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import userpicture from "../../../public/user_picture.png";
 import { Comment as CommentType } from "../../utils";
 import "./Comment.css";
 import CommentTextField from "./CommentTextField";
@@ -46,7 +45,11 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
     >
       <div className="comment-user-container">
         <div className="comment-user-image-wrapper">
-          <img src={userpicture} alt="Profile" className="comment-user-image" />
+          <img
+            src={"/user_picture.png"}
+            alt="Profile"
+            className="comment-user-image"
+          />
         </div>
         <div className="comment-content">
           <div className="comment-meta">

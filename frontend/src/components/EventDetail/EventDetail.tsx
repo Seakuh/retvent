@@ -218,6 +218,23 @@ export const EventDetail: React.FC = () => {
           />
         )}
       </div>
+      <div className="event-detail-footer">
+        <p className="">
+          This event was submitted by a user. The content does not originate
+          from Event-Scanner or the event organizer.
+        </p>
+        <p className="">
+          If you are the rights holder and would like this content removed,
+          please{" "}
+          <a
+            onClick={() => navigate("/imprint")}
+            className=" contact-link underline"
+          >
+            contact us here
+          </a>
+          .
+        </p>
+      </div>
       <CommentSection eventId={eventId || ""} />
     </div>
   );

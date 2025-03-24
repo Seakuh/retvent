@@ -250,6 +250,7 @@
   .event-description-section {
     margin: 2rem 0;
     padding: 2rem;
+    min-width: 60rem;
     background: black;
     color: white !important;
     border-radius: 1rem;
@@ -612,3 +613,19 @@
     text-align: center;
     padding: 2
   }
+
+  .event-detail-footer {
+    padding: 1rem;
+    font-size: .9rem;
+    margin: 2rem;
+    color: white;
+  }
+  
+  .contact-link {
+    color: var(--color-neon-blue);
+    transition: transform 0.2s ease, color 0.2s ease;
+    cursor: pointer;  
+  }
+
+  
+  

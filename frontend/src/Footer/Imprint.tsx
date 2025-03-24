@@ -1,13 +1,34 @@
+import { useNavigate } from "react-router-dom";
+
 export const Imprint = () => {
+  const navigate = useNavigate();
   return (
-    <div className="max-w-3xl mx-auto p-6 text-sm text-white leading-relaxed">
+    <div className="mt-20 max-w-3xl mx-auto p-6 text-sm text-white leading-relaxed">
+      <button
+        onClick={() => {
+          if (window.history.length > 1) {
+            navigate(-1);
+          } else {
+            navigate("/");
+          }
+        }}
+        className="back-button"
+      >
+        ← Back
+      </button>
       <h1 className="text-2xl font-bold mb-6">Legal Disclosure (Imprint)</h1>
 
       <p className="mb-4">Information in accordance with Section 5 TMG:</p>
       <p>
-        <strong>Event-Scanner</strong>
+        <strong>Event-Scanner (Project in Development)</strong>
         <br />
-        [Berlin, Germany]
+        <br />
+        This project is currently operated by a private individual in the early
+        stages of development.
+        <br />
+        In accordance with §5 TMG, full contact information will be provided
+        upon project launch.
+        <br />
         <br />
         Email:{" "}
         <a
@@ -17,7 +38,8 @@ export const Imprint = () => {
           info@event-scanner.com
         </a>
         <br />
-        Responsible for content under Section 55(2) RStV: [Name]
+        Responsible for content under Section 55(2) RStV: The operator can be
+        reached via the above email.
       </p>
 
       <hr className="my-6 border-white/20" />
