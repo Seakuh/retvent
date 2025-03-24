@@ -225,6 +225,7 @@ export const EventDetail: React.FC = () => {
         </p>
         <p className="">
           If you are the rights holder and would like this content removed,
+          <br />
           please{" "}
           <a
             onClick={() => navigate("/imprint")}
@@ -232,7 +233,6 @@ export const EventDetail: React.FC = () => {
           >
             contact us here
           </a>
-          .
         </p>
       </div>
       <CommentSection eventId={eventId || ""} />
