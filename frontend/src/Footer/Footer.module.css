@@ -23,6 +23,13 @@
   color: var(--color-neon-green);
 }
 
+.footer-ai-hint {
+  font-size: 0.5rem;
+  color: white;
+  font-weight: 500;
+  opacity: 0.2;
+}
+
 .legal {
   display: flex;
   justify-content: center;
