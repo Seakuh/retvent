@@ -77,4 +77,39 @@ export class ProfileRepository {
   ): Promise<IProfile | null> {
     return this.profileModel.findByIdAndUpdate(id, { category }, { new: true });
   }
+
+  async addFollower(
+    profileId: string,
+    followerId: string,
+  ): Promise<IProfile | null> {
+    return this.profileModel.findByIdAndUpdate(
+      profileId,
+      {
+        $addToSet: { followers: followerId },
+        $inc: { followerCount: 1 }, // Erhöht den Counter automatisch
+      },
+      { new: true },
+    );
+  }
+
+  async removeFollower(
+    profileId: string,
+    followerId: string,
+  ): Promise<IProfile | null> {
+    return this.profileModel.findByIdAndUpdate(
+      profileId,
+      {
+        $pull: { followers: followerId },
+        $inc: { followerCount: -1 }, // Verringert den Counter automatisch
+      },
+      { new: true },
+    );
+  }
+
+  async getFollowerCount(profileId: string): Promise<number> {
+    const profile = await this.profileModel
+      .findById(profileId)
+      .select('followerCount');
+    return profile?.followerCount || 0;
+  }
 }

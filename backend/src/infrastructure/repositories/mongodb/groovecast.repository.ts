@@ -1,16 +1,14 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { GrooveCast } from "src/core/domain/GrooveCast";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { GrooveCast } from 'src/core/domain/GrooveCast';
 
 @Injectable()
 export class MongoGrooveCastRepository {
   constructor(
-    @InjectModel('GrooveCast') private eventModel: Model<GrooveCast>
-  ) {
-    
-  }
-  
+    @InjectModel('GrooveCast') private eventModel: Model<GrooveCast>,
+  ) {}
+
   async findAll(): Promise<GrooveCast[]> {
     return this.eventModel.find().exec();
   }
@@ -22,5 +20,4 @@ export class MongoGrooveCastRepository {
   async create(groovecast: GrooveCast): Promise<GrooveCast> {
     return this.eventModel.create(groovecast);
   }
-
 }

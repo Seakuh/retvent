@@ -4,9 +4,9 @@ export interface IProfile extends Document {
   username: string;
   email?: string;
   userId: string;
-  password?: string;
   profileImageUrl?: string;
   category?: string;
+  followerCount?: number;
   bio?: string;
   followedLocationIds?: string[];
   likedEventIds?: string[];
@@ -25,6 +25,7 @@ const ProfileSchema = new Schema<IProfile>({
   userId: { type: String, required: true },
   profileImageUrl: { type: String },
   category: { type: String },
+  followerCount: { type: Number, default: 0 },
   bio: { type: String },
   followedLocationIds: { type: [String] },
   likedEventIds: { type: [String] },
