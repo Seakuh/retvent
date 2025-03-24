@@ -358,7 +358,7 @@ export class EventController {
   @UseGuards(JwtAuthGuard)
   async deleteEvent(@Param('id') id: string, @Request() req) {
     try {
-      const event = await this.eventService.findById(id);
+      const event = await this.eventService.findByIdToDelete(id);
 
       if (!event) {
         throw new NotFoundException('Event not found');

@@ -61,6 +61,10 @@ export class EventService {
     return this.eventRepository.findLatest(limit);
   }
 
+  async findByIdToDelete(id: string): Promise<Event> {
+    return this.eventRepository.findById(id);
+  }
+
   async findByCategory(
     category: string,
     skip: number = 0,
