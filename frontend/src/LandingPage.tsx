@@ -1,6 +1,7 @@
 import {
   Heart,
   Hexagon,
+  Info,
   LogIn,
   Menu,
   Plus,
@@ -18,6 +19,7 @@ import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import SearchModal from "./components/SearchModal/SearchModal";
 import { ViewToggle } from "./components/ViewToggle/ViewToggle";
+import Footer from "./Footer/Footer";
 import {
   fetchEventsByCategory,
   fetchLatestEvents,
@@ -206,6 +208,16 @@ function LandingPage() {
                 <Upload size={20} />
                 {showUploads ? "Hide My Events" : "My Events"}
               </button>
+              {/* About Button */}
+              <button
+                onClick={() => {
+                  navigate("/about");
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+              >
+                <Info size={20} />
+                <p>About</p>
+              </button>
               {/* Login Button */}
               <button
                 onClick={() => {
@@ -290,6 +302,7 @@ function LandingPage() {
         onClose={() => setIsSearchOpen(false)}
         onSearch={handleSearch}
       />
+      <Footer />
     </div>
   );
 }

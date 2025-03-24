@@ -2,6 +2,7 @@
   padding: 1rem;
   background: var(--color-midnight);
   text-align: center;
+  color: white;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 1000;
 }
@@ -11,7 +12,6 @@
 }
 
 .contact a {
-  color: var(--color-cream);
   text-decoration: none;
   opacity: 0.7;
   transition: all 0.3s ease;

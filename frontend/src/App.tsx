@@ -2,6 +2,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { Route, Routes } from "react-router-dom";
+import { About } from "./Footer/About";
+import { Imprint } from "./Footer/Imprint";
+import { Privacy } from "./Footer/Privacy";
+import { Terms } from "./Footer/Terms";
 import LandingPage from "./LandingPage";
 import AdminEvents from "./components/Admin/AdminEvents";
 import CreateEvent from "./components/Admin/CreateEvent";
@@ -44,6 +48,11 @@ const App: React.FC = () => {
                 <Route path="/event/:eventId" element={<EventDetail />} />
                 <Route path="/liked" element={<LikedEvents />} />
                 <Route path="/category/:category" element={<LandingPage />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/imprint" element={<Imprint />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/imprint" element={<Imprint />} />
                 <Route
                   path="/admin/dashboard"
                   element={
