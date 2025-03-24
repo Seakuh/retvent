@@ -17,6 +17,7 @@ export interface IEvent extends Document {
     name: string;
     role: string;
     startTime: string;
+    endTime: string;
   }[];
   socialMediaLinks?: {
     instagram?: string;
@@ -55,6 +56,7 @@ const EventSchema = new Schema<IEvent>(
         name: { type: String, required: false },
         role: { type: String, required: false },
         startTime: { type: String, required: false },
+        endTime: { type: String, required: false },
       },
     ],
     socialMediaLinks: {
