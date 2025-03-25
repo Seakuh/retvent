@@ -12,11 +12,12 @@ export interface IProfile extends Document {
   likedEventIds?: string[];
   createdEventIds?: string[];
   links?: string[];
-  doorPolicy?: string;
   followers?: string[];
   following?: string[];
   createdAt: Date;
   updatedAt: Date;
+  queue?: string;
+  doorPolicy?: string;
 }
 
 const ProfileSchema = new Schema<IProfile>({
@@ -32,6 +33,7 @@ const ProfileSchema = new Schema<IProfile>({
   createdEventIds: { type: [String] },
   links: { type: [String] },
   doorPolicy: { type: String },
+  queue: { type: String },
   followers: { type: [String] },
   following: { type: [String] },
   createdAt: { type: Date, default: Date.now },
