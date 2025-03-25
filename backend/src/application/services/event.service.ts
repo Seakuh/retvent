@@ -44,6 +44,10 @@ export class EventService {
     return event ? this.toEntity(event) : null;
   }
 
+  findByIdForUpdate(id: string) {
+    return this.eventRepository.findById(id);
+  }
+
   async getEventById(id: string): Promise<Event | null> {
     return this.eventRepository.findById(id);
   }

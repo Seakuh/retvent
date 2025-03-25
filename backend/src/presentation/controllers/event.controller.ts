@@ -335,7 +335,7 @@ export class EventController {
     @Request() req,
   ) {
     try {
-      const event = await this.eventService.findById(id);
+      const event = await this.eventService.findByIdForUpdate(id);
 
       if (!event) {
         throw new NotFoundException('Event not found');
