@@ -98,9 +98,23 @@ export interface Event {
   commentCount?: number;
 }
 
-export interface User {
-  id: string;
+export interface Profile {
   username: string;
+  userId: string;
+  profileImageUrl?: string;
+  category?: string;
+  followerCount?: number;
+  bio?: string;
+  followedLocationIds?: string[];
+  likedEventIds?: string[];
+  createdEventIds?: string[];
+  links?: string[];
+  doorPolicy?: string;
+  followers?: string[];
+  following?: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
   email: string;
   profilePictureUrl: string;
   uploads: number;
