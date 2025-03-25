@@ -4,7 +4,6 @@ import {
   ForbiddenException,
   Get,
   NotFoundException,
-  Param,
   Put,
   UseGuards,
 } from '@nestjs/common';
@@ -88,17 +87,25 @@ export class UserController {
     return userWithoutPassword;
   }
 
-  @Get(':id')
-  async getUserById(@Param('id') id: string): Promise<User> {
-    console.log('getUserById', id);
-    const user = await this.userService.findById(id);
-    if (!user) {
-      throw new NotFoundException('Benutzer nicht gefunden');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
-  }
+  // @Get('profile/:id')
+  // async getUserProfile(@Param('id') id: string): Promise<User> {
+  //   const user = await this.userService.findById(id);
+  //   if (!user) {
+  //     throw new NotFoundException('Benutzer nicht gefunden');
+  //   }
+
+  //   // Hier können weitere Profilinformationen geladen werden
+  //   const userProfile = await this.userService.getUserProfileData(id);
+
+  //   // Passwort aus der Antwort entfernen
+  //   const { password, ...userWithoutPassword } = user;
+
+  //   // Benutzerdaten mit Profilinformationen zusammenführen
+  //   return {
+  //     ...userWithoutPassword,
+  //     profile: userProfile,
+  //   };
+  // }
 
   // // Comment
   // @Post('comment')

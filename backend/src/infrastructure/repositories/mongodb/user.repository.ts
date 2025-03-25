@@ -107,5 +107,10 @@ export class MongoUserRepository implements IUserRepository {
     return updated ? this.toEntity(updated) : null;
   }
 
+  async getUserProfileData(id: string): Promise<User | null> {
+    const user = await this.userModel.findById(id);
+    return user ? this.toEntity(user) : null;
+  }
+
   // Ähnliche Implementierungen für Location-Following...
 }
