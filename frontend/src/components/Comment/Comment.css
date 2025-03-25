@@ -97,3 +97,7 @@
 .comment-content {
   flex: 1;
 }
+
+.comment-user-image-wrapper:hover {
+  cursor: pointer;
+}

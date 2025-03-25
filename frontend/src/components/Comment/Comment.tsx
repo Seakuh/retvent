@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Comment as CommentType } from "../../utils";
 import "./Comment.css";
 import CommentTextField from "./CommentTextField";
-
 interface CommentProps {
   comment: CommentType;
   onReply: (parentId: string, text: string) => void;
@@ -12,7 +12,7 @@ interface CommentProps {
 export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
   const [isReplying, setIsReplying] = useState(false);
   const [replyText, setReplyText] = useState("");
-
+  const navigate = useNavigate();
   const handleSubmitReply = () => {
     if (replyText.trim() && comment._id) {
       onReply(comment._id, replyText);
@@ -44,13 +44,18 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
       style={{ marginLeft: `${depth * 20}px` }}
     >
       <div className="comment-user-container">
-        <div className="comment-user-image-wrapper">
+        <a
+          className="comment-user-image-wrapper"
+          onClick={() => {
+            navigate(`/profile/${comment.userId}`);
+          }}
+        >
           <img
             src={"/user_picture.png"}
             alt="Profile"
             className="comment-user-image"
           />
-        </div>
+        </a>
         <div className="comment-content">
           <div className="comment-meta">
             {/* <span className="comment-user">{comment.userId}</span> */}
