@@ -42,11 +42,27 @@ export const EventDetail: React.FC = () => {
     const formattedStart = formatDate(startDate.toISOString());
     const formattedEnd = formatDate(endDate.toISOString());
 
+    const description =
+      "-----------------------\nDescription\n" +
+      event.description +
+      " " +
+      (event.lineup
+        ? "\n-----------------------\nLineup:\n" +
+          event.lineup.map((artist) => artist.name).join("\n")
+        : "");
+
+    const location =
+      event.address?.city +
+      " " +
+      event.address?.street +
+      " " +
+      event.address?.houseNumber;
+
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
       event.title
     )}&dates=${formattedStart}/${formattedEnd}&details=${encodeURIComponent(
-      event.description || ""
-    )}&location=${encodeURIComponent(event.city || "")}`;
+      description
+    )}&location=${encodeURIComponent(location)}`;
 
     window.open(googleCalendarUrl, "_blank");
   };
@@ -72,7 +88,7 @@ export const EventDetail: React.FC = () => {
   const HelmetMeta = () => {
     return (
       <Helmet>
-        <title>{event.title}</title>
+        <title>{event.title} | EventScanner</title>
         <meta name="description" content={event.description} />
         <meta property="og:title" content={event.title} />
         <meta property="og:description" content={event.description} />
@@ -164,24 +180,28 @@ export const EventDetail: React.FC = () => {
         {event.tags && event.tags.length > 0 && (
           <GenreSlider genres={event.tags} />
         )}
-        <div className="event-title-container">
-          <a
-            href={`https://www.google.com/search?q=${encodeURIComponent(
-              event.title + " event"
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h1 className="event-title">{event.title}</h1>
-          </a>
-        </div>
+
         <div className="event-content">
-          <EventBasicInfo
-            startDate={event.startDate?.toString() || ""}
-            startTime={event.startTime}
-            city={event.city}
-            category={event.category}
-          />
+          <div className="event-important-info-contain">
+            <div className="event-title-container">
+              <a
+                href={`https://www.google.com/search?q=${encodeURIComponent(
+                  event.title + " event"
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              ></a>
+              <h1 className="event-title-detail">{event.title}</h1>
+            </div>
+            <EventBasicInfo
+              startDate={event.startDate?.toString() || ""}
+              startTime={event.startTime}
+              city={event.city}
+              category={event.category}
+              address={event.address}
+              handleAddToCalendar={handleAddToCalendar}
+            />
+          </div>
 
           <EventDescription
             title={event.title}
@@ -217,23 +237,23 @@ export const EventDetail: React.FC = () => {
             onClose={() => setShowImageModal(false)}
           />
         )}
-      </div>
-      <div className="event-detail-footer">
-        <p className="">
-          This event was submitted by a user. The content does not originate
-          from Event-Scanner or the event organizer.
-        </p>
-        <p className="">
-          If you are the rights holder and would like this content removed,
-          <br />
-          please{" "}
-          <a
-            onClick={() => navigate("/imprint")}
-            className=" contact-link underline"
-          >
-            contact us here
-          </a>
-        </p>
+        <div className="event-detail-footer">
+          <p className="">
+            This event was submitted by a user. The content does not originate
+            from Event-Scanner or the event organizer.
+          </p>
+          <p className="">
+            If you are the rights holder and would like this content removed,
+            <br />
+            please{" "}
+            <a
+              onClick={() => navigate("/imprint")}
+              className=" contact-link underline"
+            >
+              contact us here
+            </a>
+          </p>
+        </div>
       </div>
       <CommentSection eventId={eventId || ""} />
     </div>

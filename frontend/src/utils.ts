@@ -50,6 +50,12 @@ export const CACHE_DURATION_3 = 3 * 60 * 60 * 1000;
 // 1 Stunde
 export const CACHE_DURATION_1 = 60 * 60 * 1000;
 
+interface address {
+  city?: string;
+  houseNumber?: string;
+  street?: string;
+}
+
 export interface Event {
   // ID
   id?: string;
@@ -70,6 +76,7 @@ export interface Event {
   city?: string;
   locationId?: string;
   category?: string;
+  address?: address;
   price?: string;
   ticketLink?: string;
   lineup?: Array<{ name: string; role?: string; startTime?: string }>;

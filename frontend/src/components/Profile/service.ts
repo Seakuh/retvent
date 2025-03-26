@@ -2,7 +2,7 @@ import { API_URL } from "../../utils";
 
 export const getProfile = async (userId: string) => {
   try {
-    const response = await fetch(`${API_URL}profile/${userId}`);
+    const response = await fetch(`${API_URL}users/${userId}`);
     return response.json();
   } catch (error) {
     console.error("Error fetching user profile:", error);
@@ -12,9 +12,7 @@ export const getProfile = async (userId: string) => {
 
 export const getUserEvents = async (userId: string) => {
   try {
-    const response = await fetch(
-      `${API_URL}events/host/id/${userId}`
-    );
+    const response = await fetch(`${API_URL}events/host/id/${userId}`);
     const data = await response.json();
     return data.events;
   } catch (error) {
