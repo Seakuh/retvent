@@ -5,6 +5,9 @@ export interface IUser {
   password?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  points?: number;
 }
 
-export type UserResponse = Omit<IUser, 'password'>; 
+export type UserResponse = Omit<IUser, 'password'> & {
+  id: string;
+};
