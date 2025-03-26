@@ -36,14 +36,15 @@ export const EventDetail: React.FC = () => {
 
     const startDate = new Date(event.startDate);
     const endDate = new Date(startDate);
-    endDate.setHours(endDate.getHours() + 2);
+    endDate.setHours(endDate.getHours() + 5);
 
     // Format: YYYYMMDDTHHMMSSZ
     const formattedStart = formatDate(startDate.toISOString());
     const formattedEnd = formatDate(endDate.toISOString());
 
     const description =
-      "-----------------------\nDescription\n" +
+      `${event.title} | \nhttps://event-scanner.com/event/${eventId}\n\n` +
+      "\n-----------------------\nDescription\n" +
       event.description +
       " " +
       (event.lineup
@@ -51,12 +52,17 @@ export const EventDetail: React.FC = () => {
           event.lineup.map((artist) => artist.name).join("\n")
         : "");
 
-    const location =
-      event.address?.city +
-      " " +
-      event.address?.street +
-      " " +
-      event.address?.houseNumber;
+    let location = "";
+    if (event.address) {
+      location =
+        event.address.city +
+        " " +
+        event.address.street +
+        " " +
+        event.address.houseNumber;
+    } else if (event.city) {
+      location = event.city;
+    }
 
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
       event.title
