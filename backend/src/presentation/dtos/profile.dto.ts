@@ -11,6 +11,10 @@ import { IsNotEmpty } from 'class-validator';
 export class ProfileInfoDto {
   @IsString()
   @IsNotEmpty()
+  id: string;
+
+  @IsString()
+  @IsNotEmpty()
   username: string;
 
   @IsString()
