@@ -117,6 +117,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const [categories, setCategories] = useState<string[]>([]);
   const [showGenreFilter, setShowGenreFilter] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchAndCacheCategories = async () => {

@@ -7,18 +7,31 @@
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: flex-end;
-  animation: slideIn 0.3s ease-out;
+  animation: fadeIn 0.3s ease-out;
   z-index: 1000;
+  will-change: opacity;
+}
+
+.genre-filter-container.closing {
+  animation: fadeOut 0.3s ease-out forwards;
 }
 
 .genre-filter-content {
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   width: 80%;
   max-width: 600px;
   height: 100%;
   padding: 2rem;
   overflow-y: auto;
-  animation: slideInContent 0.3s ease-out;
+  animation: slideIn 0.3s ease-out;
+  position: relative;
+  will-change: transform;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.genre-filter-container.closing .genre-filter-content {
+  animation: slideOut 0.3s ease-out forwards;
 }
 
 .genre-bubbles {
@@ -36,40 +49,23 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 1rem;
+  will-change: transform, background-color;
 }
 
 .genre-bubble:hover {
   background-color: #f5f5f5;
+  transform: translateY(-2px);
 }
 
 .genre-bubble.active {
   background-color: var(--color-neon-blue);
   color: white;
-  border-color: #007bff;
+  border-color: var(--color-neon-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
-.select-button {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 1rem 3rem;
-  background-color: var(--color-neon-pink);
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.select-button:hover {
-  background-color: #0056b3;
-  transform: translateX(-50%) translateY(-2px);
-}
-
-@keyframes slideIn {
+@keyframes fadeIn {
   from {
     opacity: 0;
   }
@@ -78,11 +74,29 @@
   }
 }
 
-@keyframes slideInContent {
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
   from {
     transform: translateX(100%);
   }
   to {
     transform: translateX(0);
   }
-} 
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}

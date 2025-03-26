@@ -8,7 +8,7 @@ import {
   Search,
   Upload,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
@@ -39,12 +39,11 @@ function LandingPage() {
   const [showUploads, setShowUploads] = useState(false);
   const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    "All"
-  );
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -137,6 +136,81 @@ function LandingPage() {
       return newFavorites;
     });
   };
+
+  const handleGenreSelect = useCallback(
+    async (genres: string[]) => {
+      console.log("Selected genres:", genres);
+      setSelectedGenres(genres);
+      setLoading(true);
+      try {
+        let url = `${import.meta.env.VITE_API_URL}events`;
+        const params = new URLSearchParams();
+
+        if (
+          selectedCategory &&
+          selectedCategory !== "All" &&
+          selectedCategory !== "Home"
+        ) {
+          params.append("category", selectedCategory);
+        }
+
+        if (genres.length > 0) {
+          params.append("genres", genres.join(","));
+        }
+
+        const queryString = params.toString();
+        if (queryString) {
+          url += `?${queryString}`;
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+        setEvents(data);
+      } catch (error) {
+        console.error("Fehler beim Laden der Events:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedCategory]
+  );
+
+  useEffect(() => {
+    const loadEvents = async () => {
+      setLoading(true);
+      try {
+        let url = `${import.meta.env.VITE_API_URL}events`;
+        const params = new URLSearchParams();
+
+        if (
+          selectedCategory &&
+          selectedCategory !== "All" &&
+          selectedCategory !== "Home"
+        ) {
+          params.append("category", selectedCategory);
+        }
+
+        if (selectedGenres.length > 0) {
+          params.append("genres", selectedGenres.join(","));
+        }
+
+        const queryString = params.toString();
+        if (queryString) {
+          url += `?${queryString}`;
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+        setEvents(data);
+      } catch (error) {
+        console.error("Fehler beim Laden der Events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, [selectedCategory, selectedGenres]);
 
   return (
     <div className="min-h-screen">
@@ -241,6 +315,7 @@ function LandingPage() {
           <CategoryFilter
             selectedCategory={selectedCategory}
             onCategoryChange={handleCategoryChange}
+            onGenreSelect={handleGenreSelect}
           />
         </div>
 
