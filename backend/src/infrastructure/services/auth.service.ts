@@ -6,15 +6,16 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Profile } from '../../core/domain/profile';
 import { User } from '../../core/domain/user';
 import { BcryptService } from '../../core/services/bcrypt.service';
 import { LoginDto } from '../../presentation/dtos/login.dto';
 import { RegisterUserDto } from '../../presentation/dtos/register-user.dto';
-
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel('User') private userModel: Model<User>,
+    @InjectModel('Profile') private profileModel: Model<Profile>,
     private jwtService: JwtService,
     private readonly bcryptService: BcryptService,
   ) {}
@@ -37,6 +38,31 @@ export class AuthService {
       username,
       password: hashedPassword,
     });
+
+    await this.profileModel.create({
+      userId: user._id,
+      username,
+      email,
+      followerCount: 0,
+      followingCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const payload = {
+      sub: user._id.toString(),
+      email: user.email,
+      username: user.username,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        username: user.username,
+      },
+    };
   }
 
   async register(registerDto: RegisterUserDto) {
