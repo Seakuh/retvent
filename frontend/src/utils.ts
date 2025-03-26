@@ -109,6 +109,7 @@ export interface Profile {
   username: string;
   userId: string;
   profileImageUrl?: string;
+  headerImageUrl?: string;
   category?: string;
   followerCount?: number;
   bio?: string;
@@ -177,6 +178,8 @@ export const emptyEvent: Event = {
   startDate: new Date(),
   description: "",
 };
+export const fallBackProfileImage =
+  "https://hel1.your-objectstorage.com/imagebucket/events/8d703697-caf7-4438-abda-4ccd8e5939e9.png";
 
 interface CommentWithReplies extends Comment {
   replies: CommentWithReplies[];

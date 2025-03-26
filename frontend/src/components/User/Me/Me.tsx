@@ -3,6 +3,7 @@ import type { Profile } from "../../../utils";
 import {
   calculateProgress,
   calculateUserLevel,
+  fallBackProfileImage,
   USER_LEVELS,
 } from "../../../utils";
 import "./Me.css";
@@ -31,6 +32,11 @@ export const Me: React.FC = () => {
     fetchMe();
   }, [user.id]);
 
+  const handleChange = (field: keyof Profile, value: string) => {
+    if (!me) return;
+    setMe({ ...me, [field]: value });
+  };
+
   const handleUpdate = async () => {
     if (!me || !user.id) return;
     try {
@@ -57,107 +63,95 @@ export const Me: React.FC = () => {
   const nextLevel = USER_LEVELS.find((level) => level.level > userLevel.level);
 
   return (
-    <div className="me-container">
-      <div className="header-section">
-        <img
-          src={me.headerImageUrl || "/default-header.jpg"}
-          alt="Header"
-          className="header-image"
-        />
-        <div className="header-overlay" />
-        <div className="profile-image-container">
+    <div>
+      <div className="me-container">
+        <div className="header-section">
           <img
-            src={me.profileImageUrl || "/default-avatar.jpg"}
-            alt="Profil"
-            className="profile-image"
+            src={me.headerImageUrl || fallBackProfileImage}
+            alt="Header"
+            className="header-image"
           />
-        </div>
-      </div>
-
-      <div className="content-section">
-        <div
-          className="level-section"
-          style={{
-            background: `linear-gradient(135deg, ${userLevel.color}20 0%, ${userLevel.color}40 100%)`,
-          }}
-        >
-          <div className="level-header">
-            <div>
-              <div className="level-title">Level {userLevel.level}</div>
-              <div className="level-name">{userLevel.name}</div>
-              <div className="level-description">{userLevel.description}</div>
-            </div>
-            <div className="points-info">
-              <span>{me.points || 0} Punkte</span>
-              {nextLevel && <span>Nächstes Level: {nextLevel.minPoints}</span>}
-            </div>
-          </div>
-
-          <div className="progress-container">
-            <div
-              className="progress-bar"
-              style={{
-                width: `${progress}%`,
-                background: `linear-gradient(90deg, ${userLevel.color} 0%, ${userLevel.color}80 100%)`,
-              }}
+          <div className="header-overlay" />
+          <div className="profile-image-container">
+            <img
+              src={me.profileImageUrl || fallBackProfileImage}
+              alt="Profil"
+              className="profile-image"
             />
           </div>
-
-          {nextLevel && (
-            <div className="next-level">
-              <span>Nächstes Level: {nextLevel.name}</span>
-              <span>→</span>
-            </div>
-          )}
         </div>
 
-        <div className="profile-info">
-          <div className="info-group">
-            <div className="info-label">Benutzername</div>
-            <div className="info-value">{me.username}</div>
-          </div>
-          <div className="info-group">
-            <div className="info-label">E-Mail</div>
-            <div className="info-value">{me.email}</div>
-          </div>
-          {me.bio && (
-            <div className="info-group">
-              <div className="info-label">Bio</div>
-              <div className="info-value">{me.bio}</div>
+        <div className="content-section">
+          <div
+            className="level-section"
+            style={{
+              background: `linear-gradient(135deg, ${userLevel.color}20 0%, ${userLevel.color}40 100%)`,
+            }}
+          >
+            <div className="level-header">
+              <div>
+                <div className="level-title">Level {userLevel.level}</div>
+                <div className="level-name">{userLevel.name}</div>
+                <div className="level-description">{userLevel.description}</div>
+              </div>
+              <div className="points-info">
+                <span>{me.points || 0} Points</span>
+                {nextLevel && <span>next Level: {nextLevel.minPoints}</span>}
+              </div>
             </div>
-          )}
-          {me.category && (
-            <div className="info-group">
-              <div className="info-label">Kategorie</div>
-              <div className="info-value">{me.category}</div>
-            </div>
-          )}
-          <div className="info-group">
-            <div className="info-label">Follower</div>
-            <div className="info-value">{me.followerCount || 0}</div>
-          </div>
-          {me.doorPolicy && (
-            <div className="info-group">
-              <div className="info-label">Door Policy</div>
-              <div className="info-value">{me.doorPolicy}</div>
-            </div>
-          )}
-          {me.queue && (
-            <div className="info-group">
-              <div className="info-label">Queue</div>
-              <div className="info-value">{me.queue}</div>
-            </div>
-          )}
-        </div>
 
-        <button
-          className="update-button"
-          onClick={handleUpdate}
-          disabled={isUpdating}
-        >
-          {isUpdating ? "Wird aktualisiert..." : "Profil aktualisieren"}
-        </button>
+            <div className="progress-container">
+              <div
+                className="progress-bar"
+                style={{
+                  width: `${progress}%`,
+                  background: `linear-gradient(90deg, ${userLevel.color} 0%, ${userLevel.color}80 100%)`,
+                }}
+              />
+            </div>
+
+            {nextLevel && (
+              <div className="next-level">
+                <span>next Level: {nextLevel.name}</span>
+                <span>→</span>
+              </div>
+            )}
+          </div>
+
+          <div className="profile-info">
+            {[
+              ["Username", "username"],
+              ["E-Mail", "email"],
+              ["Bio", "bio"],
+            ].map(([label, field]) => (
+              <div className="info-group" key={field}>
+                <div className="info-label">{label}</div>
+                <input
+                  className="info-value"
+                  type="text"
+                  value={me[field as keyof Profile] || ""}
+                  onChange={(e) =>
+                    handleChange(field as keyof Profile, e.target.value)
+                  }
+                />
+              </div>
+            ))}
+          </div>
+
+          <button
+            className="update-button"
+            onClick={handleUpdate}
+            disabled={isUpdating}
+          >
+            {isUpdating ? "Updating..." : "Update Profile"}
+          </button>
+        </div>
       </div>
+      {/* <EventGalleryII
+        events={}
+        title="Uploaded Events"
+        showTitle={false}
+      /> */}
     </div>
   );
 };
