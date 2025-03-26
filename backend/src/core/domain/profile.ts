@@ -3,7 +3,7 @@ import { IProfile } from './interfaces/profile.interface';
 export class Profile implements IProfile {
   id: string;
   username: string;
-  email?: string;
+  email: string;
   gallery?: string[];
   userId: string;
   profileImageUrl?: string;

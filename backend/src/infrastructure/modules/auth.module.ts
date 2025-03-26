@@ -6,6 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { CoreModule } from '../../core/core.module';
 import { AuthController } from '../../presentation/controllers/auth.controller';
 import { UploadGuard } from '../../presentation/guards/upload.guard';
+import { ProfileSchema } from '../schemas/profile.schema';
 import { UserSchema } from '../schemas/user.schema';
 import { AuthService } from '../services/auth.service';
 import { JwtStrategy } from '../strategies/jwt.strategy';
@@ -32,7 +33,10 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
       },
       inject: [ConfigService],
     }),
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'User', schema: UserSchema },
+      { name: 'Profile', schema: ProfileSchema },
+    ]),
   ],
   controllers: [AuthController],
   providers: [
