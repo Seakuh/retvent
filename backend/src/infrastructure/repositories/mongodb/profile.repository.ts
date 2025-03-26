@@ -1,24 +1,34 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IProfile } from 'src/core/domain/Profile';
+import { Profile } from '../../../core/domain/profile';
+import { IProfileRepository } from '../../../core/repositories/profile.repository.interface';
 
 @Injectable()
-export class ProfileRepository {
-  constructor(private readonly profileModel: Model<IProfile>) {}
+export class MongoProfileRepository implements IProfileRepository {
+  constructor(
+    @InjectModel('Profile') private readonly profileModel: Model<Profile>,
+  ) {}
+  findBySlug(slug: string): Promise<Profile | null> {
+    throw new Error('Method not implemented.');
+  }
+  findByHostId(hostId: string): Promise<Event[]> {
+    throw new Error('Method not implemented.');
+  }
 
-  async findById(id: string): Promise<IProfile | null> {
+  async findById(id: string): Promise<Profile | null> {
     return this.profileModel.findById(id);
   }
 
-  async findByUsername(username: string): Promise<IProfile | null> {
+  async findByUsername(username: string): Promise<Profile | null> {
     return this.profileModel.findOne({ username });
   }
 
-  async create(profile: IProfile): Promise<IProfile> {
+  async create(profile: Profile): Promise<Profile> {
     return this.profileModel.create(profile);
   }
 
-  async update(id: string, profile: IProfile): Promise<IProfile | null> {
+  async update(id: string, profile: Profile): Promise<Profile | null> {
     return this.profileModel.findByIdAndUpdate(id, profile, { new: true });
   }
 
@@ -27,25 +37,25 @@ export class ProfileRepository {
     return result !== null;
   }
 
-  async findByUserId(userId: string): Promise<IProfile | null> {
+  async findByUserId(userId: string): Promise<Profile | null> {
     return this.profileModel.findOne({ userId });
   }
 
   async findByUsernameOrEmail(
     username: string,
     email: string,
-  ): Promise<IProfile | null> {
+  ): Promise<Profile | null> {
     return this.profileModel.findOne({ $or: [{ username }, { email }] });
   }
 
-  async findByEmail(email: string): Promise<IProfile | null> {
+  async findByEmail(email: string): Promise<Profile | null> {
     return this.profileModel.findOne({ email });
   }
 
   async updateProfilePicture(
     id: string,
     profilePictureUrl: string,
-  ): Promise<IProfile | null> {
+  ): Promise<Profile | null> {
     return this.profileModel.findByIdAndUpdate(
       id,
       { profilePictureUrl },
@@ -56,14 +66,14 @@ export class ProfileRepository {
   async updateProfileLinks(
     id: string,
     links: string[],
-  ): Promise<IProfile | null> {
+  ): Promise<Profile | null> {
     return this.profileModel.findByIdAndUpdate(id, { links }, { new: true });
   }
 
   async updateProfileDoorPolicy(
     id: string,
     doorPolicy: string,
-  ): Promise<IProfile | null> {
+  ): Promise<Profile | null> {
     return this.profileModel.findByIdAndUpdate(
       id,
       { doorPolicy },
@@ -74,14 +84,14 @@ export class ProfileRepository {
   async updateProfileCategory(
     id: string,
     category: string,
-  ): Promise<IProfile | null> {
+  ): Promise<Profile | null> {
     return this.profileModel.findByIdAndUpdate(id, { category }, { new: true });
   }
 
   async addFollower(
     profileId: string,
     followerId: string,
-  ): Promise<IProfile | null> {
+  ): Promise<Profile | null> {
     return this.profileModel.findByIdAndUpdate(
       profileId,
       {
@@ -95,7 +105,7 @@ export class ProfileRepository {
   async removeFollower(
     profileId: string,
     followerId: string,
-  ): Promise<IProfile | null> {
+  ): Promise<Profile | null> {
     return this.profileModel.findByIdAndUpdate(
       profileId,
       {

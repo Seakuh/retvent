@@ -41,6 +41,6 @@ export class UserService {
       profileImageUrl: profileData.profileImageUrl || null,
       ...userWithoutPassword,
       ...profileData,
-    };
+    } as ProfileInfoDto;
   }
 }

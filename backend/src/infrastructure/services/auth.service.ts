@@ -1,14 +1,15 @@
-import { Injectable, ConflictException, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { IUserRepository } from '../../core/repositories/user.repository.interface';
-import { RegisterUserDto } from '../../presentation/dtos/register-user.dto';
-import { LoginDto } from '../../presentation/dtos/login.dto';
-import { User } from '../../core/domain/user';
-import * as bcrypt from 'bcrypt';
-import { Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { User } from '../../core/domain/user';
 import { BcryptService } from '../../core/services/bcrypt.service';
+import { LoginDto } from '../../presentation/dtos/login.dto';
+import { RegisterUserDto } from '../../presentation/dtos/register-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,12 +19,32 @@ export class AuthService {
     private readonly bcryptService: BcryptService,
   ) {}
 
+  async registerWithProfile(registerDto: RegisterUserDto) {
+    const { email, password, username } = registerDto;
+
+    const existingUser = await this.userModel.findOne({
+      $or: [{ email }, { username }],
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('User already exists');
+    }
+
+    const hashedPassword = await this.bcryptService.hash(password);
+
+    const user = await this.userModel.create({
+      email,
+      username,
+      password: hashedPassword,
+    });
+  }
+
   async register(registerDto: RegisterUserDto) {
     const { email, password, username } = registerDto;
 
     // Check if user exists
     const existingUser = await this.userModel.findOne({
-      $or: [{ email }, { username }]
+      $or: [{ email }, { username }],
     });
 
     if (existingUser) {
@@ -43,7 +64,7 @@ export class AuthService {
     const payload = {
       sub: user._id.toString(),
       email: user.email,
-      username: user.username
+      username: user.username,
     };
 
     return {
@@ -51,8 +72,8 @@ export class AuthService {
       user: {
         id: user._id.toString(),
         email: user.email,
-        username: user.username
-      }
+        username: user.username,
+      },
     };
   }
 
@@ -64,7 +85,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await this.bcryptService.compare(password, user.password);
+    const isPasswordValid = await this.bcryptService.compare(
+      password,
+      user.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -72,7 +96,7 @@ export class AuthService {
     const payload = {
       sub: user._id.toString(),
       email: user.email,
-      username: user.username
+      username: user.username,
     };
 
     return {
@@ -80,8 +104,8 @@ export class AuthService {
       user: {
         id: user._id.toString(),
         email: user.email,
-        username: user.username
-      }
+        username: user.username,
+      },
     };
   }
 
@@ -103,4 +127,4 @@ export class AuthService {
   isTokenBlacklisted(token: string): boolean {
     return this.tokenBlacklist.has(token);
   }
-} 
+}
