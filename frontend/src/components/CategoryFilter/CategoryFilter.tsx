@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CACHE_DURATION_3 } from "../../utils";
+import { GenreFilter } from "../GenreFilter/GenreFilter";
 import "./CategoryFilter.css";
 
 const categories = [
@@ -97,6 +98,7 @@ const categoryEmojiMap = categories.reduce(
 interface CategoryFilterProps {
   selectedCategory: string | null;
   onCategoryChange: (category: string | null) => void;
+  onGenreSelect?: (genres: string[]) => void;
 }
 
 // Cache-Dauer in Millisekunden (z.B. 24 Stunden)
@@ -110,8 +112,10 @@ interface CachedCategories {
 export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   selectedCategory,
   onCategoryChange,
+  onGenreSelect,
 }) => {
   const [categories, setCategories] = useState<string[]>([]);
+  const [showGenreFilter, setShowGenreFilter] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -201,35 +205,59 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     };
   }, []);
 
+  const handleGenreSelect = (genres: string[]) => {
+    if (onGenreSelect) {
+      onGenreSelect(genres);
+    }
+    setShowGenreFilter(false);
+  };
+
   return (
-    <div className="category-filter" ref={containerRef}>
-      <button
-        className={`category-button ${
-          selectedCategory === "Home" ? "active" : ""
-        }`}
-        onClick={() => onCategoryChange("Home")}
-      >
-        🏠Home
-      </button>
-      <button
-        className={`category-button ${
-          selectedCategory === "All" ? "active" : ""
-        }`}
-        onClick={() => onCategoryChange("All")}
-      >
-        🌟 All
-      </button>
-      {categories.map((category) => (
+    <>
+      <div className="category-filter" ref={containerRef}>
         <button
-          key={category}
           className={`category-button ${
-            selectedCategory === category ? "active" : ""
+            selectedCategory === "Home" ? "active" : ""
           }`}
-          onClick={() => onCategoryChange(category)}
+          onClick={() => onCategoryChange("Home")}
         >
-          {categoryEmojiMap[category] || "❓"} {category}
+          Home
         </button>
-      ))}
-    </div>
+        <button
+          className={`category-button ${
+            selectedCategory === "All" ? "active" : ""
+          }`}
+          onClick={() => onCategoryChange("All")}
+        >
+          All
+        </button>
+        <button
+          className={`category-button ${
+            selectedCategory === "Genre" ? "active" : ""
+          }`}
+          onClick={() => setShowGenreFilter(true)}
+        >
+          Genre
+        </button>
+        {/* {categories.map((category) => (
+          <button
+            key={category}
+            className={`category-button ${
+              selectedCategory === category ? "active" : ""
+            }`}
+            onClick={() => onCategoryChange(category)}
+          >
+            {category}
+          </button>
+        ))} */}
+      </div>
+      {showGenreFilter && (
+        <GenreFilter
+          genres={categories}
+          onClose={() => setShowGenreFilter(false)}
+          onSelect={handleGenreSelect}
+        />
+      )}
+    </>
   );
 };
