@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   Get,
   NotFoundException,
+  Param,
   Put,
   UseGuards,
 } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { UserService } from '../../application/services/user.service';
 import { User } from '../../core/domain/user';
 import { BcryptService } from '../../core/services/bcrypt.service';
 import { User as UserDecorator } from '../decorators/user.decorator';
+import { ProfileInfoDto } from '../dtos/profile.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto.';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 @Controller('users')
@@ -85,6 +87,14 @@ export class UserController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = updatedUser;
     return userWithoutPassword;
+  }
+  @Get(':id')
+  async getUserById(@Param('id') id: string): Promise<ProfileInfoDto> {
+    const user = await this.userService.findById(id);
+    if (!user) {
+      throw new NotFoundException('Benutzer nicht gefunden');
+    }
+    return null;
   }
 
   // @Get('profile/:id')

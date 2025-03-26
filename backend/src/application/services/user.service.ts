@@ -20,4 +20,8 @@ export class UserService {
   async findByEmail(email: string) {
     return this.userRepository.findByEmail(email);
   }
+
+  async getProfileInfo(id: string) {
+    return this.userRepository.getProfileInfo(id);
+  }
 }

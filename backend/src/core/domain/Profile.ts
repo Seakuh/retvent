@@ -3,8 +3,10 @@ import { Document, model, Schema } from 'mongoose';
 export interface IProfile extends Document {
   username: string;
   email?: string;
+  // reference to user id
   userId: string;
   profileImageUrl?: string;
+  headerImageUrl?: string;
   category?: string;
   followerCount?: number;
   bio?: string;
@@ -27,6 +29,7 @@ const ProfileSchema = new Schema<IProfile>({
   profileImageUrl: { type: String },
   category: { type: String },
   followerCount: { type: Number, default: 0 },
+  headerImageUrl: { type: String },
   bio: { type: String },
   followedLocationIds: { type: [String] },
   likedEventIds: { type: [String] },
@@ -41,5 +44,6 @@ const ProfileSchema = new Schema<IProfile>({
 });
 
 ProfileSchema.index({ username: 1 }, { unique: true });
+ProfileSchema.index({ userId: 1 }, { unique: true });
 
 export const Profile = model<IProfile>('Profile', ProfileSchema);
