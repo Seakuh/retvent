@@ -5,6 +5,9 @@ import { ProfileRepository } from 'src/infrastructure/repositories/mongodb/profi
 export class ProfileService {
   constructor(private readonly profileRepository: ProfileRepository) {}
 
+  getProfileByUserId(userId: string): Promise<IProfile> {
+    return this.profileRepository.findByUserId(userId);
+  }
   async getProfile(id: string): Promise<IProfile> {
     return this.profileRepository.findById(id);
   }

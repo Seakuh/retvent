@@ -90,11 +90,7 @@ export class UserController {
   }
   @Get(':id')
   async getUserById(@Param('id') id: string): Promise<ProfileInfoDto> {
-    const user = await this.userService.findById(id);
-    if (!user) {
-      throw new NotFoundException('Benutzer nicht gefunden');
-    }
-    return null;
+    return this.userService.getProfileInfo(id);
   }
 
   // @Get('profile/:id')
