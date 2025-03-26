@@ -1,5 +1,4 @@
 import {
-  Heart,
   Hexagon,
   Info,
   LogIn,
@@ -7,6 +6,7 @@ import {
   Plus,
   Search,
   Upload,
+  User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -265,6 +265,15 @@ function LandingPage() {
                 </button>
                 <button
                   onClick={() => {
+                    navigate("/me");
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                >
+                  <User size={20} />
+                  <h3>Profile</h3>
+                </button>
+                <button
+                  onClick={() => {
                     navigate("/admin/events/create");
                   }}
                   className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
@@ -272,7 +281,7 @@ function LandingPage() {
                   <Plus size={20} />
                   <p>Create Event</p>
                 </button>
-                <button
+                {/* <button
                   onClick={() => {
                     navigate("/liked");
                   }}
@@ -280,7 +289,7 @@ function LandingPage() {
                 >
                   <Heart size={20} />
                   <p>Liked Events</p>
-                </button>
+                </button> */}
                 {/* My Uploads Button */}
                 <button
                   onClick={() => {

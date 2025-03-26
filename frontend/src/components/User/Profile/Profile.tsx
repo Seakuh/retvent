@@ -1,9 +1,9 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { getProfile, getUserEvents } from "./service";
 import { useEffect, useState } from "react";
-import type { Profile as ProfileType } from "../../utils";
-import { EventGalleryII } from "../EventGallery/EventGalleryII";
+import { useNavigate, useParams } from "react-router-dom";
+import type { Profile as ProfileType } from "../../../utils";
+import { EventGalleryII } from "../../EventGallery/EventGalleryII";
 import "./Profile.css";
+import { getProfile, getUserEvents } from "./service";
 
 export const Profile: React.FC = () => {
   const { userId } = useParams();
@@ -31,22 +31,22 @@ export const Profile: React.FC = () => {
   console.log(user);
   return (
     <div className="profile-container">
-        <button
-          className="back-button"
-          onClick={() => {
-            if (window.history.length > 1) {
-              navigate(-1);
-            } else {
-              navigate("/");
-            }
-          }}
-        >
-          ← Back
-        </button>
+      <button
+        className="back-button"
+        onClick={() => {
+          if (window.history.length > 1) {
+            navigate(-1);
+          } else {
+            navigate("/");
+          }
+        }}
+      >
+        ← Back
+      </button>
       <div className="user-profile-info">
         <div>
           <h1>{userId || "User"}</h1>
-        {/* <p>{user?.uploads}</p>
+          {/* <p>{user?.uploads}</p>
       <p>{user?.events.length}</p>
       <p>{user?.likedEvents.length}</p> */}
           <EventGalleryII events={events || []} />

@@ -1,7 +1,10 @@
-import { API_URL } from "../../utils";
+import { API_URL } from "../../../utils";
 
 export const getProfile = async (userId: string) => {
   try {
+    if (userId === "public") {
+      return null;
+    }
     const response = await fetch(`${API_URL}users/${userId}`);
     return response.json();
   } catch (error) {

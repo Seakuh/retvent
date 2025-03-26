@@ -16,9 +16,10 @@ import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import Register from "./components/Auth/Register";
 import { EventDetail } from "./components/EventDetail/EventDetail";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
+import { Me } from "./components/User/Me/Me";
+import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
 import { eventService } from "./services/api";
-import { Profile } from "./components/Profile/Profile";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,6 +48,7 @@ const App: React.FC = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/profile/:userId" element={<Profile />} />
+                <Route path="/me" element={<Me />} />
                 <Route path="/event/:eventId" element={<EventDetail />} />
                 <Route path="/liked" element={<LikedEvents />} />
                 <Route path="/category/:category" element={<LandingPage />} />
