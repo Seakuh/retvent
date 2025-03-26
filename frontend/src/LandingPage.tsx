@@ -265,7 +265,7 @@ function LandingPage() {
                 </button>
                 <button
                   onClick={() => {
-                    navigate("/me");
+                    navigate(`/me`);
                   }}
                   className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
                 >

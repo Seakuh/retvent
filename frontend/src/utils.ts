@@ -116,11 +116,14 @@ export interface Profile {
   likedEventIds?: string[];
   createdEventIds?: string[];
   links?: string[];
+  queue?: string;
+  gallery?: string[];
   doorPolicy?: string;
   followers?: string[];
   following?: string[];
   createdAt: Date;
   updatedAt: Date;
+  points?: number;
   id: string;
   email: string;
   profilePictureUrl: string;
@@ -212,25 +215,76 @@ export const buildCommentTree = (comments: Comment[]): CommentWithReplies[] => {
 
   return rootComments;
 };
-export interface Profile {
-  id: string;
-  username: string;
-  email: string;
-  gallery?: string[];
-  userId: string;
-  profileImageUrl?: string;
-  headerImageUrl?: string;
-  category?: string;
-  followerCount?: number;
-  bio?: string;
-  followedLocationIds?: string[];
-  likedEventIds?: string[];
-  createdEventIds?: string[];
-  links?: string[];
-  followers?: string[];
-  following?: string[];
-  createdAt: Date;
-  updatedAt: Date;
-  queue?: string;
-  doorPolicy?: string;
+
+export interface UserLevel {
+  level: number;
+  name: string;
+  minPoints: number;
+  color: string;
+  description: string;
 }
+
+export const USER_LEVELS: UserLevel[] = [
+  {
+    level: 0,
+    name: "Explorer",
+    minPoints: 0,
+    color: "#94A3B8",
+    description: "Start your journey!",
+  },
+  {
+    level: 1,
+    name: "Event-Expert",
+    minPoints: 100,
+    color: "#22C55E",
+    description: "You've created your first event!",
+  },
+  {
+    level: 2,
+    name: "Scann-Pro-light",
+    minPoints: 500,
+    color: "#3B82F6",
+    description: "You know your way around!",
+  },
+  {
+    level: 3,
+    name: "Scann-Pro",
+    minPoints: 2000,
+    color: "#8B5CF6",
+    description: "You're a local legend!",
+  },
+  {
+    level: 4,
+    name: "Event-Master",
+    minPoints: 5000,
+    color: "#EC4899",
+    description: "You're a true pro!",
+  },
+  {
+    level: 5,
+    name: "Event-God",
+    minPoints: 10000,
+    color: "#F59E0B",
+    description: "You're a true legend!",
+  },
+];
+
+export const calculateUserLevel = (points: number): UserLevel => {
+  return USER_LEVELS.reduce((prev, curr) =>
+    points >= curr.minPoints ? curr : prev
+  );
+};
+
+export const calculateProgress = (
+  points: number,
+  currentLevel: UserLevel
+): number => {
+  const nextLevel = USER_LEVELS.find(
+    (level) => level.level > currentLevel.level
+  );
+  if (!nextLevel) return 100;
+
+  const levelRange = nextLevel.minPoints - currentLevel.minPoints;
+  const currentProgress = points - currentLevel.minPoints;
+  return (currentProgress / levelRange) * 100;
+};
