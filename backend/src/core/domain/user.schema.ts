@@ -10,6 +10,7 @@ export const UserSchema = new Schema(
     followedLocationIds: [String],
     likedEventIds: [String],
     createdEventIds: [String],
+    points: { type: Number, default: 0 },
   },
   { timestamps: true },
 );

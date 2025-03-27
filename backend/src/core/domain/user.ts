@@ -9,6 +9,7 @@ export class User implements IUser {
   password?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  points?: number;
   events?: Event[];
 
   constructor(partial: Partial<IUser>) {

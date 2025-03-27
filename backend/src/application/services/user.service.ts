@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProfileInfoDto } from 'src/presentation/dtos/profile.dto';
-import { UpdateUserDto } from 'src/presentation/dtos/update-user.dto.';
+import { UpdateUserProfileDto } from 'src/presentation/dtos/update-user.dto';
 import { MongoUserRepository } from '../../infrastructure/repositories/mongodb/user.repository';
 import { ProfileService } from './profile.service';
 
@@ -11,7 +11,7 @@ export class UserService {
     private readonly profileService: ProfileService,
   ) {}
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  update(id: string, updateUserDto: UpdateUserProfileDto) {
     return this.userRepository.update(id, updateUserDto);
   }
   findByEmailOrUsername(email: string, username: string) {

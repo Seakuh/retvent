@@ -37,6 +37,7 @@ export class AuthService {
       email,
       username,
       password: hashedPassword,
+      points: 0,
     });
 
     await this.profileModel.create({
@@ -85,6 +86,7 @@ export class AuthService {
       email,
       username,
       password: hashedPassword,
+      points: 0,
     });
 
     const payload = {
