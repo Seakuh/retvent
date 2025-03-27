@@ -11,6 +11,7 @@ export const UserSchema = new Schema({
   password: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  points: { type: Number, default: 0 },
 });
 
 UserSchema.pre('save', function (next) {

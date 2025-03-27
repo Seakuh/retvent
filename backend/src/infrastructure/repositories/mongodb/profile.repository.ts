@@ -15,6 +15,13 @@ export class MongoProfileRepository implements IProfileRepository {
   findByHostId(hostId: string): Promise<Event[]> {
     throw new Error('Method not implemented.');
   }
+  updateProfileGallery(id: string, fileUrls: string[]): Promise<Profile> {
+    return this.profileModel.findByIdAndUpdate(
+      id,
+      { gallery: fileUrls },
+      { new: true },
+    );
+  }
 
   async findById(id: string): Promise<Profile | null> {
     // when no points are set, set them to 0
@@ -35,8 +42,30 @@ export class MongoProfileRepository implements IProfileRepository {
     return this.profileModel.create(profile);
   }
 
-  async update(id: string, profile: Profile): Promise<Profile | null> {
-    return this.profileModel.findByIdAndUpdate(id, profile, { new: true });
+  async update(
+    userId: string,
+    profileData: Partial<Profile>,
+  ): Promise<Profile | null> {
+    // Erst das Profil anhand der userId finden
+    const profile = await this.profileModel.findOne({ userId });
+
+    if (!profile) {
+      return null;
+    }
+
+    // Nur die mitgegebenen, nicht-null Felder filtern
+    const updateFields = Object.fromEntries(
+      Object.entries(profileData).filter(
+        ([_, value]) => value !== undefined && value !== null,
+      ),
+    );
+
+    // Update durchführen mit den gefilterten Feldern
+    return this.profileModel.findByIdAndUpdate(
+      profile._id,
+      { $set: updateFields },
+      { new: true },
+    );
   }
 
   async delete(id: string): Promise<boolean> {

@@ -9,6 +9,18 @@ export class ProfileService {
     private readonly imageService: ImageService,
   ) {}
 
+  async updateProfileGallery(
+    id: string,
+    gallery: Express.Multer.File[],
+  ): Promise<Profile> {
+    const fileUrls = await Promise.all(
+      gallery.map(async (file) => {
+        const fileUrl = await this.imageService.uploadImage(file);
+        return fileUrl;
+      }),
+    );
+    return this.profileRepository.updateProfileGallery(id, fileUrls);
+  }
   getProfileByUserId(userId: string): Promise<Profile> {
     return this.profileRepository.findByUserId(userId);
   }
