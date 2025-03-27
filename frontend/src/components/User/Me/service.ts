@@ -6,7 +6,7 @@ export const meService = {
     const accessToken = localStorage.getItem("access_token");
 
     try {
-      const response = await fetch(`${API_URL}profile/${id}`, {
+      const response = await fetch(`${API_URL}users/me/profile`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -25,6 +25,7 @@ export const meService = {
       throw error;
     }
   },
+
   updateProfile: async (id: string, profile: Partial<Profile>) => {
     const accessToken = localStorage.getItem("access_token");
     const response = await fetch(`${API_URL}profile/${id}`, {

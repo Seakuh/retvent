@@ -18,6 +18,7 @@ export const Me: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [changedFields, setChangedFields] = useState<Partial<Profile>>({});
+  const [points, setPoints] = useState<number>(0);
   const navigate = useNavigate();
   const userLevel = calculateUserLevel(me?.points || 0);
   const progress = calculateProgress(me?.points || 0, userLevel);
@@ -37,6 +38,7 @@ export const Me: React.FC = () => {
         const profile = await meService.getMe(user.id);
         const events = await getHostEvents(user.id);
         setMe(profile);
+        setPoints(profile.points);
         setHeaderImage(profile.headerImageUrl || fallBackProfileImage);
         setProfileImage(profile.profileImageUrl || fallBackProfileImage);
       } catch (error) {
@@ -197,7 +199,7 @@ export const Me: React.FC = () => {
                 <div className="level-description">{userLevel.description}</div>
               </div>
               <div className="points-info">
-                <span>{me.points || 0} Points</span>
+                <span>{points || 0} Points</span>
                 {nextLevel && <span>Next Level: {nextLevel.minPoints}</span>}
               </div>
             </div>
@@ -218,9 +220,6 @@ export const Me: React.FC = () => {
                 <span>→</span>
               </div>
             )}
-          </div>
-          <div className="member-since">
-            Member since {formatDate(me.createdAt)}
           </div>
           <div className="profile-info">
             {profileFields.map(({ label, field, type = "text" }) => (
@@ -244,6 +243,9 @@ export const Me: React.FC = () => {
           <button className="update-button" onClick={handleUpdate}>
             {isUpdating ? "Updating..." : "Update Profile"}
           </button>
+        </div>
+        <div className="member-since">
+          Member since {formatDate(me.createdAt)}
         </div>
       </div>
     </div>
