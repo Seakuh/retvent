@@ -45,7 +45,7 @@ export const EventScanner: React.FC = () => {
 
         if (!eventResponse) {
           setError(
-            "Das Bild konnte nicht erkannt werden. Bitte versuche es mit einem anderen Bild."
+            "The image could not be recognized. Please try again with a different image."
           );
         } else {
           isUploading = false; // Beende die Progress-Animation
@@ -58,7 +58,7 @@ export const EventScanner: React.FC = () => {
         }
       } catch (err) {
         setError(
-          "Es gab ein Problem beim Hochladen des Bildes. Versuche es später erneut."
+          "There was a problem uploading the image. Please try again later."
         );
       } finally {
         isUploading = false;
