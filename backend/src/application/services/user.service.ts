@@ -18,8 +18,37 @@ export class UserService {
     return this.userRepository.findByEmailOrUsername(email, username);
   }
 
+  getUserPoints(userId: string) {
+    return this.userRepository.getUserPoints(userId);
+  }
+
   async findById(id: string) {
     return this.userRepository.findById(id);
+  }
+
+  async getUserProfile(userId: string) {
+    const user = await this.findById(userId);
+    const profile = await this.profileService.getProfileByUserId(userId);
+
+    if (!user) {
+      throw new NotFoundException('Benutzer nicht gefunden');
+    }
+
+    return {
+      id: user.id,
+      points: user.points.toString(),
+      email: user.email,
+      username: user.username,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      gallery: profile.gallery || [],
+      links: profile.links || [],
+      profileImageUrl: profile.profileImageUrl || null,
+      headerImageUrl: profile.headerImageUrl || null,
+      bio: profile.bio || null,
+      doorPolicy: profile.doorPolicy || null,
+      category: profile.category || null,
+    };
   }
 
   async findByEmail(email: string) {

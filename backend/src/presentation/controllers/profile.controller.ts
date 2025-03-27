@@ -101,6 +101,16 @@ export class ProfileController {
     return this.profileService.updateProfileDoorPolicy(id, doorPolicy);
   }
 
+  @Put('gallery/:id')
+  @UseGuards(JwtAuthGuard, ProfileOwnerGuard)
+  @UseInterceptors(FilesInterceptor('gallery', 10))
+  async updateProfileGallery(
+    @Param('id') id: string,
+    @UploadedFiles() gallery: Express.Multer.File[],
+  ): Promise<Profile> {
+    return this.profileService.updateProfileGallery(id, gallery);
+  }
+
   @Put('category/:id')
   async updateProfileCategory(
     @Param('id') id: string,

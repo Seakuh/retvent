@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../../../core/domain/user';
@@ -17,6 +17,19 @@ export class MongoUserRepository implements IUserRepository {
     });
   }
 
+  getUserPoints(userId: string) {
+    return this.userModel.findById(userId).then(async (user) => {
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      if (user.points === undefined) {
+        user.points = 0;
+        await user.save();
+      }
+      return user.points;
+    });
+  }
+
   async findByEmail(email: string): Promise<User | null> {
     const user = await this.userModel.findOne({ email });
     return user ? this.toEntity(user) : null;
@@ -24,6 +37,11 @@ export class MongoUserRepository implements IUserRepository {
 
   async findById(id: string): Promise<User | null> {
     const user = await this.userModel.findById(id);
+    if (user.points === undefined) {
+      user.points = 0;
+      await user.save();
+    }
+    console.log(user.points);
     return user ? this.toEntity(user) : null;
   }
 

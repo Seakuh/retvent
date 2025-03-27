@@ -14,6 +14,7 @@ import { BcryptService } from '../../core/services/bcrypt.service';
 import { User as UserDecorator } from '../decorators/user.decorator';
 import { ProfileInfoDto } from '../dtos/profile.dto';
 import { UpdateUserProfileDto } from '../dtos/update-user.dto';
+import { UserProfileDto } from '../dtos/user-profile.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 @Controller('users')
 export class UserController {
@@ -34,6 +35,21 @@ export class UserController {
     return userWithoutPassword;
   }
 
+  @Get('me/profile')
+  @UseGuards(JwtAuthGuard)
+  async getCurrentUserProfile(
+    @UserDecorator() user: User,
+  ): Promise<UserProfileDto> {
+    return (await this.userService.getUserProfile(user.sub)) as UserProfileDto;
+  }
+
+  @Get('me/points')
+  @UseGuards(JwtAuthGuard)
+  async getCurrentUserPoints(@UserDecorator() user: User) {
+    console.log(user);
+    return this.userService.getUserPoints(user.id);
+  }
+
   @Put('me')
   @UseGuards(JwtAuthGuard)
   async updateCurrentUser(
@@ -51,9 +67,7 @@ export class UserController {
         updateUserDto.email,
       );
       if (existingUser) {
-        throw new ForbiddenException(
-          'Diese E-Mail-Adresse wird bereits verwendet',
-        );
+        throw new ForbiddenException('This email is already in use');
       }
     }
 
@@ -66,9 +80,7 @@ export class UserController {
         updateUserDto.username,
       );
       if (existingUser) {
-        throw new ForbiddenException(
-          'Dieser Benutzername wird bereits verwendet',
-        );
+        throw new ForbiddenException('This username is already in use');
       }
     }
 
