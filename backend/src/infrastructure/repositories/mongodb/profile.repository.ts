@@ -17,7 +17,14 @@ export class MongoProfileRepository implements IProfileRepository {
   }
 
   async findById(id: string): Promise<Profile | null> {
-    return this.profileModel.findById(id);
+    // when no points are set, set them to 0
+    console.log('findById - id:', id);
+    const profile = await this.profileModel.findById(id);
+    if (profile && !profile.get('points')) {
+      profile.set('points', 0);
+      await profile.save();
+    }
+    return profile;
   }
 
   async findByUsername(username: string): Promise<Profile | null> {
@@ -54,11 +61,22 @@ export class MongoProfileRepository implements IProfileRepository {
 
   async updateProfilePicture(
     id: string,
-    profilePictureUrl: string,
+    profileImageUrl: string,
   ): Promise<Profile | null> {
     return this.profileModel.findByIdAndUpdate(
       id,
-      { profilePictureUrl },
+      { profileImageUrl },
+      { new: true },
+    );
+  }
+
+  async updateHeaderPicture(
+    id: string,
+    headerImageUrl: string,
+  ): Promise<Profile | null> {
+    return this.profileModel.findByIdAndUpdate(
+      id,
+      { headerImageUrl },
       { new: true },
     );
   }
@@ -121,5 +139,16 @@ export class MongoProfileRepository implements IProfileRepository {
       .findById(profileId)
       .select('followerCount');
     return profile?.followerCount || 0;
+  }
+
+  async addCreatedEvent(
+    userId: string,
+    eventId: string,
+  ): Promise<Profile | null> {
+    return this.profileModel.findByIdAndUpdate(
+      userId,
+      { $push: { createdEventIds: eventId } },
+      { new: true },
+    );
   }
 }

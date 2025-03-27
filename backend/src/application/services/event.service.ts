@@ -6,6 +6,7 @@ import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
 import { ImageService } from '../../infrastructure/services/image.service';
+import { ProfileService } from './profile.service';
 @Injectable()
 export class EventService {
   constructor(
@@ -13,6 +14,7 @@ export class EventService {
     private readonly imageService: ImageService,
     private readonly chatGptService: ChatGPTService,
     private readonly geolocationService: GeolocationService,
+    private readonly profileService: ProfileService,
   ) {}
 
   getPopularEventsNearby(lat: number, lon: number, limit: number) {
@@ -196,6 +198,57 @@ export class EventService {
       };
 
       const createdEvent = await this.eventRepository.create(eventData);
+      return createdEvent;
+    } catch (error) {
+      console.error('Failed to process event image upload:', error);
+      throw new BadRequestException(
+        `Failed to process event image: ${error.message}`,
+      );
+    }
+  }
+
+  async processEventImageUploadV2(
+    image: Express.Multer.File,
+    lat?: number,
+    lon?: number,
+    userId?: string,
+  ): Promise<Event> {
+    try {
+      // 1. Upload image and get URL
+      const uploadedImageUrl = await this.imageService.uploadImage(image);
+      if (!uploadedImageUrl) {
+        throw new BadRequestException('Failed to upload image');
+      }
+
+      // 2. Try to extract event data from image, but don't fail if it doesn't work
+      let extractedEventData = {};
+      try {
+        extractedEventData =
+          await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
+      } catch (error) {
+        console.warn('Failed to extract event data from image:', error);
+      }
+
+      // 4. Create event with all available data
+      const eventData = {
+        ...extractedEventData,
+        imageUrl: uploadedImageUrl,
+        uploadLat: lat,
+        uploadLon: lon,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        location: {
+          coordinates: {
+            lat: lat,
+            lon: lon,
+          },
+        },
+        status: 'pending',
+        hostId: userId || 'public', // Setze hostId auf userId wenn vorhanden, sonst 'public'
+      };
+
+      const createdEvent = await this.eventRepository.create(eventData);
+      await this.profileService.addCreatedEvent(userId, createdEvent.id);
       return createdEvent;
     } catch (error) {
       console.error('Failed to process event image upload:', error);

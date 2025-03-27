@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UploadedFile } from '@nestjs/common';
 import { Profile } from 'src/core/domain/profile';
 import { MongoProfileRepository } from 'src/infrastructure/repositories/mongodb/profile.repository';
+import { ImageService } from 'src/infrastructure/services/image.service';
 @Injectable()
 export class ProfileService {
-  constructor(private readonly profileRepository: MongoProfileRepository) {}
+  constructor(
+    private readonly profileRepository: MongoProfileRepository,
+    private readonly imageService: ImageService,
+  ) {}
 
   getProfileByUserId(userId: string): Promise<Profile> {
     return this.profileRepository.findByUserId(userId);
   }
   async getProfile(id: string): Promise<Profile> {
-    return this.profileRepository.findById(id);
+    return this.profileRepository.findByUserId(id);
   }
 
   async createProfile(profile: Profile): Promise<Profile> {
@@ -45,9 +49,28 @@ export class ProfileService {
 
   async updateProfilePicture(
     id: string,
-    profilePictureUrl: string,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<Profile | null> {
-    return this.profileRepository.updateProfilePicture(id, profilePictureUrl);
+    try {
+      const fileUrl = await this.imageService.uploadImage(file);
+      return this.profileRepository.updateProfilePicture(id, fileUrl);
+    } catch (error) {
+      console.error('Error updating profile picture:', error);
+      throw new Error('Error updating profile picture');
+    }
+  }
+
+  async updateHeaderPicture(
+    id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Profile | null> {
+    try {
+      const fileUrl = await this.imageService.uploadImage(file);
+      return this.profileRepository.updateHeaderPicture(id, fileUrl);
+    } catch (error) {
+      console.error('Error updating header picture:', error);
+      throw new Error('Error updating header picture');
+    }
   }
 
   async updateProfileLinks(
@@ -69,5 +92,15 @@ export class ProfileService {
     category: string,
   ): Promise<Profile | null> {
     return this.profileRepository.updateProfileCategory(id, category);
+  }
+
+  async addCreatedEvent(
+    userId: string,
+    eventId: string,
+  ): Promise<Profile | null> {
+    console.log('addCreatedEvent - userId:', userId);
+    console.log('addCreatedEvent - eventId:', eventId);
+    console.log('addCreatedEvent - profileRepository:', this.profileRepository);
+    return this.profileRepository.addCreatedEvent(userId, eventId);
   }
 }

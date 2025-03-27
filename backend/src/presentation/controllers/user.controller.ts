@@ -13,7 +13,7 @@ import { User } from '../../core/domain/user';
 import { BcryptService } from '../../core/services/bcrypt.service';
 import { User as UserDecorator } from '../decorators/user.decorator';
 import { ProfileInfoDto } from '../dtos/profile.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto.';
+import { UpdateUserProfileDto } from '../dtos/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 @Controller('users')
 export class UserController {
@@ -27,7 +27,7 @@ export class UserController {
   async getCurrentUser(@UserDecorator() user: User) {
     const currentUser = await this.userService.findById(user.id);
     if (!currentUser) {
-      throw new NotFoundException('Benutzer nicht gefunden');
+      throw new NotFoundException('User not found');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = currentUser;
@@ -38,7 +38,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async updateCurrentUser(
     @UserDecorator() user: User,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: UpdateUserProfileDto,
   ) {
     const currentUser = await this.userService.findById(user.id);
     if (!currentUser) {

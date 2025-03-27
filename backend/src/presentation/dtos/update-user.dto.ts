@@ -1,6 +1,6 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
-export class UpdateUserDto {
+export class UpdateUserProfileDto {
   @IsString()
   @IsOptional()
   username?: string;
@@ -28,6 +28,30 @@ export class UpdateUserDto {
   // @IsString()
   // @IsOptional()
   // socialMediaLinks?: SocialMediaLinksDto;
+  @IsArray()
+  @IsOptional()
+  links?: string[];
+  @IsString()
+  @IsOptional()
+  doorPolicy?: string;
+
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  // Images
+
+  @IsString()
+  @IsOptional()
+  headerImageUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  profileImageUrl?: string;
+
+  @IsArray()
+  @IsOptional()
+  gallery?: string[];
 
   @IsString()
   @IsOptional()
