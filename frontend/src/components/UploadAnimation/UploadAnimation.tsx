@@ -24,6 +24,11 @@ export const UploadAnimation: React.FC<UploadAnimationProps> = ({
       document.body.style.pointerEvents = "";
     };
   }, [isUploading]);
+
+  if (!isUploading) {
+    return null;
+  }
+
   return (
     <div className="upload-container">
       <div
