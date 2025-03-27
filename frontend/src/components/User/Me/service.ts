@@ -37,31 +37,30 @@ export const meService = {
     });
     return response.json();
   },
-
-  updateProfileImage: async (id: string, fileObject: File) => {
+  updateProfileImage: async (id: string, file: File) => {
     const accessToken = localStorage.getItem("access_token");
     const formData = new FormData();
-    formData.append("file", fileObject);
+    formData.append("file", file);
+
     const response = await fetch(`${API_URL}profile/profile-picture/${id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "multipart/form-data",
       },
       body: formData,
     });
+    console.log(response);
     return response.json();
   },
-
-  updateHeaderImage: async (id: string, fileObject: File) => {
+  updateHeaderImage: async (id: string, file: File) => {
     const accessToken = localStorage.getItem("access_token");
     const formData = new FormData();
-    formData.append("file", fileObject);
+    formData.append("file", file);
+
     const response = await fetch(`${API_URL}profile/header-picture/${id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "multipart/form-data",
       },
       body: formData,
     });

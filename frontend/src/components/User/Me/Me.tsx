@@ -20,6 +20,12 @@ export const Me: React.FC = () => {
   const userLevel = calculateUserLevel(me?.points || 0);
   const progress = calculateProgress(me?.points || 0, userLevel);
   const nextLevel = USER_LEVELS.find((level) => level.level > userLevel.level);
+  const [headerImage, setHeaderImage] = useState<string>(
+    me?.headerImageUrl || fallBackProfileImage
+  );
+  const [profileImage, setProfileImage] = useState<string>(
+    me?.profileImageUrl || fallBackProfileImage
+  );
 
   useEffect(() => {
     const fetchMe = async () => {
@@ -28,6 +34,8 @@ export const Me: React.FC = () => {
         setIsLoading(true);
         const profile = await meService.getMe(user.id);
         setMe(profile);
+        setHeaderImage(profile.headerImageUrl || fallBackProfileImage);
+        setProfileImage(profile.profileImageUrl || fallBackProfileImage);
       } catch (error) {
         console.error("Error loading profile:", error);
       } finally {
@@ -69,11 +77,12 @@ export const Me: React.FC = () => {
           : await meService.updateProfileImage(user.id, file);
 
       if (response.success && me) {
-        const imageUrl = response.url;
-        setMe({
-          ...me,
-          [type === "header" ? "headerImageUrl" : "profileImageUrl"]: imageUrl,
-        });
+        const responseJson = await response.json();
+        if (type === "header") {
+          setHeaderImage(responseJson.headerImageUrl);
+        } else {
+          setProfileImage(responseJson.profileImageUrl);
+        }
       }
     } catch (error) {
       console.error(
@@ -122,7 +131,6 @@ export const Me: React.FC = () => {
     { label: "Username", field: "username" },
     { label: "Email", field: "email" },
     { label: "Bio", field: "bio" },
-    { label: "Queue", field: "queue" },
     { label: "Gallery", field: "gallery" },
   ];
 
@@ -146,30 +154,18 @@ export const Me: React.FC = () => {
             className="header-image-container"
             onClick={() => createFileInput("header")}
           >
-            <img
-              src={me.headerImageUrl || fallBackProfileImage}
-              alt="Header"
-              className="header-image"
-            />
+            <img src={headerImage} alt="Header" className="header-image" />
           </div>
           <div className="header-overlay" />
           <div
             className="profile-image-container"
             onClick={() => createFileInput("profile")}
           >
-            <img
-              src={me.profileImageUrl || fallBackProfileImage}
-              alt="Profile"
-              className="profile-image"
-            />
+            <img src={profileImage} alt="Profile" className="profile-image" />
           </div>
         </div>
 
         <div className="content-section">
-          <div className="member-since">
-            Member since {formatDate(me.createdAt)}
-          </div>
-
           <div
             className="level-section"
             style={{
@@ -205,7 +201,9 @@ export const Me: React.FC = () => {
               </div>
             )}
           </div>
-
+          <div className="member-since">
+            Member since {formatDate(me.createdAt)}
+          </div>
           <div className="profile-info">
             {profileFields.map(({ label, field, type = "text" }) => (
               <div className="info-group" key={field}>
@@ -213,18 +211,19 @@ export const Me: React.FC = () => {
                 <input
                   className="info-value"
                   type={type}
-                  value={me[field] || ""}
+                  placeholder={me[field] || ""}
                   onChange={(e) => handleChange(field, e.target.value)}
                 />
               </div>
             ))}
           </div>
-
           <button
-            className="update-button"
-            onClick={handleUpdate}
-            disabled={isUpdating || Object.keys(changedFields).length === 0}
+            className="preview-button"
+            onClick={() => navigate(`/profile/${me.id}`)}
           >
+            Preview
+          </button>
+          <button className="update-button" onClick={handleUpdate}>
             {isUpdating ? "Updating..." : "Update Profile"}
           </button>
         </div>
