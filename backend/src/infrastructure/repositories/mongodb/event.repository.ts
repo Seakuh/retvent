@@ -208,10 +208,6 @@ export class MongoEventRepository implements IEventRepository {
 
       // Save and wait for result
       const savedEvent = await event.save();
-      console.log(
-        'Saved event:',
-        JSON.stringify(savedEvent.toObject(), null, 2),
-      );
 
       return this.toEntity(savedEvent);
     } catch (error) {
@@ -278,11 +274,6 @@ export class MongoEventRepository implements IEventRepository {
 
       // Save and wait for result
       const savedEvent = await event.save();
-      console.log(
-        'Saved event:',
-        JSON.stringify(savedEvent.toObject(), null, 2),
-      );
-
       return this.toEntity(savedEvent);
     } catch (error) {
       console.error('Error saving event:', error);

@@ -46,7 +46,6 @@ export class UserController {
   @Get('me/points')
   @UseGuards(JwtAuthGuard)
   async getCurrentUserPoints(@UserDecorator() user: User) {
-    console.log(user);
     return this.userService.getUserPoints(user.id);
   }
 

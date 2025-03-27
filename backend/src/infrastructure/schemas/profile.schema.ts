@@ -13,7 +13,7 @@ export const ProfileSchema = new Schema({
   gallery: { type: [String] },
   likedEventIds: { type: [String] },
   createdEventIds: { type: [String] },
-  links: { type: [String] },
+  links: { type: [String], maxLength: 3 },
   doorPolicy: { type: String },
   queue: { type: String },
   followers: { type: [String] },
