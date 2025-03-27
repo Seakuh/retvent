@@ -69,6 +69,16 @@ export const Me: React.FC = () => {
     [me]
   );
 
+  const handleChangeLinks = useCallback(
+    // split the value by comma and remove whitespace
+    (field: keyof Profile, value: string) => {
+      if (!me) return;
+      const links = value.split(",").map((link) => link.trim());
+      setChangedFields((prev) => ({ ...prev, [field]: links }));
+    },
+    [me]
+  );
+
   const handleUpdate = useCallback(async () => {
     if (!me || !user.id || Object.keys(changedFields).length === 0) return;
 
@@ -262,7 +272,7 @@ export const Me: React.FC = () => {
                 className="info-value"
                 type="text"
                 placeholder={me.links?.join(", ")}
-                onChange={(e) => handleChange("links", e.target.value)}
+                onChange={(e) => handleChangeLinks("links", e.target.value)}
               />
             </div>
           </div>
