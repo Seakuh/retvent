@@ -60,12 +60,17 @@
     margin-bottom: 1rem;
   }
   
-  .event-title {
-    font-size: 4rem;
-    padding: 1rem;
-    margin-left: 0rem;
-    text-align: left;
+  .event-title-detail {
+    font-size: 3rem;
+    padding: 1.5rem;
     font-weight: bold;
+    text-shadow: 0 0 5px var(--color-neon-blue);
+    text-align: center;
+  }
+
+  .event-title-detail:hover {
+    color: var(--color-neon-blue);
+    cursor: pointer;
   }
 
 
@@ -110,7 +115,9 @@
   
   .event-title-container {
     display: flex;
-    align-items: left;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
   }
   
   /* =============================================================
@@ -196,15 +203,13 @@
     .share-button:hover {
       transform: scale(1.1);
     }
-    .event-title {
+    .event-title-detail {
       font-size: 2rem;
-      margin-left: 0rem;
-      text-align: left;
+      text-shadow: 0 0 5px var(--color-neon-blue) !important;
+      text-align: center;
       overflow-wrap: break-word;
       word-wrap: break-word;
       hyphens: auto;
-      text-overflow: ellipsis;
-      overflow: hidden;
     }
   }
   
@@ -224,10 +229,6 @@
     gap: 4rem;
     margin: -2rem auto 2rem;
     padding: 1.5rem;
-    background: black;
-    backdrop-filter: blur(10px);
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
   .info-item {
@@ -242,6 +243,14 @@
   
   .info-text {
     text-align: left;
+  }
+
+  .calendar-text-container {
+    cursor: pointer;
+  }
+
+  .calendar-text-container:hover {
+    color: #00ff87;
   }
   
   /* =============================================================
@@ -627,4 +636,20 @@
   }
 
   
+  .event-important-info-contain {
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+  
+  .location-text {
+    cursor: pointer;
+  }
+  
+  .location-text:hover {
+    color: var(--color-neon-pink) !important;
+  }
   

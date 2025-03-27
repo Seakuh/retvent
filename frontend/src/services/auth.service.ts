@@ -21,62 +21,61 @@ export interface AuthResponse {
 }
 
 export class AuthService {
-  
-
-  private baseUrl = import.meta.env.VITE_API_URL + 'auth' || "http://localhost:4000" + 'auth';
+  private baseUrl =
+    import.meta.env.VITE_API_URL + "auth" || "http://localhost:4000" + "auth";
 
   async login(credentials: LoginDto): Promise<AuthResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/login`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Login failed 😢');
+        throw new Error(error.message || "Login failed 😢");
       }
 
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       throw error;
     }
   }
 
   async register(userData: RegisterDto): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/register`, {
-        method: 'POST',
+      const response = await fetch(`${this.baseUrl}/v2/register`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Registration failed 😢');
+        throw new Error(error.message || "Registration failed 😢");
       }
 
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       throw error;
     }
   }
 
   logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('access_token');
+    return !!localStorage.getItem("access_token");
   }
-} 
+}

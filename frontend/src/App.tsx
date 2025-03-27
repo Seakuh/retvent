@@ -16,6 +16,8 @@ import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import Register from "./components/Auth/Register";
 import { EventDetail } from "./components/EventDetail/EventDetail";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
+import { Me } from "./components/User/Me/Me";
+import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
 import { eventService } from "./services/api";
 
@@ -45,6 +47,7 @@ const App: React.FC = () => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/profile/:userId" element={<Profile />} />
                 <Route path="/event/:eventId" element={<EventDetail />} />
                 <Route path="/liked" element={<LikedEvents />} />
                 <Route path="/category/:category" element={<LandingPage />} />
@@ -53,6 +56,15 @@ const App: React.FC = () => {
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/imprint" element={<Imprint />} />
+
+                <Route
+                  path="/me"
+                  element={
+                    <ProtectedRoute>
+                      <Me />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/admin/dashboard"
                   element={

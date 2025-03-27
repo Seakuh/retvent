@@ -20,3 +20,32 @@ const formatDate = (date: string) => {
     year: "numeric",
   });
 };
+
+export const handleAddToCalendar = (event: {
+  startDate: string;
+  startTime: string;
+  city: string;
+  address: string;
+}) => {
+  if (!event?.startDate) return;
+
+  const formatDate = (date: string) => {
+    return date.replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  };
+
+  const startDate = new Date(event.startDate);
+  const endDate = new Date(startDate);
+  endDate.setHours(endDate.getHours() + 2);
+
+  // Format: YYYYMMDDTHHMMSSZ
+  const formattedStart = formatDate(startDate.toISOString());
+  const formattedEnd = formatDate(endDate.toISOString());
+
+  const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+    event.title
+  )}&dates=${formattedStart}/${formattedEnd}&details=${encodeURIComponent(
+    event.description || ""
+  )}&location=${encodeURIComponent(event.city || "")}`;
+
+  window.open(googleCalendarUrl, "_blank");
+};

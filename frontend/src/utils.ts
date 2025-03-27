@@ -50,6 +50,12 @@ export const CACHE_DURATION_3 = 3 * 60 * 60 * 1000;
 // 1 Stunde
 export const CACHE_DURATION_1 = 60 * 60 * 1000;
 
+interface address {
+  city?: string;
+  houseNumber?: string;
+  street?: string;
+}
+
 export interface Event {
   // ID
   id?: string;
@@ -70,6 +76,7 @@ export interface Event {
   city?: string;
   locationId?: string;
   category?: string;
+  address?: address;
   price?: string;
   ticketLink?: string;
   lineup?: Array<{ name: string; role?: string; startTime?: string }>;
@@ -98,9 +105,27 @@ export interface Event {
   commentCount?: number;
 }
 
-export interface User {
-  id: string;
+export interface Profile {
   username: string;
+  userId: string;
+  profileImageUrl?: string;
+  headerImageUrl?: string;
+  category?: string;
+  followerCount?: number;
+  bio?: string;
+  followedLocationIds?: string[];
+  likedEventIds?: string[];
+  createdEventIds?: string[];
+  links?: string[];
+  queue?: string;
+  gallery?: string[];
+  doorPolicy?: string;
+  followers?: string[];
+  following?: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  points?: number;
+  id: string;
   email: string;
   profilePictureUrl: string;
   uploads: number;
@@ -153,6 +178,8 @@ export const emptyEvent: Event = {
   startDate: new Date(),
   description: "",
 };
+export const fallBackProfileImage =
+  "https://hel1.your-objectstorage.com/imagebucket/events/8d703697-caf7-4438-abda-4ccd8e5939e9.png";
 
 interface CommentWithReplies extends Comment {
   replies: CommentWithReplies[];
@@ -190,4 +217,83 @@ export const buildCommentTree = (comments: Comment[]): CommentWithReplies[] => {
   });
 
   return rootComments;
+};
+
+export interface UserLevel {
+  level: number;
+  name: string;
+  minPoints: number;
+  color: string;
+  description: string;
+}
+
+export const USER_LEVELS: UserLevel[] = [
+  {
+    level: 0,
+    name: "Explorer",
+    minPoints: 0,
+    color: "#94A3B8",
+    description: "Start your journey!",
+  },
+  {
+    level: 1,
+    name: "Event-Expert",
+    minPoints: 100,
+    color: "#22C55E",
+    description: "You've created your first events!",
+  },
+  {
+    level: 2,
+    name: "Scann-Pro-light",
+    minPoints: 500,
+    color: "#3B82F6",
+    description: "You know your way around!",
+  },
+  {
+    level: 3,
+    name: "Scann-Pro",
+    minPoints: 2000,
+    color: "#8B5CF6",
+    description: "You're a local legend!",
+  },
+  {
+    level: 4,
+    name: "Event-Master",
+    minPoints: 5000,
+    color: "#EC4899",
+    description: "You're a true pro!",
+  },
+  {
+    level: 5,
+    name: "Event-God",
+    minPoints: 10000,
+    color: "#F59E0B",
+    description: "You're a true legend!",
+  },
+];
+
+export const calculateUserLevel = (points: number): UserLevel => {
+  return USER_LEVELS.reduce((prev, curr) =>
+    points >= curr.minPoints ? curr : prev
+  );
+};
+
+export const calculateProgress = (
+  points: number,
+  currentLevel: UserLevel
+): number => {
+  const nextLevel = USER_LEVELS.find(
+    (level) => level.level > currentLevel.level
+  );
+  if (!nextLevel) return 100;
+
+  const levelRange = nextLevel.minPoints - currentLevel.minPoints;
+  const currentProgress = points - currentLevel.minPoints;
+  return (currentProgress / levelRange) * 100;
+};
+
+export const getHostEvents = async (hostId: string): Promise<Event[]> => {
+  const response = await fetch(`${API_URL}events/host/id/${hostId}`);
+  if (!response.ok) throw new Error("Failed to fetch events");
+  return await response.json();
 };
