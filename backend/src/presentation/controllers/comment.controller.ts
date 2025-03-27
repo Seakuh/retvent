@@ -42,11 +42,11 @@ export class CommentController {
     @Req() req: any,
   ) {
     if (!comment || typeof comment.text !== 'string') {
-      throw new BadRequestException('Der Kommentar muss einen Text enthalten');
+      throw new BadRequestException('The comment must contain a text');
     }
 
     if (!eventId || typeof eventId !== 'string') {
-      throw new BadRequestException('Eine gültige Event-ID ist erforderlich');
+      throw new BadRequestException('A valid event ID is required');
     }
 
     const userId = req.user?.id || 'public';
