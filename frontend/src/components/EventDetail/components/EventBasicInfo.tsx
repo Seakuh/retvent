@@ -31,14 +31,11 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
         onClick={handleAddToCalendar}
       >
         <span className="icon">
-          <Calendar className="h-10 w-10" />
+          <Calendar className="h-5 w-5" />
         </span>
         <div className="info-text">
           {startDate && (
-            <div
-              className="text-lg font-semibold"
-              onClick={() => handleAddToCalendar}
-            >
+            <div onClick={() => handleAddToCalendar}>
               {new Date(startDate).toLocaleDateString("de-DE", {
                 day: "2-digit",
                 month: "2-digit",
@@ -52,7 +49,7 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
 
       <div className="info-item location-text">
         <span className="icon">
-          <MapPin className="h-10 w-10" />
+          <MapPin className="h-5 w-5" />
         </span>
         <div
           className="info-text"
