@@ -17,17 +17,18 @@ export const meService = {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      return await response.json();
+      const data = await response.json();
+      console.log(data);
+      return data;
     } catch (error) {
       console.error("Error fetching profile:", error);
       throw error;
     }
   },
-  updateProfile: async (id: string, profile: Profile) => {
+  updateProfile: async (id: string, profile: Partial<Profile>) => {
     const accessToken = localStorage.getItem("access_token");
-    const response = await fetch(`${API_URL} /${id}`, {
-      method: "PUT",
+    const response = await fetch(`${API_URL}profile/${id}`, {
+      method: "PATCH",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
@@ -36,10 +37,13 @@ export const meService = {
     });
     return response.json();
   },
-  updateProfileImage: async (id: string, formData: FormData) => {
+
+  updateProfileImage: async (id: string, fileObject: File) => {
     const accessToken = localStorage.getItem("access_token");
-    const response = await fetch(`${API_URL}profile-picture/${id}/image`, {
-      method: "POST",
+    const formData = new FormData();
+    formData.append("file", fileObject);
+    const response = await fetch(`${API_URL}profile/profile-picture/${id}`, {
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "multipart/form-data",
@@ -48,10 +52,13 @@ export const meService = {
     });
     return response.json();
   },
-  updateHeaderImage: async (id: string, formData: FormData) => {
+
+  updateHeaderImage: async (id: string, fileObject: File) => {
     const accessToken = localStorage.getItem("access_token");
-    const response = await fetch(`${API_URL}header-picture/${id}/image`, {
-      method: "POST",
+    const formData = new FormData();
+    formData.append("file", fileObject);
+    const response = await fetch(`${API_URL}profile/header-picture/${id}`, {
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "multipart/form-data",

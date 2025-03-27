@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Profile } from "../../../utils";
 import {
   calculateProgress,
@@ -14,7 +15,8 @@ export const Me: React.FC = () => {
   const [me, setMe] = useState<Profile>();
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
-
+  const [changedFields, setChangedFields] = useState<Partial<Profile>>({});
+  const navigate = useNavigate();
   const userLevel = calculateUserLevel(me?.points || 0);
   const progress = calculateProgress(me?.points || 0, userLevel);
   const nextLevel = USER_LEVELS.find((level) => level.level > userLevel.level);
@@ -27,7 +29,7 @@ export const Me: React.FC = () => {
         const profile = await meService.getMe(user.id);
         setMe(profile);
       } catch (error) {
-        console.error("Fehler beim Laden des Profils:", error);
+        console.error("Error loading profile:", error);
       } finally {
         setIsLoading(false);
       }
@@ -37,105 +39,137 @@ export const Me: React.FC = () => {
 
   const handleChange = (field: keyof Profile, value: string) => {
     if (!me) return;
-    setMe({ ...me, [field]: value });
+    setChangedFields((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleUpdate = async () => {
-    if (!me || !user.id) return;
+    if (!me || !user.id || Object.keys(changedFields).length === 0) return;
     try {
       setIsUpdating(true);
-      const updatedProfile = await meService.updateProfile(user.id, me);
-      setMe(updatedProfile);
+      const updatedProfile = await meService.updateProfile(
+        user.id,
+        changedFields
+      );
+      setMe((prev) => (prev ? { ...prev, ...updatedProfile } : undefined));
+      setChangedFields({});
     } catch (error) {
-      console.error("Fehler beim Aktualisieren des Profils:", error);
+      console.error("Error updating profile:", error);
     } finally {
       setIsUpdating(false);
     }
   };
 
+  const handleImageUpload = async (type: "header" | "profile", file: File) => {
+    if (!user.id) return;
+
+    try {
+      const response =
+        type === "header"
+          ? await meService.updateHeaderImage(user.id, file)
+          : await meService.updateProfileImage(user.id, file);
+
+      if (response.success && me) {
+        const imageUrl = response.url;
+        setMe({
+          ...me,
+          [type === "header" ? "headerImageUrl" : "profileImageUrl"]: imageUrl,
+        });
+      }
+    } catch (error) {
+      console.error(
+        `Error updating ${type === "header" ? "header" : "profile"} image:`,
+        error
+      );
+    }
+  };
+
+  const createFileInput = (type: "header" | "profile") => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        await handleImageUpload(type, file);
+      }
+      fileInput.remove();
+    };
+    fileInput.click();
+  };
+
   if (isLoading) {
-    return <div className="me-container">Laden...</div>;
+    return <div className="me-container">Loading...</div>;
   }
 
   if (!me) {
-    return <div className="me-container">Profil nicht gefunden</div>;
+    return <div className="me-container">Profile not found</div>;
   }
 
-  const changeHeaderImage = () => {
-    console.log("Header image clicked");
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("type", "header");
-        try {
-          const response = await meService.updateHeaderImage(user.id, formData);
-          if (response.success) {
-            setMe({ ...me, headerImageUrl: response.url });
-          }
-        } catch (error) {
-          console.error("Fehler beim Aktualisieren des Headers:", error);
-        } finally {
-          fileInput.remove();
-        }
-      }
-      fileInput.click();
-    };
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
-  const changeProfileImage = () => {
-    console.log("Profile image clicked");
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("type", "header");
-        try {
-          const response = await meService.updateProfileImage(
-            user.id,
-            formData
-          );
-          if (response.success) {
-            setMe({ ...me, headerImageUrl: response.url });
-          }
-        } catch (error) {
-          console.error("Fehler beim Aktualisieren des Headers:", error);
-        } finally {
-          fileInput.remove();
-        }
-      }
-      fileInput.click();
-    };
-  };
+  const profileFields: Array<{
+    label: string;
+    field: keyof Profile;
+    type?: string;
+  }> = [
+    { label: "Username", field: "username" },
+    { label: "Email", field: "email" },
+    { label: "Bio", field: "bio" },
+    { label: "Queue", field: "queue" },
+    { label: "Gallery", field: "gallery" },
+  ];
 
   return (
     <div>
+      <button
+        className="back-button"
+        onClick={() => {
+          if (window.history.length > 1) {
+            navigate(-1);
+          } else {
+            navigate("/");
+          }
+        }}
+      >
+        ← Back
+      </button>
       <div className="me-container">
-        <div className="header-section" onClick={changeHeaderImage}>
-          <img
-            src={me.headerImageUrl || fallBackProfileImage}
-            alt="Header"
-            className="header-image"
-          />
+        <div className="header-section">
+          <div
+            className="header-image-container"
+            onClick={() => createFileInput("header")}
+          >
+            <img
+              src={me.headerImageUrl || fallBackProfileImage}
+              alt="Header"
+              className="header-image"
+            />
+          </div>
           <div className="header-overlay" />
-          <div className="profile-image-container" onClick={changeProfileImage}>
+          <div
+            className="profile-image-container"
+            onClick={() => createFileInput("profile")}
+          >
             <img
               src={me.profileImageUrl || fallBackProfileImage}
-              alt="Profil"
+              alt="Profile"
               className="profile-image"
             />
           </div>
         </div>
 
         <div className="content-section">
+          <div className="member-since">
+            Member since {formatDate(me.createdAt)}
+          </div>
+
           <div
             className="level-section"
             style={{
@@ -150,7 +184,7 @@ export const Me: React.FC = () => {
               </div>
               <div className="points-info">
                 <span>{me.points || 0} Points</span>
-                {nextLevel && <span>next Level: {nextLevel.minPoints}</span>}
+                {nextLevel && <span>Next Level: {nextLevel.minPoints}</span>}
               </div>
             </div>
 
@@ -166,27 +200,21 @@ export const Me: React.FC = () => {
 
             {nextLevel && (
               <div className="next-level">
-                <span>next Level: {nextLevel.name}</span>
+                <span>Next Level: {nextLevel.name}</span>
                 <span>→</span>
               </div>
             )}
           </div>
 
           <div className="profile-info">
-            {[
-              ["Username", "username"],
-              ["E-Mail", "email"],
-              ["Bio", "bio"],
-            ].map(([label, field]) => (
+            {profileFields.map(({ label, field, type = "text" }) => (
               <div className="info-group" key={field}>
                 <div className="info-label">{label}</div>
                 <input
                   className="info-value"
-                  type="text"
-                  value={me[field as keyof Profile] || ""}
-                  onChange={(e) =>
-                    handleChange(field as keyof Profile, e.target.value)
-                  }
+                  type={type}
+                  value={me[field] || ""}
+                  onChange={(e) => handleChange(field, e.target.value)}
                 />
               </div>
             ))}
@@ -195,17 +223,12 @@ export const Me: React.FC = () => {
           <button
             className="update-button"
             onClick={handleUpdate}
-            disabled={isUpdating}
+            disabled={isUpdating || Object.keys(changedFields).length === 0}
           >
             {isUpdating ? "Updating..." : "Update Profile"}
           </button>
         </div>
       </div>
-      {/* <EventGalleryII
-        events={}
-        title="Uploaded Events"
-        showTitle={false}
-      /> */}
     </div>
   );
 };
