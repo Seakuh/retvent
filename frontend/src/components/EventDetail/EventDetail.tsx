@@ -189,7 +189,20 @@ export const EventDetail: React.FC = () => {
 
         <div className="event-content">
           <div className="event-important-info-contain">
-            <div className="event-title-container">
+            <div
+              className="event-title-container"
+              onClick={() => setShowImageModal(true)}
+              style={{
+                backgroundImage: `url(${event.imageUrl})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backdropFilter: "blur(10px)",
+                borderRadius: "1rem",
+                padding: "2rem",
+                marginBottom: "3rem",
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              }}
+            >
               <a
                 href={`https://www.google.com/search?q=${encodeURIComponent(
                   event.title + " event"
