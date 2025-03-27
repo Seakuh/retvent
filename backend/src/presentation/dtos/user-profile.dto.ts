@@ -2,7 +2,7 @@ export class UserProfileDto {
   id: string;
   email: string;
   username: string;
-  points: string;
+  points: number;
   bio: string;
   profileImageUrl: string;
   headerImageUrl: string;

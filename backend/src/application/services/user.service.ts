@@ -22,6 +22,10 @@ export class UserService {
     return this.userRepository.getUserPoints(userId);
   }
 
+  addUserPoints(userId: string, amount: number) {
+    return this.userRepository.addUserPoints(userId, amount);
+  }
+
   async findById(id: string) {
     return this.userRepository.findById(id);
   }
@@ -36,7 +40,7 @@ export class UserService {
 
     return {
       id: user.id,
-      points: user.points.toString(),
+      points: user.points,
       email: user.email,
       username: user.username,
       createdAt: user.createdAt,
