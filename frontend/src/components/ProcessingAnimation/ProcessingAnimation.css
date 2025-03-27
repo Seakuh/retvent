@@ -1,46 +1,88 @@
 .scanning-circle {
   width: 100%;
   height: 100%;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #00ff87;
   border-radius: 50%;
-  border: 4px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #fff;
-  animation: scan 1s infinite linear;
+  animation: spin 1s linear infinite;
   position: relative;
-  z-index: 1001;
 }
 
+.scanning-circle::before,
 .scanning-circle::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 120%;
-  height: 120%;
-  transform: translate(-50%, -50%);
+  border: 4px solid transparent;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  animation: pulse 2s infinite;
 }
 
-@keyframes scan {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.scanning-circle::before {
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+  border-top-color: #60efff;
+  animation: spin 2s linear infinite;
 }
 
-@keyframes pulse {
-  0% {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 0;
-  }
-} 
+.scanning-circle::after {
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border-top-color: #fff;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.success-checkmark {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  animation: scale-in 0.5s ease-out;
+}
+
+.success-checkmark::before,
+.success-checkmark::after {
+  content: '';
+  position: absolute;
+  background-color: #00ff87;
+  border-radius: 2px;
+}
+
+.success-checkmark::before {
+  width: 4px;
+  height: 50%;
+  left: 50%;
+  top: 0;
+  transform-origin: bottom;
+  animation: checkmark-left 0.5s ease-out;
+}
+
+.success-checkmark::after {
+  width: 4px;
+  height: 30%;
+  left: 0;
+  bottom: 0;
+  transform-origin: bottom;
+  animation: checkmark-right 0.5s ease-out;
+}
+
+@keyframes scale-in {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+@keyframes checkmark-left {
+  0% { transform: rotate(-45deg) scale(0); }
+  100% { transform: rotate(-45deg) scale(1); }
+}
+
+@keyframes checkmark-right {
+  0% { transform: rotate(45deg) scale(0); }
+  100% { transform: rotate(45deg) scale(1); }
+}

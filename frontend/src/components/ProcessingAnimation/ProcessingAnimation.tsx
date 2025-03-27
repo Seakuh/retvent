@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ProcessingAnimation.css";
 
 const processingSteps = [
@@ -9,18 +10,82 @@ const processingSteps = [
   { text: "Gathering internet data", emoji: "🌐" },
 ];
 
-export const ProcessingAnimation: React.FC = () => {
+interface ProcessingAnimationProps {
+  onComplete?: () => void;
+  eventId?: string;
+}
+
+export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({
+  onComplete,
+  eventId,
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentStep((prev) =>
-        prev < processingSteps.length - 1 ? prev + 1 : prev
-      );
+      setCurrentStep((prev) => {
+        if (prev < processingSteps.length - 1) {
+          return prev + 1;
+        } else {
+          setIsComplete(true);
+          clearInterval(interval);
+          return prev;
+        }
+      });
     }, 1500);
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (isComplete) {
+      // Zeige Benachrichtigung
+      if ("Notification" in window) {
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            new Notification("Event successfully uploaded!", {
+              body: "Your event has been successfully processed.\n Credited 20 points to your account.",
+              icon: "/logo.png",
+            });
+          }
+        });
+      }
+
+      // Warte kurz und blende dann aus
+      const timer = setTimeout(() => {
+        if (onComplete) {
+          onComplete();
+        }
+        if (eventId) {
+          navigate(`/event/${eventId}`);
+        }
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isComplete, onComplete, eventId, navigate]);
+
+  if (isComplete) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/10 backdrop-blur-lg transition-opacity duration-300">
+        <div className="p-8 rounded-3xl w-[90%] max-w-md text-center">
+          <div className="mb-8">
+            <div className="w-24 h-24 mx-auto mb-6">
+              <div className="success-checkmark"></div>
+            </div>
+          </div>
+          <div className="text-white text-xl font-bold mb-4">
+            Event erfolgreich hochgeladen!
+          </div>
+          <div className="text-white/80">
+            Du wirst in Kürze weitergeleitet...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/10 backdrop-blur-lg transition-opacity duration-300">
