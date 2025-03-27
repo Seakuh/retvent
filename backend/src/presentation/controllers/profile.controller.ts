@@ -71,9 +71,8 @@ export class ProfileController {
   async updateProfilePicture(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<string> {
-    return (await this.profileService.updateProfilePicture(id, file))
-      .profileImageUrl;
+  ): Promise<Profile> {
+    return this.profileService.updateProfilePicture(id, file);
   }
 
   @Put('header-picture/:id')
@@ -82,9 +81,8 @@ export class ProfileController {
   async updateHeaderPicture(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<string> {
-    return (await this.profileService.updateHeaderPicture(id, file))
-      .headerImageUrl;
+  ): Promise<Profile> {
+    return this.profileService.updateHeaderPicture(id, file);
   }
 
   @Put('links/:id')
