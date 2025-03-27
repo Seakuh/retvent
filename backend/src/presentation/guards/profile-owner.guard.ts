@@ -14,8 +14,6 @@ export class ProfileOwnerGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user; // vom JwtAuthGuard gesetzter User
     const profileId = request.params.id;
-    console.log('profileId:', profileId);
-    console.log('user:', user);
     // Prüfe ob der User eingeloggt ist
     if (!user) {
       throw new ForbiddenException('Not authenticated');

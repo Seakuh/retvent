@@ -60,24 +60,40 @@ export class MongoProfileRepository implements IProfileRepository {
   }
 
   async updateProfilePicture(
-    id: string,
+    userId: string,
     profileImageUrl: string,
   ): Promise<Profile | null> {
-    return this.profileModel.findByIdAndUpdate(
-      id,
-      { profileImageUrl },
-      { new: true },
+    return this.profileModel.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          profileImageUrl: profileImageUrl || null,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      },
     );
   }
 
   async updateHeaderPicture(
-    id: string,
+    userId: string,
     headerImageUrl: string,
   ): Promise<Profile | null> {
-    return this.profileModel.findByIdAndUpdate(
-      id,
-      { headerImageUrl },
-      { new: true },
+    return this.profileModel.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          headerImageUrl: headerImageUrl || null,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      },
     );
   }
 
