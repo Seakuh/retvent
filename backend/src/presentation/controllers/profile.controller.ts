@@ -71,18 +71,20 @@ export class ProfileController {
   async updateProfilePicture(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<Profile> {
-    return this.profileService.updateProfilePicture(id, file);
+  ): Promise<string> {
+    return (await this.profileService.updateProfilePicture(id, file))
+      .profileImageUrl;
   }
 
   @Put('header-picture/:id')
-  @UseGuards(ProfileOwnerGuard)
+  @UseGuards(JwtAuthGuard, ProfileOwnerGuard)
   @UseInterceptors(FileInterceptor('file'))
   async updateHeaderPicture(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<Profile> {
-    return this.profileService.updateHeaderPicture(id, file);
+  ): Promise<string> {
+    return (await this.profileService.updateHeaderPicture(id, file))
+      .headerImageUrl;
   }
 
   @Put('links/:id')
