@@ -11,10 +11,13 @@ import { meService } from "./service";
 
 export const Me: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-  const [me, setMe] = useState<Profile | null>(null);
+  const [me, setMe] = useState<Profile>();
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const userLevel = calculateUserLevel(me?.points || 0);
+  const progress = calculateProgress(me?.points || 0, userLevel);
+  const nextLevel = USER_LEVELS.find((level) => level.level > userLevel.level);
 
   useEffect(() => {
     const fetchMe = async () => {
@@ -58,21 +61,72 @@ export const Me: React.FC = () => {
     return <div className="me-container">Profil nicht gefunden</div>;
   }
 
-  const userLevel = calculateUserLevel(me.points || 0);
-  const progress = calculateProgress(me.points || 0, userLevel);
-  const nextLevel = USER_LEVELS.find((level) => level.level > userLevel.level);
+  const changeHeaderImage = () => {
+    console.log("Header image clicked");
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", "header");
+        try {
+          const response = await meService.updateHeaderImage(user.id, formData);
+          if (response.success) {
+            setMe({ ...me, headerImageUrl: response.url });
+          }
+        } catch (error) {
+          console.error("Fehler beim Aktualisieren des Headers:", error);
+        } finally {
+          fileInput.remove();
+        }
+      }
+      fileInput.click();
+    };
+  };
+
+  const changeProfileImage = () => {
+    console.log("Profile image clicked");
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", "header");
+        try {
+          const response = await meService.updateProfileImage(
+            user.id,
+            formData
+          );
+          if (response.success) {
+            setMe({ ...me, headerImageUrl: response.url });
+          }
+        } catch (error) {
+          console.error("Fehler beim Aktualisieren des Headers:", error);
+        } finally {
+          fileInput.remove();
+        }
+      }
+      fileInput.click();
+    };
+  };
 
   return (
     <div>
       <div className="me-container">
-        <div className="header-section">
+        <div className="header-section" onClick={changeHeaderImage}>
           <img
             src={me.headerImageUrl || fallBackProfileImage}
             alt="Header"
             className="header-image"
           />
           <div className="header-overlay" />
-          <div className="profile-image-container">
+          <div className="profile-image-container" onClick={changeProfileImage}>
             <img
               src={me.profileImageUrl || fallBackProfileImage}
               alt="Profil"

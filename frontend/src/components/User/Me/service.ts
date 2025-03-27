@@ -26,13 +26,37 @@ export const meService = {
   },
   updateProfile: async (id: string, profile: Profile) => {
     const accessToken = localStorage.getItem("access_token");
-    const response = await fetch(`${API_URL}profile/${id}`, {
+    const response = await fetch(`${API_URL} /${id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(profile),
+    });
+    return response.json();
+  },
+  updateProfileImage: async (id: string, formData: FormData) => {
+    const accessToken = localStorage.getItem("access_token");
+    const response = await fetch(`${API_URL}profile-picture/${id}/image`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+      body: formData,
+    });
+    return response.json();
+  },
+  updateHeaderImage: async (id: string, formData: FormData) => {
+    const accessToken = localStorage.getItem("access_token");
+    const response = await fetch(`${API_URL}header-picture/${id}/image`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+      body: formData,
     });
     return response.json();
   },
