@@ -48,7 +48,6 @@ export class MongoUserRepository implements IUserRepository {
       user.points = 0;
       await user.save();
     }
-    console.log(user.points);
     return user ? this.toEntity(user) : null;
   }
 

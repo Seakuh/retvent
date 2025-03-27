@@ -110,9 +110,6 @@ export class ProfileService {
     userId: string,
     eventId: string,
   ): Promise<Profile | null> {
-    console.log('addCreatedEvent - userId:', userId);
-    console.log('addCreatedEvent - eventId:', eventId);
-    console.log('addCreatedEvent - profileRepository:', this.profileRepository);
     return this.profileRepository.addCreatedEvent(userId, eventId);
   }
 }

@@ -294,7 +294,6 @@ export class EventController {
     @UploadedFile() image?: Express.Multer.File,
   ) {
     const parsedData = this.eventMapper.toEntity(eventData, req.user.sub);
-    console.log('Create Event - Parsed data:', parsedData);
     const event = await this.eventService.createEvent(parsedData, image);
     return event;
   }
@@ -391,10 +390,6 @@ export class EventController {
       if (!event) {
         throw new NotFoundException('Event not found');
       }
-      console.log('Delete Event - Event:', event);
-      console.log('Delete Event - Request user:', req.user);
-      console.log('Delete Event - Event hostId:', event.hostId);
-
       if (event.hostId !== req.user.sub) {
         throw new ForbiddenException('You can only delete your own events');
       }
