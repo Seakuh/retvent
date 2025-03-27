@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Profile } from "../../../utils";
+import type { Event, Profile } from "../../../utils";
 import {
   calculateProgress,
   calculateUserLevel,
   fallBackProfileImage,
+  getHostEvents,
   USER_LEVELS,
 } from "../../../utils";
 import "./Me.css";
@@ -13,6 +14,7 @@ import { meService } from "./service";
 export const Me: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const [me, setMe] = useState<Profile>();
+  const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [changedFields, setChangedFields] = useState<Partial<Profile>>({});
@@ -33,6 +35,7 @@ export const Me: React.FC = () => {
       try {
         setIsLoading(true);
         const profile = await meService.getMe(user.id);
+        const events = await getHostEvents(user.id);
         setMe(profile);
         setHeaderImage(profile.headerImageUrl || fallBackProfileImage);
         setProfileImage(profile.profileImageUrl || fallBackProfileImage);
@@ -42,7 +45,12 @@ export const Me: React.FC = () => {
         setIsLoading(false);
       }
     };
+    const fetchEvents = async () => {
+      const events = await getHostEvents(user.id);
+      setEvents(events);
+    };
     fetchMe();
+    fetchEvents();
   }, [user.id]);
 
   const handleChange = (field: keyof Profile, value: string) => {

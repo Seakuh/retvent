@@ -291,3 +291,9 @@ export const calculateProgress = (
   const currentProgress = points - currentLevel.minPoints;
   return (currentProgress / levelRange) * 100;
 };
+
+export const getHostEvents = async (hostId: string): Promise<Event[]> => {
+  const response = await fetch(`${API_URL}events/host/id/${hostId}`);
+  if (!response.ok) throw new Error("Failed to fetch events");
+  return await response.json();
+};
