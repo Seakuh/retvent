@@ -16,6 +16,13 @@ export class MongoUserRepository implements IUserRepository {
       ...rest,
     });
   }
+  addUserPoints(userId: string, amount: number) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $inc: { points: amount } },
+      { new: true },
+    );
+  }
 
   getUserPoints(userId: string) {
     return this.userModel.findById(userId).then(async (user) => {
