@@ -7,9 +7,9 @@ import {
   fallBackProfileImage,
   USER_LEVELS,
 } from "../../../utils";
+import { LevelSection } from "../../LevelSection/LevelSection";
 import "./Me.css";
 import { meService } from "./service";
-
 export const Me: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
@@ -198,41 +198,7 @@ export const Me: React.FC = () => {
         </div>
 
         <div className="content-section">
-          <div
-            className="level-section"
-            style={{
-              background: `linear-gradient(135deg, ${userLevel.color}20 0%, ${userLevel.color}40 100%)`,
-            }}
-          >
-            <div className="level-header">
-              <div>
-                <div className="level-title">Level {userLevel.level}</div>
-                <div className="level-name">{userLevel.name}</div>
-                <div className="level-description">{userLevel.description}</div>
-              </div>
-              <div className="points-info">
-                <span>{points || 0} Points</span>
-                {nextLevel && <span>Next Level: {nextLevel.minPoints}</span>}
-              </div>
-            </div>
-
-            <div className="progress-container">
-              <div
-                className="progress-bar"
-                style={{
-                  width: `${progress}%`,
-                  background: `linear-gradient(90deg, ${userLevel.color} 0%, ${userLevel.color}80 100%)`,
-                }}
-              />
-            </div>
-
-            {nextLevel && (
-              <div className="next-level">
-                <span>Next Level: {nextLevel.name}</span>
-                <span>→</span>
-              </div>
-            )}
-          </div>
+          <LevelSection points={points} />
           <button
             className="preview-button"
             onClick={() => navigate(`/profile/${me.id}`)}
