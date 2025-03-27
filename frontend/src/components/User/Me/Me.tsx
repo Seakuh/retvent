@@ -271,7 +271,7 @@ export const Me: React.FC = () => {
               <input
                 className="info-value"
                 type="text"
-                placeholder={me.links?.join(", ")}
+                placeholder={me.links?.join(", ") || "seperate links by comma"}
                 onChange={(e) => handleChangeLinks("links", e.target.value)}
               />
             </div>
