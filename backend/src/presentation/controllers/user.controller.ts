@@ -105,6 +105,11 @@ export class UserController {
     return this.userService.getProfileInfo(id);
   }
 
+  @Get('points/:id')
+  async getUserPoints(@Param('id') id: string) {
+    return this.userService.getUserPoints(id);
+  }
+
   // @Get('profile/:id')
   // async getUserProfile(@Param('id') id: string): Promise<User> {
   //   const user = await this.userService.findById(id);
