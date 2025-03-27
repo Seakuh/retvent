@@ -61,7 +61,7 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({
         if (eventId) {
           navigate(`/event/${eventId}`);
         }
-      }, 2000);
+      }, 1000);
 
       return () => clearTimeout(timer);
     }
@@ -77,18 +77,16 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({
             </div>
           </div>
           <div className="text-white text-xl font-bold mb-4">
-            Event erfolgreich hochgeladen!
+            Event successfully uploaded!
           </div>
-          <div className="text-white/80">
-            Du wirst in Kürze weitergeleitet...
-          </div>
+          <div className="text-white/80">You will be redirected shortly...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/10 backdrop-blur-lg transition-opacity duration-300">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/10 backdrop-blur-lg transition-opacity duration-300 pointer-events-none">
       <div className="p-8 rounded-3xl w-[90%] max-w-md text-center">
         <div className="mb-8">
           <div className="w-24 h-24 mx-auto mb-6">
