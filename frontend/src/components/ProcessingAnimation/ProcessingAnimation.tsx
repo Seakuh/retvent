@@ -102,8 +102,8 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({
               key={index}
               className={`flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${
                 index <= currentStep
-                  ? "bg-white/10 backdrop-blur-sm"
-                  : "opacity-50"
+                  ? "bg-blue-900/80 backdrop-blur-sm"
+                  : "bg-blue-900/60 backdrop-blur-sm"
               }`}
             >
               <span className="text-white text-lg">{step.text}</span>
