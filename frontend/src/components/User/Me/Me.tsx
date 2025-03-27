@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Event, Profile } from "../../../utils";
+import type { Profile } from "../../../utils";
 import {
   calculateProgress,
   calculateUserLevel,
   fallBackProfileImage,
-  getHostEvents,
   USER_LEVELS,
 } from "../../../utils";
 import "./Me.css";
@@ -13,55 +12,66 @@ import { meService } from "./service";
 
 export const Me: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const navigate = useNavigate();
+
+  // Zustandsverwaltung
   const [me, setMe] = useState<Profile>();
-  const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [changedFields, setChangedFields] = useState<Partial<Profile>>({});
   const [points, setPoints] = useState<number>(0);
-  const navigate = useNavigate();
+  const [headerImage, setHeaderImage] = useState<string>(fallBackProfileImage);
+  const [profileImage, setProfileImage] =
+    useState<string>(fallBackProfileImage);
+
+  // Abgeleitete Werte
   const userLevel = calculateUserLevel(me?.points || 0);
   const progress = calculateProgress(me?.points || 0, userLevel);
   const nextLevel = USER_LEVELS.find((level) => level.level > userLevel.level);
-  const [headerImage, setHeaderImage] = useState<string>(
-    me?.headerImageUrl || fallBackProfileImage
-  );
-  const [profileImage, setProfileImage] = useState<string>(
-    me?.profileImageUrl || fallBackProfileImage
-  );
 
-  useEffect(() => {
-    const fetchMe = async () => {
-      if (!user.id) return;
-      try {
-        setIsLoading(true);
-        const profile = await meService.getMe(user.id);
-        const events = await getHostEvents(user.id);
-        setMe(profile);
-        setPoints(profile.points);
-        setHeaderImage(profile.headerImageUrl || fallBackProfileImage);
-        setProfileImage(profile.profileImageUrl || fallBackProfileImage);
-      } catch (error) {
-        console.error("Error loading profile:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    const fetchEvents = async () => {
-      const events = await getHostEvents(user.id);
-      setEvents(events);
-    };
-    fetchMe();
-    fetchEvents();
+  // Daten-Fetching
+  const fetchProfileData = useCallback(async () => {
+    if (!user.id) return;
+    try {
+      setIsLoading(true);
+      const profile = await meService.getMe(user.id);
+      setMe((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(profile) ? profile : prev
+      );
+      setPoints((prev) => (prev !== profile.points ? profile.points : prev));
+      setHeaderImage((prev) =>
+        prev !== (profile.headerImageUrl || fallBackProfileImage)
+          ? profile.headerImageUrl || fallBackProfileImage
+          : prev
+      );
+      setProfileImage((prev) =>
+        prev !== (profile.profileImageUrl || fallBackProfileImage)
+          ? profile.profileImageUrl || fallBackProfileImage
+          : prev
+      );
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [user.id]);
 
-  const handleChange = (field: keyof Profile, value: string) => {
-    if (!me) return;
-    setChangedFields((prev) => ({ ...prev, [field]: value }));
-  };
+  useEffect(() => {
+    fetchProfileData();
+  }, [fetchProfileData]);
 
-  const handleUpdate = async () => {
+  // Event Handler
+  const handleChange = useCallback(
+    (field: keyof Profile, value: string) => {
+      if (!me) return;
+      setChangedFields((prev) => ({ ...prev, [field]: value }));
+    },
+    [me]
+  );
+
+  const handleUpdate = useCallback(async () => {
     if (!me || !user.id || Object.keys(changedFields).length === 0) return;
+
     try {
       setIsUpdating(true);
       const updatedProfile = await meService.updateProfile(
@@ -71,88 +81,80 @@ export const Me: React.FC = () => {
       setMe((prev) => (prev ? { ...prev, ...updatedProfile } : undefined));
       setChangedFields({});
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Fehler beim Aktualisieren des Profils:", error);
     } finally {
       setIsUpdating(false);
     }
-  };
+  }, [me, user.id, changedFields]);
 
-  const handleImageUpload = async (type: "header" | "profile", file: File) => {
-    if (!user.id) return;
+  const handleImageUpload = useCallback(
+    async (type: "header" | "profile", file: File) => {
+      if (!user.id) return;
 
-    try {
-      const response =
-        type === "header"
-          ? await meService.updateHeaderImage(user.id, file)
-          : await meService.updateProfileImage(user.id, file);
+      try {
+        const response =
+          type === "header"
+            ? await meService.updateHeaderImage(user.id, file)
+            : await meService.updateProfileImage(user.id, file);
 
-      if (response.ok) {
-        const data = await response.json();
-        if (type === "header") {
-          setHeaderImage(data.headerImageUrl);
+        if (response.ok) {
+          const data = await response.json();
+          const imageUrl =
+            type === "header" ? data.headerImageUrl : data.profileImageUrl;
+
+          if (type === "header") {
+            setHeaderImage(imageUrl);
+          } else {
+            setProfileImage(imageUrl);
+          }
+
           setMe((prev) =>
-            prev ? { ...prev, headerImageUrl: data.headerImageUrl } : undefined
+            prev ? { ...prev, [`${type}ImageUrl`]: imageUrl } : undefined
           );
         } else {
-          setProfileImage(data.profileImageUrl);
-          setMe((prev) =>
-            prev
-              ? { ...prev, profileImageUrl: data.profileImageUrl }
-              : undefined
-          );
+          throw new Error(`Fehler beim Aktualisieren des ${type}-Bildes`);
         }
-      } else {
-        throw new Error(`Failed to update ${type} image`);
+      } catch (error) {
+        console.error(`Fehler beim Aktualisieren des ${type}-Bildes:`, error);
       }
-    } catch (error) {
-      console.error(
-        `Error updating ${type === "header" ? "header" : "profile"} image:`,
-        error
-      );
-    }
-  };
+    },
+    [user.id]
+  );
 
-  const createFileInput = (type: "header" | "profile") => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        await handleImageUpload(type, file);
-      }
-      fileInput.remove();
-    };
-    fileInput.click();
-  };
+  const createFileInput = useCallback(
+    (type: "header" | "profile") => {
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/*";
+      fileInput.onchange = async (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) {
+          await handleImageUpload(type, file);
+        }
+        fileInput.remove();
+      };
+      fileInput.click();
+    },
+    [handleImageUpload]
+  );
 
+  // Hilfsfunktionen
+  const formatDate = useCallback((date: Date) => {
+    return date.toLocaleDateString("de-DE", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }, []);
+
+  // Loading und Error States
   if (isLoading) {
-    return <div className="me-container">Loading...</div>;
+    return <div className="me-container">Laden...</div>;
   }
 
   if (!me) {
     return <div className="me-container">Profile not found</div>;
   }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  const profileFields: Array<{
-    label: string;
-    field: keyof Profile;
-    type?: string;
-  }> = [
-    { label: "Username", field: "username" },
-    { label: "Email", field: "email" },
-    { label: "Bio", field: "bio" },
-    { label: "Links", field: "links" },
-  ];
 
   return (
     <div>
@@ -221,31 +223,56 @@ export const Me: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="profile-info">
-            {profileFields.map(({ label, field, type = "text" }) => (
-              <div className="info-group" key={field}>
-                <div className="info-label">{label}</div>
-                <input
-                  className="info-value"
-                  type={type}
-                  placeholder={me[field] || ""}
-                  onChange={(e) => handleChange(field, e.target.value)}
-                />
-              </div>
-            ))}
-          </div>
           <button
             className="preview-button"
             onClick={() => navigate(`/profile/${me.id}`)}
           >
-            Preview
+            View Profile
           </button>
+          <div className="profile-info">
+            <div className="profile-info-item">
+              <div className="info-label">Username</div>
+              <input
+                className="info-value"
+                type="text"
+                placeholder={me.username}
+                onChange={(e) => handleChange("username", e.target.value)}
+              />
+            </div>
+            <div className="profile-info-item">
+              <div className="info-label">Email</div>
+              <input
+                className="info-value"
+                type="email"
+                placeholder={me.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+              />
+            </div>
+            <div className="profile-info-item">
+              <div className="info-label">Bio</div>
+              <textarea
+                className="info-value"
+                placeholder={me.bio}
+                onChange={(e) => handleChange("bio", e.target.value)}
+              />
+            </div>
+            <div className="profile-info-item">
+              <div className="info-label">Links</div>
+              <input
+                className="info-value"
+                type="text"
+                placeholder={me.links?.join(", ")}
+                onChange={(e) => handleChange("links", e.target.value)}
+              />
+            </div>
+          </div>
+
           <button className="update-button" onClick={handleUpdate}>
             {isUpdating ? "Updating..." : "Update Profile"}
           </button>
         </div>
         <div className="member-since">
-          Member since {formatDate(me.createdAt)}
+          Member since {formatDate(new Date(me.createdAt))}
         </div>
       </div>
     </div>

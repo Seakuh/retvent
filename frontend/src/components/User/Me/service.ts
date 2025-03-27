@@ -29,7 +29,7 @@ export const meService = {
   updateProfile: async (id: string, profile: Partial<Profile>) => {
     const accessToken = localStorage.getItem("access_token");
     const response = await fetch(`${API_URL}profile/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",

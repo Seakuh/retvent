@@ -173,6 +173,10 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.profile-info-item {
+  padding: 1rem;
+}
+
 .info-group {
   margin-bottom: 16px;
 }
@@ -216,7 +220,8 @@
   border-radius: 8px;
   font-weight: 600;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
