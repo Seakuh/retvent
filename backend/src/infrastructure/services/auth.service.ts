@@ -86,7 +86,7 @@ export class AuthService {
       email,
       username,
       password: hashedPassword,
-      points: 0,
+      points: 500,
     });
 
     const payload = {
