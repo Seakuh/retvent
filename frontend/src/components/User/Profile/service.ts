@@ -5,7 +5,7 @@ export const getProfile = async (userId: string) => {
     if (userId === "public") {
       return null;
     }
-    const response = await fetch(`${API_URL}users/${userId}`);
+    const response = await fetch(`${API_URL}profile/${userId}`);
     return response.json();
   } catch (error) {
     console.error("Error fetching user profile:", error);
