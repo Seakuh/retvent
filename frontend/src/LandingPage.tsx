@@ -28,7 +28,6 @@ import {
 } from "./service";
 import { ViewMode } from "./types/event";
 import { Event } from "./utils";
-
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -263,6 +262,7 @@ function LandingPage() {
                   <Hexagon size={20} />
                   <h3>Dashboard</h3>
                 </button>
+
                 <button
                   onClick={() => {
                     navigate(`/me`);

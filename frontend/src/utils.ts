@@ -240,7 +240,7 @@ export const USER_LEVELS: UserLevel[] = [
     name: "Event-Expert",
     minPoints: 100,
     color: "#22C55E",
-    description: "You've created your first event!",
+    description: "You've created your first events!",
   },
   {
     level: 2,

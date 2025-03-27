@@ -3,7 +3,7 @@ import {
   calculateUserLevel,
   USER_LEVELS,
 } from "../../utils";
-
+import { ProgressBar } from "./ProgressBar";
 export const LevelSection = ({ points }: { points: number }) => {
   // Abgeleitete Werte
   const userLevel = calculateUserLevel(points || 0);
@@ -29,15 +29,7 @@ export const LevelSection = ({ points }: { points: number }) => {
         </div>
       </div>
 
-      <div className="progress-container">
-        <div
-          className="progress-bar"
-          style={{
-            width: `${progress}%`,
-            background: `linear-gradient(90deg, ${userLevel.color} 0%, ${userLevel.color}80 100%)`,
-          }}
-        />
-      </div>
+      <ProgressBar progress={progress} userLevel={userLevel} />
 
       {nextLevel && (
         <div className="next-level">
