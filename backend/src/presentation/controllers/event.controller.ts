@@ -139,6 +139,34 @@ export class EventController {
     }
   }
 
+  @Post('v4/upload/event-image')
+  @UseGuards(UploadGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadEventImageV4(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() body: { location: string },
+    @Request() req,
+  ) {
+    try {
+      // Location-String zu Objekt parsen
+      const locationData = JSON.parse(body.location);
+
+      // Koordinaten extrahieren
+      const lonFromBodyCoordinates = locationData.coordinates[0];
+      const latFromBodyCoordinates = locationData.coordinates[1];
+
+      return this.eventService.processEventImageUploadV4(
+        image,
+        lonFromBodyCoordinates,
+        latFromBodyCoordinates,
+        req.user.id,
+      );
+    } catch (error) {
+      console.error('V4 Upload - Error:', error);
+      throw error;
+    }
+  }
+
   @Get('search')
   async searchEvents(
     @Query('query') query?: string,
