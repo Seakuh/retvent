@@ -77,7 +77,7 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({
             </div>
           </div>
           <div className="text-white text-xl font-bold mb-4">
-            Event successfully uploaded!
+            Event successfully uploaded! +20 Points
           </div>
           <div className="text-white/80">You will be redirected shortly...</div>
         </div>
