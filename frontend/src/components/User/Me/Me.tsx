@@ -76,13 +76,23 @@ export const Me: React.FC = () => {
           ? await meService.updateHeaderImage(user.id, file)
           : await meService.updateProfileImage(user.id, file);
 
-      if (response.success && me) {
-        const responseJson = await response.json();
+      if (response.ok) {
+        const data = await response.json();
         if (type === "header") {
-          setHeaderImage(responseJson.headerImageUrl);
+          setHeaderImage(data.headerImageUrl);
+          setMe((prev) =>
+            prev ? { ...prev, headerImageUrl: data.headerImageUrl } : undefined
+          );
         } else {
-          setProfileImage(responseJson.profileImageUrl);
+          setProfileImage(data.profileImageUrl);
+          setMe((prev) =>
+            prev
+              ? { ...prev, profileImageUrl: data.profileImageUrl }
+              : undefined
+          );
         }
+      } else {
+        throw new Error(`Failed to update ${type} image`);
       }
     } catch (error) {
       console.error(
@@ -131,7 +141,7 @@ export const Me: React.FC = () => {
     { label: "Username", field: "username" },
     { label: "Email", field: "email" },
     { label: "Bio", field: "bio" },
-    { label: "Gallery", field: "gallery" },
+    { label: "Links", field: "links" },
   ];
 
   return (

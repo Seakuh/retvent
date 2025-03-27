@@ -46,11 +46,17 @@ export const meService = {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
       },
       body: formData,
+      credentials: "include",
     });
-    console.log(response);
-    return response.json();
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response;
   },
   updateHeaderImage: async (id: string, file: File) => {
     const accessToken = localStorage.getItem("access_token");
@@ -61,9 +67,16 @@ export const meService = {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
       },
       body: formData,
+      credentials: "include",
     });
-    return response.json();
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response;
   },
 };
