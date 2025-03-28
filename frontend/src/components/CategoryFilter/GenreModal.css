@@ -39,6 +39,11 @@
     cursor: pointer;
     transition: background 0.3s, color 0.3s;
   }
+
+  .genre-bubble:hover {
+    background: var(--color-neon-blue);
+    color: white;
+  }
   
   .genre-bubble.selected {
     background: var(--color-neon-blue);
