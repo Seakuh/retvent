@@ -1,19 +1,17 @@
-import { useState } from "react";
 import { categories } from "../../utils";
 import "./GenreModal.css";
 
 interface GenreModalProps {
-  showGenreModal: boolean;
   genres: string[];
+  onGenreSelect: (genre: string) => void;
+  selectedGenre: string | null;
 }
 
-export const GenreModal = ({ showGenreModal, genres }: GenreModalProps) => {
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-
-  const onGenreBubbleClicked = (genre: string) => {
-    setSelectedGenre(genre);
-  };
-
+export const GenreModal = ({
+  genres,
+  onGenreSelect,
+  selectedGenre,
+}: GenreModalProps) => {
   const categoryEmojiMap = categories.reduce(
     (acc, category) => ({
       ...acc,
@@ -21,8 +19,6 @@ export const GenreModal = ({ showGenreModal, genres }: GenreModalProps) => {
     }),
     {} as Record<string, string>
   );
-
-  if (!showGenreModal) return null;
 
   return (
     <div className="genre-modal-overlay">
@@ -34,10 +30,9 @@ export const GenreModal = ({ showGenreModal, genres }: GenreModalProps) => {
               className={`genre-bubble ${
                 selectedGenre === genre ? "selected" : ""
               }`}
-              onClick={() => onGenreBubbleClicked(genre)}
+              onClick={() => onGenreSelect(genre)}
             >
-              {categoryEmojiMap[genre] || "❓"}
-              {genre}
+              {categoryEmojiMap[genre] || "❓"} {genre}
             </li>
           ))}
         </ul>

@@ -3,15 +3,6 @@ import { CACHE_DURATION_3 } from "../../utils";
 import "./CategoryFilter.css";
 import { GenreModal } from "./GenreModal";
 
-// Zuerst erstellen wir ein Mapping-Objekt aus dem vordefinierten categories Array
-const categoryEmojiMap = categories.reduce(
-  (acc, category) => ({
-    ...acc,
-    [category.name]: category.emoji,
-  }),
-  {} as Record<string, string>
-);
-
 interface CategoryFilterProps {
   selectedCategory: string | null;
   onCategoryChange: (category: string | null) => void;
@@ -124,6 +115,11 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     setShowGenreModal(!showGenreModal);
   };
 
+  const onGenreSelect = (genre: string) => {
+    onCategoryChange(genre);
+    setShowGenreModal(false);
+  };
+
   return (
     <div className="category-filter" ref={containerRef}>
       <button
@@ -162,7 +158,11 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         </button>
       ))} */}
       {showGenreModal && (
-        <GenreModal showGenreModal={showGenreModal} genres={categories} />
+        <GenreModal
+          genres={categories}
+          onGenreSelect={onGenreSelect}
+          selectedGenre={selectedCategory}
+        />
       )}
     </div>
   );
