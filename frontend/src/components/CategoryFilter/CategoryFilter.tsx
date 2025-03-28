@@ -140,7 +140,9 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       </button>
       <button
         className={`category-button ${
-          selectedCategory === "Genre" ? "active" : ""
+          selectedCategory !== "Home" && selectedCategory !== "All"
+            ? "active"
+            : ""
         }`}
         onClick={toggleGenreModal}
       >
