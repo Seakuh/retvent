@@ -27,6 +27,12 @@ export const EventDetail: React.FC = () => {
     window.scrollTo(0, 0); // Falls die Seite nicht ganz oben startet
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (event) {
+      document.title = `${event.title} | EventScanner`;
+    }
+  }, [event]);
+
   const handleAddToCalendar = () => {
     if (!event?.startDate) return;
 
@@ -73,14 +79,6 @@ export const EventDetail: React.FC = () => {
     window.open(googleCalendarUrl, "_blank");
   };
 
-  if (loading) {
-    return <EventDetailSkeleton />;
-  }
-
-  if (error || !event) {
-    return <EventDetailError message={error?.message} />;
-  }
-
   function handleFavoriteClick(): void {
     if (!eventId) return;
 
@@ -92,34 +90,68 @@ export const EventDetail: React.FC = () => {
   }
 
   const HelmetMeta = () => {
+    if (!event) return null;
+
+    const formattedDate = event.startDate
+      ? new Date(event.startDate).toLocaleDateString("de-DE")
+      : "";
+    const description = `${event.title} - ${formattedDate} in ${
+      event.city || "TBA"
+    }. ${event.description || ""}`;
+
     return (
       <Helmet>
         <title>{event.title} | EventScanner</title>
-        <meta name="description" content={event.description} />
+        <meta name="description" content={description} />
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#000000" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
         <meta property="og:title" content={event.title} />
-        <meta property="og:description" content={event.description} />
+        <meta property="og:description" content={description} />
         <meta property="og:image" content={event.imageUrl} />
         <meta
           property="og:url"
           content={`https://event-scanner.com/event/${eventId}`}
         />
-        <meta property="og:type" content="website" />
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content={event.title} />
-        <meta property="twitter:description" content={event.description} />
-        <meta property="twitter:image" content={event.imageUrl} />
-        <meta property="og:image:alt" content={event.title} />
+        <meta property="og:site_name" content="EventScanner" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@eventscanner" />
+        <meta name="twitter:title" content={event.title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={event.imageUrl} />
         <meta
-          property="twitter:url"
+          name="twitter:url"
           content={`https://event-scanner.com/event/${eventId}`}
+        />
+
+        {/* Additional Meta Tags */}
+        <meta name="author" content="EventScanner" />
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        <link
+          rel="canonical"
+          href={`https://event-scanner.com/event/${eventId}`}
         />
       </Helmet>
     );
   };
 
+  if (loading) {
+    return <EventDetailSkeleton />;
+  }
+
+  if (error || !event) {
+    return <EventDetailError message={error?.message} />;
+  }
+
   return (
     <div>
-      {event && <HelmetMeta />}
+      <HelmetMeta />
       <div
         className="event-detail"
         style={
