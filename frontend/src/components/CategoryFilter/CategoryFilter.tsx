@@ -116,7 +116,11 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   };
 
   const onGenreSelect = (genre: string) => {
-    onCategoryChange(genre);
+    if (genre == selectedCategory) {
+      onCategoryChange("All");
+    } else {
+      onCategoryChange(genre);
+    }
     setShowGenreModal(false);
   };
 
