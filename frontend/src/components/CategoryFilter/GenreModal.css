@@ -1,0 +1,47 @@
+  
+  .genre-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.4); /* dark overlay with blur */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .genre-modal {
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+  }
+  
+  .genre-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+  }
+  
+  .genre-bubble {
+    background: white;
+    color: black;
+    border: 2px solid var(--color-neon-blue);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+  }
+  
+  .genre-bubble.selected {
+    background: var(--color-neon-blue);
+    color: white;
+  }
+  

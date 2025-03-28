@@ -1,89 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CACHE_DURATION_3 } from "../../utils";
 import "./CategoryFilter.css";
-
-const categories = [
-  { name: "Music", emoji: "🎵" },
-  { name: "Concert", emoji: "🎤" },
-  { name: "Exhibition", emoji: "🖼️" },
-  { name: "Workshop", emoji: "🔧" },
-  { name: "Konzert", emoji: "🎤" },
-  { name: "Kunst", emoji: "🎨" },
-  { name: "Event", emoji: "📅" },
-  { name: "Party", emoji: "🎉" },
-  { name: "Sports", emoji: "⚽" },
-  { name: "Art", emoji: "🎨" },
-  { name: "Food", emoji: "🍔" },
-  { name: "Gaming", emoji: "🎮" },
-  { name: "Tech", emoji: "💻" },
-  { name: "Education", emoji: "📚" },
-  { name: "Festival", emoji: "🎪" },
-  { name: "Fitness", emoji: "💪" },
-  { name: "Travel", emoji: "✈️" },
-  { name: "Nature", emoji: "🌿" },
-  { name: "Photography", emoji: "📸" },
-  { name: "Fashion", emoji: "👗" },
-  { name: "Books", emoji: "📖" },
-  { name: "Movies", emoji: "🎬" },
-  { name: "Science", emoji: "🔬" },
-  { name: "Nightlife", emoji: "🌃" },
-  { name: "Finance", emoji: "💰" },
-  { name: "Health", emoji: "🏥" },
-  { name: "DIY & Crafting", emoji: "✂️" },
-  { name: "Animals", emoji: "🐾" },
-  { name: "Spirituality", emoji: "🧘" },
-  { name: "Comedy", emoji: "😂" },
-  { name: "History", emoji: "🏛️" },
-  { name: "Startups", emoji: "🚀" },
-  { name: "Coding", emoji: "🖥️" },
-  { name: "Politics", emoji: "🗳️" },
-  { name: "Relationships", emoji: "💑" },
-  { name: "Mental Health", emoji: "🧠" },
-  { name: "Automotive", emoji: "🚗" },
-  { name: "Luxury", emoji: "💎" },
-  { name: "Minimalism", emoji: "🏡" },
-  { name: "Environment", emoji: "🌍" },
-  { name: "Parenting", emoji: "👶" },
-  { name: "Space", emoji: "🚀" },
-  { name: "Esports", emoji: "🎮🏆" },
-  { name: "Film", emoji: "🎬" },
-  { name: "Demonstration", emoji: "👩‍🎤" },
-  { name: "Community", emoji: "👥" },
-  { name: "Healthcare", emoji: "🏥" },
-  { name: "Science", emoji: "🔬" },
-  { name: "Parade", emoji: "👯‍♀️" },
-  { name: "Fashion Show", emoji: "👗" },
-  { name: "Art Show", emoji: "🖼️" },
-  { name: "Food Festival", emoji: "🍔" },
-  { name: "Music Festival", emoji: "🎵" },
-  { name: "Film Festival", emoji: "🎬" },
-  { name: "Comedy Festival", emoji: "😂" },
-  { name: "Market", emoji: "🛍️" },
-  { name: "Festival", emoji: "🎪" },
-  { name: "Party", emoji: "🎉" },
-  { name: "Sports", emoji: "⚽" },
-  { name: "Art", emoji: "🎨" },
-  { name: "Food", emoji: "🍔" },
-  { name: "Gaming", emoji: "🎮" },
-  { name: "Theater", emoji: "🎭" },
-  { name: "Dance", emoji: "💃" },
-  { name: "Fashion Show", emoji: "👗" },
-  { name: "Art Show", emoji: "🖼️" },
-  { name: "Food Festival", emoji: "🍔" },
-  { name: "Music Festival", emoji: "🎵" },
-  { name: "Service", emoji: "💼" },
-  { name: "Workshop", emoji: "🔧" },
-  { name: "Konzert", emoji: "🎤" },
-  { name: "Kunst", emoji: "🎨" },
-  { name: "Party", emoji: "🎉" },
-  { name: "Rave", emoji: "💃" },
-  { name: "Club", emoji: "🎉" },
-  { name: "Bar", emoji: "🍸" },
-  { name: "Pub", emoji: "🍻" },
-  { name: "Club", emoji: "🎉" },
-  { name: "Bar", emoji: "🍸" },
-  { name: "Pub", emoji: "🍻" },
-];
+import { GenreModal } from "./GenreModal";
 
 // Zuerst erstellen wir ein Mapping-Objekt aus dem vordefinierten categories Array
 const categoryEmojiMap = categories.reduce(
@@ -113,6 +31,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   const [categories, setCategories] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [showGenreModal, setShowGenreModal] = useState(false);
 
   useEffect(() => {
     const fetchAndCacheCategories = async () => {
@@ -201,6 +120,10 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     };
   }, []);
 
+  const toggleGenreModal = () => {
+    setShowGenreModal(!showGenreModal);
+  };
+
   return (
     <div className="category-filter" ref={containerRef}>
       <button
@@ -209,7 +132,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }`}
         onClick={() => onCategoryChange("Home")}
       >
-        🏠Home
+        Home
       </button>
       <button
         className={`category-button ${
@@ -217,9 +140,17 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }`}
         onClick={() => onCategoryChange("All")}
       >
-        🌟 All
+        All
       </button>
-      {categories.map((category) => (
+      <button
+        className={`category-button ${
+          selectedCategory === "Genre" ? "active" : ""
+        }`}
+        onClick={toggleGenreModal}
+      >
+        Genre
+      </button>
+      {/* {categories.map((category) => (
         <button
           key={category}
           className={`category-button ${
@@ -227,9 +158,12 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
           }`}
           onClick={() => onCategoryChange(category)}
         >
-          {categoryEmojiMap[category] || "❓"} {category}
+          {category}
         </button>
-      ))}
+      ))} */}
+      {showGenreModal && (
+        <GenreModal showGenreModal={showGenreModal} genres={categories} />
+      )}
     </div>
   );
 };
