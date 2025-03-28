@@ -20,8 +20,14 @@ export const GenreModal = ({
     {} as Record<string, string>
   );
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onGenreSelect(selectedGenre || "");
+    }
+  };
+
   return (
-    <div className="genre-modal-overlay">
+    <div className="genre-modal-overlay" onClick={handleOverlayClick}>
       <div className="genre-modal">
         <ul className="genre-list">
           {genres.map((genre) => (
