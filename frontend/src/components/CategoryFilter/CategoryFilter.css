@@ -1,7 +1,6 @@
 .category-filter {
   display: flex;
   gap: 0.5rem;
-  padding: 1rem 0rem;
   overflow-x: auto;
   overflow-y: hidden;
   cursor: grab;
