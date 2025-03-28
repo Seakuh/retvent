@@ -1,24 +1,42 @@
 import { Event } from "../../utils";
 
-export const handleWhatsAppShare = async (eventToShare: Event) => {
-  console.log("handleWhatsAppShare", eventToShare);
+export const shareEvent = async (eventToShare: Event) => {
   if (!eventToShare) return;
-  const message = `
-  *${eventToShare.title}*\n
-  📍 ${eventToShare.city || "N/A"}
-  📅 ${formatDate(eventToShare.startDate?.toString() || "")}
-  🕒 ${eventToShare.startTime?.toString() || ""}\n
-  ${`https://event-scanner.com/event/${eventToShare.id}`}`;
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, "_blank");
-};
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString("de-DE", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+  const formattedDate = eventToShare.startDate
+    ? new Date(eventToShare.startDate).toLocaleDateString("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    : "";
+
+  const shareData = {
+    title: eventToShare.title,
+    text: `${eventToShare.title}\n\n📍 ${
+      eventToShare.city || "N/A"
+    }\n📅 ${formattedDate}\n🕒 ${eventToShare.startTime || ""}\n\n`,
+    url: `https://event-scanner.com/event/${eventToShare.id}`,
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      // Fallback für Browser, die die Web Share API nicht unterstützen
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+        shareData.text + shareData.url
+      )}`;
+      window.open(whatsappUrl, "_blank");
+    }
+  } catch (error) {
+    console.error("Error sharing event:", error);
+    // Fallback auf WhatsApp
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+      shareData.text + shareData.url
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  }
 };
 
 export const handleAddToCalendar = (event: {

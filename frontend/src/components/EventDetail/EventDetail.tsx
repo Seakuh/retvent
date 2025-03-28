@@ -14,7 +14,7 @@ import { EventHero } from "./components/EventHero";
 import { EventLineup } from "./components/EventLineup";
 import GenreSlider from "./components/GenreSlider/GenreSlider";
 import "./EventDetail.css";
-import { handleWhatsAppShare } from "./service";
+import { shareEvent } from "./service";
 
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
@@ -164,14 +164,14 @@ export const EventDetail: React.FC = () => {
           <button
             onClick={handleAddToCalendar}
             className="share-button"
-            title="Zum Kalender hinzufügen"
+            title="Add to Calendar"
           >
             <CalendarPlus className="h-5 w-5" />
           </button>
           <button
-            onClick={() => handleWhatsAppShare(event)}
+            onClick={() => shareEvent(event)}
             className="share-button"
-            title="Via WhatsApp teilen"
+            title="Share Event"
           >
             <Share2 className="h-5 w-5" />
           </button>
@@ -182,8 +182,8 @@ export const EventDetail: React.FC = () => {
             onClick={handleFavoriteClick}
             title={
               isFavorite(eventId || "")
-                ? "Von Favoriten entfernen"
-                : "Zu Favoriten hinzufügen"
+                ? "Remove from Favorites"
+                : "Add to Favorites"
             }
           >
             <Heart
