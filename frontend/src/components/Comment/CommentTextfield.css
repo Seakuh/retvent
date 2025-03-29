@@ -1,9 +1,10 @@
 .comment-textfield-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
   color: white;
   margin-bottom: 10px;
+  width: 100%;
 }
 
 .comment-textfield {
@@ -17,4 +18,23 @@
 .comment-textfield:focus {
   border: 1px solid #ccc;
   border-color: white;
+}
+
+.comment-textfield-container-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.comment-textfield-button {
+  color: var(--color-neon-blue);
+  padding: 0.5rem;
+  margin-left: -3rem;
+
+}
+
+.comment-textfield-container-wrapper:hover {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
