@@ -14,7 +14,9 @@ export class CommentService {
     comment: CreateCommentDto,
     userId: string,
   ) {
-    await this.userService.addUserPoints(userId, 5);
+    if (userId !== 'public') {
+      await this.userService.addUserPoints(userId, 5);
+    }
     return this.commentRepository.createCommentToEvent(
       eventId,
       comment,
