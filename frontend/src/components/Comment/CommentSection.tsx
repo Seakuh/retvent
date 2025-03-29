@@ -31,6 +31,14 @@ export const CommentSection = ({ eventId }: { eventId: string }) => {
       const commentTree = buildCommentTree(fetchedComments);
       setComments(commentTree);
       setCommentText("");
+      if (comment.parentId == null) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: "smooth", // oder "auto"
+          });
+        }, 150);
+      }
     }
   };
 
