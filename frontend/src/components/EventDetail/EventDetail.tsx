@@ -12,7 +12,7 @@ import { EventDetailError } from "./components/EventDetailError";
 import { EventDetailSkeleton } from "./components/EventDetailSkeleton";
 import { EventHero } from "./components/EventHero";
 import { EventLineup } from "./components/EventLineup";
-import GenreSlider from "./components/GenreSlider/GenreSlider";
+import { EventTags } from "./components/EventTags";
 import "./EventDetail.css";
 import { shareEvent } from "./service";
 
@@ -215,9 +215,6 @@ export const EventDetail: React.FC = () => {
         >
           ← Back
         </button>
-        {event.tags && event.tags.length > 0 && (
-          <GenreSlider genres={event.tags} />
-        )}
 
         <div className="event-content">
           <div className="event-important-info-contain">
@@ -268,6 +265,9 @@ export const EventDetail: React.FC = () => {
             // youtube={event.socialMediaLinks?.youtube}
             // soundCloud={event.socialMediaLinks?.soundCloud}
           /> */}
+          {event.tags && event.tags.length > 0 && (
+            <EventTags tags={event.tags} />
+          )}
         </div>
 
         {showImageModal && (
