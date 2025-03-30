@@ -228,8 +228,9 @@ export const EventDetail: React.FC = () => {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-              ></a>
-              <h1 className="event-title-detail">{event.title}</h1>
+              >
+                <h1 className="event-title-detail">{event.title}</h1>
+              </a>
             </div>
             <EventBasicInfo
               startDate={event.startDate?.toString() || ""}
