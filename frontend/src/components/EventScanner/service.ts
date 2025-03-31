@@ -23,15 +23,11 @@ export const uploadEventImage = async (
       : `${API_URL}events/upload/event-image`;
 
     const token = localStorage.getItem("access_token");
-    console.log("Gespeicherter Token:", token);
 
     const headers: HeadersInit = {};
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }
-
-    console.log("Endpoint:", endpoint);
-    console.log("Headers:", headers);
 
     const response = await fetch(endpoint, {
       method: "POST",
@@ -46,7 +42,6 @@ export const uploadEventImage = async (
     }
 
     const data = await response.json();
-    console.log("Upload erfolgreich:", data);
 
     if (data._id) {
       saveEventToLocalStorage(data._id);

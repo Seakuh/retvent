@@ -33,7 +33,7 @@ export const LikedEvents: React.FC = () => {
             },
           }
         );
-        console.log(response.data);
+        response.data;
         setEvents(response.data);
       } catch (err) {
         setError("Fehler beim Laden der favorisierten Events");

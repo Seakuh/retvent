@@ -22,7 +22,6 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
   address,
   handleAddToCalendar,
 }) => {
-  console.log(city);
   return (
     <div className="event-basic-info">
       {/* <h2 className="section-headline">Date & Time</h2> */}

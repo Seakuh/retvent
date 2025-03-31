@@ -17,7 +17,6 @@ export const fetchNewEvents = async () => {
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}events/latest?limit=40`
   );
-  console.log("response", response);
   return response.json();
 };
 
@@ -28,7 +27,6 @@ export const fetchFavoriteEvents = async (ids: string[]) => {
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}events/byIds?ids=${ids.join(",")}`
   );
-  console.log("response", response);
   return response.json();
 };
 
@@ -36,7 +34,6 @@ export const fetchAllEvents = async () => {
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}events/latest?limit=30`
   );
-  console.log("response", response);
   return response.json();
 };
 

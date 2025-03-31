@@ -8,7 +8,6 @@ export const getProfile = async (userId: string) => {
     const response = await fetch(`${API_URL}profile/${userId}`);
 
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error fetching user profile:", error);
@@ -28,7 +27,6 @@ export const getUserEvents = async (userId: string) => {
 };
 
 export const shareProfile = async (userId: string) => {
-  console.log("userId", userId);
   if (!userId) return;
   try {
     const shareData = {

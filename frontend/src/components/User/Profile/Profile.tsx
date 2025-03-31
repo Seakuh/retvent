@@ -98,24 +98,48 @@ export const Profile: React.FC = () => {
     return events.reduce((acc, event) => acc + (event.views || 0), 0);
   };
 
-  return (
-    <div className="profile-wrapper">
+  const ProfileMeta = () => {
+    if (!user) return null;
+
+    return (
       <Helmet>
         <title>{`${user.username || "Profile"} | EventScanner`}</title>
         <meta
           name="description"
-          content={`${user.username}'s profile on EventScanner`}
+          content={`${user.username}'s profile on EventScanner - View their events and activity`}
         />
         <meta property="og:title" content={`${user.username} | EventScanner`} />
         <meta
           property="og:description"
-          content={`${user.username}'s profile on EventScanner`}
+          content={`${user.username}'s profile on EventScanner - View their events and activity`}
         />
-        <meta property="og:image" content={user.profilePictureUrl} />
+        <meta
+          property="og:image"
+          content={user.profilePictureUrl || defaultProfileImage}
+        />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="profile" />
         <meta property="og:site_name" content="EventScanner" />
+        <meta name="twitter:card" content="summary" />
+        <meta
+          name="twitter:title"
+          content={`${user.username} | EventScanner`}
+        />
+        <meta
+          name="twitter:description"
+          content={`${user.username}'s profile on EventScanner`}
+        />
+        <meta
+          name="twitter:image"
+          content={user.profilePictureUrl || defaultProfileImage}
+        />
       </Helmet>
+    );
+  };
+
+  return (
+    <div className="profile-wrapper">
+      <ProfileMeta />
 
       <button className="back-button" onClick={handleBack}>
         ← Back

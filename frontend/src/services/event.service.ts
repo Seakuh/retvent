@@ -39,8 +39,6 @@ export class EventService {
         }
       });
 
-      console.log(this.getHeaders(true));
-
       const response = await fetch(`${this.baseUrl}/create`, {
         method: "POST",
         headers: this.getHeaders(true),
@@ -77,7 +75,6 @@ export class EventService {
   }
 
   async updateEvent(eventId: string, event: Event): Promise<Event> {
-    console.log(event);
     try {
       const response = await fetch(`${this.baseUrl}/${eventId}`, {
         method: "PUT",

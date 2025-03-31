@@ -13,7 +13,6 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
-import { EventList } from "./components/EventList/EventList";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
 import { EventScanner } from "./components/EventScanner/Eventscanner";
@@ -389,7 +388,7 @@ function LandingPage() {
             </div>
           )}
 
-          {showUploads && (
+          {/* {showUploads && (
             <div className="mt-4">
               <h2 className="text-xl font-bold text-white">
                 Meine hochgeladenen Events
@@ -409,7 +408,7 @@ function LandingPage() {
                 />
               )}
             </div>
-          )}
+          )} */}
         </main>
         <SearchModal
           isOpen={isSearchOpen}

@@ -25,8 +25,6 @@ export const fetchComments = async (eventId: string) => {
 };
 
 export const createCommentToEvent = async (comment: Comment) => {
-  console.log("createCommentToEvent", comment);
-
   return await fetch(`${API_URL}comments/event/${comment.eventId}`, {
     method: "POST",
     headers: getHeaders(),

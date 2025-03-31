@@ -21,7 +21,6 @@ export const useEvent = (eventId?: string) => {
         );
         setEvent(response.data);
         if (response.data.host) {
-          console.log(response.data.host);
           setHost(response.data.host);
         }
       } catch (err) {
@@ -34,7 +33,6 @@ export const useEvent = (eventId?: string) => {
     };
 
     fetchEvent();
-    console.log(host);
   }, [eventId]);
 
   return { event, loading, error, host };

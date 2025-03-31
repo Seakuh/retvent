@@ -63,8 +63,6 @@ export const EventPage = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        console.log("latitude", latitude);
-        console.log("longitude", longitude);
         setUserLocation([latitude, longitude]);
         if (map) {
           map.setView([latitude, longitude]);
