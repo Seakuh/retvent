@@ -1,5 +1,5 @@
 import { Share2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../../../Footer/Footer";
@@ -67,13 +67,16 @@ export const Profile: React.FC = () => {
     };
   }, [userId]);
 
-  const handleBack = () => {
-    if (window.history.length > 1) {
+  const handleBack = useCallback(() => {
+    const previousPath = document.referrer;
+    const isFromOurSite = previousPath.includes(window.location.hostname);
+
+    if (isFromOurSite) {
       navigate(-1);
     } else {
       navigate("/");
     }
-  };
+  }, [navigate]);
 
   if (isLoading) {
     return (

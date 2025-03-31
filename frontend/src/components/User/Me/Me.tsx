@@ -163,6 +163,17 @@ export const Me: React.FC = () => {
     });
   }, []);
 
+  const handleBack = useCallback(() => {
+    const previousPath = document.referrer;
+    const isFromOurSite = previousPath.includes(window.location.hostname);
+
+    if (isFromOurSite) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
+
   // Loading und Error States
   if (isLoading) {
     return <div className="me-container">Laden...</div>;
@@ -174,16 +185,7 @@ export const Me: React.FC = () => {
 
   return (
     <div>
-      <button
-        className="back-button"
-        onClick={() => {
-          if (window.history.length > 1) {
-            navigate(-1);
-          } else {
-            navigate("/");
-          }
-        }}
-      >
+      <button className="back-button" onClick={handleBack}>
         ← Back
       </button>
       <div className="me-container">

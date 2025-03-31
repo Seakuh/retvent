@@ -1,5 +1,5 @@
 import { CalendarPlus, Heart, Share2 } from "lucide-react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -88,6 +88,17 @@ export const EventDetail: React.FC = () => {
       addFavorite(eventId);
     }
   }
+
+  const handleBack = useCallback(() => {
+    const previousPath = document.referrer;
+    const isFromOurSite = previousPath.includes(window.location.hostname);
+
+    if (isFromOurSite) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const HelmetMeta = () => {
     if (!event) return null;
@@ -204,20 +215,7 @@ export const EventDetail: React.FC = () => {
           commentCount={event.commentCount ?? 0}
           city={event.city ?? ""}
         /> */}
-        <button
-          className="back-button"
-          onClick={() => {
-            if (window.history.length > 1) {
-              navigate(-1);
-            } else {
-              if (event.category) {
-                navigate(`/category/${event.category}`);
-              } else {
-                navigate("/");
-              }
-            }
-          }}
-        >
+        <button className="back-button" onClick={handleBack}>
           ← Back
         </button>
 
