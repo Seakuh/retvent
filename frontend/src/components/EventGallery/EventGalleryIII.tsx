@@ -72,6 +72,14 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
 
   const groupedEvents = sortAndGroupEvents(events);
 
+  const Helmet = () => {
+    return (
+      <Helmet>
+        <title>Event Gallery</title>
+      </Helmet>
+    );
+  };
+
   return (
     <div className="event-gallery-container">
       {/* <h2 className="section-title">{title}</h2> */}
@@ -88,7 +96,7 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
               <>
                 Upcoming{" "}
                 <span className="days-until">
-                  in {(sectionData as { days: number }).days} days
+                  next in {(sectionData as { days: number }).days} days
                 </span>
               </>
             )}
