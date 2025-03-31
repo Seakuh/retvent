@@ -8,7 +8,6 @@ import {
   type Profile as ProfileType,
 } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
-import { ActionComponent } from "./ActionComponent";
 import "./Profile.css";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileInfo } from "./ProfileInfo";
@@ -146,11 +145,11 @@ export const Profile: React.FC = () => {
                 viewsCount={countEventViews()}
               />
             </div>
-            <ActionComponent
+            {/* <ActionComponent
               isFollowingWIP={false}
               onFollow={() => {}}
               onMessage={() => {}}
-            />
+            /> */}
           </div>
         </div>
       </div>
