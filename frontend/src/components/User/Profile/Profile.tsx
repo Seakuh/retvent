@@ -100,6 +100,7 @@ export const Profile: React.FC = () => {
 
   const ProfileMeta = () => {
     if (!user) return null;
+    const userImageString = user.profileImageUrl || defaultProfileImage;
 
     return (
       <Helmet>
@@ -113,10 +114,7 @@ export const Profile: React.FC = () => {
           property="og:description"
           content={`${user.username}'s profile on EventScanner - View their events and activity`}
         />
-        <meta
-          property="og:image"
-          content={user.profilePictureUrl || defaultProfileImage}
-        />
+        <meta property="og:image" content={userImageString} />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="profile" />
         <meta property="og:site_name" content="EventScanner" />
@@ -129,10 +127,7 @@ export const Profile: React.FC = () => {
           name="twitter:description"
           content={`${user.username}'s profile on EventScanner`}
         />
-        <meta
-          name="twitter:image"
-          content={user.profilePictureUrl || defaultProfileImage}
-        />
+        <meta name="twitter:image" content={userImageString} />
       </Helmet>
     );
   };

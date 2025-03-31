@@ -157,9 +157,7 @@ function LandingPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
 
-        <title>
-          EventScanner - Discover Events Near You | Real-time Updates
-        </title>
+        <title>EventScanner - Discover Events everywhere</title>
         <meta
           name="description"
           content="Find the best events in your city with EventScanner! Get real-time updates, interactive maps, and personalized recommendations for concerts, festivals, and more."
