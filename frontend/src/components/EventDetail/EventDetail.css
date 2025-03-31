@@ -49,8 +49,9 @@
   
   .event-content {
     margin: 0 auto;
+    margin-top: 1rem;
     width: 100%;
-    max-width: 935px; /* Maximale Breite auf großen Bildschirmen */
+    max-width: 935px;
   }
   
   /* =============================================================
@@ -191,6 +192,11 @@
   }
   
   @media (max-width: 768px) {
+
+    .event-content {
+      padding: 1rem;
+    }
+
     .share-buttons {
       position: fixed;
       right: 0.5rem;
