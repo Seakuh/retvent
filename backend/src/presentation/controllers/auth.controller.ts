@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../../infrastructure/services/auth.service';
-import { LoginDto } from '../dtos/login.dto';
+import { LoginDto, LoginV2Dto } from '../dtos/login.dto';
 import { RegisterUserDto } from '../dtos/register-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
@@ -38,6 +38,15 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto) {
     try {
       return await this.authService.login(loginDto);
+    } catch (error) {
+      throw new UnauthorizedException(error.message);
+    }
+  }
+
+  @Post('v2/login')
+  async loginV2(@Body() loginDto: LoginV2Dto) {
+    try {
+      return await this.authService.loginV2(loginDto);
     } catch (error) {
       throw new UnauthorizedException(error.message);
     }
