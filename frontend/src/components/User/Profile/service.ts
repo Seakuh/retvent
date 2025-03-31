@@ -45,3 +45,14 @@ export const shareProfile = async (userId: string) => {
     console.error("Error sharing profile:", error);
   }
 };
+
+export const fetchProfileComments = async (userId: string) => {
+  try {
+    const response = await fetch(`${API_URL}comments/${userId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching profile comments:", error);
+    return [];
+  }
+};

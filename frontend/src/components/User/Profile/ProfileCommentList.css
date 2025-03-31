@@ -1,0 +1,37 @@
+.profile-comment-list {
+  display: flex;
+  flex-direction: column;
+  max-width: 935px;
+  margin: 0 auto;
+}
+
+.user-comments-section {
+  background-color: black;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.comments-link-container {
+  text-decoration: none;
+  color: white;
+}
+
+.comments-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.comments-link-container:hover {
+  background-color: #000000ab;
+  border-radius: 10px;
+}
+
+.profile-comment-link {
+  padding: 1rem;
+}
+
+.comments-by {
+  padding: 1rem;
+}

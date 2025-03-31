@@ -10,10 +10,10 @@ import {
 } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import "./Profile.css";
+import { ProfileCommentList } from "./ProfileCommentList";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileInfo } from "./ProfileInfo";
 import { getProfile, getUserEvents, shareProfile } from "./service";
-
 export const Profile: React.FC = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -190,6 +190,7 @@ export const Profile: React.FC = () => {
         {/* <h2 className="events-title">Events by {user.username}</h2> */}
         <EventGalleryIII events={events} title={`${user.username}'s Events`} />
       </div>
+      <ProfileCommentList userName={user.username} />
       <Footer />
     </div>
   );
