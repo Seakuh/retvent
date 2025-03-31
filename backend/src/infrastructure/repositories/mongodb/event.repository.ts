@@ -40,6 +40,15 @@ export class MongoEventRepository implements IEventRepository {
     }));
   }
 
+  getEventsByTag(tag: string) {
+    return this.eventModel
+      .find({ tags: tag })
+      .sort({ createdAt: -1 })
+      .sort({ views: -1 })
+      .limit(10)
+      .exec();
+  }
+
   async findTodayEvents(): Promise<Event[]> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
