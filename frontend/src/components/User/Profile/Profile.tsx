@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../../../Footer/Footer";
 import {
   defaultProfileImage,
+  Event,
   type Profile as ProfileType,
 } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
@@ -92,6 +93,10 @@ export const Profile: React.FC = () => {
     );
   }
 
+  const countEventViews = () => {
+    return events.reduce((acc, event) => acc + (event.views || 0), 0);
+  };
+
   return (
     <div className="profile-wrapper">
       <Helmet>
@@ -137,7 +142,7 @@ export const Profile: React.FC = () => {
                 profile={user}
                 eventsCount={events.length}
                 followersCount={user.followers?.length || 0}
-                followsCount={user.following?.length || 0}
+                viewsCount={countEventViews()}
               />
             </div>
           </div>

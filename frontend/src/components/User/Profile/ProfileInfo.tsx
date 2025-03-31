@@ -6,12 +6,12 @@ export const ProfileInfo = ({
   profile,
   eventsCount,
   followersCount,
-  followsCount,
+  viewsCount,
 }: {
   profile: Profile;
   eventsCount: number;
   followersCount?: number;
-  followsCount?: number;
+  viewsCount?: number;
 }) => {
   return (
     <div className="profile-info-container">
@@ -25,8 +25,8 @@ export const ProfileInfo = ({
           <p>{followersCount || 0}</p>
         </div>
         <div className="stat-item">
-          <p>Following</p>
-          <p>{followsCount || 0}</p>
+          <p>Views</p>
+          <p>{viewsCount || 0}</p>
         </div>
       </div>
       {profile.bio && (
