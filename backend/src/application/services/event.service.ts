@@ -3,7 +3,7 @@ import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { GeolocationService } from 'src/infrastructure/services/geolocation.service';
 import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
-import { Event } from '../../core/domain/event';
+import { Event, EventWithHost } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
 import { ImageService } from '../../infrastructure/services/image.service';
 import { ProfileService } from './profile.service';
@@ -18,6 +18,9 @@ export class EventService {
     private readonly profileService: ProfileService,
     private readonly userService: UserService,
   ) {}
+  getEventsByTag(tag: string) {
+    return this.eventRepository.getEventsByTag(tag);
+  }
 
   getPopularEventsNearby(lat: number, lon: number, limit: number) {
     return this.eventRepository.getPopularEventsNearby(lat, lon, limit);
@@ -54,6 +57,18 @@ export class EventService {
 
   async getEventById(id: string): Promise<Event | null> {
     return this.eventRepository.findById(id);
+  }
+
+  async getEventByIdWithHostInformation(
+    id: string,
+  ): Promise<EventWithHost | null> {
+    const event = await this.eventRepository.findById(id);
+
+    const profile = await this.profileService.getEventProfile(event.hostId);
+    return {
+      ...event,
+      host: profile,
+    };
   }
 
   async getEventsByIds(ids: string[]): Promise<Event[]> {

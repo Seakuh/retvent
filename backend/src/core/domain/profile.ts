@@ -26,6 +26,11 @@ export class Profile implements IProfile {
   }
 }
 
+export interface ProfileEventDetail {
+  profileImageUrl: string;
+  username: string;
+}
+
 export interface SearchParams {
   query: string;
   location?: string;

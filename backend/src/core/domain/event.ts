@@ -1,5 +1,5 @@
 import { IEvent } from './interfaces/event.interface';
-
+import { ProfileEventDetail } from './profile';
 export class Event implements IEvent {
   // ID
   id: string;
@@ -48,6 +48,10 @@ export class Event implements IEvent {
   constructor(data: Partial<IEvent>) {
     Object.assign(this, data);
   }
+}
+
+export interface EventWithHost extends Event {
+  host: ProfileEventDetail;
 }
 
 export interface SearchParams {

@@ -1,5 +1,5 @@
 import { Injectable, UploadedFile } from '@nestjs/common';
-import { Profile } from 'src/core/domain/profile';
+import { Profile, ProfileEventDetail } from 'src/core/domain/profile';
 import { MongoProfileRepository } from 'src/infrastructure/repositories/mongodb/profile.repository';
 import { ImageService } from 'src/infrastructure/services/image.service';
 @Injectable()
@@ -26,6 +26,17 @@ export class ProfileService {
   }
   async getProfile(id: string): Promise<Profile> {
     return this.profileRepository.findByUserId(id);
+  }
+
+  async getEventProfile(id: string): Promise<ProfileEventDetail> {
+    const profile = await this.profileRepository.findByUserId(id);
+    if (!profile) {
+      return null;
+    }
+    return {
+      profileImageUrl: profile.profileImageUrl,
+      username: profile.username,
+    };
   }
 
   async createProfile(profile: Profile): Promise<Profile> {

@@ -202,9 +202,19 @@ export class EventController {
     return this.eventService.getEventById(id);
   }
 
+  @Get('v2/byId')
+  async getEventByIdWithHostInformation(@Query('id') id: string) {
+    return this.eventService.getEventByIdWithHostInformation(id);
+  }
+
   @Get('byIds')
   async getEventsByIds(@Query('ids') ids: string) {
     return this.eventService.getEventsByIds(ids.split(','));
+  }
+
+  @Get('byTag')
+  async getEventsByTag(@Query('tag') tag: string) {
+    return this.eventService.getEventsByTag(tag);
   }
 
   /**
