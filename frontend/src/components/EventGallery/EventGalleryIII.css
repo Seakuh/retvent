@@ -24,8 +24,6 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .event-grid-item {
-  }
 }
 
 .event-grid-item {
@@ -52,5 +50,19 @@
   font-weight: 600;
   text-align: left;
   margin-bottom: 1rem;
+}
+
+/* Neue Styles für Past Events */
+.past-title {
+  color: #999; /* Grauer Text für Past Events Überschrift */
+}
+
+.event-grid-item.past {
+  opacity: 0.6; /* Ausgegraute Events */
+  filter: grayscale(50%); /* Schwarz-Weiß-Effekt */
+}
+
+.event-grid-item.past:hover {
+  opacity: 0.8; /* Etwas mehr Sichtbarkeit beim Hover */
 }
 
