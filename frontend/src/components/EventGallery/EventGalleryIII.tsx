@@ -40,19 +40,33 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({
       );
     });
 
-    // Berechne die Tage bis zum Event für die Überschrift
-    const futureWithDays = futureEvents.map((event) => {
-      const eventDate = new Date(event.startDate as string);
-      const daysUntil = Math.ceil(
-        (eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-      );
-      return { ...event, daysUntil };
-    });
+    // Gruppiere Future Events nach Tagen
+    const futureGrouped = futureEvents.reduce(
+      (groups: Record<number, Event[]>, event) => {
+        const eventDate = new Date(event.startDate as string);
+        const daysUntil = Math.ceil(
+          (eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        if (!groups[daysUntil]) {
+          groups[daysUntil] = [];
+        }
+        groups[daysUntil].push(event);
+        return groups;
+      },
+      {}
+    );
 
     return {
       ...(todayEvents.length > 0 && { today: todayEvents }),
       ...(tomorrowEvents.length > 0 && { tomorrow: tomorrowEvents }),
-      ...(futureEvents.length > 0 && { upcoming: futureWithDays }),
+      ...Object.entries(futureGrouped).reduce(
+        (acc, [days, events]) => ({
+          ...acc,
+          [`in${days}days`]: events,
+        }),
+        {}
+      ),
     };
   };
 
@@ -68,21 +82,17 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({
       {/* <h2 className="section-title">{title}</h2> */}
       {Object.entries(groupedEvents).map(([section, sectionEvents]) => (
         <div key={section} className="event-section">
-          <h2 className="event-section-title">{section}</h2>
+          <h2 className="event-section-title">
+            {section === "today" && "Heute"}
+            {section === "tomorrow" && "Morgen"}
+            {section.startsWith("in") && `In ${section.match(/\d+/)?.[0]} days`}
+          </h2>
           <div className="event-grid-gallery">
-            {(section === "upcoming"
-              ? (sectionEvents as (Event & { daysUntil: number })[])
-              : sectionEvents
-            ).map((event) => (
+            {(sectionEvents as Event[]).map((event) => (
               <EventGridItem
                 key={event.id}
                 event={event}
                 handleEventClick={handleEventClick}
-                daysUntil={
-                  section === "upcoming"
-                    ? `in ${(event as any).daysUntil} Tagen`
-                    : undefined
-                }
               />
             ))}
           </div>
