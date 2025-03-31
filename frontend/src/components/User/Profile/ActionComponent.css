@@ -1,0 +1,45 @@
+.action-component-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem;
+}
+
+.action-component-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.action-component-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.action-component-button {
+  border-radius: 1rem;
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+}
+
+.follow-button {
+  background-color: var(--color-neon-blue) !important;
+  color: white !important;
+}
+
+.follow-button:hover {
+  background-color: white;
+  color: black;
+}
+
+.following {
+  background-color: gray !important;
+  color: white !important;
+}
