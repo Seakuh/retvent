@@ -8,7 +8,6 @@ export const EventHost = ({
   host: EventProfile;
   userId: string;
 }) => {
-  console.log(host);
   const navigate = useNavigate();
   return (
     <div className="event-host">

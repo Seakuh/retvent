@@ -150,6 +150,9 @@ export interface Event {
   commentCount?: number;
 }
 
+export const defaultProfileImage =
+  "https://hel1.your-objectstorage.com/imagebucket/events/8d703697-caf7-4438-abda-4ccd8e5939e9.png";
+
 export interface Profile {
   username: string;
   userId: string;

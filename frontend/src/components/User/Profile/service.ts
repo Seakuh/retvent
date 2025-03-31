@@ -6,7 +6,10 @@ export const getProfile = async (userId: string) => {
       return null;
     }
     const response = await fetch(`${API_URL}profile/${userId}`);
-    return response.json();
+
+    const data = await response.json();
+    console.log(data);
+    return data;
   } catch (error) {
     console.error("Error fetching user profile:", error);
     return null;
