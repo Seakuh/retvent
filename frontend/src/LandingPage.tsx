@@ -83,8 +83,13 @@ function LandingPage() {
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
+    // Lösche den search Parameter
+    searchParams.delete("search");
+    // Setze die neue Kategorie
     searchParams.set("category", category);
     setSearchParams(searchParams);
+    // Setze searchPerformed zurück
+    setSearchPerformed(false);
   };
 
   useEffect(() => {
@@ -238,7 +243,14 @@ function LandingPage() {
                   src="/logo.png"
                   alt="Logo"
                   className="w-8 h-8 rounded-md"
-                  onClick={() => navigate("/")}
+                  onClick={() => {
+                    // Lösche alle Suchparameter
+                    searchParams.delete("search");
+                    searchParams.delete("category");
+                    setSearchParams(searchParams);
+                    setSearchPerformed(false);
+                    navigate("/");
+                  }}
                 />
               </div>
               <div className="flex items-center gap-4">
