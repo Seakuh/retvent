@@ -215,6 +215,11 @@ export const formatDate = (date: string) => {
     .toUpperCase();
 };
 
+export interface EventProfile {
+  username?: string;
+  profileImageUrl?: string;
+}
+
 export const emptyEvent: Event = {
   id: "",
   title: "No events found",

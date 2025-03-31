@@ -11,14 +11,14 @@ import { EventDescription } from "./components/EventDescription";
 import { EventDetailError } from "./components/EventDetailError";
 import { EventDetailSkeleton } from "./components/EventDetailSkeleton";
 import { EventHero } from "./components/EventHero";
+import { EventHost } from "./components/EventHost";
 import { EventLineup } from "./components/EventLineup";
 import { EventTags } from "./components/EventTags";
 import "./EventDetail.css";
 import { shareEvent } from "./service";
-
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
-  const { event, loading, error } = useEvent(eventId);
+  const { event, loading, error, host } = useEvent(eventId);
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
@@ -250,6 +250,7 @@ export const EventDetail: React.FC = () => {
             price={event.price}
             ticketLink={event.ticketLink}
           />
+          {host && <EventHost host={host} userId={event.hostId || ""} />}
 
           {event.lineup && event.lineup.length > 0 && (
             <EventLineup lineup={event.lineup} />

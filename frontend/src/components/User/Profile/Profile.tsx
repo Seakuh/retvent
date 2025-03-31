@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
+import Footer from "../../../Footer/Footer";
 import type { Profile as ProfileType } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import "./Profile.css";
@@ -94,6 +95,7 @@ export const Profile: React.FC = () => {
           <EventGalleryIII events={events || []} />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

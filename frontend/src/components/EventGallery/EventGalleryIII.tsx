@@ -86,9 +86,9 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
             {section === "thisWeek" && "This Week"}
             {section === "upcoming" && (
               <span>
-                Upcoming in{" "}
+                Upcoming{" "}
                 <span className="days-until">
-                  {(sectionData as { days: number }).days} days
+                  in {(sectionData as { days: number }).days} days
                 </span>
               </span>
             )}
