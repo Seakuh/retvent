@@ -121,7 +121,7 @@ export const Profile: React.FC = () => {
       />
       <div>
         <div
-          className="profile-container"
+          className="profile-info-background"
           style={
             {
               "--profile-background-image": `url(${
@@ -130,14 +130,16 @@ export const Profile: React.FC = () => {
             } as React.CSSProperties
           }
         >
-          <h1 className="profile-header-username">{user.username}</h1>
-          <div className="user-profile-info">
-            <ProfileInfo
-              profile={user}
-              eventsCount={events.length}
-              followersCount={user.followers?.length || 0}
-              followsCount={user.following?.length || 0}
-            />
+          <div className="profile-container">
+            <h1 className="profile-header-username">{user.username}</h1>
+            <div className="user-profile-info">
+              <ProfileInfo
+                profile={user}
+                eventsCount={events.length}
+                followersCount={user.followers?.length || 0}
+                followsCount={user.following?.length || 0}
+              />
+            </div>
           </div>
         </div>
       </div>

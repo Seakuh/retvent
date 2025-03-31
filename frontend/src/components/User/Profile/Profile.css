@@ -1,55 +1,55 @@
 .profile-container {
-max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
-.profile-container::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: var(--profile-background-image);
-    background-size: cover;
-    background-position: center;
-    filter: blur(1.4rem);
-    opacity: 0.7;
-    z-index: -1;
-    animation: moveBackground 300s linear infinite;
+.profile-info-background::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 110%;
+  background-image: var(--profile-background-image);
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  z-index: -1;
+  animation: moveBackground 300s linear infinite;
 }
 
 .loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
 }
 
 .error-container {
-    text-align: center;
-    padding: 2rem;
+  text-align: center;
+  padding: 2rem;
 }
 
 .user-profile-info {
-margin: 2rem 0;
+  margin: 2rem 0;
 }
 
 .user-events-section {
-    margin-top: 2rem;
+  margin-top: 2rem;
 }
 
 .events-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
 
 .profile-header-username {
-    margin-top: 2.5rem;
-    font-size: 2rem;
-    font-weight: 600;
-    color: white;
-    text-align: center;
-  }
+  margin-top: 2.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+}
