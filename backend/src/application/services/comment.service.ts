@@ -23,6 +23,9 @@ export class CommentService {
       userId,
     );
   }
+  async findByUserId(userId: string) {
+    return this.commentRepository.findByUserId(userId);
+  }
 
   async findByEventId(eventId: string) {
     return this.commentRepository.findByEventId(eventId);

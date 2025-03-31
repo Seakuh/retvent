@@ -52,6 +52,11 @@ export class CommentController {
     const userId = req.user?.id || 'public';
     return this.commentService.createCommentToEvent(eventId, comment, userId);
   }
+
+  @Get('/:userId')
+  async getCommentsByUserId(@Param('userId') userId: string) {
+    return this.commentService.findByUserId(userId);
+  }
 }
 
 // export const fetchComments = async (eventId: string) => {

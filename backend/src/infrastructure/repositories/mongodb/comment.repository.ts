@@ -55,6 +55,10 @@ export class MongoCommentRepository implements ICommentRepository {
     return this.commentModel.countDocuments({ eventId });
   }
 
+  async findByUserId(userId: string) {
+    return this.commentModel.find({ userId });
+  }
+
   async findByEventIdWithCount(eventId: string) {
     const [comments, total] = await Promise.all([
       this.commentModel.find({ eventId }).sort({ createdAt: -1 }).lean(),
