@@ -21,7 +21,6 @@
 
 .event-host-info:hover {
   transition: transform 0.3s ease-in-out;
-  text-decoration: underline;
   color: var(--color-neon-blue) !important;
 }
 
