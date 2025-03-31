@@ -67,7 +67,7 @@
 }
 
 .days-until {
-  font-size: 0.8em;
+  font-size: 0.5em;
   color: var(--color-neon-pink); /* Neon Pink */
   display: inline-block;
   font-weight: 600;
