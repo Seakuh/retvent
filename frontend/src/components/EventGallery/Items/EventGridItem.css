@@ -13,3 +13,7 @@ overflow: hidden;
   position: relative;
 }
 
+.event-grid-item-image:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
