@@ -66,3 +66,11 @@
   opacity: 0.8; /* Etwas mehr Sichtbarkeit beim Hover */
 }
 
+.days-until {
+  font-size: 0.8em;
+  color: var(--color-neon-pink); /* Neon Pink */
+  display: inline-block;
+  font-weight: 600;
+}
+
+

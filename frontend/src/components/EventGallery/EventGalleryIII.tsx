@@ -84,8 +84,14 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
           >
             {section === "today" && "Today"}
             {section === "thisWeek" && "This Week"}
-            {section === "upcoming" &&
-              `Upcoming in ${(sectionData as { days: number }).days} days`}
+            {section === "upcoming" && (
+              <>
+                Upcoming{" "}
+                <span className="days-until">
+                  in {(sectionData as { days: number }).days} days
+                </span>
+              </>
+            )}
             {section === "past" && "Past Events"}
           </h2>
           <div className="event-grid-gallery">
