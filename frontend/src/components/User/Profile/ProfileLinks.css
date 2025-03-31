@@ -1,0 +1,16 @@
+.profile-links-container {
+  display: flex;
+  flex-direction: column;
+  width: 30rem;
+  margin: 0 auto;
+}
+
+.profile-link {
+  background-color: black;
+  color: white;
+  border-radius: 0.5rem;
+}
+
+.profile-link:hover {
+  background-color: #333;
+}

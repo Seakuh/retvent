@@ -1,5 +1,6 @@
-import { defaultProfileImage, Profile } from "../../../utils";
+import { Profile } from "../../../utils";
 import "./ProfileInfo.css";
+import { ProfileLinks } from "./ProfileLinks";
 
 export const ProfileInfo = ({
   profile,
@@ -12,45 +13,32 @@ export const ProfileInfo = ({
   followersCount?: number;
   followsCount?: number;
 }) => {
-  console.log(profile);
   return (
-    <>
-      <div className="profile-info">
-        <div className="profile-info-header">
-          <div className="profile-info-header-image"></div>
-          <h1>{profile.username}</h1>
+    <div className="profile-info-container">
+      <div className="profile-info-stats">
+        <div className="stat-item">
+          <p>Events</p>
+          <p>{eventsCount || 0}</p>
         </div>
-        {/* Image */}
-        <div className="profile-info-image">
-          <img
-            src={profile.profileImageUrl || defaultProfileImage}
-            alt={profile.username}
-          />
-        </div>
-        {/* InfoSection */}
-        <div className="profile-info-info-section">
-          <div className="profile-info-info-section-item">
-            <p>Events</p>
-            <p>{eventsCount}</p>
-          </div>
-          {/* <div className="profile-info-info-section-item">
+        <div className="stat-item">
           <p>Followers</p>
-          <p>{followersCount}</p>
+          <p>{followersCount || 0}</p>
         </div>
-        <div className="profile-info-info-section-item">
-          <p>Follows</p>
-          <p>{followsCount}</p>
-        </div> */}
+        <div className="stat-item">
+          <p>Following</p>
+          <p>{followsCount || 0}</p>
         </div>
-        {/* Events Count */}
-        {/* Followers Count */}
-        {/* Follows Count */}
-
-        <div className="profile-info-bio">
-          <p>{profile.bio}</p>
-        </div>
-        <div className="profile-info-stats"></div>
       </div>
-    </>
+      {profile.bio && (
+        <div className="profile-info-bio">
+          <p>{profile.bio || ""}</p>
+        </div>
+      )}
+      {profile.links?.length > 0 && (
+        <div className="profile-info-links">
+          <ProfileLinks links={profile.links} />
+        </div>
+      )}
+    </div>
   );
 };

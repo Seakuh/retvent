@@ -20,31 +20,11 @@ max-width: 1200px;
     animation: moveBackground 300s linear infinite;
 }
 
-.profile-info-header-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
 .loading-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 300px;
-}
-
-.profile-info-header-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-}
-
-.loading-spinner {
-    /* Dein Spinner Styling */
 }
 
 .error-container {
@@ -65,3 +45,11 @@ margin: 2rem 0;
     font-weight: 600;
     margin-bottom: 1rem;
 }
+
+.profile-header-username {
+    margin-top: 2.5rem;
+    font-size: 2rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+  }

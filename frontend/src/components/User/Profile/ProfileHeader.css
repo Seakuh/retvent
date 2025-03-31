@@ -1,0 +1,30 @@
+.profile-header-image-cover {
+  width: 100%;
+  height: 20rem;
+}
+
+.profile-header-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.profile-header-profile-image {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  position: absolute;
+  top: 7rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.profile-header-profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+

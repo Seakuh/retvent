@@ -8,6 +8,7 @@ import {
 } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import "./Profile.css";
+import { ProfileHeader } from "./ProfileHeader";
 import { ProfileInfo } from "./ProfileInfo";
 import { getProfile, getUserEvents } from "./service";
 
@@ -93,61 +94,56 @@ export const Profile: React.FC = () => {
 
   return (
     <div className="profile-wrapper">
-      <div
-        className="profile-container"
-        style={
-          {
-            "--profile-background-image": `url(${
-              user.headerImageUrl || defaultProfileImage
-            })`,
-          } as React.CSSProperties
-        }
-      >
-        <img
-          className="profile-info-header-image"
-          src={user.headerImageUrl || defaultProfileImage}
-          alt={user.username}
+      <Helmet>
+        <title>{`${user.username || "Profile"} | EventScanner`}</title>
+        <meta
+          name="description"
+          content={`${user.username}'s profile on EventScanner`}
         />
-        <Helmet>
-          <title>{`${user.username || "Profile"} | EventScanner`}</title>
-          <meta
-            name="description"
-            content={`${user.username}'s profile on EventScanner`}
-          />
-          <meta
-            property="og:title"
-            content={`${user.username} | EventScanner`}
-          />
-          <meta
-            property="og:description"
-            content={`${user.username}'s profile on EventScanner`}
-          />
-          <meta property="og:image" content={user.profilePictureUrl} />
-          <meta property="og:url" content={window.location.href} />
-          <meta property="og:type" content="profile" />
-          <meta property="og:site_name" content="EventScanner" />
-        </Helmet>
+        <meta property="og:title" content={`${user.username} | EventScanner`} />
+        <meta
+          property="og:description"
+          content={`${user.username}'s profile on EventScanner`}
+        />
+        <meta property="og:image" content={user.profilePictureUrl} />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:site_name" content="EventScanner" />
+      </Helmet>
 
-        <button className="back-button" onClick={handleBack}>
-          ← Back
-        </button>
-
-        <div className="user-profile-info">
-          <ProfileInfo
-            profile={user}
-            eventsCount={events.length}
-            followersCount={user.followers?.length || 0}
-            followsCount={user.following?.length || 0}
-          />
-
-          <div className="user-events-section">
-            <h2 className="events-title">Events by {user.username}</h2>
-            <EventGalleryIII
-              events={events}
-              title={`${user.username}'s Events`}
+      <button className="back-button" onClick={handleBack}>
+        ← Back
+      </button>
+      <ProfileHeader
+        headerImageUrl={user.headerImageUrl || defaultProfileImage}
+        profileImageUrl={user.profileImageUrl || defaultProfileImage}
+        username={user.username}
+      />
+      <div>
+        <div
+          className="profile-container"
+          style={
+            {
+              "--profile-background-image": `url(${
+                user.headerImageUrl || defaultProfileImage
+              })`,
+            } as React.CSSProperties
+          }
+        >
+          <h1 className="profile-header-username">{user.username}</h1>
+          <div className="user-profile-info">
+            <ProfileInfo
+              profile={user}
+              eventsCount={events.length}
+              followersCount={user.followers?.length || 0}
+              followsCount={user.following?.length || 0}
             />
           </div>
         </div>
+      </div>
+      <div className="user-events-section">
+        {/* <h2 className="events-title">Events by {user.username}</h2> */}
+        <EventGalleryIII events={events} title={`${user.username}'s Events`} />
       </div>
       <Footer />
     </div>
