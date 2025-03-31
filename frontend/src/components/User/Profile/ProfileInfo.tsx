@@ -1,4 +1,4 @@
-import { formatProfileDate, Profile } from "../../../utils";
+import { Profile } from "../../../utils";
 import "./ProfileInfo.css";
 import { ProfileLinks } from "./ProfileLinks";
 
@@ -39,9 +39,6 @@ export const ProfileInfo = ({
           <ProfileLinks links={profile.links} />
         </div>
       )}
-      <div className="member-since-profile">
-        Member since {formatProfileDate(new Date(profile.createdAt || ""))}
-      </div>
     </div>
   );
 };

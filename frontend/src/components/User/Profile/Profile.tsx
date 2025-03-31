@@ -6,6 +6,7 @@ import Footer from "../../../Footer/Footer";
 import {
   defaultProfileImage,
   Event,
+  formatProfileDate,
   type Profile as ProfileType,
 } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
@@ -191,6 +192,9 @@ export const Profile: React.FC = () => {
         <EventGalleryIII events={events} title={`${user.username}'s Events`} />
       </div>
       <ProfileCommentList userName={user.username} />
+      <div className="member-since-profile">
+        Member since {formatProfileDate(new Date(user.createdAt || ""))}
+      </div>
       <Footer />
     </div>
   );

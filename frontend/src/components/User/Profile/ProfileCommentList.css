@@ -26,6 +26,7 @@
 .comments-link-container:hover {
   background-color: #000000ab;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .profile-comment-link {
