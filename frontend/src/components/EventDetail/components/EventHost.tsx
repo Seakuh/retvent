@@ -12,15 +12,15 @@ export const EventHost = ({
   return (
     <div className="event-host">
       <h2 className="section-headline">Uploader</h2>
-      <div
+      <a
         className="event-host-info"
         onClick={() => {
           navigate(`/profile/${userId}`);
         }}
       >
-        <p className="event-host-name">{host.username}</p>
         <img src={host.profileImageUrl} alt={host.username} />
-      </div>
+        <p className="event-host-name">{host.username}</p>
+      </a>
     </div>
   );
 };

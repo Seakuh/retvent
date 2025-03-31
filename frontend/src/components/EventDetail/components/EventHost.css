@@ -12,26 +12,36 @@
 
 .event-host-info {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   cursor: pointer;
 }
+
 .event-host-info:hover {
+  transition: transform 0.3s ease-in-out;
+  text-decoration: underline;
+  color: var(--color-neon-blue) !important;
+}
+
+.event-host img:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease-in-out;
 }
 
 .event-host-name {
-  font-size: 1.5rem;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--color-neon-blue) !important;
+}
+
+.event-host-name:hover {
 }
 
 .event-host img {
   width: 100px;
   height: 100px;
+  overflow: hidden;
   border-radius: 50%;
   object-fit: cover;
 }

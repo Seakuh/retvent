@@ -250,7 +250,6 @@ export const EventDetail: React.FC = () => {
             price={event.price}
             ticketLink={event.ticketLink}
           />
-          {host && <EventHost host={host} userId={event.hostId || ""} />}
 
           {event.lineup && event.lineup.length > 0 && (
             <EventLineup lineup={event.lineup} />
@@ -271,6 +270,8 @@ export const EventDetail: React.FC = () => {
             // youtube={event.socialMediaLinks?.youtube}
             // soundCloud={event.socialMediaLinks?.soundCloud}
           /> */}
+          {host && <EventHost host={host} userId={event.hostId || ""} />}
+
           {event.tags && event.tags.length > 0 && (
             <EventTags tags={event.tags} />
           )}
