@@ -70,3 +70,11 @@
   margin: 0;
   line-height: 1.5;
 }
+
+.member-since-profile {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  text-align: center;
+  color: #666;
+}
+

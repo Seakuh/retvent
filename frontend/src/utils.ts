@@ -218,6 +218,14 @@ export const formatDate = (date: string) => {
     .toUpperCase();
 };
 
+export const formatProfileDate = (date: Date) => {
+  return date.toLocaleDateString("de-DE", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 export interface EventProfile {
   username?: string;
   profileImageUrl?: string;
