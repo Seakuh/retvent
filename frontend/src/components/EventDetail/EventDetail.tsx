@@ -271,7 +271,7 @@ export const EventDetail: React.FC = () => {
             // soundCloud={event.socialMediaLinks?.soundCloud}
           /> */}
           {event.tags && event.tags.length > 0 && (
-            <EventTags tags={event.tags} searchByTag={searchByTag} />
+            <EventTags tags={event.tags} />
           )}
         </div>
 
