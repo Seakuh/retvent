@@ -1,16 +1,24 @@
 .profile-links-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 30rem;
-  margin: 0 auto;
+  padding: 1rem;
+  gap: 0.5rem;
+  color: var(--color-neon-blue);
 }
 
 .profile-link {
   background-color: black;
-  color: white;
   border-radius: 0.5rem;
+  cursor: pointer;
 }
 
 .profile-link:hover {
-  background-color: #333;
+  text-decoration: underline;
+}
+
+.profile-links {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
 }
