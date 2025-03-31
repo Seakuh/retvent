@@ -4,6 +4,12 @@ export interface LoginDto {
   isArtist: boolean;
 }
 
+export interface LoginV2Dto {
+  username: string;
+  password: string;
+  isArtist: boolean;
+}
+
 export interface RegisterDto {
   username: string;
   email: string;
@@ -27,6 +33,29 @@ export class AuthService {
   async login(credentials: LoginDto): Promise<AuthResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Login failed 😢");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
+  }
+
+  async loginV2(credentials: LoginV2Dto): Promise<AuthResponse> {
+    try {
+      const response = await fetch(`${this.baseUrl}/v2/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -5,6 +5,7 @@ import Footer from "../../../Footer/Footer";
 import type { Profile as ProfileType } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import "./Profile.css";
+import { ProfileInfo } from "./ProfileInfo";
 import { getProfile, getUserEvents } from "./service";
 
 export const Profile: React.FC = () => {
@@ -87,6 +88,7 @@ export const Profile: React.FC = () => {
         ← Back
       </button>
       <div className="user-profile-info">
+        <ProfileInfo profile={user} />
         <div>
           <h1>{userId || "User"}</h1>
           {/* <p>{user?.uploads}</p>
