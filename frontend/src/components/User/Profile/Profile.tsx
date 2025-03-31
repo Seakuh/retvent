@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Profile as ProfileType } from "../../../utils";
-import { EventGalleryII } from "../../EventGallery/EventGalleryII";
+import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import "./Profile.css";
 import { getProfile, getUserEvents } from "./service";
 
@@ -49,7 +49,7 @@ export const Profile: React.FC = () => {
           {/* <p>{user?.uploads}</p>
       <p>{user?.events.length}</p>
       <p>{user?.likedEvents.length}</p> */}
-          <EventGalleryII events={events || []} />
+          <EventGalleryIII events={events || []} />
         </div>
       </div>
     </div>

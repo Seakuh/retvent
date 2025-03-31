@@ -1,0 +1,15 @@
+.event-grid-item {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.event-grid-item-image {
+overflow: hidden;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+}
+
