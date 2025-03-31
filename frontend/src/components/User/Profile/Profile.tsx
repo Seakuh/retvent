@@ -1,3 +1,4 @@
+import { Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,7 +12,7 @@ import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import "./Profile.css";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileInfo } from "./ProfileInfo";
-import { getProfile, getUserEvents } from "./service";
+import { getProfile, getUserEvents, shareProfile } from "./service";
 
 export const Profile: React.FC = () => {
   const { userId } = useParams();
@@ -119,6 +120,16 @@ export const Profile: React.FC = () => {
       <button className="back-button" onClick={handleBack}>
         ← Back
       </button>
+      <div className="share-buttons">
+        <button
+          onClick={() => shareProfile(userId || "")}
+          className="share-button"
+          title="Share Profile"
+        >
+          <Share2 className="h-5 w-5" />
+        </button>
+      </div>
+
       <ProfileHeader
         headerImageUrl={user.headerImageUrl || defaultProfileImage}
         profileImageUrl={user.profileImageUrl || defaultProfileImage}

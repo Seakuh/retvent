@@ -26,3 +26,24 @@ export const getUserEvents = async (userId: string) => {
     return [];
   }
 };
+
+export const shareProfile = async (userId: string) => {
+  console.log("userId", userId);
+  if (!userId) return;
+  try {
+    const shareData = {
+      url: `${window.location.origin}/profile/${userId}`,
+    };
+
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+        shareData.url
+      )}`;
+      window.open(whatsappUrl, "_blank");
+    }
+  } catch (error) {
+    console.error("Error sharing profile:", error);
+  }
+};
