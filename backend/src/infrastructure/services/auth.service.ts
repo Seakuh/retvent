@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 import { Profile } from '../../core/domain/profile';
 import { User } from '../../core/domain/user';
 import { BcryptService } from '../../core/services/bcrypt.service';
-import { LoginDto } from '../../presentation/dtos/login.dto';
+import { LoginDto, LoginV2Dto } from '../../presentation/dtos/login.dto';
 import { RegisterUserDto } from '../../presentation/dtos/register-user.dto';
 @Injectable()
 export class AuthService {
@@ -113,6 +113,37 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    const isPasswordValid = await this.bcryptService.compare(
+      password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = {
+      sub: user._id.toString(),
+      email: user.email,
+      username: user.username,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        username: user.username,
+      },
+    };
+  }
+
+  async loginV2(loginDto: LoginV2Dto) {
+    const { username, password } = loginDto;
+
+    const user = await this.userModel.findOne({ username });
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
     const isPasswordValid = await this.bcryptService.compare(
       password,
       user.password,
