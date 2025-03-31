@@ -3,19 +3,19 @@ import { Event } from "../../utils";
 export const shareEvent = async (eventToShare: Event) => {
   if (!eventToShare) return;
 
-  const formattedDate = eventToShare.startDate
-    ? new Date(eventToShare.startDate).toLocaleDateString("de-DE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-    : "";
+  // const formattedDate = eventToShare.startDate
+  //   ? new Date(eventToShare.startDate).toLocaleDateString("de-DE", {
+  //       day: "2-digit",
+  //       month: "2-digit",
+  //       year: "numeric",
+  //     })
+  //   : "";
 
   const shareData = {
-    title: eventToShare.title,
-    text: `${eventToShare.title}\n\n📍 ${
-      eventToShare.city || "N/A"
-    }\n📅 ${formattedDate}\n🕒 ${eventToShare.startTime || ""}\n\n`,
+    // title: eventToShare.title,
+    // text: `${eventToShare.title}\n\n📍 ${
+    //   eventToShare.city || "N/A"
+    // }\n📅 ${formattedDate}\n🕒 ${eventToShare.startTime || ""}\n\n`,
     url: `https://event-scanner.com/event/${eventToShare.id}`,
   };
 

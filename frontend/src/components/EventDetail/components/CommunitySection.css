@@ -1,0 +1,29 @@
+.community-meta-container {
+  display: flex;
+  background-color: black;
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.community-meta-container-right {
+  display: flex;
+  justify-content: right;
+  align-items: right;
+  gap: 1rem;
+  margin-right: 1.5rem;
+  margin-left: auto;
+}
+
+.community-meta-comments {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-neon-blue);
+}
+
+.community-meta-views {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-neon-pink);
+}

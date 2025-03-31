@@ -199,6 +199,11 @@ export const EventDetail: React.FC = () => {
           title={event.title}
           onImageClick={() => setShowImageModal(true)}
         />
+        {/* <CommunitySection
+          views={event.views ?? 0}
+          commentCount={event.commentCount ?? 0}
+          city={event.city ?? ""}
+        /> */}
         <button
           className="back-button"
           onClick={() => {
@@ -266,7 +271,7 @@ export const EventDetail: React.FC = () => {
             // soundCloud={event.socialMediaLinks?.soundCloud}
           /> */}
           {event.tags && event.tags.length > 0 && (
-            <EventTags tags={event.tags} />
+            <EventTags tags={event.tags} searchByTag={searchByTag} />
           )}
         </div>
 

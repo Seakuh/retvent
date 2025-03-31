@@ -31,7 +31,6 @@ import { Event } from "./utils";
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -91,6 +90,7 @@ function LandingPage() {
   useEffect(() => {
     // Prüfe erst URL-Parameter
     const queryParamCategory = searchParams.get("category");
+    const searchQuery = searchParams.get("search");
     // Prüfe dann Route-Parameter
     const routeParamCategory = params.category;
 
@@ -108,10 +108,16 @@ function LandingPage() {
     const loadEvents = async () => {
       setLoading(true);
       try {
-        const events =
-          categoryToUse && categoryToUse !== "All"
-            ? await fetchEventsByCategory(categoryToUse)
-            : await fetchLatestEvents();
+        let events;
+        if (searchQuery) {
+          events = await searchEventsByKeyword(searchQuery);
+          setSearchPerformed(true);
+        } else {
+          events =
+            categoryToUse && categoryToUse !== "All"
+              ? await fetchEventsByCategory(categoryToUse)
+              : await fetchLatestEvents();
+        }
 
         if (Array.isArray(events) && events.length > 0) {
           setEvents(events.reverse());

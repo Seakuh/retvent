@@ -1,22 +1,25 @@
+import { useNavigate } from "react-router-dom";
+
 interface EventTagsProps {
   tags: string[];
 }
 
-export const EventTags: React.FC<EventTagsProps> = ({ tags }) => (
-  <div className="event-tags">
-    <h2 className="section-headline">Tags</h2>
-    <div className="tags-container">
-      {tags.map((tag, index) => (
-        <span
-          key={index}
-          className="tag"
-          onClick={() => {
-            window.open(`https://www.google.com/search?q=${tag}`, "_blank");
-          }}
-        >
-          #{tag}
-        </span>
-      ))}
+export const EventTags: React.FC<EventTagsProps> = ({ tags }) => {
+  const navigate = useNavigate();
+
+  const handleTagClick = (tag: string) => {
+    navigate(`/?search=${encodeURIComponent(tag)}`);
+  };
+  return (
+    <div className="event-tags">
+      <h2 className="section-headline">Tags</h2>
+      <div className="tags-container">
+        {tags.map((tag, index) => (
+          <span key={index} className="tag" onClick={() => handleTagClick(tag)}>
+            #{tag}
+          </span>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};

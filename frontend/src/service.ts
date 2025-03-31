@@ -79,3 +79,18 @@ export const searchEventsByKeyword = async (
     return [];
   }
 };
+
+export const searchEventsByCategory = async (
+  category: string
+): Promise<Event[]> => {
+  try {
+    const response = await fetch(
+      `${API_URL}events/search/category?query=${encodeURIComponent(category)}`
+    );
+    const data = await response.json();
+    return data || [];
+  } catch (error) {
+    console.error("Error searching events by category:", error);
+    return [];
+  }
+};
