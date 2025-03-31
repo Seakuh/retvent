@@ -23,6 +23,7 @@ export const Me: React.FC = () => {
   const [headerImage, setHeaderImage] = useState<string>(fallBackProfileImage);
   const [profileImage, setProfileImage] =
     useState<string>(fallBackProfileImage);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   // Abgeleitete Werte
   const userLevel = calculateUserLevel(me?.points || 0);
@@ -102,30 +103,35 @@ export const Me: React.FC = () => {
       if (!user.id) return;
 
       try {
+        setIsImageUploading(true);
         const response =
           type === "header"
             ? await meService.updateHeaderImage(user.id, file)
             : await meService.updateProfileImage(user.id, file);
 
-        if (response.ok) {
-          const data = await response.json();
-          const imageUrl =
-            type === "header" ? data.headerImageUrl : data.profileImageUrl;
-
-          if (type === "header") {
-            setHeaderImage(imageUrl);
-          } else {
-            setProfileImage(imageUrl);
-          }
-
-          setMe((prev) =>
-            prev ? { ...prev, [`${type}ImageUrl`]: imageUrl } : undefined
-          );
-        } else {
+        if (!response.ok) {
           throw new Error(`Fehler beim Aktualisieren des ${type}-Bildes`);
         }
+
+        const data = await response.json();
+        const imageUrl =
+          type === "header" ? data.headerImageUrl : data.profileImageUrl;
+
+        // Aktualisiere die States erst nach erfolgreicher Verarbeitung
+        if (type === "header") {
+          setHeaderImage(imageUrl);
+        } else {
+          setProfileImage(imageUrl);
+        }
+
+        setMe((prev) =>
+          prev ? { ...prev, [`${type}ImageUrl`]: imageUrl } : undefined
+        );
       } catch (error) {
         console.error(`Fehler beim Aktualisieren des ${type}-Bildes:`, error);
+        // Bei einem Fehler behalten wir die alten Bilder bei
+      } finally {
+        setIsImageUploading(false);
       }
     },
     [user.id]
@@ -187,6 +193,9 @@ export const Me: React.FC = () => {
             onClick={() => createFileInput("header")}
           >
             <img src={headerImage} alt="Header" className="header-image" />
+            {isImageUploading && (
+              <div className="upload-overlay">Uploading...</div>
+            )}
           </div>
           <div className="header-overlay" />
           <div
@@ -194,6 +203,9 @@ export const Me: React.FC = () => {
             onClick={() => createFileInput("profile")}
           >
             <img src={profileImage} alt="Profile" className="profile-image" />
+            {isImageUploading && (
+              <div className="upload-overlay">Uploading...</div>
+            )}
           </div>
         </div>
 
