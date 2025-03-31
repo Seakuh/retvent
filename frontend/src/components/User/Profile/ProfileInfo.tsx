@@ -34,7 +34,7 @@ export const ProfileInfo = ({
           <p>{profile.bio || ""}</p>
         </div>
       )}
-      {profile.links?.length > 0 && (
+      {profile.links && profile.links.length > 0 && (
         <div className="profile-info-links">
           <ProfileLinks links={profile.links} />
         </div>
