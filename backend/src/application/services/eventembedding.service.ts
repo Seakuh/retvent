@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { Event } from 'src/core/domain';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { EventService } from './event.service';
@@ -15,7 +14,7 @@ export class EventEmbeddingService {
   ) {}
 
   //@Cron(CronExpression.EVERY_10_SECONDS)
-  @Cron('0 */15 * * * *') // alle 15 Minuten exakt
+  //@Cron('0 */15 * * * *') // alle 15 Minuten exakt
   async embedMissingEventsBatch() {
     this.logger.log('🔁 Embedding Cron gestartet…');
 
