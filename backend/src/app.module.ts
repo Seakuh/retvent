@@ -24,6 +24,7 @@ const MONGODB_URI = 'mongodb://localhost:27017';
     CommentController,
     UserController,
     ProfileController,
+    // FOr embeddings
     SearchController,
   ],
 })
