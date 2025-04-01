@@ -9,7 +9,6 @@ export const ProfileCommentList = ({ userName }: { userName: string }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const userId = JSON.parse(localStorage.getItem("user") || "{}").id;
   const navigate = useNavigate();
-  console.log(comments);
 
   useEffect(() => {
     fetchProfileComments(userId).then(setComments);
@@ -21,20 +20,27 @@ export const ProfileCommentList = ({ userName }: { userName: string }) => {
 
   return (
     <div className="profile-comment-list">
-      <h2 className="comments-by">Comments by {userName}</h2>
       <div className="user-comments-section">
-        {comments.map((comment) => (
-          <a
-            key={comment._id}
+        <h2 className="comments-by">Comments by {userName}</h2>
+        {comments.length === 0 && (
+          <div className="no-comments">No comments yet</div>
+        )}
+        {comments.length > 0 && (
+          <>
+            <h2 className="comments-by">Comments by {userName}</h2>
+            {comments.map((comment) => (
+              <a
+                key={comment._id}
             className="profile-comment-link"
             onClick={() => handleCommentClick(comment.eventId || "")}
           >
             <div className="comments-link-container">
               <Comment comment={comment} onReply={() => {}} />
             </div>
-          </a>
-        ))}
-      </div>
+            </a>
+          ))}
+        </>
+      )}
     </div>
   );
 };

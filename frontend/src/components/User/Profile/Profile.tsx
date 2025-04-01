@@ -11,6 +11,7 @@ import {
 } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import "./Profile.css";
+import { ProfileCommentList } from "./ProfileCommentList";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileInfo } from "./ProfileInfo";
 import { getProfile, getUserEvents, shareProfile } from "./service";
@@ -179,10 +180,10 @@ export const Profile: React.FC = () => {
               />
             </div>
             {/* <ActionComponent
-              isFollowingWIP={false}
-              onFollow={() => {}}
-              onMessage={() => {}}
-            /> */}
+                    isFollowingWIP={false}
+                    onFollow={() => {}}
+                    onMessage={() => {}}
+                  /> */}
           </div>
         </div>
       </div>
@@ -190,7 +191,7 @@ export const Profile: React.FC = () => {
         {/* <h2 className="events-title">Events by {user.username}</h2> */}
         <EventGalleryIII events={events} title={`${user.username}'s Events`} />
       </div>
-      {/* <ProfileCommentList userName={user.username} /> */}
+      <ProfileCommentList userName={user.username} />
       <div className="member-since-profile">
         Member since {formatProfileDate(new Date(user.createdAt || ""))}
       </div>

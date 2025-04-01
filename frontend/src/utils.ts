@@ -358,3 +358,35 @@ export const getHostEvents = async (hostId: string): Promise<Event[]> => {
   if (!response.ok) throw new Error("Failed to fetch events");
   return await response.json();
 };
+
+type FeedType =
+  | "event"
+  | "comment"
+  | "like"
+  | "dislike"
+  | "follow"
+  | "unfollow";
+
+export interface Feed {
+  id: string;
+  title: string;
+  imageUrl: string;
+  createdAt: Date;
+  type: FeedType;
+  eventId?: string;
+  commentId?: string;
+  userId?: string;
+  event?: Event;
+  comment?: Comment;
+  user?: User;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  username?: string;
+  profileImageUrl?: string;
+  headerImageUrl?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
