@@ -23,7 +23,7 @@ import Footer from "./Footer/Footer";
 import {
   fetchEventsByCategory,
   fetchLatestEvents,
-  searchEventsByKeyword,
+  searchEventsByFreeText,
 } from "./service";
 import { ViewMode } from "./types/event";
 import { Event } from "./utils";
@@ -66,7 +66,7 @@ function LandingPage() {
     setLoading(true);
     setSearchPerformed(true);
     try {
-      const searchResults = await searchEventsByKeyword(searchTerm);
+      const searchResults = await searchEventsByFreeText(searchTerm);
       setEvents(searchResults as Event[]);
       setIsSearchOpen(false);
     } catch (error) {
@@ -114,7 +114,7 @@ function LandingPage() {
       try {
         let events;
         if (searchQuery) {
-          events = await searchEventsByKeyword(searchQuery);
+          events = await searchEventsByFreeText(searchQuery);
           setSearchPerformed(true);
         } else {
           events =

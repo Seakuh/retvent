@@ -80,6 +80,21 @@ export const searchEventsByKeyword = async (
   }
 };
 
+export const searchEventsByFreeText = async (
+  text: string
+): Promise<Event[]> => {
+  try {
+    const response = await fetch(
+      `${API_URL}search/?q=${encodeURIComponent(text)}`
+    );
+    const data = await response.json();
+    return data || [];
+  } catch (error) {
+    console.error("Error searching events by keyword:", error);
+    return [];
+  }
+};
+
 export const searchEventsByCategory = async (
   category: string
 ): Promise<Event[]> => {
