@@ -31,4 +31,5 @@ export interface IEvent {
       lon?: number;
     };
   };
+  embedding?: number[];
 }

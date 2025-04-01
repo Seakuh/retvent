@@ -45,6 +45,8 @@ export class Event implements IEvent {
   views?: number;
   commentCount?: number;
 
+  embedding?: number[];
+
   constructor(data: Partial<IEvent>) {
     Object.assign(this, data);
   }

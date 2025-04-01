@@ -1,11 +1,13 @@
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event } from '../domain/event';
 export interface IEventRepository {
+  findMissingEmbeddings(): Promise<Event[]>;
   findById(id: string): Promise<Event | null>;
   findByLocationId(locationId: string): Promise<Event[]>;
   findByOrganizerId(organizerId: string): Promise<Event[]>;
   create(event: Partial<Event>): Promise<Event>;
   update(id: string, event: UpdateEventDto): Promise<Event | null>;
+  updateEmbedding(id: string, embedding: number[]): Promise<Event | null>;
   delete(id: string): Promise<boolean>;
   findUpcoming(locationId: string): Promise<Event[]>;
   addLike(eventId: string, userId: string): Promise<Event | null>;

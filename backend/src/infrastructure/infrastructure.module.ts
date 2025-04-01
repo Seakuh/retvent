@@ -35,6 +35,7 @@ import { ProfileSchema } from './schemas/profile.schema';
 import { UserSchema } from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
 import { ChatGPTService } from './services/chatgpt.service';
+import { EventEmbeddingService } from './services/eventembedding.service';
 import { GeolocationService } from './services/geolocation.service';
 import { GroovecastService } from './services/groovecast.service';
 import { ImageService } from './services/image.service';
@@ -78,6 +79,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   ],
   providers: [
     EventService,
+    EventEmbeddingService,
     ProfileService,
     CommentService,
     ChatGPTService,

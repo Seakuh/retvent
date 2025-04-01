@@ -62,6 +62,7 @@ export const EventSchema = new Schema(
         default: undefined,
       },
     },
+    embedding: { type: [Number], default: undefined },
   },
   {
     timestamps: true,

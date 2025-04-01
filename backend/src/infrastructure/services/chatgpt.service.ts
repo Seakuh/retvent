@@ -29,6 +29,15 @@ export class ChatGPTService {
     });
   }
 
+  async createEmbedding(text: string) {
+    const response = await this.openai.embeddings.create({
+      model: 'text-embedding-ada-002',
+      input: text,
+    });
+
+    return response.data[0].embedding;
+  }
+
   async generateEventFromText(text: string): Promise<Partial<Event>> {
     // Mock-Event mit der neuen Struktur
     const mockEvent: Partial<Event> = {

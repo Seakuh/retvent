@@ -49,6 +49,20 @@ export class MongoEventRepository implements IEventRepository {
       .exec();
   }
 
+  updateEmbedding(id: string, embedding: number[]): Promise<Event | null> {
+    return this.eventModel
+      .findByIdAndUpdate(id, { embedding }, { new: true })
+      .exec();
+  }
+
+  findMissingEmbeddings(): Promise<Event[]> {
+    return this.eventModel
+      .find({ embedding: { $exists: false } })
+      .limit(10)
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+
   async findTodayEvents(): Promise<Event[]> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
