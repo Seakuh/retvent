@@ -11,6 +11,7 @@ import { GroovecastController } from 'src/presentation/controllers/groovecast.co
 import { UserController } from 'src/presentation/controllers/user.controller';
 import { EventMapper } from '../application/mappers/event.mapper';
 import { EventService } from '../application/services/event.service';
+import { EventEmbeddingService } from '../application/services/eventembedding.service';
 import { LocationService } from '../application/services/location.service';
 import { UserService } from '../application/services/user.service';
 import { CoreModule } from '../core/core.module';
@@ -35,7 +36,6 @@ import { ProfileSchema } from './schemas/profile.schema';
 import { UserSchema } from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
 import { ChatGPTService } from './services/chatgpt.service';
-import { EventEmbeddingService } from './services/eventembedding.service';
 import { GeolocationService } from './services/geolocation.service';
 import { GroovecastService } from './services/groovecast.service';
 import { ImageService } from './services/image.service';
@@ -124,6 +124,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   ],
   exports: [
     EventService,
+    EventEmbeddingService,
     LocationService,
     AuthService,
     ImageService,

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Event } from 'src/core/domain';
 import { IEventRepository } from 'src/core/repositories/event.repository.interface';
-import { ChatGPTService } from './chatgpt.service';
+import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 @Injectable()
 export class EventEmbeddingService {
   private readonly logger = new Logger(EventEmbeddingService.name);
