@@ -9,6 +9,7 @@ import { EventEmbeddingService } from 'src/application/services/eventembedding.s
 import { ProfileService } from 'src/application/services/profile.service';
 import { CommentController } from 'src/presentation/controllers/comment.controller';
 import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
+import { SearchController } from 'src/presentation/controllers/search.controller';
 import { UserController } from 'src/presentation/controllers/user.controller';
 import { EventMapper } from '../application/mappers/event.mapper';
 import { EventService } from '../application/services/event.service';
@@ -76,6 +77,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     GroovecastController,
     CommentController,
     UserController,
+    SearchController,
   ],
   providers: [
     EventService,

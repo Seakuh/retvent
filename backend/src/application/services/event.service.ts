@@ -46,6 +46,11 @@ export class EventService {
     return events.map((event) => this.toEntity(event));
   }
 
+  async findAllWithEmbedding(limit: number) {
+    const events = await this.eventRepository.findAllWithEmbedding(limit);
+    return events;
+  }
+
   async findById(id: string) {
     const event = await this.eventRepository.findByIdWithCommentCount(id);
     return event ? this.toEntity(event) : null;
@@ -63,7 +68,6 @@ export class EventService {
     id: string,
   ): Promise<EventWithHost | null> {
     const event = await this.eventRepository.findById(id);
-
     const profile = await this.profileService.getEventProfile(event.hostId);
     return {
       ...event,
@@ -388,7 +392,7 @@ export class EventService {
   updateEmbedding(id: any, embedding: number[]) {
     return this.eventRepository.updateEmbedding(id, embedding);
   }
-  findMissingEmbeddings() {
-    return this.eventRepository.findMissingEmbeddings();
+  findMissingEmbeddings(batchSize: number) {
+    return this.eventRepository.findMissingEmbeddings(batchSize);
   }
 }

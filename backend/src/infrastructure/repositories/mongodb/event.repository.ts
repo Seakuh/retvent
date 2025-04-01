@@ -49,17 +49,28 @@ export class MongoEventRepository implements IEventRepository {
       .exec();
   }
 
+  async findAllWithEmbedding(limit: number) {
+    const events = await this.eventModel
+      .find({ embedding: { $exists: true } })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .exec();
+    return events.map((event) => ({
+      ...this.toEntity(event),
+    }));
+  }
+
   updateEmbedding(id: string, embedding: number[]): Promise<Event | null> {
     return this.eventModel
       .findByIdAndUpdate(id, { embedding }, { new: true })
       .exec();
   }
 
-  findMissingEmbeddings(): Promise<Event[]> {
+  findMissingEmbeddings(batchSize: number): Promise<Event[]> {
     return this.eventModel
       .find({ embedding: { $exists: false } })
-      .limit(10)
-      .sort({ createdAt: -1 })
+      .limit(batchSize)
+      .sort({ createdAt: 1 })
       .exec();
   }
 

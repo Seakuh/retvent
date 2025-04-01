@@ -7,6 +7,7 @@ export class SearchController {
 
   @Get()
   async search(@Query('q') q: string) {
+    console.log('search', q);
     return this.embeddingService.searchByText(q);
   }
 }

@@ -1,7 +1,7 @@
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event } from '../domain/event';
 export interface IEventRepository {
-  findMissingEmbeddings(): Promise<Event[]>;
+  findMissingEmbeddings(batchSize: number): Promise<Event[]>;
   findById(id: string): Promise<Event | null>;
   findByLocationId(locationId: string): Promise<Event[]>;
   findByOrganizerId(organizerId: string): Promise<Event[]>;
