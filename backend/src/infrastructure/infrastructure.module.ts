@@ -5,13 +5,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { CommentService } from 'src/application/services/comment.service';
+import { EventEmbeddingService } from 'src/application/services/eventembedding.service';
 import { ProfileService } from 'src/application/services/profile.service';
 import { CommentController } from 'src/presentation/controllers/comment.controller';
 import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
 import { UserController } from 'src/presentation/controllers/user.controller';
 import { EventMapper } from '../application/mappers/event.mapper';
 import { EventService } from '../application/services/event.service';
-import { EventEmbeddingService } from '../application/services/eventembedding.service';
 import { LocationService } from '../application/services/location.service';
 import { UserService } from '../application/services/user.service';
 import { CoreModule } from '../core/core.module';
@@ -79,10 +79,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   ],
   providers: [
     EventService,
-    EventEmbeddingService,
     ProfileService,
     CommentService,
     ChatGPTService,
+    EventEmbeddingService,
     ImageService,
     GeolocationService,
     LocationService,
@@ -125,6 +125,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   exports: [
     EventService,
     EventEmbeddingService,
+    ChatGPTService,
     LocationService,
     AuthService,
     ImageService,

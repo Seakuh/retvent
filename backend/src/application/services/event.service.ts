@@ -382,4 +382,13 @@ export class EventService {
     // Implementiere die Umwandlung von event-formatierten Daten in ein Event-Objekt
     throw new Error('Method not implemented');
   }
+
+  // Embedding ----------------------------------------------------
+
+  updateEmbedding(id: any, embedding: number[]) {
+    return this.eventRepository.updateEmbedding(id, embedding);
+  }
+  findMissingEmbeddings() {
+    return this.eventRepository.findMissingEmbeddings();
+  }
 }
