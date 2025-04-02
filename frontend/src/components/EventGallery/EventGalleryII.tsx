@@ -111,14 +111,30 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
   );
 
   const getDaysUntilDate = (date: string | Date): number => {
-    const eventDate = new Date(date);
+    // Parse das Datum-Format "SAT, JUL 12"
+    const [, month, day] = date.toString().split(/[,\s]+/);
+    const currentYear = new Date().getFullYear();
+
+    // Erstelle neues Datum mit aktuellem Jahr
+    const eventDate = new Date(`${month} ${day} ${currentYear}`);
     const now = new Date();
 
-    eventDate.setHours(0, 0, 0, 0);
-    now.setHours(0, 0, 0, 0);
+    // Beide Daten auf Mitternacht des jeweiligen Tages setzen
+    const eventDateOnly = new Date(
+      eventDate.getFullYear(),
+      eventDate.getMonth(),
+      eventDate.getDate()
+    );
+    const nowDateOnly = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
 
-    const timeDiff = eventDate.getTime() - now.getTime();
-    return Math.max(0, Math.ceil(timeDiff / (1000 * 60 * 60 * 24)));
+    const timeDiff = eventDateOnly.getTime() - nowDateOnly.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    return daysDiff;
   };
 
   return (
@@ -140,7 +156,9 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
                   <div className="event-date-heading-container">
                     <h2 className="event-date-heading">{date}</h2>
                     <h3 className="event-date-heading-sub">
-                      in {getDaysUntilDate(date)} days
+                      {getDaysUntilDate(date) === 1
+                        ? "tomorrow"
+                        : `in ${getDaysUntilDate(date)} days`}
                     </h3>
                   </div>
                   <br />
