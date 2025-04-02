@@ -97,4 +97,16 @@ export const meService = {
     });
     return response.json();
   },
+
+  getPreferences: async (id: string) => {
+    const accessToken = localStorage.getItem("access_token");
+    const response = await fetch(`${API_URL}profile/preferences/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  },
 };
