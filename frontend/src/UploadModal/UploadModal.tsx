@@ -1,34 +1,51 @@
-import { Camera, Upload, X } from "lucide-react";
+/**
+ * UploadModal Component
+ *
+ * A modal interface for uploading event images either via camera or file selection.
+ * Once a file is selected, it displays upload progress and handles success/error states.
+ */
+import { Camera, Upload } from "lucide-react";
 import { useRef, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import ErrorDialog from "../components/ErrorDialog/ErrorDialog";
 import { uploadEventImage } from "../components/EventScanner/service";
 import { ProcessingAnimation } from "../components/ProcessingAnimation/ProcessingAnimation";
 import { UploadAnimation } from "../components/UploadAnimation/UploadAnimation";
 import "./UploadModal.css";
 
+/**
+ * Props for the UploadModal component
+ */
 interface UploadModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onUpload: (file: File) => void;
+  isOpen: boolean; // Controls visibility of the modal
+  onClose: () => void; // Callback to close the modal
+  onUpload: (file: File) => void; // Callback when a file is uploaded
 }
 
+/**
+ * UploadModal provides a user interface for uploading event images
+ * with options to capture from camera or select from file system
+ */
 export const UploadModal = ({
   isOpen,
   onClose,
   onUpload,
 }: UploadModalProps) => {
+  // Exit early if modal is not open
   if (!isOpen) return null;
 
-  const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const cameraInputRef = useRef<HTMLInputElement | null>(null);
+  // State management
   const [uploadedEvent, setUploadedEvent] = useState<any | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
+  /**
+   * Handles file selection from either camera or file system
+   */
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -38,6 +55,9 @@ export const UploadModal = ({
     startUpload(image);
   };
 
+  /**
+   * Initiates the upload process and manages the upload state
+   */
   const startUpload = async (image: File) => {
     setIsUploading(true);
     setProgress(25);
@@ -46,10 +66,12 @@ export const UploadModal = ({
     const interval = setProgressInterval();
 
     try {
+      // Attempt to upload the image and process the event
       const eventResponse = await uploadEventImage(image);
+
       if (!eventResponse) {
         setError(
-          "Das Bild konnte nicht erkannt werden. Bitte versuchen Sie es mit einem anderen Bild."
+          "The image could not be recognized. Please try with a different image."
         );
       } else {
         setProgress(100);
@@ -57,7 +79,7 @@ export const UploadModal = ({
       }
     } catch (err) {
       setError(
-        "Es gab ein Problem beim Hochladen des Bildes. Bitte versuchen Sie es später erneut."
+        "There was a problem uploading the image. Please try again later."
       );
     } finally {
       clearInterval(interval);
@@ -66,6 +88,9 @@ export const UploadModal = ({
     }
   };
 
+  /**
+   * Creates and returns an interval that simulates upload progress
+   */
   const setProgressInterval = () => {
     const isUploading = true;
     const getRandomProgress = () => Math.floor(Math.random() * 4) + 5;
@@ -84,33 +109,35 @@ export const UploadModal = ({
   };
 
   return (
-    <div className="upload-modal-overlay">
-      <div className="upload-modal-content">
-        <div className="upload-buttons">
-          <button
-            className="upload-button camera-button"
-            onClick={() => cameraInputRef.current?.click()}
-          >
-            <Camera size={24} />
-            <span>Open Camera</span>
-          </button>
+    <div className="upload-modal-overlay" onClick={onClose}>
+      <div
+        className="upload-modal-content"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Show upload buttons only when not already uploading */}
+        {!isUploading && !isProcessing && (
+          <div className="upload-buttons">
+            {/* Camera access button */}
+            <button
+              className="upload-button camera-button"
+              onClick={() => cameraInputRef.current?.click()}
+            >
+              <Camera size={24} />
+              <span>Open Camera</span>
+            </button>
 
-          <button
-            className="upload-button file-button"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload size={24} />
-            <span>Select File</span>
-          </button>
-          {/* <button
-            className="upload-button file-button"
-            onClick={() => navigate("/admin/events/create")}
-          >
-            <FilePlus size={24} />
-            <span>Create Classic</span>
-          </button> */}
-        </div>
+            {/* File system access button */}
+            <button
+              className="upload-button file-button"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload size={24} />
+              <span>Select File</span>
+            </button>
+          </div>
+        )}
 
+        {/* Hidden file input for file system selection */}
         <input
           type="file"
           accept="image/*"
@@ -119,6 +146,7 @@ export const UploadModal = ({
           onChange={handleFileChange}
         />
 
+        {/* Hidden file input for camera capture */}
         <input
           type="file"
           accept="image/*"
@@ -127,19 +155,25 @@ export const UploadModal = ({
           className="hidden-input"
           onChange={handleFileChange}
         />
-
-        {isUploading && (
-          <UploadAnimation isUploading={isUploading} progress={progress} />
-        )}
-        {isProcessing && <ProcessingAnimation />}
-        {uploadedEvent && <Navigate to={`/event/${uploadedEvent.id}`} />}
-        {error && (
-          <ErrorDialog message={error} onClose={() => setError(null)} />
-        )}
-        <button className="upload-modal-close-button" onClick={onClose}>
-          <X size={35} />
-        </button>
       </div>
+      {/* Upload progress animation */}
+      {isUploading && (
+        <UploadAnimation isUploading={isUploading} progress={progress} />
+      )}
+
+      {/* Processing animation after upload completes */}
+      {isProcessing && <ProcessingAnimation />}
+
+      {/* Navigation after successful upload */}
+      {uploadedEvent && <Navigate to={`/event/${uploadedEvent.id}`} />}
+
+      {/* Error dialog for upload failures */}
+      {error && <ErrorDialog message={error} onClose={() => setError(null)} />}
+
+      {/* Close button */}
+      {/* <button className="upload-modal-close-button" onClick={onClose}>
+        <X size={35} />
+      </button> */}
     </div>
   );
 };

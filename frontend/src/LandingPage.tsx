@@ -15,7 +15,6 @@ import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
-import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import SearchModal from "./components/SearchModal/SearchModal";
 import Footer from "./Footer/Footer";
@@ -367,9 +366,9 @@ function LandingPage() {
         <main className="max-w-7xl mx-auto">
           {/* {showDateFilter && <DateFilter />} */}
           <div className="px-4 py-6">
-            <div>
+            {/* <div>
               <EventScanner />
-            </div>
+            </div> */}
             <CategoryFilter
               selectedCategory={selectedCategory}
               onCategoryChange={handleCategoryChange}
