@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
-import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
+import { EventGalleryIV } from "./components/EventGallery/EventGalleryIV";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
 import { EventScanner } from "./components/EventScanner/Eventscanner";
@@ -390,7 +390,7 @@ function LandingPage() {
               <EventSection
                 events={events.sort((a, b) => (b.views || 0) - (a.views || 0))}
               />
-              <EventGalleryII
+              <EventGalleryIV
                 title={selectedCategory}
                 events={events}
                 favorites={favorites}
