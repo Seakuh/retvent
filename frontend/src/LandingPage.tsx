@@ -441,6 +441,7 @@ function LandingPage() {
         <UploadModal
           isOpen={isUploadOpen}
           onClose={() => setIsUploadOpen(false)}
+          onUpload={handleOnUpload}
         />
         <Footer />
       </div>
