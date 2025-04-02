@@ -160,20 +160,50 @@ export const Me: React.FC = () => {
     [handleImageUpload]
   );
 
-  const savePreferences = useCallback((preferences: UserPreferences) => {
-    setPreferences(preferences);
-    console.log(preferences);
-    meService.updatePreferences(user.id, preferences);
-    localStorage.setItem("preferences", JSON.stringify(preferences));
-    setIsPreferencesOpen(false);
-  }, []);
+  const savePreferences = useCallback(
+    (preferences: UserPreferences) => {
+      setPreferences(preferences);
+      console.log(preferences);
+      meService.updatePreferences(user.id, preferences);
+      localStorage.setItem("preferences", JSON.stringify(preferences));
+      setIsPreferencesOpen(false);
+    },
+    [user.id]
+  );
 
-  const loadPreferences = useCallback(() => {
-    const preferences = localStorage.getItem("preferences");
-    if (preferences) {
-      setPreferences(JSON.parse(preferences));
+  const loadPreferences = useCallback(async () => {
+    const localPreferences = localStorage.getItem("preferences");
+    if (localPreferences) {
+      return JSON.parse(localPreferences);
+    } else {
+      const preferences = await meService.getPreferences(user.id);
+      return preferences;
     }
-  }, []);
+  }, [user.id]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchPreferences = async () => {
+      if (!user.id) return;
+
+      try {
+        const preferences = await loadPreferences();
+        if (isMounted) {
+          setPreferences(preferences);
+        }
+      } catch (error) {
+        console.error("Error loading preferences:", error);
+      }
+    };
+
+    fetchPreferences();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user.id]);
+
   // Hilfsfunktionen
   const formatDate = useCallback((date: Date) => {
     return date.toLocaleDateString("de-DE", {
