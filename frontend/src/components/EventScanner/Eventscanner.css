@@ -26,3 +26,12 @@
   transform: scale(0.98);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.upload-icon-container {
+  position: absolute; /* oder absolute, je nach Kontext */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000; /* optional, damit es über allem liegt */
+}
