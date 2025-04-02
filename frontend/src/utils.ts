@@ -22,6 +22,8 @@ export const categories = [
   { name: "Photography", emoji: "📸" },
   { name: "Fashion", emoji: "👗" },
   { name: "Books", emoji: "📖" },
+  { name: "Protest", emoji: "🛡️" },
+  { name: "Conference", emoji: "🗣️" },
   { name: "Movies", emoji: "🎬" },
   { name: "Science", emoji: "🔬" },
   { name: "Nightlife", emoji: "🌃" },
