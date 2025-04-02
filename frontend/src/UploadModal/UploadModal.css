@@ -4,20 +4,22 @@
   left: 0;
   right: 0;
   bottom: 0;
-  backdrop-filter: blur(8px);
-  display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(8px);
+  background: #000000b4;
 }
 
 .upload-modal-content {
-  background: #000000b4;
   border-radius: 16px;
+  width: 80%;
   padding: 24px;
-  width: 90%;
-  max-width: 400px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .upload-modal-content h2 {
@@ -38,18 +40,13 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 16px;
+  padding: 1rem;
   border-radius: 12px;
   font-size: 18px;
   font-weight: 500;
-  width: 100%;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
-}
-
-.upload-button span {
-  min-width: 9rem;
 }
 
 .camera-button {

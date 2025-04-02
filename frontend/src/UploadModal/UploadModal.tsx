@@ -109,55 +109,55 @@ export const UploadModal = ({
   };
 
   return (
-    <div className="upload-modal-overlay" onClick={onClose}>
-      <div
-        className="upload-modal-content"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Show upload buttons only when not already uploading */}
-        {!isUploading && !isProcessing && (
-          <div className="upload-buttons">
-            {/* Camera access button */}
-            <button
-              className="upload-button camera-button"
-              onClick={() => cameraInputRef.current?.click()}
-            >
-              <Camera size={24} />
-              <span>Open Camera</span>
-            </button>
+    <div>
+      {!isUploading && !isProcessing && (
+        <div className="upload-modal-overlay" onClick={onClose}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <div className="upload-modal-content">
+              <div className="upload-buttons">
+                {/* Camera access button */}
+                <button
+                  className="upload-button camera-button"
+                  onClick={() => cameraInputRef.current?.click()}
+                >
+                  <Camera size={24} />
+                  <span>Open Camera</span>
+                </button>
 
-            {/* File system access button */}
-            <button
-              className="upload-button file-button"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Upload size={24} />
-              <span>Select File</span>
-            </button>
+                {/* File system access button */}
+                <button
+                  className="upload-button file-button"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload size={24} />
+                  <span>Select File</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Hidden file input for file system selection */}
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              className="hidden-input"
+              onChange={handleFileChange}
+            />
+
+            {/* Hidden file input for camera capture */}
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              ref={cameraInputRef}
+              className="hidden-input"
+              onChange={handleFileChange}
+            />
           </div>
-        )}
-
-        {/* Hidden file input for file system selection */}
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          className="hidden-input"
-          onChange={handleFileChange}
-        />
-
-        {/* Hidden file input for camera capture */}
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          ref={cameraInputRef}
-          className="hidden-input"
-          onChange={handleFileChange}
-        />
-      </div>
+        </div>
+      )}
       {/* Upload progress animation */}
-      {isUploading && (
+      {isUploading && !isProcessing && (
         <UploadAnimation isUploading={isUploading} progress={progress} />
       )}
 
