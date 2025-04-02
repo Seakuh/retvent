@@ -363,12 +363,7 @@ export interface UserPreferences {
   eventTypes?: string[]; // ["Konzert", "Clubnacht"]
   subTypes?: string[]; // ["Akustik", "Rock"]
   genreStyles?: string[]; // ["Techno", "Jazz"]
-  context?: {
-    ageGroups?: string[]; // ["18+", "Familienfreundlich"]
-    moods?: string[]; // ["Rave", "Romantisch"]
-    settings?: string[]; // ["Open Air", "Indoor"]
-    specialFeatures?: string[]; // ["Barrierefrei", "LGBTQIA+"]
-  };
+  targetAudience?: string[];
   communityOffers?: string[];
 }
 
@@ -376,7 +371,8 @@ export const defaultUserPreferences: UserPreferences = {
   eventTypes: [],
   subTypes: [],
   genreStyles: [],
-  context: {},
+  targetAudience: [],
+  communityOffers: [],
 };
 
 export const userPreferencesTemplate = {
@@ -470,7 +466,6 @@ export const userPreferencesTemplate = {
           "Performance Art",
         ],
         "Art/Film": [
-          "Performance Art",
           "Experimental",
           "Installation Art",
           "Documentary Film",
@@ -492,13 +487,7 @@ export const userPreferencesTemplate = {
     {
       name: "Target Audience/Context",
       values: {
-        "Age Group": [
-          "18+",
-          "Family-Friendly",
-          "Children",
-          "Seniors",
-          "All Ages",
-        ],
+        AgeGroup: ["18+", "Family-Friendly", "Children", "Seniors", "All Ages"],
         Mood: [
           "Relaxed",
           "Rave",
@@ -518,7 +507,7 @@ export const userPreferencesTemplate = {
           "Weekend Event",
           "Hybrid Event",
         ],
-        "Special Features": [
+        SpecialFeatures: [
           "Accessible",
           "International",
           "LGBTQIA+",

@@ -19,12 +19,8 @@ export const EmbeddingPreferences = ({
     useState<UserPreferences>({
       eventTypes: preferences?.eventTypes || [],
       genreStyles: preferences?.genreStyles || [],
-      context: {
-        ageGroups: preferences?.context?.ageGroups || [],
-        moods: preferences?.context?.moods || [],
-        settings: preferences?.context?.settings || [],
-        specialFeatures: preferences?.context?.specialFeatures || [],
-      },
+      targetAudience: preferences?.targetAudience || [],
+      communityOffers: preferences?.communityOffers || [],
     });
 
   useEffect(() => {
@@ -67,23 +63,16 @@ export const EmbeddingPreferences = ({
           break;
 
         case "Target Audience/Context":
-          newPreferences.context = newPreferences.context || {};
-          const contextKey = subcategory
-            .toLowerCase()
-            .replace(/ /g, "") as keyof typeof newPreferences.context;
+          newPreferences.targetAudience = newPreferences.targetAudience || [];
 
-          if (!Array.isArray(newPreferences.context[contextKey])) {
-            newPreferences.context[contextKey] = [];
-          }
-
-          const contextArray = newPreferences.context[contextKey] as string[];
-
-          if (contextArray.includes(value)) {
-            newPreferences.context[contextKey] = contextArray.filter(
-              (c) => c !== value
-            );
+          if (newPreferences.targetAudience.includes(value)) {
+            newPreferences.targetAudience =
+              newPreferences.targetAudience.filter((t) => t !== value);
           } else {
-            newPreferences.context[contextKey] = [...contextArray, value];
+            newPreferences.targetAudience = [
+              ...(newPreferences.targetAudience || []),
+              value,
+            ];
           }
           break;
       }
@@ -195,12 +184,9 @@ const isSelected = (
         preferences.genreStyles.includes(value)
       );
     case "Target Audience/Context":
-      const contextKey = subcategory
-        .toLowerCase()
-        .replace(/ /g, "") as keyof typeof preferences.context;
       return (
-        Array.isArray(preferences.context?.[contextKey]) &&
-        preferences.context[contextKey]?.includes(value)
+        Array.isArray(preferences.targetAudience) &&
+        preferences.targetAudience.includes(value)
       );
     default:
       return false;
