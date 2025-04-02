@@ -16,6 +16,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   });
   const [location, setLocation] = useState<Location | null>(null);
 
+  // TODO: remove this
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {

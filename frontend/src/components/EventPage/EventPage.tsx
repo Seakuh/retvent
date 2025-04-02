@@ -1,11 +1,11 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { Event } from "../../utils";
+import { HomeBubbles } from "../HomeBubbles/HomeBubbles";
 import { MapView } from "../MapView/MapView";
 import "./EventPage.css";
 import { EventSection } from "./EventSection";
 import { fetchFavoriteEvents } from "./service";
-
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export const EventPage = () => {
@@ -80,6 +80,7 @@ export const EventPage = () => {
 
   return (
     <div>
+      <HomeBubbles />
       <h1 className="section-title">Nearby</h1>
       <div className="nearby-section-container">
         <EventSection
@@ -99,8 +100,8 @@ export const EventPage = () => {
           ]}
           onEventSelect={handleEventSelect}
         />
+        <EventSection title="Favorites" events={favoriteEvents} />
       </div>
-      <EventSection title="Favorites" events={favoriteEvents} />
     </div>
   );
 };
