@@ -13,7 +13,7 @@
   flex-direction: row;
   overflow-x: auto;
   overflow-y: hidden;
-  gap: 1rem;
+  gap: 0.5rem;
   scroll-behavior: smooth;
   white-space: nowrap;
   padding: 1rem;

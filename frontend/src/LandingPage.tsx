@@ -245,7 +245,7 @@ function LandingPage() {
       <HelmetMeta />
       <div className="min-h-screen">
         <header className="glass-effect sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 cursor-pointer">
                 <img
@@ -398,7 +398,6 @@ function LandingPage() {
           ) : (
             <div>
               <EventSection
-                title="Popular"
                 events={events.sort((a, b) => (b.views || 0) - (a.views || 0))}
               />
               <EventGalleryII

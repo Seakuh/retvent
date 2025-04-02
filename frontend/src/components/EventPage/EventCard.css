@@ -70,7 +70,6 @@
 
 .event-card-container:hover {
   transform: translateY(-4px);
-  box-shadow: 0 0 20px var(--color-neon-blue);
 }
 
 .event-card-views-container {
