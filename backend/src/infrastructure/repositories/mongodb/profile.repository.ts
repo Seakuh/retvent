@@ -27,13 +27,15 @@ export class MongoProfileRepository implements IProfileRepository {
   updateProfileEmbedding(id: any, embedding: number[]) {
     return this.profileModel.findByIdAndUpdate(
       id,
-      { embedding },
+      { embedding: embedding },
       { new: true },
     );
   }
 
   findMissingProfileEmbeddings(BATCH_SIZE: number) {
     return this.profileModel
+      .find({ userId: { $exists: true } })
+      .find({ preferences: { $exists: true } })
       .find({ embedding: { $exists: false } })
       .limit(BATCH_SIZE)
       .sort({ createdAt: 1 })

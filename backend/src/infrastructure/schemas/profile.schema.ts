@@ -21,6 +21,7 @@ export const ProfileSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   preferences: { type: Object },
+  embedding: { type: [Number] },
 });
 
 ProfileSchema.index({ username: 1 }, { unique: true });

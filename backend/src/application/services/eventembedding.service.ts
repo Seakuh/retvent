@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { Event, Profile } from 'src/core/domain';
 import { UserPreferences } from 'src/core/domain/profile';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
@@ -42,7 +41,7 @@ export class EventEmbeddingService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  //@Cron(CronExpression.EVERY_10_SECONDS)
   //@Cron('0 */15 * * * *') // alle 15 Minuten exakt
   async embedMissingProfilesBatch() {
     this.logger.log('🔁 PROFILE EMBEDDING Cron gestartet…');
@@ -51,16 +50,9 @@ export class EventEmbeddingService {
       this.BATCH_SIZE,
     );
 
-    // Filter nur Profile mit Präferenzen
-    const profilesWithPreferences = profiles.filter(
-      (profile) => profile.preferences,
-    );
+    this.logger.log(`🔍 Found Profiles: ${profiles.length}`);
 
-    this.logger.log(
-      `🔍 Found Profiles: ${profilesWithPreferences.length} (mit Präferenzen)`,
-    );
-
-    for (const profile of profilesWithPreferences) {
+    for (const profile of profiles) {
       try {
         this.logger.log(
           `🔍 Embedding Profile: ${profile.username} ${profile.id}`,
