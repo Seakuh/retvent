@@ -1,9 +1,4 @@
-import {
-  LucideCalendar,
-  LucideHeart,
-  LucideMapPin,
-  LucideUser,
-} from "lucide-react";
+import { LucideHeart, LucideUser, Settings, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./HomeBubbles.css";
 interface Bubble {
@@ -28,17 +23,17 @@ const BUBBLES: Bubble[] = [
   //   },
   { id: "liked", title: "Likes", route: "/liked", icon: LucideHeart },
   {
-    id: "locations",
-    title: "Locations",
-    route: "/locations",
-    icon: LucideMapPin,
+    id: "preferences",
+    title: "Preferences",
+    route: "/me",
+    icon: Settings,
   },
   { id: "profile", title: "Profile", route: "/me", icon: LucideUser },
   {
     id: "my-events",
     title: "My Events",
     route: "/admin/events",
-    icon: LucideCalendar,
+    icon: Upload,
   },
 ];
 
