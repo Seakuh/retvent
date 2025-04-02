@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Profile } from "../../../utils";
+import type { Profile, UserPreferences } from "../../../utils";
 import {
   calculateProgress,
   calculateUserLevel,
+  defaultUserPreferences,
   fallBackProfileImage,
   USER_LEVELS,
 } from "../../../utils";
+import { EmbeddingPreferences } from "../../EventDetail/components/EmbeddingPreferences/EmbeddingPreferences";
 import { LevelSection } from "../../LevelSection/LevelSection";
 import "./Me.css";
 import { meService } from "./service";
@@ -24,6 +26,10 @@ export const Me: React.FC = () => {
   const [profileImage, setProfileImage] =
     useState<string>(fallBackProfileImage);
   const [isImageUploading, setIsImageUploading] = useState(false);
+  const [preferences, setPreferences] = useState<UserPreferences>(
+    defaultUserPreferences
+  );
+  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
 
   // Abgeleitete Werte
   const userLevel = calculateUserLevel(me?.points || 0);
@@ -185,6 +191,12 @@ export const Me: React.FC = () => {
 
   return (
     <div>
+      {isPreferencesOpen && (
+        <EmbeddingPreferences
+          preferences={preferences}
+          onSave={setPreferences}
+        />
+      )}
       <button className="back-button" onClick={handleBack}>
         ← Back
       </button>
@@ -213,6 +225,12 @@ export const Me: React.FC = () => {
 
         <div className="content-section">
           <LevelSection points={points} />
+          <button
+            className="preferences-button"
+            onClick={() => setIsPreferencesOpen(!isPreferencesOpen)}
+          >
+            Preferences
+          </button>
           <button
             className="preview-button"
             onClick={() => navigate(`/profile/${me.id}`)}

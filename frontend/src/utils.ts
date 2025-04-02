@@ -358,3 +358,178 @@ export const getHostEvents = async (hostId: string): Promise<Event[]> => {
   if (!response.ok) throw new Error("Failed to fetch events");
   return await response.json();
 };
+
+export interface UserPreferences {
+  eventTypes?: string[]; // ["Konzert", "Clubnacht"]
+  subTypes?: string[]; // ["Akustik", "Rock"]
+  genreStyles?: string[]; // ["Techno", "Jazz"]
+  context?: {
+    ageGroups?: string[]; // ["18+", "Familienfreundlich"]
+    moods?: string[]; // ["Rave", "Romantisch"]
+    settings?: string[]; // ["Open Air", "Indoor"]
+    specialFeatures?: string[]; // ["Barrierefrei", "LGBTQIA+"]
+  };
+  communityOffers?: string[];
+}
+
+export const defaultUserPreferences: UserPreferences = {
+  eventTypes: [],
+  subTypes: [],
+  genreStyles: [],
+  context: {},
+};
+
+export const userPreferencesTemplate = {
+  categories: [
+    {
+      name: "Event Type",
+      values: {
+        Concert: [
+          "Acoustic",
+          "Rock",
+          "Pop",
+          "Classical",
+          "Jazz",
+          "Orchestral",
+          "Electronic Dance Music (EDM)",
+        ],
+        "Club Night": [
+          "DJ Set",
+          "Live Act",
+          "Afterparty",
+          "Label Showcase",
+          "Rave",
+        ],
+        Festival: [
+          "Music Festival",
+          "Cultural Festival",
+          "Film Festival",
+          "Food Festival",
+          "Esports Festival",
+        ],
+        "Musical/Theater": [
+          "Broadway",
+          "Disney",
+          "Modern",
+          "Dance",
+          "Cabaret",
+          "Immersive Theater",
+        ],
+        "Fair/Market": [
+          "Flea Market",
+          "Design Market",
+          "Christmas Market",
+          "Art Fair",
+          "Farmers Market",
+        ],
+        "Comedy/Show": [
+          "Stand-up Comedy",
+          "Improv",
+          "Magic Show",
+          "Satire",
+          "Podcast Live Show",
+        ],
+        "Workshop/Lecture": [
+          "Workshop",
+          "Panel Discussion",
+          "Keynote Speech",
+          "Book Reading",
+          "Masterclass",
+          "Webinar",
+        ],
+      },
+    },
+    {
+      name: "Genre/Style",
+      values: {
+        Music: [
+          "Techno",
+          "House",
+          "Electro",
+          "Minimal",
+          "Drum & Bass",
+          "Indie",
+          "Rock",
+          "Pop",
+          "Hip-Hop",
+          "Jazz",
+          "Classical",
+          "Reggae",
+          "Schlager",
+          "Folk",
+          "Hyperpop",
+          "K-Pop",
+          "Latin Urban",
+        ],
+        "Theater/Musical": [
+          "Classical",
+          "Modern",
+          "Comedy",
+          "Dance",
+          "Children's Theatre",
+          "Performance Art",
+        ],
+        "Art/Film": [
+          "Performance Art",
+          "Experimental",
+          "Installation Art",
+          "Documentary Film",
+          "Independent Film",
+          "Animation",
+          "Virtual Reality (VR) Art",
+        ],
+        "Education/Talks": [
+          "Science",
+          "Social Issues",
+          "Politics",
+          "Startups",
+          "Spirituality",
+          "Technology",
+          "Sustainability",
+        ],
+      },
+    },
+    {
+      name: "Target Audience/Context",
+      values: {
+        "Age Group": [
+          "18+",
+          "Family-Friendly",
+          "Children",
+          "Seniors",
+          "All Ages",
+        ],
+        Mood: [
+          "Relaxed",
+          "Rave",
+          "Romantic",
+          "Elegant",
+          "Alternative",
+          "Party",
+          "Upbeat",
+          "Chill",
+        ],
+        Setting: [
+          "Open Air",
+          "Indoor",
+          "Livestream",
+          "Bar Evening",
+          "Day Event",
+          "Weekend Event",
+          "Hybrid Event",
+        ],
+        "Special Features": [
+          "Accessible",
+          "International",
+          "LGBTQIA+",
+          "Dress Code",
+          "Early Access",
+          "VIP",
+          "Sustainable",
+          "Pet-Friendly",
+          "Immersive Experience",
+        ],
+      },
+    },
+  ],
+};
