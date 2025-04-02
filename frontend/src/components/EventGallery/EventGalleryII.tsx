@@ -110,6 +110,17 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
     </div>
   );
 
+  const getDaysUntilDate = (date: string | Date): number => {
+    const eventDate = new Date(date);
+    const now = new Date();
+
+    eventDate.setHours(0, 0, 0, 0);
+    now.setHours(0, 0, 0, 0);
+
+    const timeDiff = eventDate.getTime() - now.getTime();
+    return Math.max(0, Math.ceil(timeDiff / (1000 * 60 * 60 * 24)));
+  };
+
   return (
     <>
       {/* <h1 className="section-title">{title}</h1> */}
@@ -126,7 +137,12 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
             {Object.entries(groupedUpcomingEvents).map(
               ([date, eventsForDate]) => (
                 <div key={date} className="event-date-section">
-                  <h2 className="event-date-heading">{date}</h2>
+                  <div className="event-date-heading-container">
+                    <h2 className="event-date-heading">{date}</h2>
+                    <h3 className="event-date-heading-sub">
+                      in {getDaysUntilDate(date)} days
+                    </h3>
+                  </div>
                   <br />
                   {eventsForDate.map((event) => (
                     <EventListItem key={event.id} event={event} />

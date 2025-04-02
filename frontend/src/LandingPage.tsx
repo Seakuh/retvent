@@ -397,6 +397,8 @@ function LandingPage() {
             <EventPage />
           ) : (
             <div>
+              <h2 className="section-title">Popular</h2>
+
               <EventSection
                 events={events.sort((a, b) => (b.views || 0) - (a.views || 0))}
               />

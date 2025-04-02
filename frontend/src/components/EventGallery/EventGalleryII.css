@@ -15,12 +15,25 @@
     width: 100%;
 }
 
+.event-date-heading-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
 .event-date-heading {
     font-size: 2rem;
     text-align: left;
     color: white;
     margin-bottom: 0.5rem;
     padding-left: 1rem;
+}
+
+.event-date-heading-sub {
+    font-size: 1rem;
+    text-align: left;
+    color: var(--color-neon-blue);
 }
 
 .event-list-item {
