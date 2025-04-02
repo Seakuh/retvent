@@ -20,7 +20,7 @@ export const GenreModal = ({
     {} as Record<string, string>
   );
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
+  const handleOverlayClick = (e: React.MouseEvent | React.TouchEvent) => {
     if (e.target === e.currentTarget) {
       onGenreSelect(selectedGenre || "");
     }
