@@ -4,24 +4,23 @@ import "./UploadAnimation.css";
 interface UploadAnimationProps {
   isUploading: boolean;
   progress: number;
+  onClose?: () => void;
 }
 
 export const UploadAnimation: React.FC<UploadAnimationProps> = ({
   isUploading,
   progress,
+  onClose,
 }) => {
   useEffect(() => {
     if (isUploading) {
       document.body.style.overflow = "hidden";
-      document.body.style.pointerEvents = "none";
     } else {
       document.body.style.overflow = "";
-      document.body.style.pointerEvents = "";
     }
 
     return () => {
       document.body.style.overflow = "";
-      document.body.style.pointerEvents = "";
     };
   }, [isUploading]);
 
@@ -30,12 +29,8 @@ export const UploadAnimation: React.FC<UploadAnimationProps> = ({
   }
 
   return (
-    <div className="upload-container">
-      <div
-        className={`fixed inset-0 flex items-center justify-center z-50 bg-white/10 backdrop-blur-lg transition-opacity duration-300 ${
-          isUploading ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-      >
+    <div className="upload-container" onClick={onClose}>
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/80 backdrop-blur-lg transition-opacity duration-300">
         <div className="p-10 rounded-3xl w-96 text-center">
           {/* <div className="w-28 h-28 mx-auto mb-6 flex items-center justify-center text-4xl rocket-animation">
           <span role="img" aria-label="Rocket">🚀</span>
@@ -49,8 +44,13 @@ export const UploadAnimation: React.FC<UploadAnimationProps> = ({
           </div>
 
           <p className="text-white font-bold text-xl">
-            🎉 Event is uploading... {progress}%
+            🎉 Event wird hochgeladen... {progress}%
           </p>
+          {progress === 100 && (
+            <p className="text-white/80 mt-2">
+              Klicken Sie irgendwo, um fortzufahren
+            </p>
+          )}
         </div>
       </div>
     </div>

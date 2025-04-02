@@ -1,0 +1,8 @@
+.upload-icon {
+  cursor: pointer;
+  color: white;
+}
+.upload-icon-container:hover {
+  background-color: var(--color-neon-blue-light);
+  border-radius: 50%;
+}
