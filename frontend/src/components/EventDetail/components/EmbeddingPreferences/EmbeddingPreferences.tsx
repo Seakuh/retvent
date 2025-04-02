@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserPreferences, userPreferencesTemplate } from "../../../../utils";
 import "./EmbeddingPreferences.css";
 
@@ -16,18 +16,20 @@ export const EmbeddingPreferences = ({
 }: EmbeddingPreferencesProps) => {
   const [activeCategory, setActiveCategory] = useState(0);
   const [selectedPreferences, setSelectedPreferences] =
-    useState<UserPreferences>(
-      preferences || {
-        eventTypes: [],
-        genreStyles: [],
-        context: {
-          ageGroups: [],
-          moods: [],
-          settings: [],
-          specialFeatures: [],
-        },
-      }
-    );
+    useState<UserPreferences>({
+      eventTypes: preferences?.eventTypes || [],
+      genreStyles: preferences?.genreStyles || [],
+      context: {
+        ageGroups: preferences?.context?.ageGroups || [],
+        moods: preferences?.context?.moods || [],
+        settings: preferences?.context?.settings || [],
+        specialFeatures: preferences?.context?.specialFeatures || [],
+      },
+    });
+
+  useEffect(() => {
+    console.log("Current preferences:", selectedPreferences);
+  }, [selectedPreferences]);
 
   const handleSelection = (
     category: string,
@@ -35,36 +37,47 @@ export const EmbeddingPreferences = ({
     value: string
   ) => {
     setSelectedPreferences((prev) => {
-      const newPreferences = { ...prev };
+      const newPreferences = JSON.parse(
+        JSON.stringify(prev)
+      ) as UserPreferences;
 
       switch (category) {
         case "Event Type":
           newPreferences.eventTypes = newPreferences.eventTypes || [];
+
           if (newPreferences.eventTypes.includes(value)) {
             newPreferences.eventTypes = newPreferences.eventTypes.filter(
               (t) => t !== value
             );
           } else {
-            newPreferences.eventTypes.push(value);
+            newPreferences.eventTypes = [...newPreferences.eventTypes, value];
           }
           break;
+
         case "Genre/Style":
           newPreferences.genreStyles = newPreferences.genreStyles || [];
+
           if (newPreferences.genreStyles.includes(value)) {
             newPreferences.genreStyles = newPreferences.genreStyles.filter(
               (g) => g !== value
             );
           } else {
-            newPreferences.genreStyles.push(value);
+            newPreferences.genreStyles = [...newPreferences.genreStyles, value];
           }
           break;
+
         case "Target Audience/Context":
           newPreferences.context = newPreferences.context || {};
           const contextKey = subcategory
             .toLowerCase()
             .replace(/ /g, "") as keyof typeof newPreferences.context;
-          const contextArray =
-            (newPreferences.context[contextKey] as string[]) || [];
+
+          if (!Array.isArray(newPreferences.context[contextKey])) {
+            newPreferences.context[contextKey] = [];
+          }
+
+          const contextArray = newPreferences.context[contextKey] as string[];
+
           if (contextArray.includes(value)) {
             newPreferences.context[contextKey] = contextArray.filter(
               (c) => c !== value
@@ -72,7 +85,10 @@ export const EmbeddingPreferences = ({
           } else {
             newPreferences.context[contextKey] = [...contextArray, value];
           }
+          break;
       }
+
+      console.log("Updated preferences:", newPreferences);
       return newPreferences;
     });
   };
@@ -165,16 +181,27 @@ const isSelected = (
   subcategory: string,
   value: string
 ): boolean => {
+  if (!preferences) return false;
+
   switch (category) {
     case "Event Type":
-      return preferences.eventTypes?.includes(value) || false;
+      return (
+        Array.isArray(preferences.eventTypes) &&
+        preferences.eventTypes.includes(value)
+      );
     case "Genre/Style":
-      return preferences.genreStyles?.includes(value) || false;
+      return (
+        Array.isArray(preferences.genreStyles) &&
+        preferences.genreStyles.includes(value)
+      );
     case "Target Audience/Context":
       const contextKey = subcategory
         .toLowerCase()
         .replace(/ /g, "") as keyof typeof preferences.context;
-      return preferences.context?.[contextKey]?.includes(value) || false;
+      return (
+        Array.isArray(preferences.context?.[contextKey]) &&
+        preferences.context[contextKey]?.includes(value)
+      );
     default:
       return false;
   }
