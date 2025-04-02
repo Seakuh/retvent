@@ -33,11 +33,13 @@
 }
 
 .category-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   white-space: nowrap;
   padding: 0.5rem 1rem;
   min-width: 5rem;
-  border: none;
-  border-radius: 1rem;
+  border-radius: 2rem;
   background: rgba(255, 255, 255, 0.1);
   color: white;
   cursor: pointer;
@@ -49,6 +51,5 @@
 }
 
 .category-button.active {
-  background: var(--color-neon-pink);
-  box-shadow: 0 0 10px var(--color-neon-pink);
+  border: 1px solid var(--color-neon-blue);
 }

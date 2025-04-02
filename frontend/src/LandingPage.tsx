@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
+import { DateFilter } from "./components/EventDetail/components/DateFIlter/DateFilter";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
@@ -35,7 +36,12 @@ function LandingPage() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [showUploads, setShowUploads] = useState(false);
-  const [userEvents, setUserEvents] = useState<Event[]>([]);
+  const [showDateFilter, setShowDateFilter] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    localStorage.getItem("selectedDate")
+      ? new Date(localStorage.getItem("selectedDate") || "")
+      : null
+  );
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     "All"
@@ -89,6 +95,18 @@ function LandingPage() {
     setSearchParams(searchParams);
     // Setze searchPerformed zurück
     setSearchPerformed(false);
+  };
+
+  const removeDateFilter = () => {
+    localStorage.removeItem("selectedDate");
+    setSelectedDate(null);
+    setShowDateFilter(false);
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    localStorage.setItem("selectedDate", date?.toString() || "");
+    setSelectedDate(date);
+    setShowDateFilter(false);
   };
 
   useEffect(() => {
@@ -343,6 +361,7 @@ function LandingPage() {
         </header>
 
         <main className="max-w-7xl mx-auto">
+          {showDateFilter && <DateFilter />}
           <div className="px-4 py-6">
             <div>
               <EventScanner />
@@ -350,6 +369,8 @@ function LandingPage() {
             <CategoryFilter
               selectedCategory={selectedCategory}
               onCategoryChange={handleCategoryChange}
+              onDateChange={handleDateChange}
+              onShowDateFilter={setShowDateFilter}
             />
           </div>
 

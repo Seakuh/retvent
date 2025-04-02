@@ -1,11 +1,13 @@
+import { Calendar, Compass, Filter, Home } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { CACHE_DURATION_3 } from "../../utils";
 import "./CategoryFilter.css";
 import { GenreModal } from "./GenreModal";
-
 interface CategoryFilterProps {
   selectedCategory: string | null;
   onCategoryChange: (category: string | null) => void;
+  onDateChange: (date: Date | null) => void;
+  onShowDateFilter: (show: boolean) => void;
 }
 
 // Cache-Dauer in Millisekunden (z.B. 24 Stunden)
@@ -19,8 +21,10 @@ interface CachedCategories {
 export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   selectedCategory,
   onCategoryChange,
+  onShowDateFilter,
 }) => {
   const [categories, setCategories] = useState<string[]>([]);
+  const [dateFilter, setDateFilter] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [showGenreModal, setShowGenreModal] = useState(false);
 
@@ -96,19 +100,10 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   }, []);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      container.scrollLeft += e.deltaY;
-    };
-
-    container.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      container.removeEventListener("wheel", handleWheel);
-    };
+    const selectedDate = localStorage.getItem("selectedDate");
+    if (selectedDate) {
+      setDateFilter(true);
+    }
   }, []);
 
   const toggleGenreModal = () => {
@@ -132,6 +127,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }`}
         onClick={() => onCategoryChange("Home")}
       >
+        <Home size={20} />
         Home
       </button>
       <button
@@ -140,6 +136,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }`}
         onClick={() => onCategoryChange("All")}
       >
+        <Compass size={20} />
         All
       </button>
       <button
@@ -150,7 +147,15 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }`}
         onClick={toggleGenreModal}
       >
-        Genre
+        <Filter size={20} />
+        Filter
+      </button>
+      <button
+        className={`category-button ${dateFilter ? "active" : ""}`}
+        onClick={() => setDateFilter(!dateFilter)}
+      >
+        <Calendar size={20} />
+        Date
       </button>
       {/* {categories.map((category) => (
         <button
