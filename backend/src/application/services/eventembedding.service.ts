@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Event } from 'src/core/domain';
+import { Event, Profile } from 'src/core/domain';
+import { UserPreferences } from 'src/core/domain/profile';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { EventService } from './event.service';
-
+import { ProfileService } from './profile.service';
 @Injectable()
 export class EventEmbeddingService {
   private readonly logger = new Logger(EventEmbeddingService.name);
@@ -10,6 +11,7 @@ export class EventEmbeddingService {
 
   constructor(
     private readonly eventService: EventService,
+    private readonly profileService: ProfileService,
     private readonly chatgptService: ChatGPTService,
   ) {}
 
@@ -37,6 +39,65 @@ export class EventEmbeddingService {
         this.logger.error(`❌ Fehler bei "${event.title}"`, err);
       }
     }
+  }
+
+  //@Cron(CronExpression.EVERY_10_SECONDS)
+  //@Cron('0 */15 * * * *') // alle 15 Minuten exakt
+  async embedMissingProfilesBatch() {
+    this.logger.log('🔁 Embedding Cron gestartet…');
+
+    const profiles = await this.profileService.findMissingProfileEmbeddings(
+      this.BATCH_SIZE,
+    );
+
+    this.logger.log(`🔍 Gefundene Profiles: ${profiles.length}`);
+
+    for (const profile of profiles) {
+      try {
+        this.logger.log(
+          `🔍 Embedding Profile: ${profile.username} ${profile.id}`,
+        );
+        const text = this.buildProfileText(profile);
+        const embedding = await this.chatgptService.createEmbedding(text);
+
+        await this.profileService.updateProfileEmbedding(profile.id, embedding);
+
+        this.logger.log(`✅ Profile "${profile.username}" eingebettet`);
+      } catch (err) {
+        this.logger.error(`❌ Fehler bei "${profile.username}"`, err);
+      }
+    }
+  }
+  buildProfileText(profile: Profile) {
+    return [this.preferencesToText(profile.preferences)]
+      .filter(Boolean)
+      .join(' | ');
+  }
+
+  preferencesToText(prefs: UserPreferences): string {
+    const parts: string[] = [];
+
+    Object.entries(prefs.eventType ?? {}).forEach(([category, sub]) =>
+      parts.push(`${category}: ${sub.join(', ')}`),
+    );
+
+    Object.entries(prefs.genreStyle ?? {}).forEach(([category, sub]) =>
+      parts.push(`${category}: ${sub.join(', ')}`),
+    );
+
+    Object.entries(prefs.context ?? {}).forEach(([key, values]) =>
+      parts.push(`${key}: ${values.join(', ')}`),
+    );
+
+    if (prefs.communityOffers?.length) {
+      parts.push(
+        `Helping offers: ${Object.entries(prefs.communityOffers)
+          .map(([key, values]) => `${key}: ${values.join(', ')}`)
+          .join(', ')}`,
+      );
+    }
+
+    return parts.join(' | ');
   }
 
   async embedMissingEvents() {

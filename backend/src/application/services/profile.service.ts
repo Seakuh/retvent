@@ -1,5 +1,9 @@
 import { Injectable, UploadedFile } from '@nestjs/common';
-import { Profile, ProfileEventDetail } from 'src/core/domain/profile';
+import {
+  Profile,
+  ProfileEventDetail,
+  UserPreferences,
+} from 'src/core/domain/profile';
 import { MongoProfileRepository } from 'src/infrastructure/repositories/mongodb/profile.repository';
 import { ImageService } from 'src/infrastructure/services/image.service';
 @Injectable()
@@ -9,6 +13,9 @@ export class ProfileService {
     private readonly imageService: ImageService,
   ) {}
 
+  updateProfileEmbedding(id: any, embedding: number[]) {
+    return this.profileRepository.updateProfileEmbedding(id, embedding);
+  }
   async updateProfileGallery(
     id: string,
     gallery: Express.Multer.File[],
@@ -28,6 +35,10 @@ export class ProfileService {
     return this.profileRepository.findByUserId(id);
   }
 
+  findMissingProfileEmbeddings(BATCH_SIZE: number) {
+    return this.profileRepository.findMissingProfileEmbeddings(BATCH_SIZE);
+  }
+
   async getEventProfile(id: string): Promise<ProfileEventDetail> {
     const profile = await this.profileRepository.findByUserId(id);
     if (!profile) {
@@ -37,6 +48,23 @@ export class ProfileService {
       profileImageUrl: profile.profileImageUrl,
       username: profile.username,
     };
+  }
+
+  async setProfilePreferences(
+    id: string,
+    preferences: UserPreferences,
+  ): Promise<Profile> {
+    console.log(preferences);
+    const profile = await this.profileRepository.findByUserId(id);
+    if (!profile) {
+      throw new Error('Profile not found');
+    }
+    return this.profileRepository.updateProfilePreferences(id, preferences);
+  }
+
+  async getProfilePreferences(id: string): Promise<UserPreferences> {
+    const profile = await this.profileRepository.findByUserId(id);
+    return profile.preferences;
   }
 
   async createProfile(profile: Profile): Promise<Profile> {

@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ProfileService } from 'src/application/services/profile.service';
-import { Profile } from 'src/core/domain/profile';
+import { Profile, UserPreferences } from 'src/core/domain/profile';
 import { ImageService } from 'src/infrastructure/services/image.service';
 import { UpdateUserProfileDto } from '../dtos/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -63,6 +63,22 @@ export class ProfileController {
   @Get('email/:email')
   async getProfileByEmail(@Param('email') email: string): Promise<Profile> {
     return this.profileService.findByEmail(email);
+  }
+
+  @Put('preferences/:id')
+  @UseGuards(JwtAuthGuard, ProfileOwnerGuard)
+  async setProfilePreferences(
+    @Param('id') id: string,
+    @Body() preferences: UserPreferences,
+  ): Promise<Profile> {
+    return this.profileService.setProfilePreferences(id, preferences);
+  }
+
+  @Get('preferences/:id')
+  async getProfilePreferences(
+    @Param('id') id: string,
+  ): Promise<UserPreferences> {
+    return this.profileService.getProfilePreferences(id);
   }
 
   @UseGuards(JwtAuthGuard, ProfileOwnerGuard)

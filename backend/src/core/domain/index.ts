@@ -1,3 +1,4 @@
 export { Event } from './event';
 export { Location } from './location';
-export { User } from './user'; 
+export { Profile } from './profile';
+export { User } from './user';

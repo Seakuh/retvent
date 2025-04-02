@@ -21,9 +21,22 @@ export class Profile implements IProfile {
   updatedAt: Date;
   queue?: string;
   doorPolicy?: string;
+  preferences?: UserPreferences;
+  embedding?: number[];
   constructor(data: Partial<IProfile>) {
     Object.assign(this, data);
   }
+}
+
+interface PreferenceCategory {
+  [key: string]: string[]; // e.g. "Concert": ["Jazz", "Acoustic"]
+}
+
+export interface UserPreferences {
+  eventType?: PreferenceCategory;
+  genreStyle?: PreferenceCategory;
+  context?: PreferenceCategory;
+  communityOffers?: PreferenceCategory;
 }
 
 export interface ProfileEventDetail {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Profile } from '../../../core/domain/profile';
+import { Profile, UserPreferences } from '../../../core/domain/profile';
 import { IProfileRepository } from '../../../core/repositories/profile.repository.interface';
 
 @Injectable()
@@ -9,6 +9,7 @@ export class MongoProfileRepository implements IProfileRepository {
   constructor(
     @InjectModel('Profile') private readonly profileModel: Model<Profile>,
   ) {}
+
   findBySlug(slug: string): Promise<Profile | null> {
     throw new Error('Method not implemented.');
   }
@@ -22,6 +23,34 @@ export class MongoProfileRepository implements IProfileRepository {
       { new: true },
     );
   }
+
+  updateProfileEmbedding(id: any, embedding: number[]) {
+    return this.profileModel.findByIdAndUpdate(
+      id,
+      { embedding },
+      { new: true },
+    );
+  }
+
+  findMissingProfileEmbeddings(BATCH_SIZE: number) {
+    return this.profileModel
+      .find({ embedding: { $exists: false } })
+      .limit(BATCH_SIZE)
+      .sort({ createdAt: 1 })
+      .exec();
+  }
+
+  updateProfilePreferences(
+    id: string,
+    preferences: UserPreferences,
+  ): Profile | PromiseLike<Profile> {
+    return this.profileModel.findByIdAndUpdate(
+      id,
+      { preferences },
+      { new: true },
+    );
+  }
+  con;
 
   async findById(id: string): Promise<Profile | null> {
     // when no points are set, set them to 0
