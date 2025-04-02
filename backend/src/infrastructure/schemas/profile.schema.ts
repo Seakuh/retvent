@@ -20,6 +20,7 @@ export const ProfileSchema = new Schema({
   following: { type: [String] },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  preferences: { type: Object },
 });
 
 ProfileSchema.index({ username: 1 }, { unique: true });

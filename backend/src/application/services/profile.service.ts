@@ -54,17 +54,34 @@ export class ProfileService {
     id: string,
     preferences: UserPreferences,
   ): Promise<Profile> {
-    console.log(preferences);
     const profile = await this.profileRepository.findByUserId(id);
     if (!profile) {
       throw new Error('Profile not found');
     }
-    return this.profileRepository.updateProfilePreferences(id, preferences);
+
+    // Embedding für die neuen Präferenzen erstellen
+    // const preferencesEmbedding =
+    //   await this.eventEmbeddingService.createEmbeddingFromPreferences(
+    //     preferences,
+    //   );
+    console.log('preferences', preferences);
+    console.log('profile', profile);
+    // Profil mit neuen Präferenzen und Embedding aktualisieren
+    const updatedProfile =
+      await this.profileRepository.updateProfilePreferences(id, preferences);
+    // await this.updateProfileEmbedding(id, preferencesEmbedding);
+
+    console.log(updatedProfile);
+    return updatedProfile;
   }
 
   async getProfilePreferences(id: string): Promise<UserPreferences> {
     const profile = await this.profileRepository.findByUserId(id);
     return profile.preferences;
+  }
+
+  createPreferencesEmbeddings(preferences: UserPreferences): UserPreferences {
+    return preferences;
   }
 
   async createProfile(profile: Profile): Promise<Profile> {

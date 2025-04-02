@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Event, Profile } from 'src/core/domain';
 import { UserPreferences } from 'src/core/domain/profile';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
@@ -41,25 +42,32 @@ export class EventEmbeddingService {
     }
   }
 
-  //@Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_10_SECONDS)
   //@Cron('0 */15 * * * *') // alle 15 Minuten exakt
   async embedMissingProfilesBatch() {
-    this.logger.log('🔁 Embedding Cron gestartet…');
+    this.logger.log('🔁 PROFILE EMBEDDING Cron gestartet…');
 
     const profiles = await this.profileService.findMissingProfileEmbeddings(
       this.BATCH_SIZE,
     );
 
-    this.logger.log(`🔍 Gefundene Profiles: ${profiles.length}`);
+    // Filter nur Profile mit Präferenzen
+    const profilesWithPreferences = profiles.filter(
+      (profile) => profile.preferences,
+    );
 
-    for (const profile of profiles) {
+    this.logger.log(
+      `🔍 Found Profiles: ${profilesWithPreferences.length} (mit Präferenzen)`,
+    );
+
+    for (const profile of profilesWithPreferences) {
       try {
         this.logger.log(
           `🔍 Embedding Profile: ${profile.username} ${profile.id}`,
         );
+
         const text = this.buildProfileText(profile);
         const embedding = await this.chatgptService.createEmbedding(text);
-
         await this.profileService.updateProfileEmbedding(profile.id, embedding);
 
         this.logger.log(`✅ Profile "${profile.username}" eingebettet`);
@@ -67,6 +75,13 @@ export class EventEmbeddingService {
         this.logger.error(`❌ Fehler bei "${profile.username}"`, err);
       }
     }
+  }
+
+  async createEmbeddingFromPreferences(preferences: UserPreferences) {
+    const text = this.preferencesToText(preferences);
+    console.log(text);
+    const embedding = await this.chatgptService.createEmbedding(text);
+    return embedding;
   }
   buildProfileText(profile: Profile) {
     return [this.preferencesToText(profile.preferences)]

@@ -40,17 +40,22 @@ export class MongoProfileRepository implements IProfileRepository {
       .exec();
   }
 
-  updateProfilePreferences(
+  async updateProfilePreferences(
     id: string,
     preferences: UserPreferences,
-  ): Profile | PromiseLike<Profile> {
-    return this.profileModel.findByIdAndUpdate(
-      id,
-      { preferences },
-      { new: true },
-    );
+  ): Promise<Profile> {
+    return await this.profileModel
+      .findOneAndUpdate(
+        { userId: id },
+        {
+          $set: {
+            preferences: preferences,
+          },
+        },
+        { new: true, upsert: true },
+      )
+      .exec();
   }
-  con;
 
   async findById(id: string): Promise<Profile | null> {
     // when no points are set, set them to 0
