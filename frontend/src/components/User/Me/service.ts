@@ -1,4 +1,4 @@
-import type { Profile } from "../../../utils";
+import type { Profile, UserPreferences } from "../../../utils";
 import { API_URL } from "../../../utils";
 
 export const meService = {
@@ -78,5 +78,23 @@ export const meService = {
     }
 
     return response;
+  },
+
+  // @Get('preferences/:id')
+  // @UseGuards(JwtAuthGuard, ProfileOwnerGuard)
+  // async setProfilePreferences(
+  // @Param('id') id: string,
+  // @Body() preferences: UserPreferences,
+  updatePreferences: async (id: string, preferences: UserPreferences) => {
+    const accessToken = localStorage.getItem("access_token");
+    const response = await fetch(`${API_URL}profile/preferences/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(preferences),
+    });
+    return response.json();
   },
 };

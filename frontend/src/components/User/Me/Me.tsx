@@ -163,6 +163,7 @@ export const Me: React.FC = () => {
   const savePreferences = useCallback((preferences: UserPreferences) => {
     setPreferences(preferences);
     console.log(preferences);
+    meService.updatePreferences(user.id, preferences);
     localStorage.setItem("preferences", JSON.stringify(preferences));
     setIsPreferencesOpen(false);
   }, []);
