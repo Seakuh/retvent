@@ -18,7 +18,6 @@ import { EventSection } from "./components/EventPage/EventSection";
 import { EventScanner } from "./components/EventScanner/Eventscanner";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import SearchModal from "./components/SearchModal/SearchModal";
-import { ViewToggle } from "./components/ViewToggle/ViewToggle";
 import Footer from "./Footer/Footer";
 import {
   fetchEventsByCategory,
@@ -269,7 +268,7 @@ function LandingPage() {
                 >
                   <Search size={24} color="white" />
                 </button>
-                <ViewToggle view={viewMode} onViewChange={setViewMode} />
+                {/* <ViewToggle view={viewMode} onViewChange={setViewMode} /> */}
                 <button
                   onClick={() => setShowMenu(!showMenu)}
                   className="p-2 rounded-lg glass-effect text-white"
