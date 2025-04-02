@@ -6,31 +6,28 @@ import "./EmbeddingPreferences.css";
 interface EmbeddingPreferencesProps {
   preferences: UserPreferences;
   onSave: (preferences: UserPreferences) => void;
+  onClose?: () => void;
 }
 
 export const EmbeddingPreferences = ({
   preferences,
   onSave,
+  onClose,
 }: EmbeddingPreferencesProps) => {
   const [activeCategory, setActiveCategory] = useState(0);
   const [selectedPreferences, setSelectedPreferences] =
-    useState<UserPreferences>(preferences);
-
-  const getSelectionCount = (category: string, subcategory: string): number => {
-    switch (category) {
-      case "Event Type":
-        return selectedPreferences.eventTypes?.length || 0;
-      case "Genre/Style":
-        return selectedPreferences.genreStyles?.length || 0;
-      case "Target Audience/Context":
-        const contextKey = subcategory
-          .toLowerCase()
-          .replace(/ /g, "") as keyof typeof selectedPreferences.context;
-        return selectedPreferences.context?.[contextKey]?.length || 0;
-      default:
-        return 0;
-    }
-  };
+    useState<UserPreferences>(
+      preferences || {
+        eventTypes: [],
+        genreStyles: [],
+        context: {
+          ageGroups: [],
+          moods: [],
+          settings: [],
+          specialFeatures: [],
+        },
+      }
+    );
 
   const handleSelection = (
     category: string,
@@ -66,15 +63,14 @@ export const EmbeddingPreferences = ({
           const contextKey = subcategory
             .toLowerCase()
             .replace(/ /g, "") as keyof typeof newPreferences.context;
-          newPreferences.context[contextKey] =
-            newPreferences.context[contextKey] || [];
-          const contextArray = newPreferences.context[contextKey] as string[];
+          const contextArray =
+            (newPreferences.context[contextKey] as string[]) || [];
           if (contextArray.includes(value)) {
             newPreferences.context[contextKey] = contextArray.filter(
               (c) => c !== value
             );
           } else {
-            contextArray.push(value);
+            newPreferences.context[contextKey] = [...contextArray, value];
           }
       }
       return newPreferences;
@@ -82,77 +78,75 @@ export const EmbeddingPreferences = ({
   };
 
   return (
-    <div className="preferences-container">
-      <div className="preferences-content">
-        <h2 className="preferences-title">Customize Your Experience</h2>
-        <p className="preferences-subtitle">
-          Select multiple options that match your interests
-        </p>
-
-        <div className="category-tabs">
-          {userPreferencesTemplate.categories.map((cat, index) => (
-            <button
-              key={cat.name}
-              onClick={() => setActiveCategory(index)}
-              className={`category-tab ${
-                activeCategory === index ? "active" : ""
-              }`}
-            >
-              {cat.name}
+    <div className="preferences-overlay">
+      <div className="preferences-container">
+        <div className="preferences-header">
+          <h2 className="preferences-title">Customize Your Experience</h2>
+          {onClose && (
+            <button className="close-button" onClick={onClose}>
+              ×
             </button>
-          ))}
+          )}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          key={activeCategory}
-          className="selection-grid"
-        >
-          {Object.entries(
-            userPreferencesTemplate.categories[activeCategory].values
-          ).map(([category, values]) => (
-            <div key={category} className="category-card">
-              <div className="category-header">
+        <div className="preferences-content">
+          <div className="category-tabs">
+            {userPreferencesTemplate.categories.map((cat, index) => (
+              <button
+                key={cat.name}
+                onClick={() => setActiveCategory(index)}
+                className={`category-tab ${
+                  activeCategory === index ? "active" : ""
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            key={activeCategory}
+            className="selection-grid"
+          >
+            {Object.entries(
+              userPreferencesTemplate.categories[activeCategory].values
+            ).map(([category, values]) => (
+              <div key={category} className="category-card">
                 <h3 className="category-title">{category}</h3>
-                <span className="selection-count">
-                  {getSelectionCount(
-                    userPreferencesTemplate.categories[activeCategory].name,
-                    category
-                  )}
-                  selected
-                </span>
+                <div className="options-grid">
+                  {values.map((value) => (
+                    <button
+                      key={value}
+                      onClick={() =>
+                        handleSelection(
+                          userPreferencesTemplate.categories[activeCategory]
+                            .name,
+                          category,
+                          value
+                        )
+                      }
+                      className={`option-chip ${
+                        isSelected(
+                          selectedPreferences,
+                          userPreferencesTemplate.categories[activeCategory]
+                            .name,
+                          category,
+                          value
+                        )
+                          ? "selected"
+                          : ""
+                      }`}
+                    >
+                      {value}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="options-grid">
-                {values.map((value) => (
-                  <button
-                    key={value}
-                    onClick={() =>
-                      handleSelection(
-                        userPreferencesTemplate.categories[activeCategory].name,
-                        category,
-                        value
-                      )
-                    }
-                    className={`option-chip ${
-                      isSelected(
-                        selectedPreferences,
-                        userPreferencesTemplate.categories[activeCategory].name,
-                        category,
-                        value
-                      )
-                        ? "selected"
-                        : ""
-                    }`}
-                  >
-                    <span className="option-text">{value}</span>
-                    <span className="selection-indicator"></span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </motion.div>
+            ))}
+          </motion.div>
+        </div>
 
         <button
           onClick={() => onSave(selectedPreferences)}
@@ -165,7 +159,6 @@ export const EmbeddingPreferences = ({
   );
 };
 
-// Hilfsfunktion um zu prüfen, ob ein Wert ausgewählt ist
 const isSelected = (
   preferences: UserPreferences,
   category: string,

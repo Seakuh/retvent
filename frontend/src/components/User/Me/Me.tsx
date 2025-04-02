@@ -160,6 +160,19 @@ export const Me: React.FC = () => {
     [handleImageUpload]
   );
 
+  const savePreferences = useCallback((preferences: UserPreferences) => {
+    setPreferences(preferences);
+    console.log(preferences);
+    localStorage.setItem("preferences", JSON.stringify(preferences));
+    setIsPreferencesOpen(false);
+  }, []);
+
+  const loadPreferences = useCallback(() => {
+    const preferences = localStorage.getItem("preferences");
+    if (preferences) {
+      setPreferences(JSON.parse(preferences));
+    }
+  }, []);
   // Hilfsfunktionen
   const formatDate = useCallback((date: Date) => {
     return date.toLocaleDateString("de-DE", {
@@ -194,7 +207,8 @@ export const Me: React.FC = () => {
       {isPreferencesOpen && (
         <EmbeddingPreferences
           preferences={preferences}
-          onSave={setPreferences}
+          onSave={savePreferences}
+          onClose={() => setIsPreferencesOpen(false)}
         />
       )}
       <button className="back-button" onClick={handleBack}>
