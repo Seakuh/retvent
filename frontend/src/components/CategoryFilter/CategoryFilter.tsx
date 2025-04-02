@@ -1,4 +1,4 @@
-import { Compass, Home, SlidersHorizontal } from "lucide-react";
+import { Home, SlidersHorizontal, Telescope } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { CACHE_DURATION_3 } from "../../utils";
 import "./CategoryFilter.css";
@@ -135,7 +135,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }`}
         onClick={() => onCategoryChange("All")}
       >
-        <Compass size={20} />
+        <Telescope size={20} />
         All
       </button>
       <button
