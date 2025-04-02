@@ -81,6 +81,9 @@ export const EventPage = () => {
   return (
     <div>
       <HomeBubbles />
+      <div className="event-favorites-container">
+        <EventSection title="Favorites" events={favoriteEvents} />
+      </div>
       <h1 className="section-title">Nearby</h1>
       <div className="nearby-section-container">
         <EventSection
@@ -100,7 +103,6 @@ export const EventPage = () => {
           ]}
           onEventSelect={handleEventSelect}
         />
-        <EventSection title="Favorites" events={favoriteEvents} />
       </div>
     </div>
   );

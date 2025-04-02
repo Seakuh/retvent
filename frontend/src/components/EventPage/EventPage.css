@@ -11,6 +11,10 @@
   overflow: hidden;
 }
 
+.event-favorites-container {
+  margin-top: 1rem;
+}
+
 .map-view-container {
   margin-top: -2.5rem;
 }
