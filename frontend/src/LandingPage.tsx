@@ -25,6 +25,7 @@ import {
   searchEventsByKeyword,
 } from "./service";
 import { ViewMode } from "./types/event";
+import { UploadModal } from "./UploadModal/UploadModal";
 import { Event } from "./utils";
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -40,6 +41,7 @@ function LandingPage() {
     "All"
   );
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
@@ -263,6 +265,15 @@ function LandingPage() {
               </div>
               <div className="flex items-center gap-4">
                 <button
+                  className="upload-icon"
+                  onClick={() => {
+                    setIsUploadOpen(!isUploadOpen);
+                  }}
+                >
+                  <Upload size={24} color="white" />
+                </button>
+
+                <button
                   className="search-icon"
                   onClick={() => setIsSearchOpen(true)}
                 >
@@ -426,6 +437,10 @@ function LandingPage() {
           isOpen={isSearchOpen}
           onClose={() => setIsSearchOpen(false)}
           onSearch={handleSearch}
+        />
+        <UploadModal
+          isOpen={isUploadOpen}
+          onClose={() => setIsUploadOpen(false)}
         />
         <Footer />
       </div>
