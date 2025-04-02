@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { UserPreferences, userPreferencesTemplate } from "../../../../utils";
+import "./EmbeddingPreferences.css";
 
 interface EmbeddingPreferencesProps {
   preferences: UserPreferences;
@@ -15,6 +16,22 @@ export const EmbeddingPreferences = ({
   const [selectedPreferences, setSelectedPreferences] =
     useState<UserPreferences>(preferences);
 
+  const getSelectionCount = (category: string, subcategory: string): number => {
+    switch (category) {
+      case "Event Type":
+        return selectedPreferences.eventTypes?.length || 0;
+      case "Genre/Style":
+        return selectedPreferences.genreStyles?.length || 0;
+      case "Target Audience/Context":
+        const contextKey = subcategory
+          .toLowerCase()
+          .replace(/ /g, "") as keyof typeof selectedPreferences.context;
+        return selectedPreferences.context?.[contextKey]?.length || 0;
+      default:
+        return 0;
+    }
+  };
+
   const handleSelection = (
     category: string,
     subcategory: string,
@@ -24,7 +41,7 @@ export const EmbeddingPreferences = ({
       const newPreferences = { ...prev };
 
       switch (category) {
-        case "EventArt":
+        case "Event Type":
           newPreferences.eventTypes = newPreferences.eventTypes || [];
           if (newPreferences.eventTypes.includes(value)) {
             newPreferences.eventTypes = newPreferences.eventTypes.filter(
@@ -34,7 +51,7 @@ export const EmbeddingPreferences = ({
             newPreferences.eventTypes.push(value);
           }
           break;
-        case "GenreStil":
+        case "Genre/Style":
           newPreferences.genreStyles = newPreferences.genreStyles || [];
           if (newPreferences.genreStyles.includes(value)) {
             newPreferences.genreStyles = newPreferences.genreStyles.filter(
@@ -44,21 +61,18 @@ export const EmbeddingPreferences = ({
             newPreferences.genreStyles.push(value);
           }
           break;
-        case "TargetAudienceContext":
+        case "Target Audience/Context":
           newPreferences.context = newPreferences.context || {};
-          newPreferences.context[
-            subcategory.toLowerCase() as keyof typeof newPreferences.context
-          ] =
-            newPreferences.context[
-              subcategory.toLowerCase() as keyof typeof newPreferences.context
-            ] || [];
-          const contextArray = newPreferences.context[
-            subcategory.toLowerCase() as keyof typeof newPreferences.context
-          ] as string[];
+          const contextKey = subcategory
+            .toLowerCase()
+            .replace(/ /g, "") as keyof typeof newPreferences.context;
+          newPreferences.context[contextKey] =
+            newPreferences.context[contextKey] || [];
+          const contextArray = newPreferences.context[contextKey] as string[];
           if (contextArray.includes(value)) {
-            newPreferences.context[
-              subcategory.toLowerCase() as keyof typeof newPreferences.context
-            ] = contextArray.filter((c) => c !== value);
+            newPreferences.context[contextKey] = contextArray.filter(
+              (c) => c !== value
+            );
           } else {
             contextArray.push(value);
           }
@@ -68,17 +82,20 @@ export const EmbeddingPreferences = ({
   };
 
   return (
-    <div className="embedding-preferences-container max-w-4xl mx-auto p-6">
-      <div className="mb-8">
-        <div className="flex justify-between mb-6">
+    <div className="preferences-container">
+      <div className="preferences-content">
+        <h2 className="preferences-title">Customize Your Experience</h2>
+        <p className="preferences-subtitle">
+          Select multiple options that match your interests
+        </p>
+
+        <div className="category-tabs">
           {userPreferencesTemplate.categories.map((cat, index) => (
             <button
               key={cat.name}
               onClick={() => setActiveCategory(index)}
-              className={`px-4 py-2 rounded-lg transition-all ${
-                activeCategory === index
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
+              className={`category-tab ${
+                activeCategory === index ? "active" : ""
               }`}
             >
               {cat.name}
@@ -90,14 +107,23 @@ export const EmbeddingPreferences = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           key={activeCategory}
-          className="grid gap-6"
+          className="selection-grid"
         >
           {Object.entries(
             userPreferencesTemplate.categories[activeCategory].values
           ).map(([category, values]) => (
-            <div key={category} className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold mb-4">{category}</h3>
-              <div className="flex flex-wrap gap-2">
+            <div key={category} className="category-card">
+              <div className="category-header">
+                <h3 className="category-title">{category}</h3>
+                <span className="selection-count">
+                  {getSelectionCount(
+                    userPreferencesTemplate.categories[activeCategory].name,
+                    category
+                  )}
+                  selected
+                </span>
+              </div>
+              <div className="options-grid">
                 {values.map((value) => (
                   <button
                     key={value}
@@ -108,32 +134,33 @@ export const EmbeddingPreferences = ({
                         value
                       )
                     }
-                    className={`px-4 py-2 rounded-full text-sm transition-all ${
+                    className={`option-chip ${
                       isSelected(
                         selectedPreferences,
                         userPreferencesTemplate.categories[activeCategory].name,
                         category,
                         value
                       )
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 hover:bg-gray-200"
+                        ? "selected"
+                        : ""
                     }`}
                   >
-                    {value}
+                    <span className="option-text">{value}</span>
+                    <span className="selection-indicator"></span>
                   </button>
                 ))}
               </div>
             </div>
           ))}
         </motion.div>
-      </div>
 
-      <button
-        onClick={() => onSave(selectedPreferences)}
-        className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors"
-      >
-        Save
-      </button>
+        <button
+          onClick={() => onSave(selectedPreferences)}
+          className="save-button"
+        >
+          Save Preferences
+        </button>
+      </div>
     </div>
   );
 };
@@ -146,16 +173,15 @@ const isSelected = (
   value: string
 ): boolean => {
   switch (category) {
-    case "EventArt":
+    case "Event Type":
       return preferences.eventTypes?.includes(value) || false;
-    case "GenreStil":
+    case "Genre/Style":
       return preferences.genreStyles?.includes(value) || false;
-    case "TargetAudienceContext":
-      return (
-        preferences.context?.[
-          subcategory.toLowerCase() as keyof typeof preferences.context
-        ]?.includes(value) || false
-      );
+    case "Target Audience/Context":
+      const contextKey = subcategory
+        .toLowerCase()
+        .replace(/ /g, "") as keyof typeof preferences.context;
+      return preferences.context?.[contextKey]?.includes(value) || false;
     default:
       return false;
   }
