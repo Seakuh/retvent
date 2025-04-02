@@ -50,7 +50,7 @@
 }
 
 .upload-button span {
-  line-height: 24px; /* Gleiche Höhe wie Icons */
+  min-width: 9rem;
 }
 
 .camera-button {

@@ -1,6 +1,6 @@
-import { Camera, Upload } from "lucide-react";
+import { Camera, FilePlus, Upload } from "lucide-react";
 import { useRef, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import ErrorDialog from "../components/ErrorDialog/ErrorDialog";
 import { uploadEventImage } from "../components/EventScanner/service";
 import { ProcessingAnimation } from "../components/ProcessingAnimation/ProcessingAnimation";
@@ -20,6 +20,7 @@ export const UploadModal = ({
 }: UploadModalProps) => {
   if (!isOpen) return null;
 
+  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const [uploadedEvent, setUploadedEvent] = useState<any | null>(null);
@@ -100,6 +101,13 @@ export const UploadModal = ({
           >
             <Upload size={24} />
             <span>Select File</span>
+          </button>
+          <button
+            className="upload-button file-button"
+            onClick={() => navigate("/admin/events/create")}
+          >
+            <FilePlus size={24} />
+            <span>Create Classic</span>
           </button>
         </div>
 
