@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { Event } from "../../utils";
 import { HomeBubbles } from "../HomeBubbles/HomeBubbles";
-import { MapView } from "../MapView/MapView";
 import "./EventPage.css";
 import { EventSection } from "./EventSection";
 import { fetchFavoriteEvents } from "./service";
@@ -93,7 +92,7 @@ export const EventPage = () => {
           className="nearby-section"
         />
       </div>
-      <div className="map-view-container">
+      {/* <div className="map-view-container">
         <MapView
           events={nearbyEvents}
           selectedEvent={selectedNearbyEvent}
@@ -103,7 +102,7 @@ export const EventPage = () => {
           ]}
           onEventSelect={handleEventSelect}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
