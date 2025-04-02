@@ -1,0 +1,76 @@
+.upload-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.upload-modal-content {
+  background: #000000b4;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.upload-modal-content h2 {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.upload-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.upload-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 500;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.upload-button span {
+  line-height: 24px; /* Gleiche Höhe wie Icons */
+}
+
+.camera-button {
+  background-color: #2563eb;
+  color: white;
+}
+
+.camera-button:hover {
+  background-color: #1d4ed8;
+}
+
+.file-button {
+  background-color: #4b5563;
+  color: white;
+}
+
+.file-button:hover {
+  background-color: #374151;
+}
+
+.hidden-input {
+  display: none;
+}

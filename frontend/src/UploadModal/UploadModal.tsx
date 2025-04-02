@@ -5,6 +5,7 @@ import ErrorDialog from "../components/ErrorDialog/ErrorDialog";
 import { uploadEventImage } from "../components/EventScanner/service";
 import { ProcessingAnimation } from "../components/ProcessingAnimation/ProcessingAnimation";
 import { UploadAnimation } from "../components/UploadAnimation/UploadAnimation";
+import "./UploadModal.css";
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -20,14 +21,12 @@ export const UploadModal = ({
   if (!isOpen) return null;
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const [uploadedEvent, setUploadedEvent] = useState<any | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<
-    "file" | "camera" | null
-  >(null);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -36,12 +35,6 @@ export const UploadModal = ({
 
     const image = event.target.files[0];
     startUpload(image);
-  };
-
-  const handleCameraCapture = async () => {
-    if (!fileInputRef.current) return;
-    fileInputRef.current.capture = "environment";
-    fileInputRef.current.click();
   };
 
   const startUpload = async (image: File) => {
@@ -90,38 +83,40 @@ export const UploadModal = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative bg-white rounded-2xl p-6 w-[90%] max-w-md shadow-xl">
-        <div className="space-y-4">
+    <div className="upload-modal-overlay">
+      <div className="upload-modal-content">
+        <div className="upload-buttons">
           <button
-            onClick={() => handleCameraCapture()}
-            className="w-full flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 
-                     text-white p-4 rounded-xl text-lg font-medium transition-colors"
+            className="upload-button camera-button"
+            onClick={() => cameraInputRef.current?.click()}
           >
             <Camera size={24} />
-            Open Camera
+            <span>Open Camera</span>
           </button>
 
           <button
+            className="upload-button file-button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full flex items-center justify-center gap-3 bg-gray-600 hover:bg-gray-700 
-                     text-white p-4 rounded-xl text-lg font-medium transition-colors"
           >
             <Upload size={24} />
-            Select File
+            <span>Select File</span>
           </button>
         </div>
 
         <input
           type="file"
           accept="image/*"
-          capture="environment"
           ref={fileInputRef}
-          className="hidden"
+          className="hidden-input"
+          onChange={handleFileChange}
+        />
+
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          ref={cameraInputRef}
+          className="hidden-input"
           onChange={handleFileChange}
         />
 
