@@ -1,4 +1,4 @@
-import { Calendar, Compass, Filter, Home } from "lucide-react";
+import { Compass, Home, SlidersHorizontal } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { CACHE_DURATION_3 } from "../../utils";
 import "./CategoryFilter.css";
@@ -21,7 +21,6 @@ interface CachedCategories {
 export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   selectedCategory,
   onCategoryChange,
-  onShowDateFilter,
 }) => {
   const [categories, setCategories] = useState<string[]>([]);
   const [dateFilter, setDateFilter] = useState<boolean>(false);
@@ -147,16 +146,16 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }`}
         onClick={toggleGenreModal}
       >
-        <Filter size={20} />
+        <SlidersHorizontal size={20} />
         Filter
       </button>
-      <button
+      {/* <button
         className={`category-button ${dateFilter ? "active" : ""}`}
         onClick={() => setDateFilter(!dateFilter)}
       >
         <Calendar size={20} />
         Date
-      </button>
+      </button> */}
       {/* {categories.map((category) => (
         <button
           key={category}

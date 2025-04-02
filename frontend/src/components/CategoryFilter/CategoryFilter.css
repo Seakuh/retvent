@@ -12,8 +12,7 @@
 }
 
 .category-filter::-webkit-scrollbar {
-  height: 8px;
-  background: transparent;
+  height: 0.5rem;
 }
 
 .category-filter::-webkit-scrollbar-track {
@@ -51,5 +50,7 @@
 }
 
 .category-button.active {
-  border: 1px solid var(--color-neon-blue);
+  background: var(--color-neon-blue-light);
+  color: var(--color-neon-blue);
+  border: 1px solid var(--color-neon-blue-light);
 }
