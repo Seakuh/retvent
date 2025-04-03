@@ -9,7 +9,6 @@ import { Terms } from "./Footer/Terms";
 import LandingPage from "./LandingPage";
 import AdminEvents from "./components/Admin/AdminEvents";
 import CreateEvent from "./components/Admin/CreateEvent";
-import Dashboard from "./components/Admin/Dashboard";
 import EditEvent from "./components/Admin/EditEvent";
 import Login from "./components/Auth/Login";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
@@ -65,14 +64,14 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-                <Route
+                {/* <Route
                   path="/admin/dashboard"
                   element={
                     <ProtectedRoute>
                       <Dashboard />
                     </ProtectedRoute>
                   }
-                />
+                /> */}
                 <Route
                   path="/admin/events"
                   element={

@@ -1,13 +1,4 @@
-import {
-  Hexagon,
-  Info,
-  LogIn,
-  Menu,
-  Plus,
-  Search,
-  Upload,
-  User,
-} from "lucide-react";
+import { Info, LogIn, Menu, Plus, Search, Upload, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -289,7 +280,7 @@ function LandingPage() {
             </div>
             {showMenu && (
               <div className="absolute right-4 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 ">
-                <button
+                {/* <button
                   onClick={() => {
                     navigate("/admin/dashboard");
                   }}
@@ -297,7 +288,7 @@ function LandingPage() {
                 >
                   <Hexagon size={20} />
                   <h3>Dashboard</h3>
-                </button>
+                </button> */}
 
                 <button
                   onClick={() => {

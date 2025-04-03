@@ -67,14 +67,14 @@ const CreateEvent: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate("/admin/dashboard");
+    navigate("/me");
   };
 
   return (
     <div className="create-event-container">
       <div className="header-container">
         <button onClick={handleBack} className="back-button">
-          ← Back to Dashboard
+          ← Back
         </button>
         <h1>Create New Event 🎪</h1>
       </div>

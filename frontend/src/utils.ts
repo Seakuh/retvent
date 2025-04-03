@@ -524,3 +524,8 @@ export const userPreferencesTemplate = {
     },
   ],
 };
+
+export const handleLogout = () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("access_token");
+};

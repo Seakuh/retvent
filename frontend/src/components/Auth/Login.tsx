@@ -25,7 +25,7 @@ const Login: React.FC = () => {
       });
       localStorage.setItem("access_token", response.access_token);
       localStorage.setItem("user", JSON.stringify(response.user));
-      navigate("/admin/dashboard");
+      navigate(`/me`);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Login failed 😢");
     }

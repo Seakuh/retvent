@@ -75,13 +75,13 @@ const AdminEvents: React.FC = () => {
   }
 
   const handleBack = () => {
-    navigate("/admin/dashboard");
+    navigate(-1);
   };
 
   return (
     <div className="admin-events-container">
       <button onClick={handleBack} className="back-button">
-        ← Back to Dashboard
+        ← Back
       </button>
       <h2 className="admin-events-title">My Events 📅</h2>
       {events.length === 0 ? (
