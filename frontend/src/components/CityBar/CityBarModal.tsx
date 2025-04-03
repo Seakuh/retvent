@@ -69,7 +69,14 @@ const CityBarModal: React.FC<CityBarModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="city-bar-modal-overlay" onClick={onClose}>
+    <div
+      className="city-bar-modal-overlay"
+      onClick={(e) => {
+        e.stopPropagation();
+        console.log("clicked");
+        onClose();
+      }}
+    >
       <div
         className="city-bar-modal-content"
         onClick={(e) => e.stopPropagation()}
