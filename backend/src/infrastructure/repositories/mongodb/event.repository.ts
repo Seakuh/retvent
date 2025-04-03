@@ -411,6 +411,7 @@ export class MongoEventRepository implements IEventRepository {
   async findLatest(limit: number): Promise<Event[]> {
     const events = await this.eventModel
       .find()
+      .select('id title imageUrl startDate city views commentCount')
       .sort({ createdAt: -1 })
       .limit(limit)
       .exec();

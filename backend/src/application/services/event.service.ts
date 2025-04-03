@@ -105,6 +105,7 @@ export class EventService {
   }
 
   async findLatest(limit: number = 10): Promise<Event[]> {
+    console.log('call latest in service');
     return this.eventRepository.findLatest(limit);
   }
 
