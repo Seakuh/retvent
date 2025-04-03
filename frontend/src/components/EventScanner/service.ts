@@ -5,7 +5,10 @@ export const uploadEventImage = async (
 ): Promise<{ _id: string }> => {
   try {
     const position = await getCurrentPosition();
-    const { latitude, longitude } = position.coords;
+    const { latitude, longitude } = position.coords || {
+      latitude: 52.52,
+      longitude: 13.405,
+    };
 
     const formData = new FormData();
     formData.append("image", image);
@@ -57,7 +60,21 @@ export const uploadEventImage = async (
 // ✅ Hilfsfunktion für Geolocation mit Promise
 const getCurrentPosition = (): Promise<GeolocationPosition> => {
   return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject);
+    navigator.geolocation.getCurrentPosition(resolve, () => {
+      // Fallback auf Berlin Koordinaten wenn keine Berechtigung
+      resolve({
+        coords: {
+          latitude: 52.520008,
+          longitude: 13.404954,
+          accuracy: 0,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null,
+        },
+        timestamp: Date.now(),
+      } as GeolocationPosition);
+    });
   });
 };
 

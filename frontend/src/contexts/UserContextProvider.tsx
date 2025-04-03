@@ -18,14 +18,14 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // TODO: remove this
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        setLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-      });
-    }
+    // if (navigator.geolocation) {
+    //   navigator.geolocation.getCurrentPosition((position) => {
+    //     setLocation({
+    //       latitude: position.coords.latitude,
+    //       longitude: position.coords.longitude,
+    //     });
+    //   });
+    // }
   }, []);
 
   useEffect(() => {
