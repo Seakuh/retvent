@@ -1,5 +1,7 @@
 .city-bar-container {
   font-size: 3rem;
+  display: flex;
+  align-items: center;
   color: white;
   width: 100%;
   padding: 1.5rem;
@@ -23,6 +25,16 @@
   max-height: 300px;
   overflow-y: auto;
   z-index: 1000;
+}
+
+.city-bar-input-button-close {
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+
+.city-bar-input-button-close:hover {
+  color: var(--color-neon-pink);
 }
 
 .suggestions-list li,

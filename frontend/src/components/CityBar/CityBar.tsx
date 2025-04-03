@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+import { MapPin, X } from "lucide-react";
 import React, { useState } from "react";
 import "./CityBar.css";
 import CityBarModal from "./CityBarModal";
@@ -55,6 +55,13 @@ export const CityBar: React.FC<CityBarProps> = ({
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSearch={handleSearchLocation}
+        />
+      )}
+      {selectedLocation !== "Worldwide" && (
+        <X
+          size={20}
+          className="city-bar-input-button-close"
+          onClick={() => onLocationSelect("Worldwide")}
         />
       )}
     </div>
