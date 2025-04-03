@@ -4,14 +4,6 @@
   color: white;
 }
 
-.city-bar-input {
-  width: 100%;
-  padding: 12px 20px;
-  outline: none;
-  background-color: transparent;
-  border: none;
-}
-
 .suggestions-list,
 .recent-searches ul {
   position: absolute;

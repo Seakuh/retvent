@@ -21,7 +21,7 @@ import { Event } from "./utils";
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [city, setCity] = useState<string | null>(null);
+  const [city, setCity] = useState<string | null>("Berlin");
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());

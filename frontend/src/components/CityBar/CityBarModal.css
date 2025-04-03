@@ -1,0 +1,39 @@
+.city-bar-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .city-bar-modal-content {
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
+  }
+  
+  .city-bar-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2rem;
+    border: 2px solid white;
+    border-radius: .6rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+  }
+  
+  .city-bar-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .city-bar-input:focus {
+    border-color: #007bff;
+  }
+  
