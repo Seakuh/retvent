@@ -452,7 +452,7 @@ export class MongoEventRepository implements IEventRepository {
     const events = await this.eventModel
       .find({ _id: { $in: eventIds } })
       .exec();
-    return events.map((event) => this.toEntity(event));
+    return this.addCommentCountToEvents(events);
   }
 
   async findByHostId(
