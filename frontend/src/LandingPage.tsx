@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
+import { CityBar } from "./components/CityBar/CityBar";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
@@ -20,6 +21,7 @@ import { Event } from "./utils";
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [city, setCity] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -355,6 +357,11 @@ function LandingPage() {
         </header>
 
         <main className="max-w-7xl mx-auto">
+          <CityBar
+            onLocationSelect={(location) => {
+              console.log("Location selected", location);
+            }}
+          />
           {/* {showDateFilter && <DateFilter />} */}
           <div className="px-4 py-6">
             {/* <div>

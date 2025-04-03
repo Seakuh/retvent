@@ -1,0 +1,42 @@
+.city-bar-container {
+  font-size: 3rem;
+  padding: 1.5rem;
+  color: white;
+}
+
+.city-bar-input {
+  width: 100%;
+  padding: 12px 20px;
+  outline: none;
+  background-color: transparent;
+  border: none;
+}
+
+.suggestions-list,
+.recent-searches ul {
+  position: absolute;
+  width: 100%;
+  border-radius: 0 0 8px 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.suggestions-list li,
+.recent-searches li {
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.recent-searches h4 {
+  padding: 10px 20px;
+  margin: 0;
+  color: #666;
+}
+
+.city-bar-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
