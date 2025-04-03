@@ -106,6 +106,7 @@ interface address {
 export interface Event {
   // ID
   id?: string;
+  _id?: string;
   // Titel
   title: string;
   // Beschreibung

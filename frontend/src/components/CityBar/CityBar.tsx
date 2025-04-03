@@ -37,13 +37,16 @@ export const CityBar: React.FC<CityBarProps> = ({
 
   return (
     <div className="city-bar-container">
-      <div className="city-bar-input-container">
-        <MapPin color="white" size={45} className="city-bar-icon" />
-        <button
-          type="button"
-          className="city-bar-input-button"
-          onClick={() => setIsModalOpen(true)}
-        >
+      <div
+        className="city-bar-input-container"
+        onClick={() => setIsModalOpen(true)}
+      >
+        <MapPin
+          size={40}
+          className="city-bar-icon"
+          absoluteStrokeWidth={false}
+        />
+        <button type="button" className="city-bar-input-button">
           {selectedLocation}
         </button>
       </div>

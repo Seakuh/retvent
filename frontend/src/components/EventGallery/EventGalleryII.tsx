@@ -74,9 +74,9 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
     isPast,
   }) => (
     <div
-      key={event.id}
+      key={event.id || event._id}
       className={`event-list-item ${isPast ? "past-event" : ""}`}
-      onClick={() => navigate(`/event/${event.id}`)}
+      onClick={() => navigate(`/event/${event.id || event._id}`)}
     >
       <div className="event-thumbnail">
         <img

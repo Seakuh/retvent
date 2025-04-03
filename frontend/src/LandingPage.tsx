@@ -13,6 +13,7 @@ import Footer from "./Footer/Footer";
 import {
   fetchEventsByCategory,
   fetchLatestEvents,
+  fetchLatestEventsByLocation,
   searchEventsByKeyword,
 } from "./service";
 import { ViewMode } from "./types/event";
@@ -21,7 +22,9 @@ import { Event } from "./utils";
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedLocation, setSelectedLocation] = useState<string>("Berlin");
+  const [selectedLocation, setSelectedLocation] = useState<string>(
+    localStorage.getItem("selectedLocation") || "Worldwide"
+  );
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -97,6 +100,7 @@ function LandingPage() {
 
   const handleLocationChange = (location: string) => {
     setSelectedLocation(location);
+    localStorage.setItem("selectedLocation", location);
   };
 
   useEffect(() => {
@@ -128,10 +132,12 @@ function LandingPage() {
           events =
             categoryToUse && categoryToUse !== "All"
               ? await fetchEventsByCategory(categoryToUse)
+              : selectedLocation !== "Worldwide"
+              ? await fetchLatestEventsByLocation(selectedLocation)
               : await fetchLatestEvents();
         }
 
-        if (Array.isArray(events) && events.length > 0) {
+        if (Array.isArray(events)) {
           setEvents(events.reverse());
         }
       } catch (err) {
@@ -142,7 +148,7 @@ function LandingPage() {
     };
 
     loadEvents();
-  }, [searchParams, params.category]);
+  }, [searchParams, params.category, selectedLocation]);
 
   const toggleFavorite = (eventId: string) => {
     setFavorites((prev) => {
@@ -258,6 +264,7 @@ function LandingPage() {
                   }}
                 />
               </div>
+
               <div className="flex items-center gap-4">
                 <button
                   className="upload-icon"
@@ -360,10 +367,6 @@ function LandingPage() {
         </header>
 
         <main className="max-w-7xl mx-auto">
-          <CityBar
-            onLocationSelect={handleLocationChange}
-            selectedLocation={selectedLocation}
-          />
           {/* {showDateFilter && <DateFilter />} */}
           <div className="px-4 py-6">
             {/* <div>
@@ -375,8 +378,11 @@ function LandingPage() {
               // onDateChange={handleDateChange}
               // onShowDateFilter={setShowDateFilter}
             />
+            <CityBar
+              onLocationSelect={handleLocationChange}
+              selectedLocation={selectedLocation}
+            />
           </div>
-
           {loading ? (
             <div className="search-loading">
               <div className="search-spinner">
@@ -410,7 +416,6 @@ function LandingPage() {
               />
             </div>
           )}
-
           {/* {showUploads && (
             <div className="mt-4">
               <h2 className="text-xl font-bold text-white">

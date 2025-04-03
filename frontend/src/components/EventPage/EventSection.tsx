@@ -32,7 +32,7 @@ export const EventSection = ({
           </div>
         ) : (
           events.map((event) => (
-            <div className="event-card-list-item" key={event.id + title}>
+            <div className="event-card-list-item" key={event.id || event._id}>
               <EventCard event={event} />
             </div>
           ))

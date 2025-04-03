@@ -14,6 +14,22 @@ export const fetchLatestEvents = async (): Promise<Event[]> => {
   }
 };
 
+export const fetchLatestEventsByLocation = async (
+  location: string
+): Promise<Event[]> => {
+  try {
+    console.log("Fetching latest events by location:", location);
+    const response = await fetch(
+      `${API_URL}events/latest/city?city=${location}&limit=40`
+    );
+    const data = await response.json();
+    return data.events || [];
+  } catch (error) {
+    console.error("Error in fetchLatestEventsByLocation:", error);
+    return [];
+  }
+};
+
 export const fetchEventsByCategory = async (
   selectedCategory: string | null
 ): Promise<Event[]> => {

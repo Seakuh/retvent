@@ -20,7 +20,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({
     <div
       key={event.id}
       className={`event-list-item ${isPast ? "past-event" : ""}`}
-      onClick={() => navigate(`/event/${event.id}`)}
+      onClick={() => navigate(`/event/${event.id || event._id}`)}
     >
       <div className="event-thumbnail">
         <img

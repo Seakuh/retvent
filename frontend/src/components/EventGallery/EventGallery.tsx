@@ -26,7 +26,7 @@ export const EventGallery: React.FC<EventGalleryProps> = ({
           <div
             key={event.id}
             className={`image-card`}
-            onClick={() => navigate(`/event/${event.id}`)}
+            onClick={() => navigate(`/event/${event.id || event._id}`)}
           >
             <img
               src={event.imageUrl || DEFAULT_IMAGE}

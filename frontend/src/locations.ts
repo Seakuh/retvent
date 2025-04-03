@@ -1136,6 +1136,16 @@ export const popularLocationsByCountry: {
     "Phitsanulok",
     "Nakhon Si Thammarat",
     "Surat Thani",
+    "Pattaya", // Berühmt-berüchtigte Walking Street
+    "Phuket", // Patong Beach mit Bangla Road
+    "Koh Phangan", // Full Moon Party, Half Moon, Jungle Experience
+    "Koh Samui", // Green Mango Club, Ark Bar
+    "Krabi (Ao Nang)", // Chillige Strandpartys & Bars
+    "Koh Tao", // Kleine Bars und Full Moon Vibes im Mini-Format
+    "Pai", // Alternative Szene, Live-Musik, entspannte Vibes
+    "Koh Phi Phi", // Feiern am Strand – Slinky, Ibiza Pool Party, Apache Bar
+    "Hua Hin", // Weniger wild, aber viele Rooftop Bars und Clubs
+    "Hat Yai", // Grenznahe Großstadt mit aktiver Nachtkultur
     "Ubon Ratchathani",
     "Nakhon Pathom",
     "Rayong",
@@ -1367,4 +1377,24 @@ export const popularLocationsByCountry: {
   Morocco: ["Marrakech", "Chefchaouen"],
   Vietnam: ["Hanoi", "Hoi An"],
   Portugal: ["Lisbon", "Porto"],
+  Switzerland: ["Zürich", "Genf"],
+  Netherlands: [
+    "Amsterdam", // ca. 936.674 Einwohner
+    "Rotterdam", // ca. 670.610 Einwohner
+    "Den Haag", // ca. 566.221 Einwohner
+    "Utrecht", // ca. 374.238 Einwohner
+    "Eindhoven", // ca. 234.235 Einwohner
+    "Tilburg", // ca. 219.632 Einwohner
+    "Groningen", // ca. 203.105 Einwohner
+    "Almere", // ca. 211.514 Einwohner
+    "Breda", // ca. 184.403 Einwohner
+    "Nijmegen", // ca. 177.818 Einwohner
+    "Enschede", // ca. 158.542 Einwohner
+    "Haarlem", // ca. 161.265 Einwohner
+    "s-Hertogenbosch", // ca. 160.783 Einwohner
+  ],
+  Belgium: ["Brussels", "Antwerp"],
+  Austria: ["Vienna", "Salzburg"],
+  Poland: ["Warsaw", "Cracow"],
+  Hungary: ["Budapest", "Debrecen"],
 };
