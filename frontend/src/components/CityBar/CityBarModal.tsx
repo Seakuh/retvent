@@ -72,9 +72,9 @@ const CityBarModal: React.FC<CityBarModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="search-modal-overlay" onClick={onClose}>
+    <div className="city-bar-modal-overlay" onClick={onClose}>
       <div
-        className="search-modal-content"
+        className="city-bar-modal-content"
         onClick={(e) => e.stopPropagation()}
       >
         <input
@@ -84,7 +84,7 @@ const CityBarModal: React.FC<CityBarModalProps> = ({
           onChange={handleSearch}
           onKeyDown={handleKeyDown}
           placeholder="Search for locations..."
-          className="search-input"
+          className="city-bar-input"
           autoFocus
         />
         {suggestions.length > 0 && (
