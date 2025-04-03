@@ -1,15 +1,12 @@
 .city-bar-container {
-  font-size: 3rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   color: white;
-  width: 100%;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 4rem;
   margin-bottom: 1.5rem;
-  font-weight: 200;
   user-select: none;
-  cursor: pointer;
   background-color: var(--color-neon-blue-light);
 }
 
@@ -28,9 +25,8 @@
 }
 
 .city-bar-input-button-close {
-  margin-left: 1rem;
-  margin-top: 0.5rem;
   cursor: pointer;
+
 }
 
 .city-bar-input-button-close:hover {
@@ -60,6 +56,3 @@
   color: var(--color-neon-blue);
 }
 
-@media (max-width: 768px) {
- 
-}
