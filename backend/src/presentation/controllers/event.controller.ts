@@ -194,7 +194,7 @@ export class EventController {
         'City query must be at least 2 characters long',
       );
     }
-    return this.eventService.searchByCity(city);
+    return this.eventService.searchByCity(city, 40);
   }
 
   @Get('byId')
@@ -223,6 +223,16 @@ export class EventController {
   @Get('latest')
   async getLatestEvents(@Query('limit') limit: number = 10) {
     const events = await this.eventService.findLatest(limit);
+    return { events };
+  }
+
+  @Get('latest/city')
+  async getLatestEventsCity(
+    @Query('city') city: string,
+    @Query('limit') limit: number = 10,
+  ) {
+    console.log('city', city);
+    const events = await this.eventService.findLatestEventsCity(city, limit);
     return { events };
   }
 

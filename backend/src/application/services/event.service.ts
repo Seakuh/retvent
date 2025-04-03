@@ -22,6 +22,20 @@ export class EventService {
     return this.eventRepository.getEventsByTag(tag);
   }
 
+  async findLatestEventsCity(city: string, limit: number) {
+    console.log('city', city);
+    const coordinates = await this.geolocationService.getCoordinates(city);
+    console.log('coordinates', coordinates);
+    const cityLocationEvents = await this.findNearbyEvents(
+      coordinates.latitude,
+      coordinates.longitude,
+      100,
+      limit,
+    );
+    const cityNameEvents = await this.eventRepository.searchByCity(city, limit);
+    return [...cityLocationEvents, ...cityNameEvents];
+  }
+
   getPopularEventsNearby(lat: number, lon: number, limit: number) {
     return this.eventRepository.getPopularEventsNearby(lat, lon, limit);
   }
@@ -37,8 +51,8 @@ export class EventService {
     return this.eventRepository.findLatestEventsByHost(username);
   }
 
-  searchByCity(city: string) {
-    return this.eventRepository.searchByCity(city);
+  searchByCity(city: string, limit: number) {
+    return this.eventRepository.searchByCity(city, limit);
   }
 
   async findAll() {

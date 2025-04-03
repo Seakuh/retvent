@@ -74,6 +74,14 @@ export class MongoEventRepository implements IEventRepository {
       .exec();
   }
 
+  findLatestEventsCity(city: string, limit: number) {
+    return this.eventModel
+      .find({ city: city })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .exec();
+  }
+
   async findTodayEvents(): Promise<Event[]> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -149,11 +157,13 @@ export class MongoEventRepository implements IEventRepository {
       .limit(1)
       .exec();
   }
-  searchByCity(city: string) {
+
+  async searchByCity(city: string, limit: number) {
     return this.eventModel
       .find({
         city: { $regex: new RegExp(city, 'i') },
       })
+      .limit(limit)
       .exec();
   }
 
