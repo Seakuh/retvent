@@ -29,7 +29,7 @@ export const GenreModal = ({
   return (
     <div className="genre-modal-overlay" onClick={handleOverlayClick}>
       <div className="genre-modal">
-        <ul className="genre-list">
+        <ul className="genre-list" onClick={handleOverlayClick}>
           {genres.map((genre) => (
             <li
               key={genre}
