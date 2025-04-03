@@ -163,6 +163,7 @@ export class MongoEventRepository implements IEventRepository {
       .find({
         city: { $regex: new RegExp(city, 'i') },
       })
+      .select('id title imageUrl startDate city views commentCount')
       .limit(limit)
       .exec();
     return this.addCommentCountToEvents(events);
@@ -580,6 +581,7 @@ export class MongoEventRepository implements IEventRepository {
           },
         },
       })
+      .select('id title imageUrl startDate city views commentCount')
       .limit(limit)
       .sort({ createdAt: -1 })
       .exec();
