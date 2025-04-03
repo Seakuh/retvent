@@ -159,12 +159,13 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async searchByCity(city: string, limit: number) {
-    return this.eventModel
+    const events = await this.eventModel
       .find({
         city: { $regex: new RegExp(city, 'i') },
       })
       .limit(limit)
       .exec();
+    return this.addCommentCountToEvents(events);
   }
 
   private toEntity(doc: any): Event {
@@ -561,10 +562,6 @@ export class MongoEventRepository implements IEventRepository {
     distance: number,
     limit: number,
   ): Promise<Event[]> {
-    console.log('lat', lat);
-    console.log('lon', lon);
-    console.log('distance', distance);
-    console.log('limit', limit);
     const events = await this.eventModel
       .find({
         'location.coordinates': {
@@ -580,7 +577,7 @@ export class MongoEventRepository implements IEventRepository {
       .limit(limit)
       .sort({ createdAt: -1 })
       .exec();
-    return events.map((event) => this.toEntity(event));
+    return this.addCommentCountToEvents(events);
   }
 
   async findAllWithCommentCount() {

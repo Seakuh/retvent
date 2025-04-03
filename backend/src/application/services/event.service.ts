@@ -30,8 +30,15 @@ export class EventService {
       100,
       limit,
     );
-    console.log('cityLocationEvents', cityLocationEvents);
     const cityNameEvents = await this.eventRepository.searchByCity(city, limit);
+    console.log(
+      'cityLocationEvents',
+      cityLocationEvents.map((event) => event.commentCount),
+    );
+    console.log(
+      'cityNameEvents',
+      cityNameEvents.map((event) => event.commentCount),
+    );
     return [...cityLocationEvents, ...cityNameEvents];
   }
 
