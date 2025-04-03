@@ -490,26 +490,33 @@ export class MongoEventRepository implements IEventRepository {
   }): Promise<Event[]> {
     const filter: any = {};
 
-    if (params.query) {
-      filter.$or = [
-        { title: { $regex: params.query, $options: 'i' } },
-        { description: { $regex: params.query, $options: 'i' } },
-      ];
+    switch (true) {
+      case !!params.query:
+        filter.$or = [
+          { title: { $regex: params.query, $options: 'i' } },
+          { description: { $regex: params.query, $options: 'i' } },
+          // { tags: { $regex: params.query, $options: 'i' } },
+        ];
+        break;
+
+      case !!params.city:
+        filter.city = { $regex: new RegExp(params.city, 'i') };
+        break;
+
+      case !!params.dateRange:
+        filter.startDate = {
+          $gte: new Date(params.dateRange.startDate),
+          $lte: new Date(params.dateRange.endDate),
+        };
+        break;
     }
 
-    if (params.city) {
-      filter['location.city'] = { $regex: new RegExp(params.city, 'i') };
-    }
+    const events = await this.eventModel
+      .find(filter)
+      .select('id title imageUrl startDate city views commentCount')
+      .exec();
 
-    if (params.dateRange) {
-      filter.startDate = {
-        $gte: new Date(params.dateRange.startDate),
-        $lte: new Date(params.dateRange.endDate),
-      };
-    }
-
-    const events = await this.eventModel.find(filter).exec();
-    return events.map((event) => this.toEntity(event));
+    return this.addCommentCountToEvents(events);
   }
 
   async findByCity(
