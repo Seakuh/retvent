@@ -67,7 +67,7 @@ const CreateEvent: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate("/me");
+    navigate(-1);
   };
 
   return (
@@ -76,7 +76,6 @@ const CreateEvent: React.FC = () => {
         <button onClick={handleBack} className="back-button">
           ← Back
         </button>
-        <h1>Create New Event 🎪</h1>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -197,7 +196,11 @@ const CreateEvent: React.FC = () => {
               }
             />
 
-            <button type="submit" disabled={loading} className="submit-button">
+            <button
+              type="submit"
+              disabled={loading}
+              className="submit-button-create-event"
+            >
               {loading ? "Creating... ⏳" : "Create Event 🚀"}
             </button>
           </div>

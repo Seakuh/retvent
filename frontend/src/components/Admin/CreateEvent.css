@@ -59,7 +59,7 @@
 }
 
 input, textarea, select {
-  padding: 1rem;
+  padding: 1rem !important;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 1rem;
@@ -83,10 +83,10 @@ textarea {
   gap: 1rem;
 }
 
-.submit-button {
+.submit-button-create-event {
   margin-top: 1rem;
   padding: 1rem;
-  background: #000;
+  background: var(--color-neon-blue-light-2);
   color: white;
   border: none;
   border-radius: 8px;
@@ -95,8 +95,8 @@ textarea {
   transition: all 0.3s ease;
 }
 
-.submit-button:hover {
-  background: #333;
+.submit-button-create-event:hover {
+    background: var(--color-neon-blue-light);
   transform: translateY(-2px);
 }
 
