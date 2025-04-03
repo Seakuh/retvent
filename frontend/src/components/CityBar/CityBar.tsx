@@ -19,7 +19,7 @@ export const CityBar: React.FC<CityBarProps> = ({
   });
 
   const handleSearchLocation = (value: string) => {
-    onLocationSelect(value);
+    onLocationSelect(value.charAt(0).toUpperCase() + value.slice(1));
   };
 
   const handleSelect = (location: string) => {
@@ -38,7 +38,7 @@ export const CityBar: React.FC<CityBarProps> = ({
   return (
     <div className="city-bar-container">
       <div className="city-bar-input-container">
-        <MapPin size={45} className="city-bar-icon" />
+        <MapPin color="white" size={45} className="city-bar-icon" />
         <button
           type="button"
           className="city-bar-input-button"
