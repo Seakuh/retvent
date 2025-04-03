@@ -289,87 +289,89 @@ function LandingPage() {
                   <Search size={24} color="white" />
                 </button>
                 {/* <ViewToggle view={viewMode} onViewChange={setViewMode} /> */}
-                <button
-                  onClick={() => setShowMenu(!showMenu)}
-                  className="p-2 rounded-lg glass-effect text-white"
-                >
-                  <Menu size={24} />
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={() => setShowMenu(!showMenu)}
+                    className="p-2 rounded-lg glass-effect text-white"
+                  >
+                    <Menu size={24} />
+                  </button>
+                  {showMenu && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500">
+                      {/* <button
+                        onClick={() => {
+                          navigate("/admin/dashboard");
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <Hexagon size={20} />
+                        <h3>Dashboard</h3>
+                      </button> */}
+
+                      <button
+                        onClick={() => {
+                          navigate(`/me`);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <User size={20} />
+                        <h3>Profile</h3>
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigate("/admin/events/create");
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <Plus size={20} />
+                        <p>Create Event</p>
+                      </button>
+                      {/* <button
+                        onClick={() => {
+                          navigate("/liked");
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <Heart size={20} />
+                        <p>Liked Events</p>
+                      </button> */}
+                      {/* My Uploads Button */}
+                      <button
+                        onClick={() => {
+                          setShowUploads(!showUploads);
+                          handleOnUpload(); // Lade Events des Nutzers
+                          setShowMenu(false);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <Upload size={20} />
+                        {showUploads ? "Hide My Events" : "My Events"}
+                      </button>
+                      {/* About Button */}
+                      <button
+                        onClick={() => {
+                          navigate("/about");
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <Info size={20} />
+                        <p>About</p>
+                      </button>
+                      {/* Login Button */}
+                      <button
+                        onClick={() => {
+                          navigate("/login");
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <LogIn size={20} />
+                        <p>Login</p>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            {showMenu && (
-              <div className="absolute right-4 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 ">
-                {/* <button
-                  onClick={() => {
-                    navigate("/admin/dashboard");
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                >
-                  <Hexagon size={20} />
-                  <h3>Dashboard</h3>
-                </button> */}
-
-                <button
-                  onClick={() => {
-                    navigate(`/me`);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                >
-                  <User size={20} />
-                  <h3>Profile</h3>
-                </button>
-                <button
-                  onClick={() => {
-                    navigate("/admin/events/create");
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                >
-                  <Plus size={20} />
-                  <p>Create Event</p>
-                </button>
-                {/* <button
-                  onClick={() => {
-                    navigate("/liked");
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                >
-                  <Heart size={20} />
-                  <p>Liked Events</p>
-                </button> */}
-                {/* My Uploads Button */}
-                <button
-                  onClick={() => {
-                    setShowUploads(!showUploads);
-                    handleOnUpload(); // Lade Events des Nutzers
-                    setShowMenu(false);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                >
-                  <Upload size={20} />
-                  {showUploads ? "Hide My Events" : "My Events"}
-                </button>
-                {/* About Button */}
-                <button
-                  onClick={() => {
-                    navigate("/about");
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                >
-                  <Info size={20} />
-                  <p>About</p>
-                </button>
-                {/* Login Button */}
-                <button
-                  onClick={() => {
-                    navigate("/login");
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                >
-                  <LogIn size={20} />
-                  <p>Login</p>
-                </button>
-              </div>
-            )}
           </div>
         </header>
 
