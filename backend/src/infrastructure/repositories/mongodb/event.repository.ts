@@ -489,26 +489,24 @@ export class MongoEventRepository implements IEventRepository {
     dateRange?: { startDate: string; endDate: string };
   }): Promise<Event[]> {
     const filter: any = {};
+    console.log('params', params.city);
+    // Alle Filter zusammen aufbauen
+    if (params.query) {
+      filter.$or = [
+        { title: { $regex: params.query, $options: 'i' } },
+        { description: { $regex: params.query, $options: 'i' } },
+      ];
+    }
 
-    switch (true) {
-      case !!params.query:
-        filter.$or = [
-          { title: { $regex: params.query, $options: 'i' } },
-          { description: { $regex: params.query, $options: 'i' } },
-          // { tags: { $regex: params.query, $options: 'i' } },
-        ];
-        break;
+    if (params.city) {
+      filter.city = { $regex: new RegExp(params.city, 'i') };
+    }
 
-      case !!params.city:
-        filter.city = { $regex: new RegExp(params.city, 'i') };
-        break;
-
-      case !!params.dateRange:
-        filter.startDate = {
-          $gte: new Date(params.dateRange.startDate),
-          $lte: new Date(params.dateRange.endDate),
-        };
-        break;
+    if (params.dateRange) {
+      filter.startDate = {
+        $gte: new Date(params.dateRange.startDate),
+        $lte: new Date(params.dateRange.endDate),
+      };
     }
 
     const events = await this.eventModel
