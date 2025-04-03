@@ -61,7 +61,10 @@ function LandingPage() {
     setLoading(true);
     setSearchPerformed(true);
     try {
-      const searchResults = await searchEventsByKeyword(searchTerm);
+      const searchResults = await searchEventsByKeyword(
+        searchTerm,
+        selectedLocation === "Worldwide" ? null : selectedLocation
+      );
       setEvents(searchResults as Event[]);
       setIsSearchOpen(false);
     } catch (error) {
@@ -126,12 +129,16 @@ function LandingPage() {
       try {
         let events;
         if (searchQuery) {
-          events = await searchEventsByKeyword(searchQuery);
+          if (selectedLocation !== "Worldwide") {
+            events = await searchEventsByKeyword(searchQuery, selectedLocation);
+          } else {
+            events = await searchEventsByKeyword(searchQuery, "Worldwide");
+          }
           setSearchPerformed(true);
         } else {
           events =
             categoryToUse && categoryToUse !== "All"
-              ? await fetchEventsByCategory(categoryToUse)
+              ? await fetchEventsByCategory(categoryToUse, selectedLocation)
               : selectedLocation !== "Worldwide"
               ? await fetchLatestEventsByLocation(selectedLocation)
               : await fetchLatestEvents();

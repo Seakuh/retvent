@@ -31,12 +31,19 @@ export const fetchLatestEventsByLocation = async (
 };
 
 export const fetchEventsByCategory = async (
-  selectedCategory: string | null
+  selectedCategory: string | null,
+  selectedLocation: string | null
 ): Promise<Event[]> => {
   try {
-    console.log("Fetching events by category:", selectedCategory);
+    console.log(
+      "Fetching events by category:",
+      selectedCategory,
+      selectedLocation
+    );
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}events/category/${selectedCategory}`
+      `${import.meta.env.VITE_API_URL}events/category/${selectedCategory}${
+        selectedLocation !== "Worldwide" ? `?location=${selectedLocation}` : ""
+      }`
     );
 
     const data = await response.json();
@@ -82,12 +89,23 @@ export const searchEventsByCity = async (city: string): Promise<Event[]> => {
 };
 
 export const searchEventsByKeyword = async (
-  keyword: string
+  keyword: string,
+  selectedLocation: string | null
 ): Promise<Event[]> => {
   try {
-    const response = await fetch(
-      `${API_URL}events/search/?query=${encodeURIComponent(keyword)}`
-    );
+    let url = `${API_URL}events/search/?query=${encodeURIComponent(keyword)}`;
+
+    switch (selectedLocation) {
+      case null:
+        break;
+      case "Worldwide":
+        break;
+      default:
+        url += `&city=${selectedLocation}`;
+        break;
+    }
+
+    const response = await fetch(url);
     const data = await response.json();
     return data || [];
   } catch (error) {
