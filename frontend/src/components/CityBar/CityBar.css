@@ -8,6 +8,7 @@
   margin-bottom: 1.5rem;
   user-select: none;
   background-color: var(--color-neon-blue-light);
+  border: 1px solid var(--color-neon-blue-light);
 }
 
 .city-bar-icon {
