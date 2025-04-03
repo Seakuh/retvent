@@ -23,15 +23,14 @@ export class EventService {
   }
 
   async findLatestEventsCity(city: string, limit: number) {
-    console.log('city', city);
     const coordinates = await this.geolocationService.getCoordinates(city);
-    console.log('coordinates', coordinates);
     const cityLocationEvents = await this.findNearbyEvents(
       coordinates.latitude,
       coordinates.longitude,
       100,
       limit,
     );
+    console.log('cityLocationEvents', cityLocationEvents);
     const cityNameEvents = await this.eventRepository.searchByCity(city, limit);
     return [...cityLocationEvents, ...cityNameEvents];
   }
@@ -110,8 +109,9 @@ export class EventService {
     category: string,
     skip: number = 0,
     limit: number = 10,
+    location?: string,
   ): Promise<Event[]> {
-    return this.eventRepository.findByCategory(category, skip, limit);
+    return this.eventRepository.findByCategory(category, skip, limit, location);
   }
 
   async countByCategory(category: string): Promise<number> {

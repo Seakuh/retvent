@@ -20,10 +20,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
+import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UploadGuard } from '../guards/upload.guard';
-
 @Controller('events')
 export class EventController {
   constructor(
@@ -351,22 +351,24 @@ export class EventController {
     @Param('category') category: string,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 30,
-  ) {
+    @Query('location') location?: string,
+  ): Promise<EventSearchResponseDto> {
     const skip = (page - 1) * limit;
     const [events, total] = await Promise.all([
-      this.eventService.findByCategory(category, skip, limit),
+      this.eventService.findByCategory(category, skip, limit, location),
       this.eventService.countByCategory(category),
     ]);
+    console.log('events', events);
 
     return {
-      events,
+      events: events,
       meta: {
         total,
         page,
         limit,
         pages: Math.ceil(total / limit),
       },
-    };
+    } as EventSearchResponseDto;
   }
 
   @Get()

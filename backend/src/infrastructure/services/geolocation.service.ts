@@ -1,8 +1,7 @@
-import { Injectable, HttpException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
-import axios from 'axios';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { firstValueFrom } from 'rxjs';
 
 interface GeocodingResponse {
   city: string;
@@ -15,11 +14,12 @@ interface GeocodingResponse {
 @Injectable()
 export class GeolocationService {
   private readonly apiKey: string;
-  private readonly geocodingApiUrl: string = 'https://maps.googleapis.com/maps/api/geocode/json';
+  private readonly geocodingApiUrl: string =
+    'https://maps.googleapis.com/maps/api/geocode/json';
 
   constructor(
     private readonly httpService: HttpService,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {
     this.apiKey = this.configService.get<string>('GOOGLE_MAPS_API_KEY');
   }
@@ -28,7 +28,7 @@ export class GeolocationService {
     return 'test';
     // Construct the Nominatim API URL with JSON format
     // const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-    
+
     // try {
     //   // Send GET request with required headers for Nominatim
     //   const response = await axios.get(url, {
@@ -37,15 +37,15 @@ export class GeolocationService {
     //       'Accept-Language': 'en' // Prefer English results
     //     }
     //   });
-      
+
     //   const data = response.data;
-      
+
     //   if (data && data.address) {
     //     // Nominatim may return the city under different keys depending on the location
     //     const { city, town, village, hamlet, suburb } = data.address;
     //     return city || town || village || hamlet || suburb || 'City not found';
     //   }
-      
+
     //   return 'City not found';
     // } catch (error) {
     //   console.error('Error during reverse geocoding:', error);
@@ -57,9 +57,7 @@ export class GeolocationService {
     components: any[],
     type: string,
   ): string | undefined {
-    const component = components.find(comp => 
-      comp.types.includes(type)
-    );
+    const component = components.find((comp) => comp.types.includes(type));
     return component?.long_name;
   }
 
@@ -72,7 +70,7 @@ export class GeolocationService {
             format: 'json',
             limit: 1,
           },
-        })
+        }),
       );
 
       if (response.data && response.data.length > 0) {
@@ -97,7 +95,7 @@ export class GeolocationService {
             lon,
             format: 'json',
           },
-        })
+        }),
       );
 
       if (response.data && response.data.display_name) {

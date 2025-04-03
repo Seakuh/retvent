@@ -420,13 +420,24 @@ export class MongoEventRepository implements IEventRepository {
     category: string,
     skip: number = 0,
     limit: number = 10,
+    location?: string,
   ): Promise<Event[]> {
+    const query: any = {
+      category: { $regex: new RegExp(category, 'i') },
+    };
+
+    if (location) {
+      query.city = { $regex: new RegExp(location, 'i') };
+    }
+
     const events = await this.eventModel
-      .find({ category: { $regex: new RegExp(`^${category}$`, 'i') } })
-      .skip(skip)
+      .find(query)
+      .select('id title imageUrl startDate city views')
       .limit(limit)
       .sort({ createdAt: -1 })
       .exec();
+    console.log('events', events);
+
     return this.addCommentCountToEvents(events);
   }
 
@@ -550,6 +561,10 @@ export class MongoEventRepository implements IEventRepository {
     distance: number,
     limit: number,
   ): Promise<Event[]> {
+    console.log('lat', lat);
+    console.log('lon', lon);
+    console.log('distance', distance);
+    console.log('limit', limit);
     const events = await this.eventModel
       .find({
         'location.coordinates': {
