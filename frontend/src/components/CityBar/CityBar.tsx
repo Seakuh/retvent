@@ -4,10 +4,13 @@ import "./CityBar.css";
 import CityBarModal from "./CityBarModal";
 interface CityBarProps {
   onLocationSelect: (location: string) => void;
+  selectedLocation: string;
 }
 
-export const CityBar: React.FC<CityBarProps> = ({ onLocationSelect }) => {
-  const [searchTerm, setSearchTerm] = useState("Berlin");
+export const CityBar: React.FC<CityBarProps> = ({
+  onLocationSelect,
+  selectedLocation,
+}) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>(() => {
@@ -17,13 +20,6 @@ export const CityBar: React.FC<CityBarProps> = ({ onLocationSelect }) => {
 
   const handleSearchLocation = (value: string) => {
     onLocationSelect(value);
-    // API-Abfrage für Vorschläge implementieren
-    const mockSuggestions = [
-      `${value} City`,
-      `${value} Downtown`,
-      `${value} District`,
-    ];
-    setSuggestions(mockSuggestions);
   };
 
   const handleSelect = (location: string) => {
@@ -48,7 +44,7 @@ export const CityBar: React.FC<CityBarProps> = ({ onLocationSelect }) => {
           className="city-bar-input-button"
           onClick={() => setIsModalOpen(true)}
         >
-          {searchTerm}
+          {selectedLocation}
         </button>
       </div>
       {isModalOpen && (
@@ -57,28 +53,6 @@ export const CityBar: React.FC<CityBarProps> = ({ onLocationSelect }) => {
           onClose={() => setIsModalOpen(false)}
           onSearch={handleSearchLocation}
         />
-      )}
-      {searchTerm && suggestions.length > 0 && (
-        <ul className="suggestions-list">
-          {suggestions.map((suggestion, index) => (
-            <li key={index} onClick={() => handleSelect(suggestion)}>
-              {suggestion}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {!searchTerm && recentSearches.length > 0 && (
-        <div className="recent-searches">
-          <h4>Letzte Standorte:</h4>
-          <ul>
-            {recentSearches.map((search, index) => (
-              <li key={index} onClick={() => handleSelect(search)}>
-                {search}
-              </li>
-            ))}
-          </ul>
-        </div>
       )}
     </div>
   );

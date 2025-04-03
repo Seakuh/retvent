@@ -21,13 +21,12 @@ import { Event } from "./utils";
 function LandingPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [city, setCity] = useState<string | null>("Berlin");
+  const [selectedLocation, setSelectedLocation] = useState<string>("Berlin");
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [showUploads, setShowUploads] = useState(false);
-  // const [showDateFilter, setShowDateFilter] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     "All"
@@ -95,6 +94,10 @@ function LandingPage() {
   //   setSelectedDate(date);
   //   setShowDateFilter(false);
   // };
+
+  const handleLocationChange = (location: string) => {
+    setSelectedLocation(location);
+  };
 
   useEffect(() => {
     // Prüfe erst URL-Parameter
@@ -358,9 +361,8 @@ function LandingPage() {
 
         <main className="max-w-7xl mx-auto">
           <CityBar
-            onLocationSelect={(location) => {
-              console.log("Location selected", location);
-            }}
+            onLocationSelect={handleLocationChange}
+            selectedLocation={selectedLocation}
           />
           {/* {showDateFilter && <DateFilter />} */}
           <div className="px-4 py-6">

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { popularLocationsByCountry } from "../../locations";
 import "./CityBarModal.css";
 
 interface CityBarModalProps {
@@ -13,16 +14,59 @@ const CityBarModal: React.FC<CityBarModalProps> = ({
   onSearch,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Alle Städte in ein Array zusammenfassen
+  const allLocations = Object.values(popularLocationsByCountry).flat();
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
+      setSearchTerm("");
+      setSuggestions([]);
+      setSelectedIndex(-1);
     }
   }, [isOpen]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    const value = e.target.value;
+    setSearchTerm(value);
+    setSelectedIndex(-1);
+
+    if (value.length > 0) {
+      const filtered = allLocations
+        .filter((location) =>
+          location.toLowerCase().includes(value.toLowerCase())
+        )
+        .slice(0, 5); // Maximal 5 Vorschläge anzeigen
+      setSuggestions(filtered);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > -1 ? prev - 1 : -1));
+    } else if (e.key === "Enter") {
+      if (selectedIndex >= 0 && suggestions[selectedIndex]) {
+        onSearch(suggestions[selectedIndex]);
+        onClose();
+      } else if (searchTerm) {
+        onSearch(searchTerm);
+        onClose();
+      }
+    } else if (e.key === "Escape") {
+      onClose();
+    }
   };
 
   if (!isOpen) return null;
@@ -38,18 +82,28 @@ const CityBarModal: React.FC<CityBarModalProps> = ({
           type="search"
           value={searchTerm}
           onChange={handleSearch}
-          placeholder="Search for location..."
+          onKeyDown={handleKeyDown}
+          placeholder="Search for locations..."
           className="search-input"
           autoFocus
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              onSearch(searchTerm);
-            }
-            if (e.key === "Escape") {
-              onClose();
-            }
-          }}
         />
+        {suggestions.length > 0 && (
+          <ul className="suggestions-list">
+            {suggestions.map((suggestion, index) => (
+              <li
+                key={index}
+                className={index === selectedIndex ? "selected" : ""}
+                onClick={() => {
+                  onSearch(suggestion);
+                  onClose();
+                }}
+                onMouseEnter={() => setSelectedIndex(index)}
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
