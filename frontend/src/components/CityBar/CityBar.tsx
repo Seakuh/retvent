@@ -36,33 +36,38 @@ export const CityBar: React.FC<CityBarProps> = ({
   };
 
   return (
-    <div className="city-bar-container">
-      <div onClick={() => setIsModalOpen(true)}>
-        <div className="city-bar-input-container">
-          <MapPin
-            size={20}
-            className="city-bar-icon"
-            absoluteStrokeWidth={false}
-          />
-          <button type="button" className="city-bar-input-button">
-            {selectedLocation}
-          </button>
+    <div>
+      <div className="city-bar-container" onClick={() => setIsModalOpen(true)}>
+        <div>
+          <div className="city-bar-input-container">
+            <MapPin
+              size={20}
+              className="city-bar-icon"
+              absoluteStrokeWidth={false}
+            />
+            <button type="button" className="city-bar-input-button">
+              {selectedLocation}
+            </button>
+          </div>
+          {isModalOpen && (
+            <CityBarModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              onSearch={handleSearchLocation}
+            />
+          )}
         </div>
-        {isModalOpen && (
-          <CityBarModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onSearch={handleSearchLocation}
+        {selectedLocation !== "Worldwide" && (
+          <X
+            size={20}
+            className="city-bar-input-button-close"
+            onClick={(e) => {
+              e.stopPropagation();
+              onLocationSelect("Worldwide");
+            }}
           />
         )}
       </div>
-      {selectedLocation !== "Worldwide" && (
-        <X
-          size={20}
-          className="city-bar-input-button-close"
-          onClick={() => onLocationSelect("Worldwide")}
-        />
-      )}
     </div>
   );
 };

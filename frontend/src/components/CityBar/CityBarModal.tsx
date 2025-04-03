@@ -24,9 +24,6 @@ const CityBarModal: React.FC<CityBarModalProps> = ({
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
-      setSearchTerm("");
-      setSuggestions([]);
-      setSelectedIndex(-1);
     }
   }, [isOpen]);
 
