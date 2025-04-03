@@ -372,15 +372,15 @@ function LandingPage() {
             {/* <div>
               <EventScanner />
             </div> */}
+            <CityBar
+              onLocationSelect={handleLocationChange}
+              selectedLocation={selectedLocation}
+            />
             <CategoryFilter
               selectedCategory={selectedCategory}
               onCategoryChange={handleCategoryChange}
               // onDateChange={handleDateChange}
               // onShowDateFilter={setShowDateFilter}
-            />
-            <CityBar
-              onLocationSelect={handleLocationChange}
-              selectedLocation={selectedLocation}
             />
           </div>
           {loading ? (
