@@ -83,25 +83,26 @@ const AdminEvents: React.FC = () => {
       <button onClick={handleBack} className="back-button">
         ← Back
       </button>
-      <h2 className="admin-events-title">My Events 📅</h2>
       {events.length === 0 ? (
         <p className="no-events">No events found.</p>
       ) : (
-        <div className="events-grid">
+        <div className="events-grid-my-events">
           {events.map((event) => (
-            <div key={event.id} className="event-card">
+            <div key={event.id} className="event-card-my-events">
               {event.imageUrl && (
                 <div className="admin-event-image">
-                  <img src={event.imageUrl} alt={event.title} />
+                  <img
+                    src={event.imageUrl}
+                    alt={event.title}
+                    onClick={() => handleEdit(event.id)}
+                  />
                 </div>
               )}
-              <div className="admin-event-content">
-                <h3>{event.title}</h3>
-              </div>
-              <div className="event-actions">
+              <div className="admin-event-content"></div>
+              <div className="event-actions-my-events">
                 <button
                   onClick={() => handleWatch(event)}
-                  className="watch-btn"
+                  className="go-to-event-btn"
                 >
                   <Eye size={20} />
                 </button>

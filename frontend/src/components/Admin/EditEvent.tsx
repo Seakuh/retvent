@@ -159,7 +159,7 @@ const EditEvent: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate("/admin/events");
+    navigate(-1);
   };
 
   if (loading)
@@ -169,7 +169,7 @@ const EditEvent: React.FC = () => {
   return (
     <div className="edit-event-container">
       <button onClick={handleBack} className="back-button">
-        ← Back to Events
+        ← Back
       </button>
       <h2>Edit Event ✏️</h2>
       <form onSubmit={handleSubmit} className="edit-event-form">
