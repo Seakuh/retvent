@@ -2,8 +2,8 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { Event } from "../../utils";
 import { HomeBubbles } from "../HomeBubbles/HomeBubbles";
+import { LikedEvents } from "../LikedEvents/LikedEvents";
 import "./EventPage.css";
-import { EventSection } from "./EventSection";
 import { fetchFavoriteEvents } from "./service";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -81,7 +81,7 @@ export const EventPage = () => {
     <div>
       <HomeBubbles />
       <div className="event-favorites-container">
-        <EventSection title="Favorites" events={favoriteEvents} />
+        <LikedEvents />
       </div>
       {/* <h1 className="section-title">Nearby</h1>
       <div className="nearby-section-container">

@@ -36,7 +36,7 @@ export const LikedEvents: React.FC = () => {
         response.data;
         setEvents(response.data);
       } catch (err) {
-        setError("Fehler beim Laden der favorisierten Events");
+        setError("Error fetching liked events");
         console.error("Error fetching liked events:", err);
       } finally {
         setLoading(false);
@@ -47,7 +47,7 @@ export const LikedEvents: React.FC = () => {
   }, [favoriteEventIds]);
 
   if (loading) {
-    return <div>Lade favorisierte Events...</div>;
+    return <div>Loading liked events...</div>;
   }
 
   if (error) {
@@ -62,7 +62,7 @@ export const LikedEvents: React.FC = () => {
         </button>
         <div className="no-liked-events">
           <Heart size={100} />
-          You have not liked any events yet. <br></br>Go back and like some
+          You have not liked any events yet. <br></br>Explore and like some
           events :)
         </div>
       </>
