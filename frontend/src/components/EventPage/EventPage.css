@@ -13,3 +13,18 @@
 .map-view-container {
   margin-top: -2.5rem;
 }
+
+.your-next-events-container {
+  display: flex;
+  margin-bottom: 1rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.your-next-events-heading {
+  font-size: 2rem;
+  text-align: left;
+  color: white;
+  padding-left: 1rem;
+}

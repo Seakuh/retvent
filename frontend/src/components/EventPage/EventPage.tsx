@@ -81,7 +81,6 @@ export const EventPage = () => {
     <div>
       <HomeBubbles />
       <div className="event-favorites-container">
-        <h1 className="section-title">Your next Events</h1>
         <LikedEvents />
       </div>
       {/* <h1 className="section-title">Nearby</h1>

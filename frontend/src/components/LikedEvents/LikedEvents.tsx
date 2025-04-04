@@ -74,6 +74,10 @@ export const LikedEvents: React.FC = () => {
       <button onClick={handleBack} className="back-button">
         ← Back
       </button>
+      <div className="your-next-events-container">
+        <Heart color="white " size={30} />
+        <h1 className="your-next-events-heading">Your next Events</h1>
+      </div>
       {/* <h1 className="section-title">❤️</h1> */}
       <EventGalleryII events={events} title="Liked Events" key={events[0].id} />
     </div>
