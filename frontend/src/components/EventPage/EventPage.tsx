@@ -83,7 +83,7 @@ export const EventPage = () => {
       <div className="event-favorites-container">
         <EventSection title="Favorites" events={favoriteEvents} />
       </div>
-      <h1 className="section-title">Nearby</h1>
+      {/* <h1 className="section-title">Nearby</h1>
       <div className="nearby-section-container">
         <EventSection
           events={nearbyEvents}
@@ -91,7 +91,7 @@ export const EventPage = () => {
           onEventSelect={setSelectedNearbyEvent}
           className="nearby-section"
         />
-      </div>
+      </div> */}
       {/* <div className="map-view-container">
         <MapView
           events={nearbyEvents}
