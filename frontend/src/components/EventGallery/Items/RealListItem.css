@@ -9,7 +9,7 @@
 }
 
 .real-event-thumbnail {
-    width: 38.2%;
+    max-width: 38.2%;
     aspect-ratio: 16/9;
     overflow: hidden;
     display: flex;
@@ -23,6 +23,14 @@
     object-fit: cover;
     object-position: center; /* zentriert das Bild */
   }
+
+  .real-list-item-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--color-neon-blue);
+  }
   
 
 .miniature-event-info {
@@ -30,8 +38,12 @@
 }
 
 @media (max-width: 600px) {
-    .miniature-event-info {
+    .event-info-title-headline {
     }
+
+    .event-info-title-headline {
+        font-size: 1rem;
+      }
   
     .real-event-list-item {
       border-radius: 0.5rem;

@@ -31,6 +31,10 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           {formatDate(event.startDate as string)}
         </h2>
         <h1 className="event-info-title-headline">{event.title}</h1>
+        <span className="real-list-item-location">
+          <MapPin size={16} />
+          {event.city || "TBA"}
+        </span>
         <div className="event-meta-container">
           <div className="event-meta-container-right">
             <span className="views">
@@ -42,10 +46,6 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               {event.commentCount}
             </span>
           </div>
-          <span className="location">
-            <MapPin size={16} />
-            {event.city || "TBA"}
-          </span>
         </div>
       </div>
     </div>
