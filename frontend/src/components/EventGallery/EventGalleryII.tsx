@@ -2,7 +2,6 @@ import { Eye, MapPin, MessageCircle } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Event, emptyEvent, formatDate } from "../../utils";
-import { EventSection } from "../EventPage/EventSection";
 import "./EventGalleryII.css";
 
 const DEFAULT_IMAGE =
@@ -137,16 +136,40 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
     return daysDiff;
   };
 
+  const listItem = (event: Event) => {
+    return (
+      <div className="event-list-item">
+        <EventListItem event={event} />
+      </div>
+    );
+  };
+
+  function getHoursUntilStart(startDate: string): number {
+    const start = new Date(startDate);
+    const now = new Date();
+    const diff = start.getTime() - now.getTime();
+    return Math.abs(Math.ceil(diff / (1000 * 60 * 60)));
+  }
+
   return (
     <>
       {/* <h1 className="section-title">{title}</h1> */}
       {todayEvents.length > 0 && (
-        <>
-          <h2 className="section-title">Today</h2>
-          <EventSection events={todayEvents} />
-        </>
+        <div>
+          <div className="event-date-section">
+            <div className="event-date-heading-container">
+              <h2 className="event-date-heading">Today</h2>
+              <h3 className="event-date-heading-sub">
+                in {getHoursUntilStart(todayEvents[0].startDate as string)}{" "}
+                hours
+              </h3>
+            </div>
+            {todayEvents.map((event) => (
+              <EventListItem key={event.id} event={event} />
+            ))}
+          </div>
+        </div>
       )}
-      <h2 className="section-title">Upcoming</h2>
       <div className="event-list">
         {Object.keys(groupedUpcomingEvents).length > 0 ? (
           <>
