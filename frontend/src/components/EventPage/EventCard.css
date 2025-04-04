@@ -126,6 +126,7 @@
 @media (max-width: 768px) {
   .event-card-container {
     height: 18rem;
+    border-radius: 0.5rem;
     width: 10rem;
   }
 
