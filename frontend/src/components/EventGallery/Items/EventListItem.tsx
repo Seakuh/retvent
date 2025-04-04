@@ -35,10 +35,6 @@ export const EventListItem: React.FC<EventListItemProps> = ({
         </h2>
         <h1 className="event-info-title-headline">{event.title}</h1>
         <div className="event-meta-container">
-          <span className="location">
-            <MapPin size={16} />
-            {event.city || "TBA"}
-          </span>
           <div className="event-meta-container-right">
             <span className="comments">
               <MessageCircle size={16} />
@@ -47,6 +43,11 @@ export const EventListItem: React.FC<EventListItemProps> = ({
             <span className="views">
               <Eye size={16} />
               {event.views}
+            </span>
+
+            <span className="location">
+              <MapPin size={16} />
+              {event.city || "TBA"}
             </span>
           </div>
         </div>

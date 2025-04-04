@@ -126,6 +126,11 @@
 
 /* Mobile Anpassungen */
 @media (max-width: 600px) {
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
     .event-list-item {
         padding: 0rem;
         margin-bottom: 1rem;
