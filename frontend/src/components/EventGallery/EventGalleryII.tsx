@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Event, emptyEvent, formatDate } from "../../utils";
 import "./EventGalleryII.css";
-
+import { RealListItem } from "./Items/RealListItem";
 const DEFAULT_IMAGE =
   "https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png";
 
@@ -136,14 +136,6 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
     return daysDiff;
   };
 
-  const listItem = (event: Event) => {
-    return (
-      <div className="event-list-item">
-        <EventListItem event={event} />
-      </div>
-    );
-  };
-
   function getHoursUntilStart(startDate: string): number {
     const start = new Date(startDate);
     const now = new Date();
@@ -165,7 +157,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
               </h3>
             </div>
             {todayEvents.map((event) => (
-              <EventListItem key={event.id} event={event} />
+              <RealListItem key={event.id} event={event} />
             ))}
           </div>
         </div>
@@ -186,14 +178,14 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
                   </div>
                   <br />
                   {eventsForDate.map((event) => (
-                    <EventListItem key={event.id} event={event} />
+                    <RealListItem key={event.id} event={event} />
                   ))}
                 </div>
               )
             )}
           </>
         ) : (
-          <EventListItem event={emptyEvent} />
+          <RealListItem event={emptyEvent} />
         )}
       </div>
       {/* Past Events */}
@@ -206,7 +198,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
                 <h2 className="event-date-heading">{date}</h2>
                 <br />
                 {eventsForDate.map((event) => (
-                  <EventListItem key={event.id} event={event} isPast={true} />
+                  <RealListItem key={event.id} event={event} isPast={true} />
                 ))}
               </div>
             ))}

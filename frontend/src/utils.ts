@@ -1,4 +1,6 @@
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+export const DEFAULT_IMAGE =
+  "https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png";
 
 export const categories = [
   { name: "Music", emoji: "🎵" },

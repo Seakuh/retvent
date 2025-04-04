@@ -1,0 +1,49 @@
+.real-event-list-item {
+  display: flex;
+  flex-direction: row;
+  background-color: black;
+  cursor: pointer;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.real-event-thumbnail {
+    width: 38.2%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .real-event-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center; /* zentriert das Bild */
+  }
+  
+
+.miniature-event-info {
+  width: 61.8%; /* Goldener Schnitt: ~61.8% */
+}
+
+@media (max-width: 600px) {
+    .miniature-event-info {
+    }
+  
+    .real-event-list-item {
+      border-radius: 0.5rem;
+      flex-direction: row;
+    }
+  
+    .real-event-thumbnail {
+      width: 100%;
+    }
+  
+    .real-event-thumbnail img {
+      object-position: center; /* sicherstellen, dass auch mobil zentriert */
+    }
+  }
+  
