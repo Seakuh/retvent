@@ -58,24 +58,24 @@ export const EventPage = () => {
     fetchFavorite();
   }, [location]);
 
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation([latitude, longitude]);
-        if (map) {
-          map.setView([latitude, longitude]);
-        }
-        loadNearbyEvents(latitude, longitude);
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        const defaultLocation: [number, number] = [52.520008, 13.404954];
-        setUserLocation(defaultLocation);
-        loadNearbyEvents(defaultLocation[0], defaultLocation[1]);
-      }
-    );
-  }, [map]);
+  // useEffect(() => {
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       const { latitude, longitude } = position.coords;
+  //       setUserLocation([latitude, longitude]);
+  //       if (map) {
+  //         map.setView([latitude, longitude]);
+  //       }
+  //       loadNearbyEvents(latitude, longitude);
+  //     },
+  //     (error) => {
+  //       console.error("Geolocation error:", error);
+  //       const defaultLocation: [number, number] = [52.520008, 13.404954];
+  //       setUserLocation(defaultLocation);
+  //       loadNearbyEvents(defaultLocation[0], defaultLocation[1]);
+  //     }
+  //   );
+  // }, [map]);
 
   return (
     <div>
