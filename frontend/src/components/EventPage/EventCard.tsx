@@ -35,19 +35,19 @@ export const EventCard = ({ event }: { event: Event }) => {
           {formatDate(event.startDate as string)}
         </span>
         <h3 className="event-card-title">{event.title}</h3>
+        <div className="event-card-location-container">
+          <MapPin size={16} />
+          <p>{event.city || "TBA"}</p>
+        </div>
         <div className="event-card-details">
-          <div className="event-card-location-container">
-            <MapPin size={16} />
-            <p>{event.city || "TBA"}</p>
-          </div>
           <div className="event-card-community-container">
-            <div className="event-card-comments-container">
-              <MessageCircle size={16} />
-              <p>{event.commentCount || 0}</p>
-            </div>
             <div className="event-card-views-container">
               <Eye size={16} />
               <p>{event.views || 0}</p>
+            </div>
+            <div className="event-card-comments-container">
+              <MessageCircle size={16} />
+              <p>{event.commentCount || 0}</p>
             </div>
           </div>
         </div>

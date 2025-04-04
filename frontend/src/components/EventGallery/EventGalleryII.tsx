@@ -136,6 +136,14 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
     return daysDiff;
   };
 
+  const getDaysPast = (date: string | Date): number => {
+    const eventDate = new Date(date);
+    const now = new Date();
+    const timeDiff = now.getTime() - eventDate.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    return daysDiff;
+  };
+
   function getHoursUntilStart(startDate: string): number {
     const start = new Date(startDate);
     const now = new Date();
@@ -150,15 +158,17 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
         <div>
           <div className="event-date-section">
             <div className="event-date-heading-container">
-              <h2 className="event-date-heading">Today</h2>
+              <h2 className="section-title">Today</h2>
               <h3 className="event-date-heading-sub">
                 in {getHoursUntilStart(todayEvents[0].startDate as string)}{" "}
                 hours
               </h3>
             </div>
-            {todayEvents.map((event) => (
-              <RealListItem key={event.id} event={event} />
-            ))}
+            <div className="real-event-list-item-container">
+              {todayEvents.map((event) => (
+                <RealListItem key={event.id} event={event} />
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -169,7 +179,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
               ([date, eventsForDate]) => (
                 <div key={date} className="event-date-section">
                   <div className="event-date-heading-container">
-                    <h2 className="event-date-heading">{date}</h2>
+                    <h2 className="section-title">{date}</h2>
                     <h3 className="event-date-heading-sub">
                       {getDaysUntilDate(date) === 1
                         ? "tomorrow"
@@ -189,13 +199,14 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
         )}
       </div>
       {/* Past Events */}
-      <h2 className="section-title">Past</h2>
+      <h2 className="section-title past-events-title">Past</h2>
+      <h3 className="event-date-heading-sub"></h3>
       <div className="event-list">
         {Object.keys(groupedPastEvents).length > 0 && (
           <>
             {Object.entries(groupedPastEvents).map(([date, eventsForDate]) => (
               <div key={date} className="event-date-section">
-                <h2 className="event-date-heading">{date}</h2>
+                <h2 className="section-title">{date}</h2>
                 <br />
                 {eventsForDate.map((event) => (
                   <RealListItem key={event.id} event={event} isPast={true} />

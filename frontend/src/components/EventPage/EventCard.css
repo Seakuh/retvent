@@ -35,7 +35,6 @@
 .event-card-title {
   font-size: 1.5rem;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
   font-weight: bold;
   color: white;
@@ -86,16 +85,6 @@
   color: grey;
 }
 
-/* Entferne die nicht mehr benötigten alten Styles */
-.event-image,
-.event-image img,
-.event-info,
-.event-info h3,
-.event-date {
-  display: none;
-}
-
-
 .hover-effect {
   transform: translateY(-4px);
   box-shadow: 0 0 20px var(--color-neon-blue);
@@ -124,18 +113,11 @@
 
 
 @media (max-width: 768px) {
-  .event-card-container {
-    height: 18rem;
-    border-radius: 0.5rem;
-    width: 10rem;
-  }
-
   .event-card-details {
     margin-top: 0.01rem;
   }
 
   .event-card-location-container {
-    display: none;
   }
 
   .event-card-image-container {

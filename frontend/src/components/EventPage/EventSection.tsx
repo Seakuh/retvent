@@ -8,12 +8,7 @@ interface EventSectionProps {
   onEventSelect?: (event: Event) => void;
 }
 
-export const EventSection = ({
-  title,
-  events,
-  selectedEvent,
-  onEventSelect,
-}: EventSectionProps) => {
+export const EventSection = ({ title, events }: EventSectionProps) => {
   const emptyEvent = {
     id: "",
     title: "No events found",
