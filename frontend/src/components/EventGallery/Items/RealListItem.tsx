@@ -34,13 +34,13 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
         <h2 className="event-description-real-list-item">
           {event.description}
         </h2>
-        <div className="event-tags-real-list-item">
+        {/* <div className="event-tags-real-list-item">
           {event.tags?.map((tag) => (
             <span key={tag} className="event-tag">
               {tag.toLowerCase()}
             </span>
           ))}
-        </div>
+        </div> */}
         <span className="real-list-item-location">
           <MapPin size={16} />
           {event.city || "TBA"}

@@ -1,8 +1,7 @@
 .event-card-container {
   width: 20rem;
-  height: 35rem;
+  height: 37rem;
   overflow: hidden;
-  background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
   display: flex;
@@ -35,7 +34,6 @@
   font-size: 1.3rem;
   font-weight: bold;
   color: white;
-  margin-bottom: 0.5rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -118,13 +116,25 @@
   width: 100%;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 0.5rem;
-  margin-top: 1rem;
 }
 
 .comment-user-container {
   display: flex;
   flex-direction: row;
 }
+
+.event-card-description {
+  font-size: 0.9rem;
+  color: gray;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 
 
 @media (max-width: 768px) {
@@ -137,13 +147,6 @@
   }
   .event-card-info-container {
     height: 50%;
-    padding: 0.5rem;
   }
-  .event-card-title {
-    font-size: 1rem;
-  }
-  .event-card-details {
-    font-size: 0.8rem;
-  }
-}
 
+}
