@@ -163,7 +163,7 @@ export class MongoEventRepository implements IEventRepository {
       .find({
         city: { $regex: new RegExp(city, 'i') },
       })
-      .select('id title imageUrl startDate city views commentCount')
+      .select('id title imageUrl startDate city views tags commentCount')
       .limit(limit)
       .exec();
     return this.addCommentCountToEvents(events);
@@ -412,7 +412,7 @@ export class MongoEventRepository implements IEventRepository {
   async findLatest(limit: number): Promise<Event[]> {
     const events = await this.eventModel
       .find()
-      .select('id title imageUrl startDate city views commentCount')
+      .select('id title imageUrl lineup startDate city views tags commentCount')
       .sort({ createdAt: -1 })
       .limit(limit)
       .exec();
@@ -451,6 +451,7 @@ export class MongoEventRepository implements IEventRepository {
   async getUserFavorites(eventIds: string[]): Promise<Event[]> {
     const events = await this.eventModel
       .find({ _id: { $in: eventIds } })
+      .select('id title imageUrl lineup startDate city views commentCount tags')
       .exec();
     return this.addCommentCountToEvents(events);
   }
@@ -513,7 +514,7 @@ export class MongoEventRepository implements IEventRepository {
 
     const events = await this.eventModel
       .find(filter)
-      .select('id title imageUrl startDate city views commentCount')
+      .select('id title imageUrl lineup startDate city views commentCount tags')
       .exec();
 
     return this.addCommentCountToEvents(events);
@@ -581,7 +582,7 @@ export class MongoEventRepository implements IEventRepository {
           },
         },
       })
-      .select('id title imageUrl startDate city views commentCount')
+      .select('id title imageUrl lineup startDate city views commentCount tags')
       .limit(limit)
       .sort({ createdAt: -1 })
       .exec();
