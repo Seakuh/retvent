@@ -12,7 +12,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   isPast,
 }) => {
   const navigate = useNavigate();
-
+  console.log("event", event);
   return (
     <div
       key={event.id || event._id}
@@ -31,6 +31,13 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           {formatDate(event.startDate as string)}
         </h2>
         <h1 className="event-info-title-headline">{event.title}</h1>
+        <div className="event-tags-real-list-item">
+          {event.tags?.map((tag) => (
+            <span key={tag} className="event-tag">
+              {tag.toLowerCase()}
+            </span>
+          ))}
+        </div>
         <span className="real-list-item-location">
           <MapPin size={16} />
           {event.city || "TBA"}
