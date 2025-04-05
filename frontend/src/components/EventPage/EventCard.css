@@ -1,6 +1,6 @@
 .event-card-container {
-  width: 18rem;
-  height: 30rem;
+  width: 20rem;
+  height: 35rem;
   overflow: hidden;
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -33,11 +33,17 @@
 
 .event-card-title {
   font-size: 1.3rem;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   font-weight: bold;
   color: white;
   margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-card-tags {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .event-card-details {

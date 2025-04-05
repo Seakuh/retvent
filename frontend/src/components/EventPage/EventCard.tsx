@@ -35,7 +35,7 @@ export const EventCard = ({ event }: { event: Event }) => {
           {formatDate(event.startDate as string)}
         </span>
         <h3 className="event-card-title">{event.title}</h3>
-        <div className="event-tags-real-list-item">
+        <div className="event-tags-real-list-item event-card-tags">
           {event.tags?.map((tag) => (
             <span key={tag} className="event-tag">
               {tag.toLowerCase()}
