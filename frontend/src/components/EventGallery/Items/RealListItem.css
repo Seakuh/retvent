@@ -36,6 +36,10 @@
   width: 61.8%; /* Goldener Schnitt: ~61.8% */
 }
 
+.past-event {
+  opacity: 0.5;
+}
+
 @media (max-width: 600px) {
   .real-event-list-item {
   }
