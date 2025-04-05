@@ -4,7 +4,7 @@ import { MapPin } from "lucide-react";
 
 import { Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { DEFAULT_IMAGE, Event, formatDate } from "../../../utils";
+import { DEFAULT_IMAGE, Event } from "../../../utils";
 import "./RealListItem.css";
 
 export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
@@ -27,10 +27,13 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
         />
       </div>
       <div className="miniature-event-info">
-        <h2 className="event-info-date">
-          {formatDate(event.startDate as string)}
-        </h2>
+        {/* <h2 className="event-info-date"> */}
+        {/* {formatDate(event.startDate as string)} */}
+        {/* </h2> */}
         <h1 className="event-info-title-headline">{event.title}</h1>
+        <h2 className="event-description-real-list-item">
+          {event.description}
+        </h2>
         <div className="event-tags-real-list-item">
           {event.tags?.map((tag) => (
             <span key={tag} className="event-tag">

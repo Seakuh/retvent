@@ -79,7 +79,6 @@
     background: black;
     flex-grow: 1;
     padding: 1rem;
-    margin-top: 1rem;
     color: white;
 }
 
@@ -154,4 +153,9 @@
         flex-direction: row;
         justify-content: space-between;
     }
+
+    .miniature-event-info {
+        padding: 0.5rem;
+    }
+
 }
