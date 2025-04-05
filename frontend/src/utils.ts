@@ -532,3 +532,55 @@ export const handleLogout = () => {
   localStorage.removeItem("user");
   localStorage.removeItem("access_token");
 };
+
+export const getDaysUntilDate = (date: string | Date): number => {
+  // Parse das Datum-Format "SAT, JUL 12"
+  const [, month, day] = date.toString().split(/[,\s]+/);
+  const currentYear = new Date().getFullYear();
+
+  // Erstelle neues Datum mit aktuellem Jahr
+  const eventDate = new Date(`${month} ${day} ${currentYear}`);
+  const now = new Date();
+
+  // Beide Daten auf Mitternacht des jeweiligen Tages setzen
+  const eventDateOnly = new Date(
+    eventDate.getFullYear(),
+    eventDate.getMonth(),
+    eventDate.getDate()
+  );
+  const nowDateOnly = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  const timeDiff = eventDateOnly.getTime() - nowDateOnly.getTime();
+  const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+  return daysDiff;
+};
+
+export const getDaysPast = (date: string | Date): number => {
+  const eventDate = new Date(date);
+  const now = new Date();
+  const timeDiff = now.getTime() - eventDate.getTime();
+  const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  console.log("daysDiff", daysDiff);
+  return daysDiff;
+};
+
+export const getHoursUntilStart = (
+  startDate: string,
+  includeMinutes: boolean = false
+): number => {
+  console.log("startDate", startDate);
+  const start = new Date(startDate);
+  const now = new Date();
+  const diff = start.getTime() - now.getTime();
+
+  if (includeMinutes) {
+    return Math.ceil(diff / (1000 * 60)); // Minuten
+  } else {
+    return Math.ceil(diff / (1000 * 60 * 60)); // Stunden
+  }
+};

@@ -20,6 +20,7 @@
     flex-direction: row;
     align-items: baseline;
     gap: 1rem;
+    padding: 0 1rem;
 }
 
 .event-date-heading {
