@@ -48,13 +48,15 @@ export const EventCard = ({ event }: { event: Event }) => {
         </div>
         <div className="event-card-details">
           <div className="event-card-community-container">
-            <div className="event-card-views-container">
-              <Eye size={16} />
-              <p>{event.views || 0}</p>
-            </div>
-            <div className="event-card-comments-container">
-              <MessageCircle size={16} />
-              <p>{event.commentCount || 0}</p>
+            <div className="event-card-community-container-left">
+              <div className="event-card-views-container">
+                <Eye size={16} />
+                <p>{event.views || 0}</p>
+              </div>
+              <div className="event-card-comments-container">
+                <MessageCircle size={16} />
+                <p>{event.commentCount || 0}</p>
+              </div>
             </div>
           </div>
         </div>

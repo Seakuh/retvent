@@ -23,7 +23,6 @@
 
 .event-card-info-container {
   width: 100%;
-  height: 30%;
   background-color: black;
   padding: 1rem;
   display: flex;
@@ -33,9 +32,8 @@
 }
 
 .event-card-title {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
   font-weight: bold;
   color: white;
@@ -47,7 +45,6 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 0.5rem;
   gap: 0.3rem;
 }
 
@@ -97,6 +94,13 @@
   border-radius: 50%;
 }
 
+.event-card-community-container-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 
 .event-card-community-container {
   display: flex;
@@ -105,6 +109,10 @@
   align-items: center;
   overflow: hidden;
   gap: 0.5rem;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.5rem;
+  margin-top: 1rem;
 }
 
 .comment-user-container {
@@ -118,8 +126,6 @@
     margin-top: 0.01rem;
   }
 
-  .event-card-location-container {
-  }
 
   .event-card-image-container {
     height: 100%;
