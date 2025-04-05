@@ -163,7 +163,9 @@ export class MongoEventRepository implements IEventRepository {
       .find({
         city: { $regex: new RegExp(city, 'i') },
       })
-      .select('id title imageUrl startDate city views tags commentCount')
+      .select(
+        'id description title imageUrl startDate city views tags commentCount',
+      )
       .limit(limit)
       .exec();
     return this.addCommentCountToEvents(events);
@@ -412,7 +414,9 @@ export class MongoEventRepository implements IEventRepository {
   async findLatest(limit: number): Promise<Event[]> {
     const events = await this.eventModel
       .find()
-      .select('id title imageUrl lineup startDate city views tags commentCount')
+      .select(
+        'id description title imageUrl lineup startDate city views tags commentCount',
+      )
       .sort({ createdAt: -1 })
       .limit(limit)
       .exec();
@@ -435,7 +439,7 @@ export class MongoEventRepository implements IEventRepository {
 
     const events = await this.eventModel
       .find(query)
-      .select('id title imageUrl startDate city views')
+      .select('id description title imageUrl startDate city views')
       .limit(limit)
       .sort({ createdAt: -1 })
       .exec();
@@ -451,7 +455,9 @@ export class MongoEventRepository implements IEventRepository {
   async getUserFavorites(eventIds: string[]): Promise<Event[]> {
     const events = await this.eventModel
       .find({ _id: { $in: eventIds } })
-      .select('id title imageUrl lineup startDate city views commentCount tags')
+      .select(
+        'id description title imageUrl lineup startDate city views commentCount tags',
+      )
       .exec();
     return this.addCommentCountToEvents(events);
   }
@@ -514,7 +520,7 @@ export class MongoEventRepository implements IEventRepository {
 
     const events = await this.eventModel
       .find(filter)
-      .select('id title imageUrl lineup startDate city views commentCount tags')
+      .select('id description title imageUrl startDate city views commentCount')
       .exec();
 
     return this.addCommentCountToEvents(events);
@@ -582,7 +588,7 @@ export class MongoEventRepository implements IEventRepository {
           },
         },
       })
-      .select('id title imageUrl lineup startDate city views commentCount tags')
+      .select('id description title imageUrl startDate city views commentCount')
       .limit(limit)
       .sort({ createdAt: -1 })
       .exec();
