@@ -8,6 +8,10 @@
     text-transform: uppercase;
 }
 
+.event-date-section {
+    padding: 1rem;
+}
+
 .event-list {
     display: flex;
     flex-direction: column;
@@ -20,7 +24,6 @@
     flex-direction: row;
     align-items: baseline;
     gap: 1rem;
-    padding: 0 1rem;
 }
 
 .event-date-heading {
