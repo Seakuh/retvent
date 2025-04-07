@@ -74,7 +74,6 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
                 </span>
               </span>
             )}
-            {section === "past" && "Past Events"}
           </h2>
           <div className="event-grid-gallery">
             {(section === "upcoming"

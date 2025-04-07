@@ -136,15 +136,7 @@ export const Profile: React.FC = () => {
   };
 
   return (
-    <div
-      style={
-        {
-          "--profile-background-image": `url(${
-            user.headerImageUrl || defaultProfileImage
-          })`,
-        } as React.CSSProperties
-      }
-    >
+    <div>
       <div className="profile-wrapper">
         <ProfileMeta />
 
