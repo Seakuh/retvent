@@ -1,8 +1,6 @@
 // context/LandingSearchContext.tsx
 import React, { createContext, useContext, useState } from "react";
 
-type ViewMode = "Home" | "All" | "Filter" | "Date";
-
 type SearchState = {
   location: string;
   date: string;
@@ -13,7 +11,7 @@ type SearchState = {
 };
 
 const defaultState: SearchState = {
-  location: "",
+  location: "Worldwide",
   date: "",
   category: "",
   prompt: "",
