@@ -234,7 +234,7 @@ function LandingPage() {
     <>
       <HelmetMeta />
       <div className="min-h-screen">
-        <header className="backdrop-blur-[30px] sticky top-0 z-50 bg-color-neon-blue">
+        <header className="sticky top-0 z-50 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-b-[1px] border-b-[color:var(--color-neon-blue-light)]">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 cursor-pointer">
