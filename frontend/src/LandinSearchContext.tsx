@@ -9,7 +9,6 @@ type SearchState = {
   category: string;
   prompt: string;
   view: ViewMode;
-
   setSearchState: (state: Partial<SearchState>) => void;
 };
 

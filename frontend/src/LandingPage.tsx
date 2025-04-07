@@ -22,22 +22,19 @@ import { UploadModal } from "./UploadModal/UploadModal";
 import { Event } from "./utils";
 
 function LandingPage() {
-  const { location, date, category, prompt, setSearchState } =
+  const { location, date, category, prompt, view, setSearchState } =
     useLandingSearch();
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedLocation, setSelectedLocation] = useState<string>(
-    localStorage.getItem("selectedLocation") || "Worldwide"
-  );
-
+  const [selectedLocation, setSelectedLocation] = useState<string>(location);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [viewMode, setViewMode] = useState<ViewMode>(view);
   const [showUploads, setShowUploads] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    "All"
+    category
   );
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -46,16 +43,12 @@ function LandingPage() {
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      // Öffne Search Modal bei Strg+L
       if (e.ctrlKey && e.key.toLowerCase() === "l") {
-        e.preventDefault(); // Verhindert das Standard-Browser-Verhalten
+        e.preventDefault();
         setIsSearchOpen(true);
       }
     };
-
     window.addEventListener("keydown", handleKeyPress);
-
-    // Cleanup beim Unmount
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
@@ -86,18 +79,19 @@ function LandingPage() {
 
   const handleViewChange = (view: ViewMode) => {
     setSearchState({ view });
+    if (view == "All") {
+      setSelectedCategory(null);
+      setSearchState({ prompt: "" });
+    }
     setViewMode(view);
   };
 
   const handleCategoryChange = (category: string) => {
     setSearchState({ category });
     setSelectedCategory(category);
-    // Lösche den search Parameter
     searchParams.delete("search");
-    // Setze die neue Kategorie
     searchParams.set("category", category);
     setSearchParams(searchParams);
-    // Setze searchPerformed zurück
     setSearchPerformed(false);
   };
 
@@ -461,6 +455,7 @@ function LandingPage() {
           )} */}
         </main>
         <SearchModal
+          prompt={prompt}
           isOpen={isSearchOpen}
           onClose={() => setIsSearchOpen(false)}
           onSearch={handleSearch}

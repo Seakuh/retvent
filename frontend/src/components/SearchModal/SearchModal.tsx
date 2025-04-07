@@ -5,12 +5,14 @@ interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSearch: (searchTerm: string) => void;
+  prompt: string;
 }
 
 const SearchModal: React.FC<SearchModalProps> = ({
   isOpen,
   onClose,
   onSearch,
+  prompt,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);

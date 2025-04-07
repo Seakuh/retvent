@@ -124,8 +124,9 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
           selectedCategory === "Home" ? "active" : ""
         }`}
         onClick={() => {
-          onCategoryChange("Home");
           onViewModeChange("Home");
+          onCategoryChange("");
+          onGenreSelect("");
         }}
       >
         <Home size={20} />
@@ -136,8 +137,9 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
           selectedCategory === "All" ? "active" : ""
         }`}
         onClick={() => {
-          onCategoryChange("All");
           onViewModeChange("All");
+          onCategoryChange("");
+          onGenreSelect("");
         }}
       >
         <Telescope size={20} />
