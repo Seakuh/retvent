@@ -1,16 +1,15 @@
 import { Home, SlidersHorizontal, Telescope } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { ViewMode } from "../../types/event";
 import { CACHE_DURATION_3 } from "../../utils";
 import "./CategoryFilter.css";
 import { GenreModal } from "./GenreModal";
 interface CategoryFilterProps {
   selectedCategory: string | null;
   onCategoryChange: (category: string | null) => void;
-  onDateChange: (date: Date | null) => void;
   onShowDateFilter: (show: boolean) => void;
+  onViewModeChange: (view: ViewMode) => void;
 }
-
-// Cache-Dauer in Millisekunden (z.B. 24 Stunden)
 
 // Cache-Struktur
 interface CachedCategories {
@@ -21,9 +20,9 @@ interface CachedCategories {
 export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   selectedCategory,
   onCategoryChange,
+  onViewModeChange,
 }) => {
   const [categories, setCategories] = useState<string[]>([]);
-  const [dateFilter, setDateFilter] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [showGenreModal, setShowGenreModal] = useState(false);
 
@@ -124,7 +123,10 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         className={`category-button ${
           selectedCategory === "Home" ? "active" : ""
         }`}
-        onClick={() => onCategoryChange("Home")}
+        onClick={() => {
+          onCategoryChange("Home");
+          onViewModeChange("Home");
+        }}
       >
         <Home size={20} />
         Home
@@ -133,7 +135,10 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         className={`category-button ${
           selectedCategory === "All" ? "active" : ""
         }`}
-        onClick={() => onCategoryChange("All")}
+        onClick={() => {
+          onCategoryChange("All");
+          onViewModeChange("All");
+        }}
       >
         <Telescope size={20} />
         All
@@ -144,7 +149,11 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             ? "active"
             : ""
         }`}
-        onClick={toggleGenreModal}
+        onClick={() => {
+          toggleGenreModal();
+          onCategoryChange(selectedCategory);
+          onViewModeChange("Filter");
+        }}
       >
         <SlidersHorizontal size={20} />
         Filter

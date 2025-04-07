@@ -22,4 +22,4 @@ export interface SearchParams {
   category?: string;
 }
 
-export type ViewMode = 'list' | 'map';
+export type ViewMode = "Home" | "All" | "Filter";

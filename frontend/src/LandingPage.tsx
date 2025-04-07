@@ -84,6 +84,11 @@ function LandingPage() {
     navigate("/admin/events");
   };
 
+  const handleViewChange = (view: ViewMode) => {
+    setSearchState({ view });
+    setViewMode(view);
+  };
+
   const handleCategoryChange = (category: string) => {
     setSearchState({ category });
     setSelectedCategory(category);
@@ -300,7 +305,7 @@ function LandingPage() {
                 <div className="relative">
                   <button
                     onClick={() => setShowMenu(!showMenu)}
-                    className="p-2 rounded-lg glass-effect text-white"
+                    className="p-2 rounded-lg glass-effect text-white dark:text-white"
                   >
                     <Menu size={24} />
                   </button>
@@ -396,6 +401,7 @@ function LandingPage() {
             <CategoryFilter
               selectedCategory={selectedCategory}
               onCategoryChange={handleCategoryChange}
+              onViewModeChange={handleViewChange}
               // onDateChange={handleDateChange}
               // onShowDateFilter={setShowDateFilter}
             />
