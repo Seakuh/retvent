@@ -136,7 +136,7 @@ export const Profile: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="profile-page-container">
       <div className="profile-wrapper">
         <ProfileMeta />
 

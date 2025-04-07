@@ -6,6 +6,10 @@
   background-color: black;
 }
 
+.profile-page-container {
+  background-color: black;
+}
+
 .profile-info-background {
   position: relative;
   width: 100%;
@@ -67,3 +71,5 @@
   color: white;
   text-align: center;
 }
+
+

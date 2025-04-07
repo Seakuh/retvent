@@ -1,6 +1,14 @@
 import { Event } from "./types/event";
+import { Profile } from "./utils";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+export const searchProfiles = async (): Promise<Profile[]> => {
+  const response = await fetch(`${API_URL}profile`);
+  const data = await response.json();
+  console.log("Profiles", data);
+  return data || [];
+};
 
 export const searchEvents = async (
   location?: string,

@@ -114,6 +114,11 @@ function LandingPage() {
     const startDateQuery = date;
     const endDateQuery = date;
 
+    // const loadProfiles = async () => {
+    //   const profiles = await searchProfiles();
+    //   console.log("profiles", profiles);
+    // };
+
     const loadEvents = async () => {
       setLoading(true);
       try {
@@ -136,6 +141,7 @@ function LandingPage() {
     };
 
     loadEvents();
+    // loadProfiles();
   }, [location, category, prompt]);
 
   const toggleFavorite = (eventId: string) => {
