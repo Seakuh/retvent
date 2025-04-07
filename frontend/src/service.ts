@@ -2,6 +2,42 @@ import { Event } from "./types/event";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
+export const searchEvents = async (
+  location?: string,
+  category?: string,
+  prompt?: string,
+  startDate?: string,
+  endDate?: string
+): Promise<Event[]> => {
+  let url = `${API_URL}events/search/all`;
+
+  const params = new URLSearchParams();
+
+  if (location && location !== "Worldwide") {
+    params.append("location", location);
+  }
+  if (category) {
+    params.append("category", category);
+  }
+  if (prompt) {
+    params.append("prompt", prompt);
+  }
+  if (startDate) {
+    params.append("startDate", startDate);
+  }
+  if (endDate) {
+    params.append("endDate", endDate);
+  }
+
+  if (params.toString()) {
+    url += "?" + params.toString();
+  }
+  const response = await fetch(url);
+  const data = await response.json();
+  console.log("data", data);
+  return data.events || [];
+};
+
 export const fetchLatestEvents = async (): Promise<Event[]> => {
   try {
     const response = await fetch(`${API_URL}events/latest?limit=40`);

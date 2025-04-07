@@ -10,30 +10,31 @@ import { EventSection } from "./components/EventPage/EventSection";
 import SearchModal from "./components/SearchModal/SearchModal";
 import Footer from "./Footer/Footer";
 import { useLandingSearch } from "./LandinSearchContext";
-import {
-  fetchEventsByCategory,
-  fetchLatestEvents,
-  fetchLatestEventsByLocation,
-  searchEventsByKeyword,
-} from "./service";
+import { searchEvents } from "./service";
 import { ViewMode } from "./types/event";
 import { UploadModal } from "./UploadModal/UploadModal";
 import { Event } from "./utils";
 
 function LandingPage() {
+  // Search State
   const { location, date, category, prompt, view, setSearchState } =
     useLandingSearch();
+  const [viewMode, setViewMode] = useState<ViewMode>(view || "All");
+
+  // Event State
   const [events, setEvents] = useState<Event[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedLocation, setSelectedLocation] = useState<string>(location);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [viewMode, setViewMode] = useState<ViewMode>(view);
   const [showUploads, setShowUploads] = useState(false);
+
+  // Search State
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+
+  // Navigation State
   const navigate = useNavigate();
   const params = useParams();
 
@@ -66,15 +67,16 @@ function LandingPage() {
   }, []);
 
   const handleSearch = async (searchTerm: string) => {
-    setSearchState({ category: "All" });
     setSearchState({ prompt: searchTerm });
     setLoading(true);
     setSearchPerformed(true);
     try {
-      const searchResults = await searchEventsByKeyword(
-        searchTerm,
-        selectedLocation === "Worldwide" ? null : selectedLocation
+      const searchResults = await searchEvents(
+        location === "Worldwide" ? undefined : location,
+        category,
+        searchTerm
       );
+      console.log("searchResults", searchResults);
       setEvents(searchResults as Event[]);
       setIsSearchOpen(false);
     } catch (error) {
@@ -91,86 +93,52 @@ function LandingPage() {
   const handleViewChange = (view: ViewMode) => {
     setSearchState({ view });
     if (view == "All") {
-      setSearchState({ prompt: "", category: "All" });
+      setSearchState({ prompt: "", category: "", view: "All" });
+      setViewMode("All");
     }
     setViewMode(view);
   };
-  const handleCategoryChange = (category: string | undefined) => {
-    setSearchState({ category });
-    searchParams.delete("search");
-    searchParams.set("category", category || "");
-    setSearchParams(searchParams);
-    setSearchPerformed(false);
+
+  const handleCategoryChange = (category: string | null) => {
+    console.log("category", category);
+    setSearchState({ category: category || "" });
+    setViewMode("Filter");
   };
 
-  // const removeDateFilter = () => {
-  //   localStorage.removeItem("selectedDate");
-  //   setSelectedDate(null);
-  //   setShowDateFilter(false);
-  // };
-
-  // const handleDateChange = (date: Date | null) => {
-  //   localStorage.setItem("selectedDate", date?.toString() || "");
-  //   setSelectedDate(date);
-  //   setShowDateFilter(false);
-  // };
-
   const handleLocationChange = (location: string) => {
-    setSelectedLocation(location);
     setSearchState({ location });
-    localStorage.setItem("selectedLocation", location);
   };
 
   useEffect(() => {
-    // Prüfe erst URL-Parameter
-    const queryParamCategory = searchParams.get("category");
-    const searchQuery = searchParams.get("search");
-    // Prüfe dann Route-Parameter
-    const routeParamCategory = params.category;
-
-    const categoryToUse = queryParamCategory || routeParamCategory;
-
-    if (categoryToUse) {
-      setSearchState({ category: categoryToUse });
-      // Wenn die Kategorie über Route-Parameter kam, setzen wir auch die SearchParams
-      if (routeParamCategory && !queryParamCategory) {
-        searchParams.set("category", routeParamCategory);
-        setSearchParams(searchParams);
-      }
-    }
+    const searchQuery = prompt;
+    const categoryQuery = category;
+    const locationQuery = location;
+    const startDateQuery = date;
+    const endDateQuery = date;
 
     const loadEvents = async () => {
       setLoading(true);
       try {
-        let events;
-        if (searchQuery) {
-          if (selectedLocation !== "Worldwide") {
-            events = await searchEventsByKeyword(searchQuery, selectedLocation);
-          } else {
-            events = await searchEventsByKeyword(searchQuery, "Worldwide");
-          }
-          setSearchPerformed(true);
-        } else {
-          events =
-            categoryToUse && categoryToUse !== "All"
-              ? await fetchEventsByCategory(categoryToUse, selectedLocation)
-              : selectedLocation !== "Worldwide"
-              ? await fetchLatestEventsByLocation(selectedLocation)
-              : await fetchLatestEvents();
-        }
-
+        const events = await searchEvents(
+          locationQuery,
+          categoryQuery,
+          searchQuery,
+          startDateQuery,
+          endDateQuery
+        );
+        console.log("events", events);
         if (Array.isArray(events)) {
           setEvents(events.reverse());
         }
       } catch (err) {
-        console.error("Fehler beim Laden der Events:", err);
+        console.error("Error loading events:", err);
       } finally {
         setLoading(false);
       }
     };
 
     loadEvents();
-  }, [searchParams, params.category, selectedLocation]);
+  }, [location, category, prompt]);
 
   const toggleFavorite = (eventId: string) => {
     setFavorites((prev) => {
@@ -277,11 +245,12 @@ function LandingPage() {
                   alt="Logo"
                   className="w-8 h-8 rounded-md"
                   onClick={() => {
-                    // Lösche alle Suchparameter
-                    searchParams.delete("search");
-                    searchParams.delete("category");
-                    setSearchParams(searchParams);
                     setSearchPerformed(false);
+                    setSearchState({ view: "All" });
+                    setSearchState({ prompt: "" });
+                    setSearchState({ location: "Worldwide" });
+                    setSearchState({ date: "" });
+                    setSearchState({ category: "" });
                     navigate("/");
                   }}
                 />
@@ -398,9 +367,10 @@ function LandingPage() {
             </div> */}
             <CityBar
               onLocationSelect={handleLocationChange}
-              selectedLocation={selectedLocation}
+              selectedLocation={location}
             />
             <CategoryFilter
+              viewMode={viewMode}
               category={category}
               onCategoryChange={handleCategoryChange}
               onViewModeChange={handleViewChange}

@@ -8,6 +8,7 @@ interface CategoryFilterProps {
   category: string | null;
   onCategoryChange: (category: string | null) => void;
   onViewModeChange: (view: ViewMode) => void;
+  viewMode: ViewMode;
 }
 
 // Cache-Struktur
@@ -20,6 +21,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   category,
   onCategoryChange,
   onViewModeChange,
+  viewMode,
 }) => {
   const [categories, setCategories] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -104,7 +106,8 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
   const onGenreSelect = (genre: string) => {
     if (genre == category) {
-      onCategoryChange("All");
+      onCategoryChange("");
+      onViewModeChange("All");
     } else {
       onCategoryChange(genre);
     }
@@ -114,7 +117,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   return (
     <div className="category-filter" ref={containerRef}>
       <button
-        className={`category-button ${category === "Home" ? "active" : ""}`}
+        className={`category-button ${viewMode === "Home" ? "active" : ""}`}
         onClick={() => {
           onViewModeChange("Home");
         }}
@@ -123,20 +126,16 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         Home
       </button>
       <button
-        className={`category-button ${category === "All" ? "active" : ""}`}
+        className={`category-button ${viewMode === "All" ? "active" : ""}`}
         onClick={() => {
           onViewModeChange("All");
-          onCategoryChange("");
-          onGenreSelect("");
         }}
       >
         <Telescope size={20} />
         All
       </button>
       <button
-        className={`category-button ${
-          category !== "Home" && category !== "All" ? "active" : ""
-        }`}
+        className={`category-button ${viewMode === "Filter" ? "active" : ""}`}
         onClick={() => {
           toggleGenreModal();
           onCategoryChange(category);
