@@ -21,6 +21,21 @@ export class EventService {
   getEventsByTag(tag: string) {
     return this.eventRepository.getEventsByTag(tag);
   }
+  searchEventsWithUserInput(
+    location?: string,
+    category?: string,
+    prompt?: string,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    return this.eventRepository.searchEventsWithUserInput(
+      location,
+      category,
+      prompt,
+      startDate,
+      endDate,
+    );
+  }
 
   async findLatestEventsCity(city: string, limit: number) {
     const coordinates = await this.geolocationService.getCoordinates(city);

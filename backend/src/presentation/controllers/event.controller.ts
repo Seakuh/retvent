@@ -217,6 +217,29 @@ export class EventController {
     return this.eventService.getEventsByTag(tag);
   }
 
+  @Get('search/all')
+  async searchEventsWithUserInput(
+    @Query('location') location?: string,
+    @Query('category') category?: string,
+    @Query('prompt') prompt?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    console.log('location', location);
+    console.log('category', category);
+    console.log('prompt', prompt);
+    console.log('startDate', startDate);
+    console.log('endDate', endDate);
+    const events = await this.eventService.searchEventsWithUserInput(
+      location,
+      category,
+      prompt,
+      startDate,
+      endDate,
+    );
+    return { events };
+  }
+
   /**
    * Gibt die neuesten 30 Events zurück, sortiert nach Erstellungsdatum.
    */

@@ -9,6 +9,46 @@ import { IEventRepository } from '../../../core/repositories/event.repository.in
 export class MongoEventRepository implements IEventRepository {
   constructor(@InjectModel('Event') private eventModel: Model<Event>) {}
 
+  async searchEventsWithUserInput(
+    location: string,
+    category: string,
+    prompt: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<Event[]> {
+    const query: any = {};
+
+    if (location !== undefined) {
+      query.city = { $regex: new RegExp(location, 'i') };
+    }
+
+    if (category !== undefined) {
+      query.category = { $regex: new RegExp(category, 'i') };
+    }
+
+    if (prompt !== undefined) {
+      query.title = { $regex: new RegExp(prompt, 'i') };
+    }
+
+    if (startDate !== undefined) {
+      query.startDate = { $gte: new Date(startDate) };
+    }
+
+    if (endDate !== undefined) {
+      query.endDate = { $lte: new Date(endDate) };
+    }
+    console.log('query', query);
+
+    const events = await this.eventModel
+      .find(query)
+      .sort({ createdAt: -1 })
+      .select(
+        'id description title imageUrl startDate city views tags commentCount',
+      )
+      .limit(40)
+      .exec();
+    return events.map((event) => this.toEntity(event));
+  }
   private async addCommentCountToEvents(events: any[]): Promise<Event[]> {
     const eventIds = events.map((event) => event._id);
     const commentCounts = await this.eventModel.aggregate([
