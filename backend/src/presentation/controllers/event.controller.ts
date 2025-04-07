@@ -225,11 +225,6 @@ export class EventController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    console.log('location', location);
-    console.log('category', category);
-    console.log('prompt', prompt);
-    console.log('startDate', startDate);
-    console.log('endDate', endDate);
     const events = await this.eventService.searchEventsWithUserInput(
       location,
       category,

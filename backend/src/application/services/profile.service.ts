@@ -13,6 +13,9 @@ export class ProfileService {
     private readonly imageService: ImageService,
   ) {}
 
+  getAllProfiles(limit: number, offset: number): Promise<Profile[]> {
+    return this.profileRepository.getAllProfiles(limit, offset);
+  }
   updateProfileEmbedding(id: any, embedding: number[]) {
     return this.profileRepository.updateProfileEmbedding(id, embedding);
   }

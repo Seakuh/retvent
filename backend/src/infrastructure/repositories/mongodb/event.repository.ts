@@ -47,7 +47,7 @@ export class MongoEventRepository implements IEventRepository {
       )
       .limit(40)
       .exec();
-    return events.map((event) => this.toEntity(event));
+    return this.addCommentCountToEvents(events);
   }
   private async addCommentCountToEvents(events: any[]): Promise<Event[]> {
     const eventIds = events.map((event) => event._id);

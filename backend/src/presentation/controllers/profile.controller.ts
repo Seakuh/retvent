@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UploadedFiles,
   UseGuards,
@@ -28,6 +29,15 @@ export class ProfileController {
   @Get(':id')
   async getProfile(@Param('id') id: string): Promise<Profile> {
     return this.profileService.getProfile(id);
+  }
+
+  @Get()
+  async getAllProfiles(
+    @Query('limit') limit: number = 10,
+    @Query('offset') offset: number = 0,
+  ): Promise<Profile[]> {
+    console.log('getAllProfiles', limit, offset);
+    return this.profileService.getAllProfiles(limit, offset);
   }
 
   @Post()
