@@ -10,6 +10,7 @@ import { EventSection } from "./components/EventPage/EventSection";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import SearchModal from "./components/SearchModal/SearchModal";
 import Footer from "./Footer/Footer";
+import { useLandingSearch } from "./LandinSearchContext";
 import {
   fetchEventsByCategory,
   fetchLatestEvents,
@@ -19,12 +20,16 @@ import {
 import { ViewMode } from "./types/event";
 import { UploadModal } from "./UploadModal/UploadModal";
 import { Event } from "./utils";
+
 function LandingPage() {
+  const { location, date, category, prompt, setSearchState } =
+    useLandingSearch();
   const [events, setEvents] = useState<Event[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedLocation, setSelectedLocation] = useState<string>(
     localStorage.getItem("selectedLocation") || "Worldwide"
   );
+
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -58,6 +63,7 @@ function LandingPage() {
 
   const handleSearch = async (searchTerm: string) => {
     setSelectedCategory("All");
+    setSearchState({ prompt: searchTerm });
     setLoading(true);
     setSearchPerformed(true);
     try {
@@ -79,6 +85,7 @@ function LandingPage() {
   };
 
   const handleCategoryChange = (category: string) => {
+    setSearchState({ category });
     setSelectedCategory(category);
     // Lösche den search Parameter
     searchParams.delete("search");
@@ -103,6 +110,7 @@ function LandingPage() {
 
   const handleLocationChange = (location: string) => {
     setSelectedLocation(location);
+    setSearchState({ location });
     localStorage.setItem("selectedLocation", location);
   };
 

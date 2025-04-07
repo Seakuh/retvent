@@ -18,7 +18,6 @@ export const fetchLatestEventsByLocation = async (
   location: string
 ): Promise<Event[]> => {
   try {
-    console.log("Fetching latest events by location:", location);
     const response = await fetch(
       `${API_URL}events/latest/city?city=${location}&limit=40`
     );
@@ -35,11 +34,6 @@ export const fetchEventsByCategory = async (
   selectedLocation: string | null
 ): Promise<Event[]> => {
   try {
-    console.log(
-      "Fetching events by category:",
-      selectedCategory,
-      selectedLocation
-    );
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}events/category/${selectedCategory}${
         selectedLocation !== "Worldwide" ? `?location=${selectedLocation}` : ""

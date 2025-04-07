@@ -12,7 +12,6 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   isPast,
 }) => {
   const navigate = useNavigate();
-  console.log("event", event);
   return (
     <div
       key={event.id || event._id}

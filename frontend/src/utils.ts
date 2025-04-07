@@ -565,7 +565,6 @@ export const getDaysPast = (date: string | Date): number => {
   const now = new Date();
   const timeDiff = now.getTime() - eventDate.getTime();
   const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-  console.log("daysDiff", daysDiff);
   return daysDiff;
 };
 
@@ -573,7 +572,6 @@ export const getHoursUntilStart = (
   startDate: string,
   includeMinutes: boolean = false
 ): number => {
-  console.log("startDate", startDate);
   const start = new Date(startDate);
   const now = new Date();
   const diff = start.getTime() - now.getTime();

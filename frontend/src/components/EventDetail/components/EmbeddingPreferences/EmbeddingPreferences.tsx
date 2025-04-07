@@ -23,9 +23,7 @@ export const EmbeddingPreferences = ({
       communityOffers: preferences?.communityOffers || [],
     });
 
-  useEffect(() => {
-    console.log("Current preferences:", selectedPreferences);
-  }, [selectedPreferences]);
+  useEffect(() => {}, [selectedPreferences]);
 
   const handleSelection = (
     category: string,

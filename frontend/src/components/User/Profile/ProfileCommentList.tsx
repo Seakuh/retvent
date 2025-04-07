@@ -9,8 +9,6 @@ export const ProfileCommentList = ({ userName }: { userName: string }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const userId = JSON.parse(localStorage.getItem("user") || "{}").id;
   const navigate = useNavigate();
-  console.log(comments);
-
   useEffect(() => {
     fetchProfileComments(userId).then(setComments);
   }, [userId]);

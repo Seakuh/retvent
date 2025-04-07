@@ -6,6 +6,7 @@ import { About } from "./Footer/About";
 import { Imprint } from "./Footer/Imprint";
 import { Privacy } from "./Footer/Privacy";
 import { Terms } from "./Footer/Terms";
+import { LandingPageProvider } from "./LandinSearchContext";
 import LandingPage from "./LandingPage";
 import AdminEvents from "./components/Admin/AdminEvents";
 import CreateEvent from "./components/Admin/CreateEvent";
@@ -38,33 +39,34 @@ queryClient.prefetchQuery(["events", null], () => eventService.getEvents());
 const App: React.FC = () => {
   return (
     <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <UserContextProvider>
-          <div className="app">
-            <main>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/profile/:userId" element={<Profile />} />
-                <Route path="/event/:eventId" element={<EventDetail />} />
-                <Route path="/liked" element={<LikedEvents />} />
-                <Route path="/category/:category" element={<LandingPage />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/imprint" element={<Imprint />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/imprint" element={<Imprint />} />
+      <LandingPageProvider>
+        <QueryClientProvider client={queryClient}>
+          <UserContextProvider>
+            <div className="app">
+              <main>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/profile/:userId" element={<Profile />} />
+                  <Route path="/event/:eventId" element={<EventDetail />} />
+                  <Route path="/liked" element={<LikedEvents />} />
+                  <Route path="/category/:category" element={<LandingPage />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/imprint" element={<Imprint />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/imprint" element={<Imprint />} />
 
-                <Route
-                  path="/me"
-                  element={
-                    <ProtectedRoute>
-                      <Me />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* <Route
+                  <Route
+                    path="/me"
+                    element={
+                      <ProtectedRoute>
+                        <Me />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* <Route
                   path="/admin/dashboard"
                   element={
                     <ProtectedRoute>
@@ -72,36 +74,37 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 /> */}
-                <Route
-                  path="/admin/events"
-                  element={
-                    <ProtectedRoute>
-                      <AdminEvents />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/events/create"
-                  element={
-                    <ProtectedRoute>
-                      <CreateEvent />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/events/edit/:eventId"
-                  element={
-                    <ProtectedRoute>
-                      <EditEvent />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="*" element={<LandingPage />} />
-              </Routes>
-            </main>
-          </div>
-        </UserContextProvider>
-      </QueryClientProvider>
+                  <Route
+                    path="/admin/events"
+                    element={
+                      <ProtectedRoute>
+                        <AdminEvents />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/events/create"
+                    element={
+                      <ProtectedRoute>
+                        <CreateEvent />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/events/edit/:eventId"
+                    element={
+                      <ProtectedRoute>
+                        <EditEvent />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="*" element={<LandingPage />} />
+                </Routes>
+              </main>
+            </div>
+          </UserContextProvider>
+        </QueryClientProvider>
+      </LandingPageProvider>
     </HelmetProvider>
   );
 };
