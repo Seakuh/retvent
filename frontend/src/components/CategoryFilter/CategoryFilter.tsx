@@ -1,7 +1,7 @@
 import { Home, SlidersHorizontal, Telescope } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { ViewMode } from "../../types/event";
-import { CACHE_DURATION_3 } from "../../utils";
+import { categoriesToFilter } from "../../utils";
 import "./CategoryFilter.css";
 import { GenreModal } from "./GenreModal";
 interface CategoryFilterProps {
@@ -23,82 +23,8 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onViewModeChange,
   viewMode,
 }) => {
-  const [categories, setCategories] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [showGenreModal, setShowGenreModal] = useState(false);
-
-  useEffect(() => {
-    const fetchAndCacheCategories = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}events/categories`
-        );
-        const data = await response.json();
-        const filteredCategories = data
-          .filter((category: string) => category !== null && category !== "")
-          .map(
-            (category: string) =>
-              category.charAt(0).toUpperCase() + category.slice(1)
-          )
-          .filter(
-            (category: string, index: number, self: string[]) =>
-              self.indexOf(category) === index
-          );
-
-        // Cache speichern
-        const cacheData: CachedCategories = {
-          categories: filteredCategories,
-          timestamp: Date.now(),
-        };
-        localStorage.setItem("eventCategories", JSON.stringify(cacheData));
-
-        setCategories(filteredCategories);
-      } catch (error) {
-        console.error("Error loading categories:", error);
-        // Bei Fehler: Versuche Cache zu laden
-        loadCachedCategories();
-      }
-    };
-
-    const loadCachedCategories = () => {
-      const cachedData = localStorage.getItem("eventCategories");
-      if (cachedData) {
-        const { categories: cachedCategories, timestamp }: CachedCategories =
-          JSON.parse(cachedData);
-        setCategories(cachedCategories);
-      }
-    };
-
-    const checkAndUpdateCategories = () => {
-      const cachedData = localStorage.getItem("eventCategories");
-
-      if (!cachedData) {
-        // Kein Cache vorhanden: Neue Daten laden
-        fetchAndCacheCategories();
-        return;
-      }
-
-      const { timestamp }: CachedCategories = JSON.parse(cachedData);
-      const isExpired = Date.now() - timestamp > CACHE_DURATION_3;
-
-      if (isExpired) {
-        // Cache ist abgelaufen: Neue Daten laden
-        fetchAndCacheCategories();
-      } else {
-        // Cache ist noch gültig: Cached Daten laden
-        loadCachedCategories();
-      }
-    };
-
-    checkAndUpdateCategories();
-
-    // Optional: Periodisches Update im Hintergrund
-    const intervalId = setInterval(checkAndUpdateCategories, CACHE_DURATION_3);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {}, []);
 
   const toggleGenreModal = () => {
     setShowGenreModal(!showGenreModal);
@@ -165,7 +91,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       ))} */}
       {showGenreModal && (
         <GenreModal
-          genres={categories}
+          genres={categoriesToFilter}
           onGenreSelect={onGenreSelect}
           selectedGenre={category}
         />
