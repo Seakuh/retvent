@@ -1,5 +1,6 @@
 // context/LandingSearchContext.tsx
 import React, { createContext, useContext, useState } from "react";
+import { ViewMode } from "./types/event";
 
 type SearchState = {
   location: string;
