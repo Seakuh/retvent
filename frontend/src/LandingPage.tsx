@@ -7,7 +7,6 @@ import { CityBar } from "./components/CityBar/CityBar";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
-import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import SearchModal from "./components/SearchModal/SearchModal";
 import Footer from "./Footer/Footer";
 import { useLandingSearch } from "./LandinSearchContext";
@@ -33,9 +32,6 @@ function LandingPage() {
   const [viewMode, setViewMode] = useState<ViewMode>(view);
   const [showUploads, setShowUploads] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    category
-  );
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const navigate = useNavigate();
@@ -47,6 +43,21 @@ function LandingPage() {
         e.preventDefault();
         setIsSearchOpen(true);
       }
+      if (e.ctrlKey && e.key.toLowerCase() === "h") {
+        e.preventDefault();
+        setViewMode("Home");
+        setSearchState({ view: "Home" });
+      }
+      if (e.ctrlKey && e.key.toLowerCase() === "a") {
+        e.preventDefault();
+        setViewMode("All");
+        setSearchState({ view: "All" });
+      }
+      if (e.ctrlKey && e.key.toLowerCase() === "f") {
+        e.preventDefault();
+        setViewMode("Filter");
+        setSearchState({ view: "Filter" });
+      }
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => {
@@ -55,7 +66,7 @@ function LandingPage() {
   }, []);
 
   const handleSearch = async (searchTerm: string) => {
-    setSelectedCategory("All");
+    setSearchState({ category: "All" });
     setSearchState({ prompt: searchTerm });
     setLoading(true);
     setSearchPerformed(true);
@@ -80,17 +91,14 @@ function LandingPage() {
   const handleViewChange = (view: ViewMode) => {
     setSearchState({ view });
     if (view == "All") {
-      setSelectedCategory(null);
-      setSearchState({ prompt: "" });
+      setSearchState({ prompt: "", category: "All" });
     }
     setViewMode(view);
   };
-
-  const handleCategoryChange = (category: string) => {
+  const handleCategoryChange = (category: string | undefined) => {
     setSearchState({ category });
-    setSelectedCategory(category);
     searchParams.delete("search");
-    searchParams.set("category", category);
+    searchParams.set("category", category || "");
     setSearchParams(searchParams);
     setSearchPerformed(false);
   };
@@ -123,7 +131,7 @@ function LandingPage() {
     const categoryToUse = queryParamCategory || routeParamCategory;
 
     if (categoryToUse) {
-      setSelectedCategory(categoryToUse);
+      setSearchState({ category: categoryToUse });
       // Wenn die Kategorie über Route-Parameter kam, setzen wir auch die SearchParams
       if (routeParamCategory && !queryParamCategory) {
         searchParams.set("category", routeParamCategory);
@@ -393,7 +401,7 @@ function LandingPage() {
               selectedLocation={selectedLocation}
             />
             <CategoryFilter
-              selectedCategory={selectedCategory}
+              category={category}
               onCategoryChange={handleCategoryChange}
               onViewModeChange={handleViewChange}
               // onDateChange={handleDateChange}
@@ -414,9 +422,7 @@ function LandingPage() {
                 <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
               </div>
             </div>
-          ) : viewMode === "map" ? (
-            <LikedEvents />
-          ) : selectedCategory === "Home" ? (
+          ) : viewMode === "Home" ? (
             <EventPage />
           ) : (
             <div>
@@ -425,7 +431,7 @@ function LandingPage() {
                 events={events.sort((a, b) => (b.views || 0) - (a.views || 0))}
               />
               <EventGalleryII
-                title={selectedCategory}
+                title={category}
                 events={events}
                 favorites={favorites}
                 onToggleFavorite={toggleFavorite}

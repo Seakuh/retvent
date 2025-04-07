@@ -5,9 +5,8 @@ import { CACHE_DURATION_3 } from "../../utils";
 import "./CategoryFilter.css";
 import { GenreModal } from "./GenreModal";
 interface CategoryFilterProps {
-  selectedCategory: string | null;
+  category: string | null;
   onCategoryChange: (category: string | null) => void;
-  onShowDateFilter: (show: boolean) => void;
   onViewModeChange: (view: ViewMode) => void;
 }
 
@@ -18,7 +17,7 @@ interface CachedCategories {
 }
 
 export const CategoryFilter: React.FC<CategoryFilterProps> = ({
-  selectedCategory,
+  category,
   onCategoryChange,
   onViewModeChange,
 }) => {
@@ -53,7 +52,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
         setCategories(filteredCategories);
       } catch (error) {
-        console.error("Fehler beim Laden der Kategorien:", error);
+        console.error("Error loading categories:", error);
         // Bei Fehler: Versuche Cache zu laden
         loadCachedCategories();
       }
@@ -97,19 +96,14 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
     return () => clearInterval(intervalId);
   }, []);
 
-  useEffect(() => {
-    const selectedDate = localStorage.getItem("selectedDate");
-    if (selectedDate) {
-      setDateFilter(true);
-    }
-  }, []);
+  useEffect(() => {}, []);
 
   const toggleGenreModal = () => {
     setShowGenreModal(!showGenreModal);
   };
 
   const onGenreSelect = (genre: string) => {
-    if (genre == selectedCategory) {
+    if (genre == category) {
       onCategoryChange("All");
     } else {
       onCategoryChange(genre);
@@ -120,22 +114,16 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   return (
     <div className="category-filter" ref={containerRef}>
       <button
-        className={`category-button ${
-          selectedCategory === "Home" ? "active" : ""
-        }`}
+        className={`category-button ${category === "Home" ? "active" : ""}`}
         onClick={() => {
           onViewModeChange("Home");
-          onCategoryChange("");
-          onGenreSelect("");
         }}
       >
         <Home size={20} />
         Home
       </button>
       <button
-        className={`category-button ${
-          selectedCategory === "All" ? "active" : ""
-        }`}
+        className={`category-button ${category === "All" ? "active" : ""}`}
         onClick={() => {
           onViewModeChange("All");
           onCategoryChange("");
@@ -147,13 +135,11 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       </button>
       <button
         className={`category-button ${
-          selectedCategory !== "Home" && selectedCategory !== "All"
-            ? "active"
-            : ""
+          category !== "Home" && category !== "All" ? "active" : ""
         }`}
         onClick={() => {
           toggleGenreModal();
-          onCategoryChange(selectedCategory);
+          onCategoryChange(category);
           onViewModeChange("Filter");
         }}
       >
@@ -182,7 +168,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         <GenreModal
           genres={categories}
           onGenreSelect={onGenreSelect}
-          selectedGenre={selectedCategory}
+          selectedGenre={category}
         />
       )}
     </div>
