@@ -1,7 +1,7 @@
 import { Info, LogIn, Menu, Plus, Search, Upload, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { CityBar } from "./components/CityBar/CityBar";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
@@ -29,14 +29,12 @@ function LandingPage() {
   const [showUploads, setShowUploads] = useState(false);
 
   // Search State
-  const [searchParams, setSearchParams] = useSearchParams();
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
 
   // Navigation State
   const navigate = useNavigate();
-  const params = useParams();
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -54,11 +52,11 @@ function LandingPage() {
         setViewMode("All");
         setSearchState({ view: "All" });
       }
-      if (e.ctrlKey && e.key.toLowerCase() === "f") {
-        e.preventDefault();
-        setViewMode("Filter");
-        setSearchState({ view: "Filter" });
-      }
+      // if (e.ctrlKey && e.key.toLowerCase() === "f") {
+      //   e.preventDefault();
+      //   setViewMode("Filter");
+      //   setSearchState({ view: "Filter" });
+      // }
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => {

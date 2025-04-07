@@ -14,7 +14,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
   onSearch,
   prompt,
 }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(prompt);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -27,10 +27,16 @@ const SearchModal: React.FC<SearchModalProps> = ({
     setSearchTerm(e.target.value);
   };
 
+  const onOutsideClick = () => {
+    setSearchTerm("");
+    onSearch("");
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="search-modal-overlay" onClick={onClose}>
+    <div className="search-modal-overlay" onClick={() => onOutsideClick()}>
       <div
         className="search-modal-content"
         onClick={(e) => e.stopPropagation()}
