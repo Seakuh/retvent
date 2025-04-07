@@ -1,8 +1,13 @@
 /* Container für das gesamte Event-Gallery */
 .event-gallery-container {
   width: 100%;
-  max-width: 935px; /* Maximale Breite auf großen Bildschirmen */
+  max-width: 80rem; /* Maximale Breite auf großen Bildschirmen */
   margin: 0 auto; /* Zentriert den Container */
+  background-color: black;
+}
+
+.event-section-next-title-text{
+  margin-left: 1.5rem;
 }
 
 /* Grid Layout */
@@ -40,10 +45,6 @@
   object-fit: cover;
 }
 
-/* Section Styling */
-.event-section {
-  margin: 2rem 0;
-}
 
 .event-section-title {
   font-size: 1.5rem;
@@ -58,12 +59,13 @@
 }
 
 .event-grid-item.past {
-  opacity: 0.6; /* Ausgegraute Events */
-  filter: grayscale(50%); /* Schwarz-Weiß-Effekt */
+  opacity: 0.3; /* Ausgegraute Events */
+  filter: grayscale(100%); /* Schwarz-Weiß-Effekt */
 }
 
 .event-grid-item.past:hover {
   opacity: 0.8; /* Etwas mehr Sichtbarkeit beim Hover */
+  filter: grayscale(50%); /* Schwarz-Weiß-Effekt */
 }
 
 .days-until {

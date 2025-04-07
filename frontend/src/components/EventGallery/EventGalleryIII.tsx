@@ -12,8 +12,6 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
   const navigate = useNavigate();
   const sortAndGroupEvents = (events: Event[]) => {
     const today = new Date();
-    const endOfWeek = new Date(today);
-    endOfWeek.setDate(today.getDate() + (6 - today.getDay()));
 
     // Sort events by date
     const sortedEvents = events.sort((a, b) => {
@@ -25,25 +23,13 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
     // Past events (before today)
     const pastEvents = sortedEvents.filter((event) => {
       const eventDate = new Date(event.startDate as string);
-      return eventDate < today && !isSameDay(eventDate, today);
+      return eventDate < today;
     });
 
-    const todayEvents = sortedEvents.filter((event) =>
-      isSameDay(new Date(event.startDate as string), today)
-    );
-
-    const thisWeekEvents = sortedEvents.filter((event) => {
-      const eventDate = new Date(event.startDate as string);
-      return (
-        !isSameDay(eventDate, today) &&
-        eventDate <= endOfWeek &&
-        eventDate >= today
-      );
-    });
-
+    // Upcoming events (from today onwards)
     const upcomingEvents = sortedEvents.filter((event) => {
       const eventDate = new Date(event.startDate as string);
-      return eventDate > endOfWeek;
+      return eventDate >= today;
     });
 
     const nextEventDays =
@@ -56,8 +42,6 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
         : null;
 
     return {
-      ...(todayEvents.length > 0 && { today: todayEvents }),
-      ...(thisWeekEvents.length > 0 && { thisWeek: thisWeekEvents }),
       ...(upcomingEvents.length > 0 && {
         upcoming: { events: upcomingEvents, days: nextEventDays },
       }),
@@ -82,11 +66,9 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
               section === "past" ? "past-title" : ""
             }`}
           >
-            {section === "today" && "Today"}
-            {section === "thisWeek" && "This Week"}
             {section === "upcoming" && (
-              <span>
-                Upcoming{" "}
+              <span className="event-section-next-title-text">
+                Next{" "}
                 <span className="days-until">
                   in {(sectionData as { days: number }).days} days
                 </span>
@@ -111,25 +93,6 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
       ))}
     </div>
   );
-};
-
-// Hilfsfunktionen
-const isSameDay = (date1: Date, date2: Date) => {
-  return (
-    date1.getDate() === date2.getDate() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getFullYear() === date2.getFullYear()
-  );
-};
-
-const isThisWeek = (date: Date) => {
-  const today = new Date();
-  const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() - today.getDay());
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-
-  return date >= weekStart && date <= weekEnd;
 };
 
 export default EventGalleryIII;

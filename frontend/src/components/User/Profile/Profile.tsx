@@ -136,65 +136,69 @@ export const Profile: React.FC = () => {
   };
 
   return (
-    <div className="profile-wrapper">
-      <ProfileMeta />
+    <div
+      style={
+        {
+          "--profile-background-image": `url(${
+            user.headerImageUrl || defaultProfileImage
+          })`,
+        } as React.CSSProperties
+      }
+    >
+      <div className="profile-wrapper">
+        <ProfileMeta />
 
-      <button className="back-button" onClick={handleBack}>
-        ← Back
-      </button>
-      <div className="share-buttons">
-        <button
-          onClick={() => shareProfile(userId || "")}
-          className="share-button"
-          title="Share Profile"
-        >
-          <Share2 className="h-5 w-5" />
+        <button className="back-button" onClick={handleBack}>
+          ← Back
         </button>
-      </div>
+        <div className="share-buttons">
+          <button
+            onClick={() => shareProfile(userId || "")}
+            className="share-button"
+            title="Share Profile"
+          >
+            <Share2 className="h-5 w-5" />
+          </button>
+        </div>
 
-      <ProfileHeader
-        headerImageUrl={user.headerImageUrl || defaultProfileImage}
-        profileImageUrl={user.profileImageUrl || defaultProfileImage}
-        username={user.username}
-      />
-      <div>
-        <div
-          className="profile-info-background"
-          style={
-            {
-              "--profile-background-image": `url(${
-                user.headerImageUrl || defaultProfileImage
-              })`,
-            } as React.CSSProperties
-          }
-        >
-          <div className="profile-container">
-            <h1 className="profile-header-username">{user.username}</h1>
-            <div className="user-profile-info">
-              <ProfileInfo
-                profile={user}
-                eventsCount={events.length}
-                followersCount={user.followers?.length || 0}
-                viewsCount={countEventViews()}
-              />
-            </div>
-            {/* <ActionComponent
+        <ProfileHeader
+          headerImageUrl={user.headerImageUrl || defaultProfileImage}
+          profileImageUrl={user.profileImageUrl || defaultProfileImage}
+          username={user.username}
+        />
+        <div>
+          <div className="profile-info-background">
+            <div className="profile-container">
+              <h1 className="profile-header-username">{user.username}</h1>
+              <div className="user-profile-info">
+                <ProfileInfo
+                  profile={user}
+                  eventsCount={events.length}
+                  followersCount={user.followers?.length || 0}
+                  viewsCount={countEventViews()}
+                />
+              </div>
+              {/* <ActionComponent
               isFollowingWIP={false}
               onFollow={() => {}}
               onMessage={() => {}}
             /> */}
+            </div>
           </div>
         </div>
+        <div className="user-events-section">
+          {/* <h2 className="events-title">Events by {user.username}</h2> */}
+          <EventGalleryIII
+            events={events}
+            title={`${user.username}'s Events`}
+          />
+        </div>
+        {/* <ProfileCommentList userName={user.username} /> */}
+        <div className="member-since-profile">
+          Member since {formatProfileDate(new Date(user.createdAt || ""))}
+        </div>
+        <Footer />
       </div>
-      <div className="user-events-section">
-        {/* <h2 className="events-title">Events by {user.username}</h2> */}
-        <EventGalleryIII events={events} title={`${user.username}'s Events`} />
-      </div>
-      {/* <ProfileCommentList userName={user.username} /> */}
-      <div className="member-since-profile">
-        Member since {formatProfileDate(new Date(user.createdAt || ""))}
-      </div>
-      <Footer />
     </div>
   );
 };

@@ -1,6 +1,9 @@
 .profile-wrapper {
   position: relative;
   min-height: 100vh;
+  max-width: 80rem;
+  margin: 0 auto;
+  background-color: black;
 }
 
 .profile-info-background {
@@ -48,8 +51,7 @@
 }
 
 .user-events-section {
-  max-width: 1200px;
-  margin: 2rem auto;
+  background-color: black;
 }
 
 .events-title {
