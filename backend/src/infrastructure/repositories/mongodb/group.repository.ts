@@ -21,6 +21,13 @@ export class MongoGroupRepository implements IGroupRepository {
     const newGroup = new this.groupModel(group);
     return newGroup.save();
   }
+
+  async createGroup(group: Group): Promise<Group> {
+    console.log(group);
+    const newGroup = new this.groupModel(group);
+    return newGroup.save();
+  }
+
   findByInviteToken(token: string): Promise<Group | null> {
     return this.groupModel.findOne({ inviteToken: token });
   }

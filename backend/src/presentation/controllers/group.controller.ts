@@ -18,8 +18,13 @@ export class GroupController {
   @Post()
   @UseGuards(GroupGuard)
   create(@Req() req, @Body() dto: CreateGroupDto) {
-    console.log(req);
     return this.groupService.createGroup(req.user.id, dto);
+  }
+
+  @Post()
+  @UseGuards(GroupGuard)
+  createWithEvent(@Req() req, @Body() dto: CreateGroupDto) {
+    return this.groupService.createGroupWithEvent(req.user.id, dto);
   }
 
   @Post('/join/:token')
