@@ -1,0 +1,47 @@
+.comment-guidelines-container {
+    background-color: var(--color-dark-blue);
+    margin: 2rem;
+    color: white;
+    padding: 3rem;
+    max-width: 935px;
+    margin: 0 auto;
+    height: 100vh;
+  }
+  
+  .comment-guidelines-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .comment-guidelines-icon {
+    color: var(--color-neon-blue, #3dafac);
+  }
+  
+  .comment-guidelines-intro {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .comment-guidelines-list {
+    list-style: none;
+    padding-left: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  
+  .comment-guidelines-list li::before {
+    content: "• ";
+    color: var(--color-neon-blue, #3dafac);
+    font-weight: bold;
+    margin-left: -1rem;
+    padding-right: 0.5rem;
+  }
+  
+  .comment-guidelines-footer {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: #cccccc;
+  }
+  

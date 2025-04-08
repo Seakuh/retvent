@@ -14,6 +14,7 @@ import EditEvent from "./components/Admin/EditEvent";
 import Login from "./components/Auth/Login";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import Register from "./components/Auth/Register";
+import CommentGuidelines from "./components/CommentGuidelines/CommentGuidelines";
 import { EventDetail } from "./components/EventDetail/EventDetail";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import { Me } from "./components/User/Me/Me";
@@ -57,6 +58,10 @@ const App: React.FC = () => {
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/imprint" element={<Imprint />} />
+                  <Route
+                    path="/comment-guidelines"
+                    element={<CommentGuidelines />}
+                  />
 
                   <Route
                     path="/me"
