@@ -12,8 +12,11 @@ export class MessageRepository implements IMessageRepository {
     return newMessage.save();
   }
 
-  async findByGroupId(groupId: string): Promise<Message[]> {
-    return this.messageModel.find({ groupId });
+  async findByGroupId(groupId: string, limit = 50): Promise<Message[]> {
+    return this.messageModel
+      .find({ groupId })
+      .sort({ createdAt: -1 })
+      .limit(limit);
   }
 
   async findByGroupIdAndSenderId(

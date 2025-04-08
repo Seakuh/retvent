@@ -1,11 +1,13 @@
 import { IGroup } from './interfaces/group.interface';
 
 export class Group implements IGroup {
+  id?: string;
   name?: string;
   description?: string;
   memberIds?: string[];
   creatorId?: string;
   eventId?: string[];
+  inviteToken?: string;
   isPublic?: boolean;
   createdAt?: Date;
   updatedAt?: Date;

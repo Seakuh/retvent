@@ -1,19 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { IMessageRepository } from 'src/core/repositories/message.repository.interface';
 @Injectable()
 export class MessageService {
-  constructor(@InjectModel('Message') private messageModel: Model<any>) {}
+  constructor(private readonly messageRepository: IMessageRepository) {}
 
   async create(groupId: string, senderId: string, content: string) {
-    const msg = new this.messageModel({ groupId, senderId, content });
-    return msg.save();
+    const msg = await this.messageRepository.create({
+      groupId,
+      senderId,
+      content,
+    });
+    return msg;
   }
 
   async findByGroup(groupId: string, limit = 50) {
-    return this.messageModel
-      .find({ groupId })
-      .sort({ createdAt: -1 })
-      .limit(limit);
+    return this.messageRepository.findByGroupId(groupId, limit);
+  }
+
+  async findByGroupAndSender(groupId: string, senderId: string) {
+    return this.messageRepository.findByGroupIdAndSenderId(groupId, senderId);
+  }
+
+  async findByGroupAndSenderAndContent(
+    groupId: string,
+    senderId: string,
+    content: string,
+  ) {
+    return this.messageRepository.findByGroupIdAndSenderIdAndContent(
+      groupId,
+      senderId,
+      content,
+    );
   }
 }

@@ -7,6 +7,7 @@ export interface IGroup extends Document {
   creatorId: { type: Types.ObjectId; ref: 'User'; required: false };
   eventId: { type: [string]; required: false };
   isPublic: { type: boolean; required: false };
+  inviteToken: { type: string; required: false };
   createdAt: { type: Date; required: false };
   updatedAt: { type: Date; required: false };
 }
@@ -18,6 +19,7 @@ const GroupSchema = new Schema<IGroup>(
     memberIds: { type: [String], required: false },
     eventId: { type: [String], required: false },
     isPublic: { type: Boolean, required: false },
+    inviteToken: { type: String, required: false },
     createdAt: { type: Date, required: false },
     updatedAt: { type: Date, required: false },
   },

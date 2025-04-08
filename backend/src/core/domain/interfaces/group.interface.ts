@@ -5,6 +5,7 @@ export interface IGroup {
   creatorId?: string;
   eventId?: string[];
   isPublic?: boolean;
+  inviteToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
