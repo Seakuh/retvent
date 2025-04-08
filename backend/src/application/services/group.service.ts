@@ -3,7 +3,6 @@ import { CreateGroupDto } from 'src/presentation/dtos/create-group.dto';
 import { UpdateGroupDto } from 'src/presentation/dtos/update-group.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { MongoGroupRepository } from '../../infrastructure/repositories/mongodb/group.repository';
-
 @Injectable()
 export class GroupService {
   constructor(private readonly groupRepository: MongoGroupRepository) {}
@@ -16,7 +15,9 @@ export class GroupService {
       inviteToken,
       creatorId: userId,
       memberIds: [userId],
-      eventIds: [],
+      eventIds: dto.eventIds ? dto.eventIds : [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     return await this.groupRepository.createGroup(userId, group);
   }
@@ -25,15 +26,19 @@ export class GroupService {
     const inviteToken = uuidv4();
     console.log(dto, userId);
     return await this.groupRepository.createGroupWithEvent({
+      ...dto,
       creatorId: userId,
       memberIds: [userId],
       inviteToken,
-      eventIds: dto.eventIds,
+      eventIds: dto.eventIds ? dto.eventIds : [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
   }
 
   async joinGroup(userId: string, token: string) {
     const group = await this.groupRepository.findByInviteToken(token);
+    console.log(group);
     if (!group) throw new NotFoundException('Group not found');
     if (!group.memberIds.includes(userId)) {
       group.memberIds.push(userId);

@@ -18,14 +18,24 @@ export class MongoGroupRepository implements IGroupRepository {
   }
 
   async createGroup(userId: string, group: Group): Promise<Group> {
-    console.log(group);
-
-    const newGroup = new this.groupModel({
-      ...group,
-      creatorId: userId,
+    const groupToSave = {
+      name: group.name,
+      description: group.description,
+      isPublic: group.isPublic,
+      inviteToken: group.inviteToken,
       memberIds: [userId],
-    });
-    return newGroup.save();
+      creatorId: userId,
+      eventIds: group.eventIds || [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    console.log('group in repository: ', groupToSave);
+
+    const newGroup = new this.groupModel(groupToSave);
+    console.log('newGroup: ', newGroup);
+    const savedGroup = await newGroup.save();
+    console.log('savedGroup: ', savedGroup);
+    return savedGroup;
   }
 
   async createGroupWithEvent(group: Group): Promise<Group> {
