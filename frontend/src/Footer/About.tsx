@@ -24,7 +24,7 @@ export const About = () => {
         />
       </a>
       <h1 className="section-title text-center mt-4">Event-Scanner</h1>
-      <div className="text-left text-white leading-relaxed p-6 break-words">
+      <div className="text-left text-white leading-relaxed p-6 break-words max-w-[935px] mx-auto">
         <section>
           <LucideInfo className="w-20 h-20 text-white mx-auto  mb-4" />
           <br />
