@@ -159,7 +159,8 @@ const EditEvent: React.FC = () => {
     }
   };
 
-  const handleBack = () => {
+  const handleBack = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     navigate(-1);
   };
 

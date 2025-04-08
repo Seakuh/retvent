@@ -4,7 +4,13 @@ export const Terms = () => {
   const navigate = useNavigate();
   return (
     <div className="mt-20 terms-container max-w-3xl mx-auto p-6 text-sm leading-relaxed text-white">
-      <button onClick={() => navigate(-1)} className="back-button">
+      <button
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.preventDefault();
+          navigate(-1);
+        }}
+        className="back-button"
+      >
         <ChevronLeft className="h-5 w-5" />
       </button>
       <h1 className="text-2xl font-bold mb-6">

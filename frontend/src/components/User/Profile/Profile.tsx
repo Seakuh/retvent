@@ -67,16 +67,20 @@ export const Profile: React.FC = () => {
     };
   }, [userId]);
 
-  const handleBack = useCallback(() => {
-    const previousPath = document.referrer;
-    const isFromOurSite = previousPath.includes(window.location.hostname);
+  const handleBack = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      const previousPath = document.referrer;
+      const isFromOurSite = previousPath.includes(window.location.hostname);
 
-    if (isFromOurSite) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
-  }, [navigate]);
+      if (isFromOurSite) {
+        navigate(-1);
+      } else {
+        navigate("/");
+      }
+    },
+    [navigate]
+  );
 
   if (isLoading) {
     return (

@@ -6,7 +6,8 @@ export const Privacy = () => {
   return (
     <div className="mt-20 max-w-3xl mx-auto p-6 text-sm text-white leading-relaxed">
       <button
-        onClick={() => {
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.preventDefault();
           if (window.history.length > 1) {
             navigate(-1);
           } else {

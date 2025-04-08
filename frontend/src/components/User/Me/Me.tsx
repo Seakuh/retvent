@@ -213,16 +213,20 @@ export const Me: React.FC = () => {
     });
   }, []);
 
-  const handleBack = useCallback(() => {
-    const previousPath = document.referrer;
-    const isFromOurSite = previousPath.includes(window.location.hostname);
+  const handleBack = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      const previousPath = document.referrer;
+      const isFromOurSite = previousPath.includes(window.location.hostname);
 
-    if (isFromOurSite) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
-  }, [navigate]);
+      if (isFromOurSite) {
+        navigate(-1);
+      } else {
+        navigate("/");
+      }
+    },
+    [navigate]
+  );
 
   // Loading und Error States
   if (isLoading) {
