@@ -21,12 +21,14 @@ export class GroupService {
     return newGroup.save();
   }
 
-  async joinGroup(userId: string, groupId: string) {
-    const group = await this.groupModel.findById(groupId);
+  async joinGroup(userId: string, token: string) {
+    const group = await this.groupModel.findOne({ inviteToken: token });
     if (!group) throw new NotFoundException('Group not found');
-
-    group.memberIds.push(userId);
-    return group.save();
+    if (!group.memberIds.includes(userId)) {
+      group.memberIds.push(userId);
+      await group.save();
+    }
+    return group;
   }
 
   async leaveGroup(userId: string, groupId: string) {
