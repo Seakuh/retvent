@@ -1,11 +1,11 @@
+import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 export const Terms = () => {
   const navigate = useNavigate();
   return (
     <div className="mt-20 terms-container max-w-3xl mx-auto p-6 text-sm leading-relaxed text-white">
       <button onClick={() => navigate(-1)} className="back-button">
-        ← Back
+        <ChevronLeft className="h-5 w-5" />
       </button>
       <h1 className="text-2xl font-bold mb-6">
         Terms of Use for the EventScanner Platform

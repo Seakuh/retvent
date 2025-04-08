@@ -126,19 +126,25 @@
   /* =============================================================
      NAVIGATION & BUTTONS
      ============================================================= */
-  .back-button {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    padding: 10px 20px;
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    z-index: 10;
-  }
+     .back-button {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      color: white;
+      padding: .9rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      border: none;
+      cursor: pointer;
+      position: fixed;
+      top: 2rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    
   
   .back-button:hover {
     transform: translateY(-2px);

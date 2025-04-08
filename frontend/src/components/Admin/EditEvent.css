@@ -213,17 +213,6 @@
   background-color: #cc0000;
 }
 
-.back-button {
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
 
 .back-button:hover {
   color: #333;

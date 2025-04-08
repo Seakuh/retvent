@@ -1,4 +1,4 @@
-import { Edit, Eye, Trash2 } from "lucide-react";
+import { ChevronLeft, Edit, Eye, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminEvents.css";
@@ -81,7 +81,7 @@ const AdminEvents: React.FC = () => {
   return (
     <div className="admin-events-container">
       <button onClick={handleBack} className="back-button">
-        ← Back
+        <ChevronLeft className="h-5 w-5" />{" "}
       </button>
       {events.length === 0 ? (
         <p className="no-events">No events found.</p>

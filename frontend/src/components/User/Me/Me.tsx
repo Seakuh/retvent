@@ -1,3 +1,4 @@
+import { ChevronLeft } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Profile, UserPreferences } from "../../../utils";
@@ -242,7 +243,7 @@ export const Me: React.FC = () => {
         />
       )}
       <button className="back-button" onClick={handleBack}>
-        ← Back
+        <ChevronLeft className="h-5 w-5" />{" "}
       </button>
       <div className="me-container">
         <div className="header-section">

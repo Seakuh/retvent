@@ -1,4 +1,4 @@
-import { LucideInfo } from "lucide-react";
+import { ChevronLeft, LucideInfo } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const About = () => {
@@ -6,7 +6,7 @@ export const About = () => {
   return (
     <div>
       <button onClick={() => navigate(-1)} className="back-button">
-        ← Back
+        <ChevronLeft className="h-5 w-5" />{" "}
       </button>
       About
       <a href="https://event-scanner.com">

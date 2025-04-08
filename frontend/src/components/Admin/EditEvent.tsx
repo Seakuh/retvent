@@ -1,3 +1,4 @@
+import { ChevronLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EventService } from "../../services/event.service";
@@ -169,7 +170,7 @@ const EditEvent: React.FC = () => {
   return (
     <div className="edit-event-container">
       <button onClick={handleBack} className="back-button">
-        ← Back
+        <ChevronLeft className="h-5 w-5" />{" "}
       </button>
       <h2>Edit Event ✏️</h2>
       <form onSubmit={handleSubmit} className="edit-event-form">

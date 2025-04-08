@@ -1,4 +1,4 @@
-import { Share2 } from "lucide-react";
+import { ChevronLeft, Share2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
@@ -91,7 +91,7 @@ export const Profile: React.FC = () => {
       <div className="error-container">
         <p>{error || "User not found"}</p>
         <button onClick={handleBack} className="back-button">
-          ← Back
+          <ChevronLeft className="h-5 w-5" />{" "}
         </button>
       </div>
     );
@@ -141,7 +141,7 @@ export const Profile: React.FC = () => {
         <ProfileMeta />
 
         <button className="back-button" onClick={handleBack}>
-          ← Back
+          <ChevronLeft className="h-5 w-5" />{" "}
         </button>
         <div className="share-buttons">
           <button

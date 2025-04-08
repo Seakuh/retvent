@@ -1,3 +1,4 @@
+import { ChevronLeft } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EventService } from "../../services/event.service";
@@ -74,7 +75,7 @@ const CreateEvent: React.FC = () => {
     <div className="create-event-container">
       <div className="header-container">
         <button onClick={handleBack} className="back-button">
-          ← Back
+          <ChevronLeft className="h-5 w-5" />{" "}
         </button>
       </div>
 

@@ -1,4 +1,4 @@
-import { CalendarPlus, Heart, Share2 } from "lucide-react";
+import { CalendarPlus, ChevronLeft, Heart, Share2 } from "lucide-react";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
@@ -216,7 +216,7 @@ export const EventDetail: React.FC = () => {
           city={event.city ?? ""}
         /> */}
         <button className="back-button" onClick={handleBack}>
-          ← Back
+          <ChevronLeft className="h-5 w-5" />
         </button>
 
         <div className="event-content">

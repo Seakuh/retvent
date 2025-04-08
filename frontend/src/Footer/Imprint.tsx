@@ -1,3 +1,4 @@
+import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const Imprint = () => {
@@ -14,7 +15,7 @@ export const Imprint = () => {
         }}
         className="back-button"
       >
-        ← Back
+        <ChevronLeft className="h-5 w-5" />{" "}
       </button>
       <h1 className="text-2xl font-bold mb-6">Legal Disclosure (Imprint)</h1>
 

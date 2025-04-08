@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Heart } from "lucide-react";
+import { ChevronLeft, Heart } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -58,7 +58,7 @@ export const LikedEvents: React.FC = () => {
     return (
       <>
         <button onClick={handleBack} className="back-button">
-          ← Back
+          <ChevronLeft className="h-5 w-5" />{" "}
         </button>
         <div className="no-liked-events">
           <Heart size={100} />
