@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { CommentService } from 'src/application/services/comment.service';
 import { EventEmbeddingService } from 'src/application/services/eventembedding.service';
+import { GroupService } from 'src/application/services/group.service';
 import { ProfileService } from 'src/application/services/profile.service';
 import { CommentController } from 'src/presentation/controllers/comment.controller';
 import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
@@ -19,6 +20,7 @@ import { CoreModule } from '../core/core.module';
 import { BcryptService } from '../core/services/bcrypt.service';
 import { AuthController } from '../presentation/controllers/auth.controller';
 import { EventController } from '../presentation/controllers/event.controller';
+import { GroupController } from '../presentation/controllers/group.controller';
 import { LocationController } from '../presentation/controllers/location.controller';
 import { JwtAuthGuard } from '../presentation/guards/jwt-auth.guard';
 import { OwnerGuard } from '../presentation/guards/owner.guard';
@@ -26,12 +28,14 @@ import { AuthModule } from './modules/auth.module';
 import { MongoCommentRepository } from './repositories/mongodb/comment.repository';
 import { MongoEventRepository } from './repositories/mongodb/event.repository';
 import { MongoGrooveCastRepository } from './repositories/mongodb/groovecast.repository';
+import { MongoGroupRepository } from './repositories/mongodb/group.repository';
 import { MongoLocationRepository } from './repositories/mongodb/location.repository';
 import { MongoProfileRepository } from './repositories/mongodb/profile.repository';
 import { MongoUserRepository } from './repositories/mongodb/user.repository';
 import { CommentSchema } from './schemas/comment.schema';
 import { EventSchema } from './schemas/event.schema';
 import { GroovecastSchema } from './schemas/groovecast.schema';
+import { GroupSchema } from './schemas/group.schmema';
 import { LocationSchema } from './schemas/location.schema';
 import { ProfileSchema } from './schemas/profile.schema';
 import { UserSchema } from './schemas/user.schema';
@@ -68,6 +72,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       { name: 'GrooveCast', schema: GroovecastSchema },
       { name: 'Comment', schema: CommentSchema },
       { name: 'Profile', schema: ProfileSchema },
+      { name: 'Group', schema: GroupSchema },
     ]),
   ],
   controllers: [
@@ -78,11 +83,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     CommentController,
     UserController,
     SearchController,
+    GroupController,
   ],
   providers: [
     EventService,
     ProfileService,
     CommentService,
+    GroupService,
     ChatGPTService,
     EventEmbeddingService,
     ImageService,
@@ -123,6 +130,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       provide: 'IProfileRepository',
       useClass: MongoProfileRepository,
     },
+    {
+      provide: 'IGroupRepository',
+      useClass: MongoGroupRepository,
+    },
   ],
   exports: [
     EventService,
@@ -130,6 +141,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     ChatGPTService,
     LocationService,
     AuthService,
+    GroupService,
     ImageService,
     JwtAuthGuard,
     OwnerGuard,
@@ -138,6 +150,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     'IUserRepository',
     'ICommentRepository',
     'IProfileRepository',
+    'IGroupRepository',
     JwtModule,
     MongoEventRepository,
     MongoProfileRepository,

@@ -7,6 +7,7 @@ import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import { CommentController } from './presentation/controllers/comment.controller';
 import { EventController } from './presentation/controllers/event.controller';
 import { GroovecastController } from './presentation/controllers/groovecast.controller';
+import { GroupController } from './presentation/controllers/group.controller';
 import { ProfileController } from './presentation/controllers/profile.controller';
 import { SearchController } from './presentation/controllers/search.controller';
 import { UserController } from './presentation/controllers/user.controller';
@@ -25,6 +26,7 @@ const MONGODB_URI = 'mongodb://localhost:27017';
     UserController,
     ProfileController,
     SearchController,
+    GroupController,
   ],
 })
 export class AppModule {}
