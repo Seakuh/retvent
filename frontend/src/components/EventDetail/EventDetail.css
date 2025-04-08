@@ -655,8 +655,9 @@
 
   .event-detail-footer {
     padding: 1rem;
+    max-width: 935px;
     font-size: .9rem;
-    margin: 2rem;
+    margin: 2rem auto;
     color: white;
   }
   
@@ -682,5 +683,13 @@
   
   .location-text:hover {
     color: var(--color-neon-pink) !important;
+  }
+  
+
+  @media (max-width: 768px) {
+    .event-detail-footer {
+      padding: 1rem;
+      margin: 2rem;
+    }
   }
   
