@@ -37,7 +37,6 @@ export class MongoEventRepository implements IEventRepository {
     if (endDate !== undefined) {
       query.endDate = { $lte: new Date(endDate) };
     }
-    console.log('query', query);
 
     const events = await this.eventModel
       .find(query)
