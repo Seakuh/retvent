@@ -6,9 +6,10 @@ export class Group implements IGroup {
   description?: string;
   memberIds?: string[];
   creatorId?: string;
-  eventId?: string[];
+  eventIds?: string[];
   inviteToken?: string;
   isPublic?: boolean;
+  isPrivate?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

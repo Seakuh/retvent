@@ -1,4 +1,7 @@
 export class CreateGroupDto {
-  name: string;
-  eventId?: string;
+  name?: string;
+  eventIds?: string[];
+  description?: string;
+  isPublic?: boolean;
+  memberIds?: string[];
 }

@@ -1,30 +1,34 @@
-import { NotFoundException } from '@nestjs/common';
-import { MongoGroupRepository } from 'src/infrastructure/repositories/mongodb/group.repository';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateGroupDto } from 'src/presentation/dtos/create-group.dto';
 import { UpdateGroupDto } from 'src/presentation/dtos/update-group.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { MongoGroupRepository } from '../../infrastructure/repositories/mongodb/group.repository';
 
+@Injectable()
 export class GroupService {
   constructor(private readonly groupRepository: MongoGroupRepository) {}
 
   async createGroup(userId: string, dto: CreateGroupDto) {
     console.log('userid: ', userId);
     const inviteToken = uuidv4();
-    return await this.groupRepository.createGroup({
+    const group = {
+      ...dto,
+      inviteToken,
       creatorId: userId,
       memberIds: [userId],
-      inviteToken,
-    });
+      eventIds: [],
+    };
+    return await this.groupRepository.createGroup(userId, group);
   }
 
   async createGroupWithEvent(userId: string, dto: CreateGroupDto) {
     const inviteToken = uuidv4();
     console.log(dto, userId);
-    return await this.groupRepository.create({
-      name: dto.name,
+    return await this.groupRepository.createGroupWithEvent({
       creatorId: userId,
       memberIds: [userId],
       inviteToken,
+      eventIds: dto.eventIds,
     });
   }
 

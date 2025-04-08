@@ -17,12 +17,18 @@ export class MongoGroupRepository implements IGroupRepository {
     return this.groupModel.findByIdAndDelete(id);
   }
 
-  async create(group: Group): Promise<Group> {
-    const newGroup = new this.groupModel(group);
+  async createGroup(userId: string, group: Group): Promise<Group> {
+    console.log(group);
+
+    const newGroup = new this.groupModel({
+      ...group,
+      creatorId: userId,
+      memberIds: [userId],
+    });
     return newGroup.save();
   }
 
-  async createGroup(group: Group): Promise<Group> {
+  async createGroupWithEvent(group: Group): Promise<Group> {
     console.log(group);
     const newGroup = new this.groupModel(group);
     return newGroup.save();

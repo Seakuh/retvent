@@ -97,6 +97,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     LocationService,
     AuthService,
     MongoEventRepository,
+    MongoGroupRepository,
     MongoLocationRepository,
     MongoUserRepository,
     MongoGrooveCastRepository,
