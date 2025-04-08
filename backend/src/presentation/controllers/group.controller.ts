@@ -9,15 +9,16 @@ import {
 } from '@nestjs/common';
 import { GroupService } from 'src/application/services/group.service';
 import { CreateGroupDto } from '../dtos/create-group.dto';
+import { GroupGuard } from '../guards/group.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-
 @Controller('groups')
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GroupGuard)
   create(@Req() req, @Body() dto: CreateGroupDto) {
+    console.log(req);
     return this.groupService.createGroup(req.user.id, dto);
   }
 

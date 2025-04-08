@@ -1,19 +1,15 @@
 import { NotFoundException } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { Group } from 'src/core/domain/group';
 import { MongoGroupRepository } from 'src/infrastructure/repositories/mongodb/group.repository';
 import { CreateGroupDto } from 'src/presentation/dtos/create-group.dto';
 import { UpdateGroupDto } from 'src/presentation/dtos/update-group.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 export class GroupService {
-  constructor(
-    private readonly groupModel: Model<Group>,
-    private readonly groupRepository: MongoGroupRepository,
-  ) {}
+  constructor(private readonly groupRepository: MongoGroupRepository) {}
 
   async createGroup(userId: string, dto: CreateGroupDto) {
     const inviteToken = uuidv4(); // sicheres Token
+    console.log(dto, userId);
     return await this.groupRepository.create({
       name: dto.name,
       creatorId: userId,
