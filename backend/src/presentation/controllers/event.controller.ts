@@ -331,7 +331,7 @@ export class EventController {
   async getEventsByHostId(
     @Param('hostId') hostId: string,
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
+    @Query('limit') limit: number = 40,
   ) {
     const skip = (page - 1) * limit;
     const [events, total] = await Promise.all([
