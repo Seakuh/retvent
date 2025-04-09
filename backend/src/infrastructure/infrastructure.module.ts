@@ -7,9 +7,12 @@ import { PassportModule } from '@nestjs/passport';
 import { CommentService } from 'src/application/services/comment.service';
 import { EventEmbeddingService } from 'src/application/services/eventembedding.service';
 import { GroupService } from 'src/application/services/group.service';
+import { MessageService } from 'src/application/services/message.service';
 import { ProfileService } from 'src/application/services/profile.service';
+import { MessageSchema } from 'src/core/domain/message.schema';
 import { CommentController } from 'src/presentation/controllers/comment.controller';
 import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
+import { MessageController } from 'src/presentation/controllers/message.controller';
 import { SearchController } from 'src/presentation/controllers/search.controller';
 import { UserController } from 'src/presentation/controllers/user.controller';
 import { EventMapper } from '../application/mappers/event.mapper';
@@ -30,6 +33,7 @@ import { MongoEventRepository } from './repositories/mongodb/event.repository';
 import { MongoGrooveCastRepository } from './repositories/mongodb/groovecast.repository';
 import { MongoGroupRepository } from './repositories/mongodb/group.repository';
 import { MongoLocationRepository } from './repositories/mongodb/location.repository';
+import { MongoMessageRepository } from './repositories/mongodb/message.repository';
 import { MongoProfileRepository } from './repositories/mongodb/profile.repository';
 import { MongoUserRepository } from './repositories/mongodb/user.repository';
 import { CommentSchema } from './schemas/comment.schema';
@@ -72,6 +76,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       { name: 'GrooveCast', schema: GroovecastSchema },
       { name: 'Comment', schema: CommentSchema },
       { name: 'Profile', schema: ProfileSchema },
+      { name: 'Message', schema: MessageSchema },
       { name: 'Group', schema: GroupSchema },
     ]),
   ],
@@ -84,12 +89,14 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     UserController,
     SearchController,
     GroupController,
+    MessageController,
   ],
   providers: [
     EventService,
     ProfileService,
     CommentService,
     GroupService,
+    MessageService,
     ChatGPTService,
     EventEmbeddingService,
     ImageService,
@@ -103,6 +110,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MongoGrooveCastRepository,
     MongoCommentRepository,
     MongoProfileRepository,
+    MongoMessageRepository,
     JwtStrategy,
     JwtAuthGuard,
     OwnerGuard,
@@ -135,6 +143,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       provide: 'IGroupRepository',
       useClass: MongoGroupRepository,
     },
+    {
+      provide: 'IMessageRepository',
+      useClass: MongoMessageRepository,
+    },
   ],
   exports: [
     EventService,
@@ -158,6 +170,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MongoLocationRepository,
     MongoGrooveCastRepository,
     MongoCommentRepository,
+    MongoMessageRepository,
     EventMapper,
     AuthModule,
     GeolocationService,
@@ -167,6 +180,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     UserService,
     CommentService,
     ProfileService,
+    MessageService,
   ],
 })
 export class InfrastructureModule {}

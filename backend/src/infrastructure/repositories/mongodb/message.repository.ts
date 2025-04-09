@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Message } from 'src/core/domain/message';
 import { IMessageRepository } from 'src/core/repositories/message.repository.interface';
 
 @Injectable()
-export class MessageRepository implements IMessageRepository {
-  constructor(private readonly messageModel: Model<Message>) {}
+export class MongoMessageRepository implements IMessageRepository {
+  constructor(@InjectModel('Message') private messageModel: Model<Message>) {}
 
   async create(message: Message): Promise<Message> {
     const newMessage = new this.messageModel(message);

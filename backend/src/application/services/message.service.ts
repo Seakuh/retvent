@@ -1,11 +1,11 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { IMessageRepository } from 'src/core/repositories/message.repository.interface';
+import { MongoMessageRepository } from 'src/infrastructure/repositories/mongodb/message.repository';
 import { SendMessageDto } from 'src/presentation/dtos/send-message.dto';
 import { GroupService } from './group.service';
 @Injectable()
 export class MessageService {
   constructor(
-    private readonly messageRepository: IMessageRepository,
+    private readonly messageRepository: MongoMessageRepository,
     private readonly groupService: GroupService,
   ) {}
 

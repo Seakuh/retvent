@@ -3,14 +3,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { MessageSchema } from 'src/core/domain/message.schema';
 import { CoreModule } from '../../core/core.module';
 import { AuthController } from '../../presentation/controllers/auth.controller';
 import { UploadGuard } from '../../presentation/guards/upload.guard';
+import { GroupSchema } from '../schemas/group.schmema';
 import { ProfileSchema } from '../schemas/profile.schema';
 import { UserSchema } from '../schemas/user.schema';
 import { AuthService } from '../services/auth.service';
 import { JwtStrategy } from '../strategies/jwt.strategy';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,6 +37,8 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
     MongooseModule.forFeature([
       { name: 'User', schema: UserSchema },
       { name: 'Profile', schema: ProfileSchema },
+      { name: 'Message', schema: MessageSchema },
+      { name: 'Group', schema: GroupSchema },
     ]),
   ],
   controllers: [AuthController],
