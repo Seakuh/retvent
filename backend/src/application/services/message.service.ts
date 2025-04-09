@@ -29,6 +29,8 @@ export class MessageService {
   }
 
   async findByGroup(userId: string, groupId: string, limit = 50) {
+    const isInGroup = await this.groupService.isUserInGroup(groupId, userId);
+    if (!isInGroup) throw new ForbiddenException('Access denied');
     return this.messageRepository.findByGroupId(groupId, limit);
   }
 
