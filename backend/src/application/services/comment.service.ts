@@ -9,6 +9,13 @@ export class CommentService {
     private readonly userService: UserService,
   ) {}
 
+  getCommentsCountByUserId(userId: string) {
+    return this.commentRepository.getCommentsCountByUserId(userId);
+  }
+
+  findByUserIdAndAmount(userId: string) {
+    return this.commentRepository.findByUserIdAndAmount(userId);
+  }
   async createCommentToEvent(
     eventId: string,
     comment: CreateCommentDto,

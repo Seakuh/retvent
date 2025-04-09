@@ -53,9 +53,14 @@ export class CommentController {
     return this.commentService.createCommentToEvent(eventId, comment, userId);
   }
 
+  @Get('/:userId/count')
+  async getCommentsCountByUserId(@Param('userId') userId: string) {
+    return this.commentService.getCommentsCountByUserId(userId);
+  }
+
   @Get('/:userId')
   async getCommentsByUserId(@Param('userId') userId: string) {
-    return this.commentService.findByUserId(userId);
+    return this.commentService.findByUserIdAndAmount(userId);
   }
 }
 

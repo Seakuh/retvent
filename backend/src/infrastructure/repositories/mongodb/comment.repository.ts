@@ -14,7 +14,15 @@ export class MongoCommentRepository implements ICommentRepository {
     // Erstelle Index für schnelle Zählung
     this.commentModel.collection.createIndex({ eventId: 1 });
   }
+  async findByUserIdAndAmount(userId: string) {
+    const comments = await this.commentModel.find({ userId }).limit(5);
+    const count = await this.commentModel.countDocuments({ userId });
+    return { comments, count };
+  }
 
+  getCommentsCountByUserId(userId: string) {
+    return this.commentModel.countDocuments({ userId });
+  }
   createCommentToEvent(
     eventId: string,
     comment: CreateCommentDto,
