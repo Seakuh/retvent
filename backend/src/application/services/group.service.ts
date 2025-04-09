@@ -27,7 +27,6 @@ export class GroupService {
 
   async joinGroup(userId: string, token: string) {
     const group = await this.groupRepository.findByInviteToken(token);
-    console.log(group);
     if (!group) throw new NotFoundException('Group not found');
     if (!group.memberIds.includes(userId)) {
       group.memberIds.push(userId);

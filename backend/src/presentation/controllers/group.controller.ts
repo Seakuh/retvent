@@ -28,7 +28,7 @@ export class GroupController {
   }
 
   @Post('/join/:token')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GroupGuard)
   joinGroup(@Req() req, @Param('token') token: string) {
     return this.groupService.joinGroup(req.user.id, token);
   }
