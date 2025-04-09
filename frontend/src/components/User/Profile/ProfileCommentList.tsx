@@ -5,12 +5,24 @@ import { Comment } from "../../Comment/Comment";
 import "./ProfileCommentList.css";
 import { fetchProfileComments } from "./service";
 
-export const ProfileCommentList = ({ userName }: { userName: string }) => {
+interface ProfileCommentListProps {
+  userName: string;
+  commentsCount: number;
+  setCommentsCount: (count: number) => void;
+}
+
+export const ProfileCommentList = ({
+  userName,
+  setCommentsCount,
+}: ProfileCommentListProps) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const userId = JSON.parse(localStorage.getItem("user") || "{}").id;
   const navigate = useNavigate();
   useEffect(() => {
-    fetchProfileComments(userId).then(setComments);
+    fetchProfileComments(userId).then(({ comments, count }) => {
+      setComments(comments);
+      setCommentsCount(count);
+    });
   }, [userId]);
 
   const handleCommentClick = (eventId: string) => {

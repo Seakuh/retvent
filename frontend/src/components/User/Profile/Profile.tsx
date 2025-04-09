@@ -11,6 +11,7 @@ import {
 } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import "./Profile.css";
+import { ProfileCommentList } from "./ProfileCommentList";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileInfo } from "./ProfileInfo";
 import { getProfile, getUserEvents, shareProfile } from "./service";
@@ -21,7 +22,7 @@ export const Profile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<ProfileType | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
-
+  const [commentsCount, setCommentsCount] = useState(0);
   useEffect(() => {
     let isMounted = true;
 
@@ -221,7 +222,7 @@ export const Profile: React.FC = () => {
                 <ProfileInfo
                   profile={user}
                   eventsCount={events.length}
-                  followersCount={user.followers?.length || 0}
+                  commentsCount={commentsCount}
                   viewsCount={countEventViews()}
                 />
               </div>
@@ -240,7 +241,11 @@ export const Profile: React.FC = () => {
             title={`${user.username}'s Events`}
           />
         </div>
-        {/* <ProfileCommentList userName={user.username} /> */}
+        <ProfileCommentList
+          userName={user.username}
+          commentsCount={commentsCount}
+          setCommentsCount={setCommentsCount}
+        />
         <div className="member-since-profile">
           Member since {formatProfileDate(new Date(user.createdAt || ""))}
         </div>

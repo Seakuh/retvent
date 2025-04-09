@@ -5,12 +5,12 @@ import { ProfileLinks } from "./ProfileLinks";
 export const ProfileInfo = ({
   profile,
   eventsCount,
-  followersCount,
+  commentsCount,
   viewsCount,
 }: {
   profile: Profile;
   eventsCount: number;
-  followersCount?: number;
+  commentsCount?: number;
   viewsCount?: number;
 }) => {
   return (
@@ -21,8 +21,8 @@ export const ProfileInfo = ({
           <p>{eventsCount || 0}</p>
         </div>
         <div className="stat-item">
-          <p>Followers</p>
-          <p>{followersCount || 0}</p>
+          <p>Comments</p>
+          <p>{commentsCount || 0}</p>
         </div>
         <div className="stat-item">
           <p>Views</p>
