@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { IMessageRepository } from 'src/core/repositories/message.repository.interface';
+import { SendMessageDto } from 'src/presentation/dtos/send-message.dto';
+import { GroupService } from './group.service';
 @Injectable()
 export class MessageService {
-  constructor(private readonly messageRepository: IMessageRepository) {}
+  constructor(
+    private readonly messageRepository: IMessageRepository,
+    private readonly groupService: GroupService,
+  ) {}
 
   async create(groupId: string, senderId: string, content: string) {
     const msg = await this.messageRepository.create({
@@ -13,7 +18,17 @@ export class MessageService {
     return msg;
   }
 
-  async findByGroup(groupId: string, limit = 50) {
+  async sendMessage(userId: string, dto: SendMessageDto) {
+    const isInGroup = await this.groupService.isUserInGroup(
+      dto.groupId,
+      userId,
+    );
+    if (!isInGroup) throw new ForbiddenException('Access denied');
+
+    return this.create(dto.groupId, userId, dto.content);
+  }
+
+  async findByGroup(userId: string, groupId: string, limit = 50) {
     return this.messageRepository.findByGroupId(groupId, limit);
   }
 

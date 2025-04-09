@@ -35,6 +35,12 @@ export class GroupService {
     return group;
   }
 
+  async isUserInGroup(groupId: string, userId: string) {
+    const group = await this.groupRepository.findById(groupId);
+    if (!group) throw new NotFoundException('Group not found');
+    return group.memberIds.includes(userId);
+  }
+
   async leaveGroup(userId: string, groupId: string) {
     const group = await this.groupRepository.findById(groupId);
     if (!group) throw new NotFoundException('Group not found');
