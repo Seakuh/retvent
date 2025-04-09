@@ -6,6 +6,8 @@ export const GroupSchema = new Schema({
   description: { type: String, required: true },
   eventId: { type: String, required: true },
   isPublic: { type: Boolean, required: true },
+  memberIds: [{ type: String }],
+  creatorId: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   inviteToken: {

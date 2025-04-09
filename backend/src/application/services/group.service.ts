@@ -8,18 +8,7 @@ export class GroupService {
   constructor(private readonly groupRepository: MongoGroupRepository) {}
 
   async createGroup(userId: string, dto: CreateGroupDto) {
-    console.log('userid: ', userId);
-    const inviteToken = uuidv4();
-    const group = {
-      ...dto,
-      inviteToken,
-      creatorId: userId,
-      memberIds: [userId],
-      eventIds: dto.eventIds ? dto.eventIds : [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    return await this.groupRepository.createGroup(userId, group);
+    return await this.groupRepository.createGroup(userId, dto);
   }
 
   async createGroupWithEvent(userId: string, dto: CreateGroupDto) {
@@ -30,7 +19,7 @@ export class GroupService {
       creatorId: userId,
       memberIds: [userId],
       inviteToken,
-      eventIds: dto.eventIds ? dto.eventIds : [],
+      eventId: dto.eventId,
       createdAt: new Date(),
       updatedAt: new Date(),
     });

@@ -2,7 +2,7 @@ export interface IGroup {
   name?: string;
   description?: string;
   memberIds?: string[];
-  creatorId?: string;
+  creatorId: string;
   eventIds?: string[];
   isPublic?: boolean;
   inviteToken?: string;

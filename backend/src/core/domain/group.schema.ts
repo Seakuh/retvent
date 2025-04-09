@@ -1,28 +1,28 @@
 import { model, Schema } from 'mongoose';
 
-export interface IGroup {
-  name: string;
-  description: string;
-  memberIds: string[];
+export interface IGroup extends Document {
+  name?: string;
+  description?: string;
+  memberIds?: string[];
   creatorId: string;
-  eventIds: string[];
-  isPublic: boolean;
-  inviteToken: string;
-  createdAt: Date;
-  updatedAt: Date;
+  eventId?: string;
+  isPublic?: boolean;
+  inviteToken?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const GroupSchema = new Schema<IGroup>(
   {
-    name: { type: String, required: false },
-    description: { type: String, required: false },
-    memberIds: [{ type: String, required: false }],
-    creatorId: { type: String, required: false },
-    eventIds: { type: [String], required: false },
-    isPublic: { type: Boolean, required: false },
-    inviteToken: { type: String, required: false },
-    createdAt: { type: Date, required: false },
-    updatedAt: { type: Date, required: false },
+    name: { type: String },
+    description: { type: String },
+    memberIds: [{ type: String }],
+    creatorId: { type: String, required: true },
+    eventId: { type: String },
+    isPublic: { type: Boolean },
+    inviteToken: { type: String },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true,
@@ -30,16 +30,9 @@ const GroupSchema = new Schema<IGroup>(
   },
 );
 
-export interface IGroup extends Document {
-  name: string;
-  description: string;
-  memberIds: string[];
-  creatorId: string;
-  eventIds: string[];
-  isPublic: boolean;
-  inviteToken: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+GroupSchema.pre('save', function (next) {
+  console.log('Saving group:', this.toObject());
+  next();
+});
 
 export const Group = model<IGroup>('Group', GroupSchema);
