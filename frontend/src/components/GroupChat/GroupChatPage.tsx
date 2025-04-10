@@ -27,6 +27,7 @@ export const GroupChatPage = () => {
       <button onClick={handleBack} className="back-button">
         <ChevronLeft className="h-5 w-5" />{" "}
       </button>
+      <h1 className="section-title my-groups-title">My Groups</h1>
       {groups.map((group) => (
         <GroupListItem key={group.id} group={group} />
       ))}
