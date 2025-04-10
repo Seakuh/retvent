@@ -33,7 +33,6 @@ export const GroupChat: React.FC = () => {
       <button onClick={handleBack} className="back-button">
         <ChevronLeft className="h-5 w-5" />{" "}
       </button>
-      GroupChat
       <ChatWindow messages={messages} onSend={onSend} group={group} />
     </div>
   );
