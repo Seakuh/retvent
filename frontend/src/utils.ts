@@ -24,8 +24,16 @@ export const categoriesToFilter = [
   "Demonstration",
   "Protest",
 ];
+export class Message {
+  groupId?: string;
+  senderId?: string;
+  content?: string;
+  type?: string;
+  createdAt?: Date;
+}
 
 export class Group {
+  _id?: string;
   id?: string;
   name?: string;
   description?: string;

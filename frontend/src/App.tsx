@@ -17,6 +17,7 @@ import Register from "./components/Auth/Register";
 import CommentGuidelines from "./components/CommentGuidelines/CommentGuidelines";
 import { GroupInvite } from "./components/CommunityDetailBar/GroupInvite/GroupInvite";
 import { EventDetail } from "./components/EventDetail/EventDetail";
+import { GroupChat } from "./components/GroupChat/GroupChat";
 import { GroupChatPage } from "./components/GroupChat/GroupChatPage";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import { Me } from "./components/User/Me/Me";
@@ -63,6 +64,9 @@ const App: React.FC = () => {
                     path="/group/invite/:userId/:tokenId"
                     element={<GroupInvite />}
                   />
+                  <ProtectedRoute>
+                    <Route path="/group/:groupId" element={<GroupChat />} />
+                  </ProtectedRoute>
                   <Route
                     path="/comment-guidelines"
                     element={<CommentGuidelines />}
