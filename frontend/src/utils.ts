@@ -24,6 +24,13 @@ export const categoriesToFilter = [
   "Demonstration",
   "Protest",
 ];
+
+export interface SendMessageDto {
+  groupId: string;
+  content: string;
+  file?: string;
+}
+
 export class Message {
   groupId?: string;
   senderId?: string;

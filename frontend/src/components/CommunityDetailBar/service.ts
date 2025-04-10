@@ -1,6 +1,6 @@
-import { API_URL } from "../../utils";
+import { API_URL, Event } from "../../utils";
 
-export const createGroup = async (eventId: string) => {
+export const createGroup = async (event: Event) => {
   const token = localStorage.getItem("access_token");
   try {
     const response = await fetch(`${API_URL}groups`, {
@@ -11,15 +11,16 @@ export const createGroup = async (eventId: string) => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        name: "New Group", // Sie können dies dynamisch machen
-        description: "Group created from invite modal",
-        eventId: eventId,
+        name: `We meet at ${event.title} at ${new Date().toLocaleString()}`,
+        description: event.description,
+        eventId: event.id,
         isPublic: true,
       }),
     });
 
     if (!response.ok) throw new Error("Failed to create group");
     const data = await response.json();
+    console.log(data);
     return data;
   } catch (err) {
     // setError("Failed to create group");

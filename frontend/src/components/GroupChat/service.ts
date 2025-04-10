@@ -1,4 +1,4 @@
-import { API_URL } from "../../utils";
+import { API_URL, SendMessageDto } from "../../utils";
 
 export const getGroups = async () => {
   const token = localStorage.getItem("access_token");
@@ -11,12 +11,9 @@ export const getGroups = async () => {
   return data;
 };
 
-// @Get(':groupId')
-// @UseGuards(GroupGuard)
-// async getMessagesWithGuard(@Req() req, @Param('groupId') groupId: string) {
-
 export const getGroupChat = async (groupId: string) => {
   const token = localStorage.getItem("access_token");
+  console.log(groupId);
   const response = await fetch(`${API_URL}messages/${groupId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -28,12 +25,17 @@ export const getGroupChat = async (groupId: string) => {
 
 export const sendMessage = async (groupId: string, message: string) => {
   const token = localStorage.getItem("access_token");
-  const response = await fetch(`${API_URL}groups/${groupId}/chat`, {
+  const sendMessageDto: SendMessageDto = {
+    groupId: groupId,
+    content: message,
+  };
+  const response = await fetch(`${API_URL}messages/`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json", // Content-Type Header hinzugefügt
     },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify(sendMessageDto),
   });
   const data = await response.json();
   return data;

@@ -1,29 +1,31 @@
 import { Copy } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useEffect, useState } from "react";
-import { FRONTEND_URL } from "../../../utils";
+import { Event, FRONTEND_URL } from "../../../utils";
 import { createGroup } from "../service";
 import "./GroupInviteModal.css";
 
 interface GroupResponse {
   inviteToken: string;
   name: string;
+  event: Event;
 }
 
 export const GroupInviteModal = ({
   onClose,
-  eventId,
+  event,
   userId,
 }: {
   onClose: () => void;
-  eventId: string;
+  event: Event;
   userId: string;
 }) => {
   const [groupData, setGroupData] = useState<GroupResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    createGroup(eventId).then((data) => {
+    if (groupData) return;
+    createGroup(event).then((data) => {
       setGroupData(data);
     });
   }, []);

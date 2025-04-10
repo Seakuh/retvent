@@ -12,6 +12,7 @@ export const GroupChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
+    console.log(groupId);
     const fetchMessages = async () => {
       const messages = await getGroupChat(groupId || "");
       setMessages(messages);
@@ -21,6 +22,7 @@ export const GroupChat: React.FC = () => {
 
   const onSend = async (message: string) => {
     const newMessage = await sendMessage(groupId || "", message);
+    console.log(newMessage);
     setMessages([...messages, newMessage]);
   };
 
