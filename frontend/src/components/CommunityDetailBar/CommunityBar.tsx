@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../../contexts/UserContext";
 import "./CommunityBar.css";
 import { CommunityButton } from "./CommunityButtom";
 import { AddModal } from "./Modals/AddModal";
 import { GroupInviteModal } from "./Modals/GroupInviteModal";
-
 export const CommunityBar = ({ eventId }: { eventId: string }) => {
+  const { user } = useContext(UserContext);
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const handleGroupClick = () => {
@@ -26,6 +27,7 @@ export const CommunityBar = ({ eventId }: { eventId: string }) => {
         <GroupInviteModal
           onClose={() => setIsGroupInviteModalOpen(false)}
           eventId={eventId}
+          userId={user?.id || ""}
         />
       )}
       {isAddModalOpen && <AddModal onClose={() => setIsAddModalOpen(false)} />}

@@ -1,5 +1,6 @@
-import { QRCodeSVG } from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 import { useEffect, useState } from "react";
+import { FRONTEND_URL } from "../../../utils";
 import { createGroup } from "../service";
 import "./GroupInviteModal.css";
 
@@ -11,15 +12,19 @@ interface GroupResponse {
 export const GroupInviteModal = ({
   onClose,
   eventId,
+  userId,
 }: {
   onClose: () => void;
   eventId: string;
+  userId: string;
 }) => {
   const [groupData, setGroupData] = useState<GroupResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    createGroup(eventId);
+    createGroup(eventId).then((data) => {
+      setGroupData(data);
+    });
   }, []);
 
   return (
@@ -33,7 +38,11 @@ export const GroupInviteModal = ({
         {groupData && (
           <div className="qr-code-container">
             <h3>{groupData.name}</h3>
-            <QRCodeSVG value={groupData.inviteToken} size={256} level="H" />
+            <QRCodeCanvas
+              value={`${FRONTEND_URL}group/invite/${userId}/${groupData.inviteToken}`}
+              size={256}
+              level="H"
+            />
             <p>Token: {groupData.inviteToken}</p>
           </div>
         )}

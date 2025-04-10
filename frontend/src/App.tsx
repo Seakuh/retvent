@@ -60,7 +60,7 @@ const App: React.FC = () => {
                   <Route path="/about" element={<About />} />
                   <Route path="/imprint" element={<Imprint />} />
                   <Route
-                    path="/group/invite/:tokenId"
+                    path="/group/invite/:userId/:tokenId"
                     element={<GroupInvite />}
                   />
                   <Route
