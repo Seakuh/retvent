@@ -74,7 +74,12 @@ export class MongoProfileRepository implements IProfileRepository {
   }
 
   async findByUsername(username: string): Promise<Profile | null> {
-    return this.profileModel.findOne({ username });
+    return this.profileModel.findOne({
+      username: {
+        $regex: username,
+        $options: 'i', // Case-insensitive
+      },
+    });
   }
 
   async create(profile: Profile): Promise<Profile> {
