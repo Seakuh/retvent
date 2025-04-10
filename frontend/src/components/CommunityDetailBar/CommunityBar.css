@@ -1,0 +1,8 @@
+.community-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 935px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}

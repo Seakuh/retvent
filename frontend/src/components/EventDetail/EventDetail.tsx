@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
 import CommentSection from "../Comment/CommentSection";
-import { GroupButton } from "../Group/GroupButton";
+import { CommunityBar } from "../CommunityDetailBar/CommunityBar";
 import { ImageModal } from "../ImageModal/ImageModal";
 import { EventBasicInfo } from "./components/EventBasicInfo";
 import { EventDescription } from "./components/EventDescription";
@@ -308,9 +308,9 @@ export const EventDetail: React.FC = () => {
             </span>
           </p>
         </div>
-      </div>
-      <div className="action-bar-container">
-        <GroupButton />
+        <div className="action-bar-container">
+          <CommunityBar />
+        </div>
       </div>
 
       <CommentSection eventId={eventId || ""} />

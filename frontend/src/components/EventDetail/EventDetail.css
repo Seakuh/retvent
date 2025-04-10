@@ -686,12 +686,9 @@
   }
 
   .action-bar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
     max-width: 935px;
-    margin: 2rem auto;
+    margin-bottom: 2rem;
+    margin: 0 auto;
   }
   
 
