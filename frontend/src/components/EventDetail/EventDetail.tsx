@@ -309,7 +309,7 @@ export const EventDetail: React.FC = () => {
           </p>
         </div>
         <div className="action-bar-container">
-          <CommunityBar />
+          <CommunityBar eventId={eventId || ""} />
         </div>
       </div>
 

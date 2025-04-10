@@ -3,18 +3,26 @@ import { useState } from "react";
 import "./CommunityButton.css";
 import { GroupInviteModal } from "./Modals/GroupInviteModal";
 
-const CommunityButtonProps = {
-  type: "group" | "add" | "share",
-  onClick: () => {},
-};
+interface CommunityButtonProps {
+  type: "group" | "add" | "share";
+  onClick: () => void;
+  eventId: string;
+}
 
-export const CommunityButton = ({ type, onClick }: CommunityButtonProps) => {
+export const CommunityButton = ({
+  type,
+  onClick,
+  eventId,
+}: CommunityButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="community-button-container" onClick={onClick}>
       {isModalOpen && (
-        <GroupInviteModal onClose={() => setIsModalOpen(false)} />
+        <GroupInviteModal
+          onClose={() => setIsModalOpen(false)}
+          eventId={eventId}
+        />
       )}
       <div className="community-button-icon-container">
         {type === "group" && (

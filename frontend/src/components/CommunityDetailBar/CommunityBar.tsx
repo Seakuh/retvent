@@ -4,7 +4,7 @@ import { CommunityButton } from "./CommunityButtom";
 import { AddModal } from "./Modals/AddModal";
 import { GroupInviteModal } from "./Modals/GroupInviteModal";
 
-export const CommunityBar = () => {
+export const CommunityBar = ({ eventId }: { eventId: string }) => {
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const handleGroupClick = () => {
@@ -23,7 +23,10 @@ export const CommunityBar = () => {
   return (
     <div className="community-bar-container">
       {isGroupInviteModalOpen && (
-        <GroupInviteModal onClose={() => setIsGroupInviteModalOpen(false)} />
+        <GroupInviteModal
+          onClose={() => setIsGroupInviteModalOpen(false)}
+          eventId={eventId}
+        />
       )}
       {isAddModalOpen && <AddModal onClose={() => setIsAddModalOpen(false)} />}
 
