@@ -17,12 +17,12 @@ import Register from "./components/Auth/Register";
 import CommentGuidelines from "./components/CommentGuidelines/CommentGuidelines";
 import { GroupInvite } from "./components/CommunityDetailBar/GroupInvite/GroupInvite";
 import { EventDetail } from "./components/EventDetail/EventDetail";
+import { GroupChatPage } from "./components/GroupChat/GroupChatPage";
 import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
 import { eventService } from "./services/api";
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -71,7 +71,7 @@ const App: React.FC = () => {
                     path="/my-groups"
                     element={
                       <ProtectedRoute>
-                        <Me />
+                        <GroupChatPage />
                       </ProtectedRoute>
                     }
                   />

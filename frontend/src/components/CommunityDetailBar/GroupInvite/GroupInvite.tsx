@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-
+import "./GroupInvite.css";
 export const GroupInvite = () => {
   const { userId, tokenId } = useParams();
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export const GroupInvite = () => {
   return (
     <div className="group-invite-container">
       <div className="group-invite-content">
-        <h1>Group Invite</h1>
+        <h1 className="section-title">Group Invite</h1>
         <p>{userId} invited you to join their group for this event</p>
         <div className="group-invite-button-container">
           <button onClick={handleJoinGroup}>Join Group</button>

@@ -2,7 +2,7 @@ export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 export const FRONTEND_URL =
   import.meta.env.VITE_FRONTEND_URL || "https://event-scanner.com/";
 export const DEFAULT_IMAGE =
-  "https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png";
+  "https://hel1.your-objectstorage.com/imagebucket/events/8d703697-caf7-4438-abda-4ccd8e5939e9.png";
 
 export const categoriesToFilter = [
   "Concert",
@@ -24,6 +24,21 @@ export const categoriesToFilter = [
   "Demonstration",
   "Protest",
 ];
+
+export class Group {
+  id?: string;
+  name?: string;
+  description?: string;
+  memberIds?: string[];
+  creatorId?: string;
+  eventId?: string;
+  imageUrl?: string;
+  inviteToken?: string;
+  isPublic?: boolean;
+  isPrivate?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 export const categories = [
   { name: "Music", emoji: "🎵" },
