@@ -52,6 +52,12 @@ export class GroupController {
     return this.groupService.getGroupById(groupId);
   }
 
+  @Get('items/:groupId/')
+  @UseGuards(JwtAuthGuard)
+  getGroupWithLatestMessage(@Req() req, @Param('groupId') groupId: string) {
+    return this.groupService.getGroupWithLatestMessage(req.user.id, groupId);
+  }
+
   //   @Put('/:groupId')
   //   @UseGuards(JwtAuthGuard)
   //   updateGroup(

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  NotImplementedException,
+} from '@nestjs/common';
 import { CreateGroupDto } from 'src/presentation/dtos/create-group.dto';
 import { UpdateGroupDto } from 'src/presentation/dtos/update-group.dto';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,6 +17,14 @@ export class GroupService {
 
   async getGroupsByUserId(userId: string) {
     return await this.groupRepository.getGroupsByUserId(userId);
+  }
+
+  async getGroupWithLatestMessage(userId: string, groupId: string) {
+    throw new NotImplementedException();
+    // const group = await this.groupRepository.findById(groupId);
+    // if (!group) throw new NotFoundException('Group not found');
+    // const messages = await this.messageService.findByGroup(userId, groupId);
+    // return { ...group, messages };
   }
 
   async createGroupWithEvent(userId: string, dto: CreateGroupDto) {
