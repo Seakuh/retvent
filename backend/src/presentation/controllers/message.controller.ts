@@ -19,24 +19,20 @@ export class MessageController {
     private readonly groupService: GroupService,
   ) {}
 
-  @Get(':groupId')
-  @UseGuards(GroupGuard)
-  async getMessages(@Req() req, @Param('groupId') groupId: string) {
-    return this.messageService.findByGroup(req.user.id, groupId);
-  }
-
   @Post()
   @UseGuards(GroupGuard)
   async sendMessage(@Req() req, @Body() dto: SendMessageDto) {
+    console.log(dto);
     return this.messageService.sendMessage(req.user.id, dto);
   }
 
   @Get(':groupId')
   @UseGuards(GroupGuard)
   async getMessagesWithGuard(@Req() req, @Param('groupId') groupId: string) {
+    console.log(req.user);
     const isInGroup = await this.groupService.isUserInGroup(
       groupId,
-      req.user.userId,
+      req.user.id,
     );
     if (!isInGroup) {
       throw new ForbiddenException('You are not a member of this group');

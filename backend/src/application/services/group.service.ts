@@ -52,6 +52,7 @@ export class GroupService {
   }
 
   async isUserInGroup(groupId: string, userId: string) {
+    console.log(groupId, userId);
     const group = await this.groupRepository.findById(groupId);
     if (!group) throw new NotFoundException('Group not found');
     return group.memberIds.includes(userId);

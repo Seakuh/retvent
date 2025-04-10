@@ -10,7 +10,7 @@ export class MongoGroupRepository implements IGroupRepository {
     return this.groupModel.findById(id);
   }
   getGroupsByUserId(userId: string) {
-    return this.groupModel.find({ memberIds: userId });
+    return this.groupModel.find({ memberIds: userId }).sort({ updatedAt: -1 });
   }
   update(id: string, group: Group): Promise<Group | null> {
     return this.groupModel.findByIdAndUpdate(id, group, { new: true });

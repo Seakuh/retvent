@@ -28,14 +28,14 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayInit {
     // Auth-Middleware
     this.server.use((socket, next) => {
       const token = socket.handshake.auth?.token;
-      if (!token) return next(new UnauthorizedException('Kein Token'));
+      if (!token) return next(new UnauthorizedException('No token provided'));
 
       try {
         const decoded = this.jwtService.verify(token);
         (socket as any).user = decoded;
         next();
       } catch (err) {
-        next(new UnauthorizedException('Ungültiges Token'));
+        next(new UnauthorizedException('Invalid token'));
       }
     });
   }

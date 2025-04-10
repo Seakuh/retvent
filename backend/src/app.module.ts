@@ -12,6 +12,7 @@ import { MessageController } from './presentation/controllers/message.controller
 import { ProfileController } from './presentation/controllers/profile.controller';
 import { SearchController } from './presentation/controllers/search.controller';
 import { UserController } from './presentation/controllers/user.controller';
+import { MessageGateway } from './presentation/gateways/message.gateway';
 const MONGODB_URI = 'mongodb://localhost:27017';
 (global as any).crypto = crypto;
 @Module({
@@ -30,6 +31,7 @@ const MONGODB_URI = 'mongodb://localhost:27017';
     MessageController,
     GroupController,
   ],
+  providers: [MessageGateway],
 })
 export class AppModule {}
 
