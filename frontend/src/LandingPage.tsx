@@ -370,6 +370,7 @@ function LandingPage() {
                           onClick={() => {
                             setLoggedIn(false);
                           }}
+                          className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
                         >
                           <LogOut size={20} />
                           <p>Logout</p>

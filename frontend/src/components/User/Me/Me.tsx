@@ -1,6 +1,7 @@
 import { ChevronLeft } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../contexts/UserContext";
 import type { Profile, UserPreferences } from "../../../utils";
 import {
   calculateProgress,
@@ -14,7 +15,6 @@ import { LevelSection } from "../../LevelSection/LevelSection";
 import "./Me.css";
 import { meService } from "./service";
 export const Me: React.FC = () => {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
 
   // Zustandsverwaltung
@@ -22,6 +22,7 @@ export const Me: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [changedFields, setChangedFields] = useState<Partial<Profile>>({});
+  const { user, setUser } = useContext(UserContext);
   const [points, setPoints] = useState<number>(0);
   const [headerImage, setHeaderImage] = useState<string>(fallBackProfileImage);
   const [profileImage, setProfileImage] =
@@ -57,6 +58,10 @@ export const Me: React.FC = () => {
           ? profile.profileImageUrl || fallBackProfileImage
           : prev
       );
+      setUser({
+        ...user,
+        ...profile,
+      });
     } catch (error) {
       console.error("Error fetching profile data:", error);
     } finally {
@@ -97,6 +102,7 @@ export const Me: React.FC = () => {
         changedFields
       );
       setMe((prev) => (prev ? { ...prev, ...updatedProfile } : undefined));
+      setUser((prev) => (prev ? { ...prev, ...updatedProfile } : undefined));
       setChangedFields({});
     } catch (error) {
       console.error("Fehler beim Aktualisieren des Profils:", error);

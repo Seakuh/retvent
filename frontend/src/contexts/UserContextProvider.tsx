@@ -41,6 +41,11 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("loggedIn", JSON.stringify(loggedIn));
     console.log("loggedIn", loggedIn);
+    if (!loggedIn) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("access_token");
+    }
   }, [favoriteEventIds, user, loggedIn]);
 
   const addFavorite = (eventId: string) => {
