@@ -1,17 +1,66 @@
 import { Send } from "lucide-react";
-import React from "react";
-import { Message } from "../../../utils";
+import React, { useEffect } from "react";
+import { io, Socket } from "socket.io-client";
+import { API_URL, Message } from "../../../utils";
 import "./Dialog.css";
 // Definieren der Props für Dialog
 interface DialogProps {
   messages: Message[];
   onSend: (message: string) => Promise<void>;
   loading: boolean;
+  groupId: string; // Neue Prop für die Gruppen-ID
 }
 
-const Dialog: React.FC<DialogProps> = ({ messages, onSend, loading }) => {
+const Dialog: React.FC<DialogProps> = ({
+  messages,
+  onSend,
+  loading,
+  groupId,
+}) => {
   const userId = localStorage.getItem("userId");
   const [input, setInput] = React.useState("");
+  const [socket, setSocket] = React.useState<Socket | null>(null);
+
+  useEffect(() => {
+    // Socket.io Client initialisieren
+    const token = localStorage.getItem("access_token");
+    const newSocket = io(API_URL, {
+      // Hier nur API_URL ohne /messages
+      auth: {
+        token: token,
+      },
+      path: "/socket.io/", // Standard Socket.IO Pfad
+      transports: ["websocket", "polling"], // Explizit die Transportmethoden angeben
+    });
+
+    // Socket Event Listener
+    newSocket.on("connect", () => {
+      console.log("Connected to WebSocket");
+      // Der Gruppe beitreten
+      newSocket.emit("joinGroup", groupId);
+    });
+
+    newSocket.on("connect_error", (error) => {
+      console.error("Connection Error:", error);
+    });
+
+    newSocket.on("newMessage", (message: Message) => {
+      // Hier können Sie die neue Nachricht verarbeiten
+      console.log("Neue Nachricht erhalten:", message);
+      // Aktualisieren Sie Ihre Messages-State hier
+    });
+
+    newSocket.on("errorMessage", (error: string) => {
+      console.error("WebSocket Fehler:", error);
+    });
+
+    setSocket(newSocket);
+
+    // Cleanup beim Unmount
+    return () => {
+      newSocket.close();
+    };
+  }, [groupId]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -29,7 +78,16 @@ const Dialog: React.FC<DialogProps> = ({ messages, onSend, loading }) => {
     const textarea = document.querySelector("textarea");
     if (textarea) textarea.style.height = "auto";
 
-    await onSend(input); // Nachricht senden
+    if (socket) {
+      // Nachricht über WebSocket senden
+      socket.emit("sendMessage", {
+        groupId: groupId,
+        senderId: userId,
+        content: input,
+      });
+    }
+
+    await onSend(input);
     setInput("");
   };
 
