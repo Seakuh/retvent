@@ -28,3 +28,26 @@
   color: red;
   margin: 10px 0;
 }
+
+.group-invite-link-text-button {
+  background-color: var(--color-neon-blue);
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  align-self: center;
+  justify-self: center;
+  display: flex;
+}
+
+.group-invite-link-text-button:hover {
+  scale: 1.05;  
+  transition: scale 0.2s ease-in-out;
+}
+
+.group-invite-link {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  text-align: center;
+}

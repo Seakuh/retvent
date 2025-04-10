@@ -1,3 +1,4 @@
+import { Copy } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useEffect, useState } from "react";
 import { FRONTEND_URL } from "../../../utils";
@@ -29,6 +30,7 @@ export const GroupInviteModal = ({
 
   return (
     <div className="group-invite-modal-container" onClick={() => onClose()}>
+      <div className="section-title">Invite to Group</div>
       <div
         className="group-invite-modal-content"
         onClick={(e) => e.stopPropagation()}
@@ -53,6 +55,17 @@ export const GroupInviteModal = ({
             />
           </div>
         )}
+        <button
+          className="group-invite-link-text-button"
+          onClick={() => {
+            navigator.clipboard.writeText(
+              `${FRONTEND_URL}group/invite/${userId}/${groupData?.inviteToken}`
+            );
+            alert("Copied to clipboard");
+          }}
+        >
+          <Copy className="copy-icon" size={24} />
+        </button>
       </div>
     </div>
   );
