@@ -1,4 +1,4 @@
-import { LucideHeart, LucideUser, Settings, Upload } from "lucide-react";
+import { LucideUser, MessageSquareIcon, Settings, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./HomeBubbles.css";
 interface Bubble {
@@ -21,7 +21,13 @@ const BUBBLES: Bubble[] = [
   //     route: "/admin/events/create",
   //     icon: LucidePlus,
   //   },
-  { id: "liked", title: "Likes", route: "/liked", icon: LucideHeart },
+  // { id: "liked", title: "Likes", route: "/liked", icon: LucideHeart },
+  {
+    id: "my-groups",
+    title: "My Groups",
+    route: "/my-groups",
+    icon: MessageSquareIcon,
+  },
   {
     id: "preferences",
     title: "Preferences",

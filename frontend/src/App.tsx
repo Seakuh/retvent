@@ -62,7 +62,14 @@ const App: React.FC = () => {
                     path="/comment-guidelines"
                     element={<CommentGuidelines />}
                   />
-
+                  <Route
+                    path="/my-groups"
+                    element={
+                      <ProtectedRoute>
+                        <Me />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route
                     path="/me"
                     element={
