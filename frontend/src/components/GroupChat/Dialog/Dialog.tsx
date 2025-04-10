@@ -33,6 +33,34 @@ const Dialog: React.FC<DialogProps> = ({ messages, onSend, loading }) => {
     setInput("");
   };
 
+  const toTime = (date: Date | undefined) => {
+    if (!date) return "";
+
+    const dateObj = new Date(date);
+    const now = new Date();
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (dateObj.toLocaleDateString() === now.toLocaleDateString()) {
+      // Today - show only time
+      return dateObj.toLocaleString("de-DE", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else if (
+      dateObj.toLocaleDateString() === yesterday.toLocaleDateString()
+    ) {
+      // Yesterday
+      return "Gestern";
+    } else {
+      // Other days - show day and month
+      return dateObj.toLocaleDateString("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+      });
+    }
+  };
+
   return (
     <div className="dialog-container">
       <div className="dialog-messages">
@@ -43,6 +71,9 @@ const Dialog: React.FC<DialogProps> = ({ messages, onSend, loading }) => {
               msg.senderId === userId ? "user-message" : "bot-message"
             }`}
           >
+            <div className="message-timestamp">
+              {toTime(msg.createdAt || new Date())}
+            </div>
             {msg.content}
           </div>
         ))}

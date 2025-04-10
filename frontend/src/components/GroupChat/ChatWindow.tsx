@@ -8,6 +8,7 @@ interface ChatWindowProps {
 }
 
 export const ChatWindow = ({ messages, onSend, group }: ChatWindowProps) => {
+  console.log(group);
   return (
     <div className="chat-window">
       <Dialog
