@@ -3,6 +3,10 @@ import { createContext, ReactNode, useState } from "react";
 export interface User {
   id: string;
   email: string;
+  profileImageUrl: string;
+  headerImageUrl: string;
+  groups: string[];
+  username: string;
 }
 
 export interface Location {
@@ -17,9 +21,9 @@ interface UserContextType {
   favoriteEventIds: string[];
   addFavorite: (eventId: string) => void;
   removeFavorite: (eventId: string) => void;
+  loggedIn: boolean;
+  setLoggedIn: (loggedIn: boolean) => void;
   isFavorite: (eventId: string) => boolean;
-  viewMode: "list" | "map";
-  switchViewMode: (viewMode: "list" | "map") => void;
   userLocation: {
     latitude: number;
     longitude: number;
@@ -37,12 +41,12 @@ export const UserContext = createContext<UserContextType>({
   user: null,
   location: null,
   setUser: () => {},
+  loggedIn: false,
+  setLoggedIn: () => {},
   favoriteEventIds: [],
   addFavorite: () => {},
   removeFavorite: () => {},
   isFavorite: () => false,
-  viewMode: "list",
-  switchViewMode: () => {},
   userLocation: null,
   adjustUserLocation: () => {},
   setLocation: () => {},

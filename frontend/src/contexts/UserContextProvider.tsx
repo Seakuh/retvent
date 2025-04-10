@@ -4,12 +4,20 @@ import { Location, User, UserContext } from "./UserContext";
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(
+    localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user") || "{}")
+      : null
+  );
+  const [loggedIn, setLoggedIn] = useState<boolean>(
+    localStorage.getItem("loggedIn")
+      ? JSON.parse(localStorage.getItem("loggedIn") || "false")
+      : false
+  );
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
-  const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [favoriteEventIds, setFavoriteEventIds] = useState<string[]>(() => {
     const saved = localStorage.getItem("favoriteEventIds");
     return saved ? JSON.parse(saved) : [];
@@ -30,8 +38,10 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
-    localStorage.setItem("viewMode", viewMode);
-  }, [favoriteEventIds, viewMode]);
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("loggedIn", JSON.stringify(loggedIn));
+    console.log("loggedIn", loggedIn);
+  }, [favoriteEventIds, user, loggedIn]);
 
   const addFavorite = (eventId: string) => {
     setFavoriteEventIds((prev) => [...new Set([...prev, eventId])]);
@@ -54,24 +64,19 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     setUserLocation(userLocation);
   };
 
-  const switchViewMode = (viewMode: "list" | "map") => {
-    localStorage.setItem("viewMode", viewMode);
-    setViewMode(viewMode);
-  };
-
   return (
     <UserContext.Provider
       value={{
         location,
         setLocation,
+        loggedIn,
+        setLoggedIn,
         user,
         setUser,
         favoriteEventIds,
         addFavorite,
         removeFavorite,
         isFavorite,
-        viewMode,
-        switchViewMode,
         userLocation,
         adjustUserLocation,
       }}

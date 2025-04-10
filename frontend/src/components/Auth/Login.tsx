@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../contexts/UserContext";
 import { AuthService } from "../../services/auth.service";
 import "./Auth.css";
 
@@ -12,6 +13,7 @@ const Login: React.FC = () => {
     isArtist: true, // Immer true für Artists
   });
   const [error, setError] = useState<string>("");
+  const { setLoggedIn, setUser } = useContext(UserContext);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +27,8 @@ const Login: React.FC = () => {
       });
       localStorage.setItem("access_token", response.access_token);
       localStorage.setItem("user", JSON.stringify(response.user));
+      setLoggedIn(true);
+      setUser(response.user as User);
       navigate(`/`);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Login failed 😢");

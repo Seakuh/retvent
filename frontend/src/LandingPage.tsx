@@ -1,5 +1,14 @@
-import { Info, LogIn, Menu, Plus, Search, Upload, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  Info,
+  LogIn,
+  LogOut,
+  Menu,
+  Plus,
+  Search,
+  Upload,
+  User as UserIcon,
+} from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
@@ -8,19 +17,19 @@ import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
 import SearchModal from "./components/SearchModal/SearchModal";
+import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
 import { useLandingSearch } from "./LandinSearchContext";
 import { searchEvents } from "./service";
 import { ViewMode } from "./types/event";
 import { UploadModal } from "./UploadModal/UploadModal";
 import { Event } from "./utils";
-
 function LandingPage() {
   // Search State
   const { location, date, category, prompt, view, setSearchState } =
     useLandingSearch();
   const [viewMode, setViewMode] = useState<ViewMode>(view || "All");
-
+  const { user, loggedIn, setLoggedIn } = useContext(UserContext);
   // Event State
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -302,7 +311,7 @@ function LandingPage() {
                         }}
                         className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
                       >
-                        <User size={20} />
+                        <UserIcon size={20} />
                         <h3>Profile</h3>
                       </button>
                       <button
@@ -346,15 +355,26 @@ function LandingPage() {
                         <p>About</p>
                       </button>
                       {/* Login Button */}
-                      <button
-                        onClick={() => {
-                          navigate("/login");
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                      >
-                        <LogIn size={20} />
-                        <p>Login</p>
-                      </button>
+                      {!loggedIn ? (
+                        <button
+                          onClick={() => {
+                            navigate("/login");
+                          }}
+                          className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                        >
+                          <LogIn size={20} />
+                          <p>Login</p>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setLoggedIn(false);
+                          }}
+                        >
+                          <LogOut size={20} />
+                          <p>Logout</p>
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
