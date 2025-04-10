@@ -684,6 +684,15 @@
   .location-text:hover {
     color: var(--color-neon-pink) !important;
   }
+
+  .action-bar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    max-width: 935px;
+    margin: 2rem auto;
+  }
   
 
   @media (max-width: 768px) {

@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
 import CommentSection from "../Comment/CommentSection";
-import { GroupBar } from "../GroupBar/GroupBar";
+import { GroupButton } from "../Group/GroupButton";
 import { ImageModal } from "../ImageModal/ImageModal";
 import { EventBasicInfo } from "./components/EventBasicInfo";
 import { EventDescription } from "./components/EventDescription";
@@ -247,7 +247,6 @@ export const EventDetail: React.FC = () => {
               handleAddToCalendar={handleAddToCalendar}
             />
           </div>
-          <GroupBar />
 
           <EventDescription
             title={event.title}
@@ -310,6 +309,10 @@ export const EventDetail: React.FC = () => {
           </p>
         </div>
       </div>
+      <div className="action-bar-container">
+        <GroupButton />
+      </div>
+
       <CommentSection eventId={eventId || ""} />
     </div>
   );

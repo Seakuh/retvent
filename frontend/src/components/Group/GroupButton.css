@@ -1,0 +1,37 @@
+.group-button-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  backdrop-filter: blur(8px);
+  padding: .9rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  background-color: black;
+  cursor: pointer;
+
+}
+
+.group-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.group-button-icon {
+  cursor: pointer;
+  color: var(--color-neon-blue);
+}
+
+.group-button-icon-container:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(var(--color-neon-blue-rgb), 0.3);
+}
+
+

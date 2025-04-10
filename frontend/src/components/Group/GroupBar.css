@@ -3,6 +3,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem;
+  width: 2rem;
   background-color: var(--color-neon-blue-light);
   border-radius: 8rem;
   border: 2px solid var(--color-neon-blue);
