@@ -78,7 +78,7 @@
 
 .message-timestamp {
   font-size: 0.75rem;
-  color: gray;
+  color: var(--color-neon-blue-dark);
   margin-bottom: 0.25rem;
 }
 
