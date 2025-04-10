@@ -1,4 +1,4 @@
-import { MessageSquareIcon, PlusIcon, ShareIcon } from "lucide-react";
+import { MessageSquareIcon, QrCode, UserPlus } from "lucide-react";
 import "./CommunityButton.css";
 
 interface CommunityButtonProps {
@@ -14,10 +14,10 @@ export const CommunityButton = ({ type, onClick }: CommunityButtonProps) => {
           <MessageSquareIcon className="community-button-icon h-5 w-5" />
         )}
         {type === "add" && (
-          <PlusIcon className="community-button-icon h-5 w-5" />
+          <UserPlus className="community-button-icon h-5 w-5" />
         )}
         {type === "share" && (
-          <ShareIcon className="community-button-icon h-5 w-5" />
+          <QrCode className="community-button-icon h-5 w-5" />
         )}
       </div>
     </div>
