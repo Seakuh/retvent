@@ -10,7 +10,13 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 1px solid var(--color-neon-blue);
+}
+
+.group-list-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .group-list-item-name {
@@ -21,5 +27,5 @@
 
 .group-list-item-description {
   font-size: 12px;
-  color: white;
+  color: gray;
 }
