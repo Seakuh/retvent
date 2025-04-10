@@ -37,17 +37,22 @@ export const GroupInviteModal = ({
 
         {groupData && (
           <div className="qr-code-container">
-            <h3>{groupData.name}</h3>
             <QRCodeCanvas
               value={`${FRONTEND_URL}group/invite/${userId}/${groupData.inviteToken}`}
-              size={256}
+              size={420}
               level="H"
+              bgColor="#FFFFFF"
+              fgColor="#000000"
+              includeMargin={true}
+              style={{
+                borderRadius: "10px",
+                padding: "0.5rem",
+                backgroundColor: "black",
+                boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+              }}
             />
-            <p>Token: {groupData.inviteToken}</p>
           </div>
         )}
-
-        <button onClick={onClose}>Close</button>
       </div>
     </div>
   );

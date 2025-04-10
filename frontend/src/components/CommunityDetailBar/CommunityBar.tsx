@@ -4,9 +4,11 @@ import "./CommunityBar.css";
 import { CommunityButton } from "./CommunityButtom";
 import { AddModal } from "./Modals/AddModal";
 import { GroupInviteModal } from "./Modals/GroupInviteModal";
+import { ShareModal } from "./Modals/ShareModal";
 export const CommunityBar = ({ eventId }: { eventId: string }) => {
   const { user } = useContext(UserContext);
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const handleGroupClick = () => {
     console.log("Group clicked");
@@ -18,6 +20,7 @@ export const CommunityBar = ({ eventId }: { eventId: string }) => {
   };
 
   const handleShareClick = () => {
+    setIsShareModalOpen(true);
     console.log("Share clicked");
   };
 
@@ -28,6 +31,12 @@ export const CommunityBar = ({ eventId }: { eventId: string }) => {
           onClose={() => setIsGroupInviteModalOpen(false)}
           eventId={eventId}
           userId={user?.id || ""}
+        />
+      )}
+      {isShareModalOpen && (
+        <ShareModal
+          onClose={() => setIsShareModalOpen(false)}
+          eventId={eventId}
         />
       )}
       {isAddModalOpen && <AddModal onClose={() => setIsAddModalOpen(false)} />}
