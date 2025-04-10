@@ -11,6 +11,10 @@ export class GroupService {
     return await this.groupRepository.createGroup(userId, dto);
   }
 
+  async getGroupsByUserId(userId: string) {
+    return await this.groupRepository.getGroupsByUserId(userId);
+  }
+
   async createGroupWithEvent(userId: string, dto: CreateGroupDto) {
     const inviteToken = uuidv4();
     console.log(dto, userId);

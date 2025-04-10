@@ -9,6 +9,9 @@ export class MongoGroupRepository implements IGroupRepository {
   findById(id: string): Promise<Group | null> {
     return this.groupModel.findById(id);
   }
+  getGroupsByUserId(userId: string) {
+    return this.groupModel.find({ memberIds: userId });
+  }
   update(id: string, group: Group): Promise<Group | null> {
     return this.groupModel.findByIdAndUpdate(id, group, { new: true });
   }

@@ -21,6 +21,13 @@ export class GroupController {
     return this.groupService.createGroup(req.user.id, dto);
   }
 
+  @Get('my-groups')
+  @UseGuards(GroupGuard)
+  async getMyGroups(@Req() req) {
+    const userId = req.user.id;
+    return this.groupService.getGroupsByUserId(userId);
+  }
+
   @Post()
   @UseGuards(GroupGuard)
   createWithEvent(@Req() req, @Body() dto: CreateGroupDto) {
