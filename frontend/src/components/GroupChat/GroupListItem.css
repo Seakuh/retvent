@@ -4,6 +4,7 @@
   padding: 1rem;
   align-items: center;
   gap: 1rem;
+  cursor: pointer;
 }
 
 .group-list-item-image {

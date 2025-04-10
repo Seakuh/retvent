@@ -1,14 +1,16 @@
+import { Send } from "lucide-react";
 import React from "react";
+import { Message } from "../../../utils";
 import "./Dialog.css";
-
 // Definieren der Props für Dialog
 interface DialogProps {
-  messages: { text: string; isUser: boolean }[];
+  messages: Message[];
   onSend: (message: string) => Promise<void>;
   loading: boolean;
 }
 
 const Dialog: React.FC<DialogProps> = ({ messages, onSend, loading }) => {
+  const userId = localStorage.getItem("userId");
   const [input, setInput] = React.useState("");
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -37,9 +39,11 @@ const Dialog: React.FC<DialogProps> = ({ messages, onSend, loading }) => {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`message ${msg.isUser ? "user-message" : "bot-message"}`}
+            className={`message ${
+              msg.senderId === userId ? "user-message" : "bot-message"
+            }`}
           >
-            {msg.text}
+            {msg.content}
           </div>
         ))}
         {loading && (
@@ -59,7 +63,7 @@ const Dialog: React.FC<DialogProps> = ({ messages, onSend, loading }) => {
           rows={1}
         />
         <button onClick={handleSendMessage} className="send-button">
-          <i className="arrow-up"></i>
+          <Send className="send-icon" size={24} />
         </button>
       </div>
     </div>

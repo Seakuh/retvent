@@ -64,18 +64,23 @@ const App: React.FC = () => {
                     path="/group/invite/:userId/:tokenId"
                     element={<GroupInvite />}
                   />
-                  <ProtectedRoute>
-                    <Route path="/group/:groupId" element={<GroupChat />} />
-                  </ProtectedRoute>
-                  <Route
-                    path="/comment-guidelines"
-                    element={<CommentGuidelines />}
-                  />
                   <Route
                     path="/my-groups"
                     element={
                       <ProtectedRoute>
                         <GroupChatPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/comment-guidelines"
+                    element={<CommentGuidelines />}
+                  />
+                  <Route
+                    path="/group/:groupId"
+                    element={
+                      <ProtectedRoute>
+                        <GroupChat />
                       </ProtectedRoute>
                     }
                   />

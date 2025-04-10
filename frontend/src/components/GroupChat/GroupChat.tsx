@@ -1,11 +1,13 @@
+import { ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Group, Message } from "../../utils";
 import { ChatWindow } from "./ChatWindow";
 import { getGroupChat, sendMessage } from "./service";
 
 export const GroupChat: React.FC = () => {
   const { groupId } = useParams();
+  const navigate = useNavigate();
   const [group, setGroup] = useState<Group | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -22,12 +24,17 @@ export const GroupChat: React.FC = () => {
     setMessages([...messages, newMessage]);
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
-    (group && (
-      <div>
-        GroupChat
-        <ChatWindow messages={messages} onSend={onSend} />
-      </div>
-    )) || <div>Group not found</div>
+    <div>
+      <button onClick={handleBack} className="back-button">
+        <ChevronLeft className="h-5 w-5" />{" "}
+      </button>
+      GroupChat
+      <ChatWindow messages={messages} onSend={onSend} group={group} />
+    </div>
   );
 };

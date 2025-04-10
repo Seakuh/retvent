@@ -17,7 +17,7 @@ export const getGroups = async () => {
 
 export const getGroupChat = async (groupId: string) => {
   const token = localStorage.getItem("access_token");
-  const response = await fetch(`${API_URL}groups/${groupId}/chat`, {
+  const response = await fetch(`${API_URL}messages/${groupId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
