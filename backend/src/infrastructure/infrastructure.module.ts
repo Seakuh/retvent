@@ -164,6 +164,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     'ICommentRepository',
     'IProfileRepository',
     'IGroupRepository',
+    'IMessageRepository',
     JwtModule,
     MongoEventRepository,
     MongoProfileRepository,

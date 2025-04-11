@@ -35,6 +35,7 @@ export class GroupService {
       creatorId: userId,
       memberIds: [userId],
       inviteToken,
+      imageUrl: dto.imageUrl,
       eventId: dto.eventId,
       createdAt: new Date(),
       updatedAt: new Date(),

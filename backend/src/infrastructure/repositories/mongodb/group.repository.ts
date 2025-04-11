@@ -27,6 +27,7 @@ export class MongoGroupRepository implements IGroupRepository {
       memberIds: [userId],
       creatorId: userId,
       eventId: group.eventId,
+      imageUrl: group.imageUrl,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

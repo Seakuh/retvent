@@ -10,6 +10,7 @@ export const GroupSchema = new Schema({
   creatorId: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  imageUrl: { type: String },
   inviteToken: {
     type: String,
     required: true,

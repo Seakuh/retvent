@@ -4,5 +4,6 @@ export class CreateGroupDto {
   description?: string;
   creatorId?: string;
   isPublic?: boolean;
+  imageUrl?: string;
   memberIds?: string[];
 }
