@@ -2,7 +2,6 @@
 .dialog-container {
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   padding-bottom: 80px; /* Platz für Input unten */
   box-sizing: border-box;
@@ -43,13 +42,13 @@
 
 .user-message {
   background: linear-gradient(135deg, var(--color-neon-blue), var(--color-neon-blue-dark));
-  color: var(--color-white);
+  color: white;
   margin-left: auto;
 }
 
 .bot-message {
   background: var(--color-neon-blue-light);
-  color: #003366;
+  color: white;
   margin-right: auto;
 }
 

@@ -1,8 +1,8 @@
-import { ChevronLeft } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { Group } from "../../utils";
+import { ChatHeader } from "./ChatHeader";
 import { GroupListItem } from "./GroupListItem";
 import { getGroups } from "./service";
 export const GroupChatPage = () => {
@@ -23,11 +23,15 @@ export const GroupChatPage = () => {
   };
 
   return (
-    <div>
-      <button onClick={handleBack} className="back-button">
-        <ChevronLeft className="h-5 w-5" />{" "}
-      </button>
-      <h1 className="section-title my-groups-title">My Groups</h1>
+    <div className="group-chat-page">
+      <ChatHeader
+        group={{
+          id: "1",
+          name: "Chats",
+          description: "Group 1 description",
+          memberIds: [],
+        }}
+      />
       {groups.map((group) => (
         <GroupListItem key={group.id} group={group} />
       ))}

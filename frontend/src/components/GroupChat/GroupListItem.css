@@ -5,6 +5,7 @@
   align-items: center;
   gap: 1rem;
   cursor: pointer;
+  background-color: black;
 }
 
 .group-list-item-image {
