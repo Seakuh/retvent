@@ -2,6 +2,7 @@ import { API_URL, Event } from "../../utils";
 
 export const createGroup = async (event: Event) => {
   const token = localStorage.getItem("access_token");
+  console.log(event);
   try {
     const response = await fetch(`${API_URL}groups`, {
       method: "POST",
@@ -11,10 +12,15 @@ export const createGroup = async (event: Event) => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        name: `We meet at ${event.title} at ${new Date().toLocaleString()}`,
+        name: `${event.title} | ${new Date().toLocaleDateString("de-DE", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })}`,
         description: event.description,
         eventId: event.id,
         isPublic: true,
+        imageUrl: event.imageUrl,
       }),
     });
 
