@@ -1,6 +1,7 @@
 import { Send } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
+import { UserContext } from "../../../contexts/UserContext";
 import { API_URL, Message } from "../../../utils";
 import "./Dialog.css";
 // Definieren der Props für Dialog
@@ -17,7 +18,9 @@ const Dialog: React.FC<DialogProps> = ({
   loading,
   groupId,
 }) => {
-  const userId = localStorage.getItem("userId");
+  const { user, loggedIn, setLoggedIn } = useContext(UserContext);
+
+  const userId = user?.id;
   const [input, setInput] = React.useState("");
   const [socket, setSocket] = React.useState<Socket | null>(null);
 
