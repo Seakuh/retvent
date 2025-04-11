@@ -4,7 +4,6 @@ import { io, Socket } from "socket.io-client";
 import { UserContext } from "../../../contexts/UserContext";
 import { API_URL, Message } from "../../../utils";
 import "./Dialog.css";
-// Definieren der Props für Dialog
 interface DialogProps {
   messages: Message[];
   onSend: (message: string) => Promise<void>;
@@ -23,6 +22,15 @@ const Dialog: React.FC<DialogProps> = ({
   const userId = user?.id;
   const [input, setInput] = React.useState("");
   const [socket, setSocket] = React.useState<Socket | null>(null);
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]); // Scrollt nach unten wenn neue Nachrichten ankommen
 
   useEffect(() => {
     // Socket.io Client initialisieren
@@ -129,19 +137,27 @@ const Dialog: React.FC<DialogProps> = ({
   return (
     <div className="dialog-container">
       <div className="dialog-messages">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`message ${
-              msg.senderId === userId ? "user-message" : "bot-message"
-            }`}
-          >
-            <div className="message-timestamp">
-              {toTime(msg.createdAt || new Date())}
+        {messages
+          .sort((a, b) => {
+            if (!a.createdAt || !b.createdAt) return 0;
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+            // Sortiere aufsteigend (älteste zuerst)
+            return dateA.getTime() - dateB.getTime();
+          })
+          .map((msg, index) => (
+            <div
+              key={index}
+              className={`message ${
+                msg.senderId === userId ? "user-message" : "bot-message"
+              }`}
+            >
+              <div className="message-timestamp">
+                {toTime(msg.createdAt || new Date())}
+              </div>
+              {msg.content}
             </div>
-            {msg.content}
-          </div>
-        ))}
+          ))}
         {loading && (
           <div className="loading">
             <span>.</span>
@@ -149,6 +165,8 @@ const Dialog: React.FC<DialogProps> = ({
             <span>.</span>
           </div>
         )}
+        <div ref={messagesEndRef} />{" "}
+        {/* Scroll-Anker am Ende der Nachrichten */}
       </div>
       <div className="dialog-input-container">
         <div className="dialog-input">
