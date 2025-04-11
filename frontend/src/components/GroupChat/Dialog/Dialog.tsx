@@ -46,12 +46,12 @@ const Dialog: React.FC<DialogProps> = ({
 
     newSocket.on("newMessage", (message: Message) => {
       // Hier können Sie die neue Nachricht verarbeiten
-      console.log("Neue Nachricht erhalten:", message);
+      console.log("Message from socket:", message);
       // Aktualisieren Sie Ihre Messages-State hier
     });
 
     newSocket.on("errorMessage", (error: string) => {
-      console.error("WebSocket Fehler:", error);
+      console.error("WebSocket Error:", error);
     });
 
     setSocket(newSocket);
@@ -109,7 +109,7 @@ const Dialog: React.FC<DialogProps> = ({
       dateObj.toLocaleDateString() === yesterday.toLocaleDateString()
     ) {
       // Yesterday
-      return "Gestern";
+      return "yesterday";
     } else {
       // Other days - show day and month
       return dateObj.toLocaleDateString("de-DE", {

@@ -23,6 +23,17 @@ export const getGroupChat = async (groupId: string) => {
   return data;
 };
 
+export const getGroup = async (groupId: string) => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}groups/${groupId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json();
+  return data;
+};
+
 export const sendMessage = async (groupId: string, message: string) => {
   const token = localStorage.getItem("access_token");
   const sendMessageDto: SendMessageDto = {

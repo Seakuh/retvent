@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { DEFAULT_IMAGE, Group } from "../../utils";
 import "./GroupListItem.css";
 export const GroupListItem = ({ group }: { group: Group }) => {
-  console.log(group);
   const navigate = useNavigate();
   return (
     <div
