@@ -27,6 +27,13 @@ export class GroupService {
     // return { ...group, messages };
   }
 
+  async addMemberToGroup(groupId: string, userId: string) {
+    const group = await this.groupRepository.findById(groupId);
+    if (!group) throw new NotFoundException('Group not found');
+    group.memberIds.push(userId);
+    return this.groupRepository.update(groupId, group);
+  }
+
   async createGroupWithEvent(userId: string, dto: CreateGroupDto) {
     const inviteToken = uuidv4();
     console.log(dto, userId);

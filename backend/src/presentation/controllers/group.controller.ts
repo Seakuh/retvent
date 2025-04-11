@@ -34,6 +34,12 @@ export class GroupController {
     return this.groupService.createGroupWithEvent(req.user.id, dto);
   }
 
+  @Post('/:groupId/members')
+  @UseGuards(GroupGuard)
+  addMemberToGroup(@Req() req, @Param('groupId') groupId: string) {
+    return this.groupService.addMemberToGroup(groupId, req.user.id);
+  }
+
   @Post('/join/:token')
   @UseGuards(GroupGuard)
   joinGroup(@Req() req, @Param('token') token: string) {
