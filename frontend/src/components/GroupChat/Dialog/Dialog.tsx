@@ -71,6 +71,10 @@ const Dialog: React.FC<DialogProps> = ({
     }
   };
 
+  const handleImageUpload = () => {
+    console.log("Image upload");
+  };
+
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
@@ -143,17 +147,22 @@ const Dialog: React.FC<DialogProps> = ({
           </div>
         )}
       </div>
-      <div className="dialog-input">
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Message"
-          rows={1}
-        />
-        <button onClick={handleSendMessage} className="send-button">
-          <Send className="send-icon" size={24} />
-        </button>
+      <div className="dialog-input-container">
+        <div className="dialog-input">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Message"
+            rows={1}
+          />
+          {/* <button onClick={handleImageUpload} className="send-button">
+            <Image className="send-icon" size={24} />
+          </button> */}
+          <button onClick={handleSendMessage} className="send-button">
+            <Send className="send-icon" size={24} />
+          </button>
+        </div>
       </div>
     </div>
   );
