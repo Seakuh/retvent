@@ -7,7 +7,7 @@ import { useChat } from "../chatProvider";
 import "./Dialog.css";
 interface DialogProps {
   messages: Message[];
-  onSend: (message: string) => Promise<void>;
+  onSend: (message: string, file?: File) => Promise<void>;
   loading: boolean;
   groupId: string; // Neue Prop für die Gruppen-ID
 }
@@ -20,12 +20,12 @@ const Dialog: React.FC<DialogProps> = ({
 }) => {
   const { user, loggedIn, setLoggedIn } = useContext(UserContext);
   const { currentGroupId } = useChat();
-
   const userId = user?.id;
   const [input, setInput] = React.useState("");
   const [socket, setSocket] = React.useState<Socket | null>(null);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
-
+  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -71,8 +71,18 @@ const Dialog: React.FC<DialogProps> = ({
     console.log("Send Location");
   };
 
-  const handleSendImage = () => {
+  const handleSendImage = async () => {
     console.log("Send Image");
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        await onSend("", file); // Leerer String als Nachricht, File als zweiter Parameter
+      }
+    };
+    fileInput.click();
   };
 
   const toTime = (date: Date | undefined) => {
@@ -111,7 +121,6 @@ const Dialog: React.FC<DialogProps> = ({
             if (!a.createdAt || !b.createdAt) return 0;
             const dateA = new Date(a.createdAt);
             const dateB = new Date(b.createdAt);
-            // Sortiere aufsteigend (älteste zuerst)
             return dateA.getTime() - dateB.getTime();
           })
           .map((msg, index) => (
@@ -124,7 +133,45 @@ const Dialog: React.FC<DialogProps> = ({
               <div className="message-timestamp">
                 {toTime(msg.createdAt || new Date())}
               </div>
-              {msg.content}
+
+              {/* Textnachricht */}
+              {(!msg.messageType || msg.messageType === "text") && (
+                <div className="message-content">{msg.content}</div>
+              )}
+
+              {/* Standortnachricht */}
+              {msg.messageType === "location" &&
+                msg.latitude &&
+                msg.longitude && (
+                  <div className="location-message">
+                    <img
+                      src={`https://maps.googleapis.com/maps/api/staticmap?center=${msg.latitude},${msg.longitude}&zoom=15&size=200x200&markers=${msg.latitude},${msg.longitude}&key=YOUR_API_KEY`}
+                      alt="Standort"
+                      className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() =>
+                        window.open(
+                          `https://www.google.com/maps?q=${msg.latitude},${msg.longitude}`,
+                          "_blank"
+                        )
+                      }
+                    />
+                    <div className="text-sm text-gray-500 mt-1">
+                      📍 Standort anzeigen
+                    </div>
+                  </div>
+                )}
+
+              {/* Bildnachricht */}
+              {msg.fileUrl && (
+                <div className="image-message">
+                  <img
+                    src={msg.fileUrl}
+                    alt="Bild"
+                    className="max-w-[200px] rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={() => setSelectedImage(msg.fileUrl || "")}
+                  />
+                </div>
+              )}
             </div>
           ))}
         {loading && (
@@ -160,6 +207,18 @@ const Dialog: React.FC<DialogProps> = ({
           </button>
         </div>
       </div>
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+          onClick={() => setSelectedImage(null)}
+        >
+          <img
+            src={selectedImage}
+            alt="Bigger Image"
+            className="max-w-[90%] max-h-[90vh] object-contain"
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -34,12 +34,21 @@ export const getGroup = async (groupId: string) => {
   return data;
 };
 
-export const sendMessage = async (groupId: string, message: string) => {
+export const sendMessage = async (
+  groupId: string,
+  message: string,
+  file?: File
+) => {
   const token = localStorage.getItem("access_token");
   const sendMessageDto: SendMessageDto = {
     groupId: groupId,
     content: message,
+    messageType: file ? "image" : "text",
   };
+  if (file) {
+    sendMessageDto.file = file;
+  }
+  console.log(sendMessageDto);
   const response = await fetch(`${API_URL}messages/`, {
     method: "POST",
     headers: {

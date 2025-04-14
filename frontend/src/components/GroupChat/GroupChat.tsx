@@ -37,9 +37,9 @@ export const GroupChat: React.FC = () => {
     loadData();
   }, [groupId]);
 
-  const onSend = async (message: string) => {
+  const onSend = async (message: string, file?: File) => {
     try {
-      const newMessage = await sendMessage(groupId || "", message);
+      const newMessage = await sendMessage(groupId || "", message, file);
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
@@ -57,12 +57,7 @@ export const GroupChat: React.FC = () => {
   return (
     <div className="group-chat-container">
       <ChatHeader group={group} />
-      <ChatWindow
-        messages={messages}
-        onSend={onSend}
-        group={group}
-        searchTerm={null}
-      />
+      <ChatWindow messages={messages} onSend={onSend} group={group} />
     </div>
   );
 };

@@ -36,15 +36,22 @@ export const groupTypesWithEmoji = [
 export interface SendMessageDto {
   groupId: string;
   content: string;
-  file?: string;
+  file?: File;
+  messageType?: "text" | "image" | "location";
+  latitude?: number;
+  longitude?: number;
 }
 
 export class Message {
   groupId?: string;
   senderId?: string;
   content?: string;
-  type?: string;
+  messageType?: "text" | "image" | "location";
+  latitude?: number;
+  longitude?: number;
+  file?: File;
   createdAt?: Date;
+  fileUrl?: string;
 }
 
 export class Group {

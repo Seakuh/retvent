@@ -3,7 +3,7 @@ import Dialog from "./Dialog/Dialog";
 
 interface ChatWindowProps {
   messages: Message[];
-  onSend: (message: string) => Promise<void>;
+  onSend: (message: string, file?: File) => Promise<void>;
   group?: Group;
 }
 
