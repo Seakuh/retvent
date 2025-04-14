@@ -1,8 +1,8 @@
 import { Send } from "lucide-react";
 import React, { useContext, useEffect } from "react";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { UserContext } from "../../../contexts/UserContext";
-import { API_URL, Message } from "../../../utils";
+import { Message } from "../../../utils";
 import { useChat } from "../chatProvider";
 import "./Dialog.css";
 interface DialogProps {
@@ -25,7 +25,6 @@ const Dialog: React.FC<DialogProps> = ({
   const [input, setInput] = React.useState("");
   const [socket, setSocket] = React.useState<Socket | null>(null);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
-  console.log(user);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -34,75 +33,6 @@ const Dialog: React.FC<DialogProps> = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages]); // Scrollt nach unten wenn neue Nachrichten ankommen
-
-  useEffect(() => {
-    let reconnectAttempts = 0;
-    const maxReconnectAttempts = 5;
-    const reconnectDelay = 2000; // 2 Sekunden
-
-    const connectSocket = () => {
-      const token = localStorage.getItem("access_token");
-
-      if (!token) {
-        console.error("Kein Token gefunden");
-        return;
-      }
-
-      const newSocket = io(API_URL, {
-        auth: { token },
-        path: "/socket.io/",
-        transports: ["websocket", "polling"],
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-        timeout: 10000, // 10 Sekunden Timeout
-      });
-
-      newSocket.on("connect", () => {
-        console.log("Mit WebSocket verbunden");
-        reconnectAttempts = 0; // Reset der Versuche bei erfolgreicher Verbindung
-        newSocket.emit("joinGroup", currentGroupId);
-      });
-
-      newSocket.on("connect_error", (error) => {
-        console.error("Verbindungsfehler:", error);
-        reconnectAttempts++;
-
-        if (reconnectAttempts < maxReconnectAttempts) {
-          console.log(
-            `Verbindungsversuch ${reconnectAttempts} von ${maxReconnectAttempts}`
-          );
-          setTimeout(connectSocket, reconnectDelay);
-        } else {
-          console.error("Maximal 5 tries reached");
-        }
-      });
-
-      newSocket.on("newMessage", (message: Message) => {
-        // Hier können Sie die neue Nachricht verarbeiten
-        console.log("Message from socket:", message);
-        // Aktualisieren Sie Ihre Messages-State hier
-      });
-
-      newSocket.on("errorMessage", (error: string) => {
-        console.error("WebSocket Error:", error);
-      });
-
-      setSocket(newSocket);
-
-      return () => {
-        newSocket.disconnect();
-      };
-    };
-
-    connectSocket();
-
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-  }, [groupId]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {

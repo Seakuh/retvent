@@ -39,8 +39,8 @@ export const CommunityBar = ({ event }: { event: Event }) => {
       )}
       {isAddModalOpen && <AddModal onClose={() => setIsAddModalOpen(false)} />}
 
-      <CommunityButton type="group" onClick={handleGroupClick} />
-      <CommunityButton type="add" onClick={handleAddClick} />
+      {/* <CommunityButton type="group" onClick={handleGroupClick} />
+      <CommunityButton type="add" onClick={handleAddClick} /> */}
       <CommunityButton type="share" onClick={handleShareClick} />
     </div>
   );

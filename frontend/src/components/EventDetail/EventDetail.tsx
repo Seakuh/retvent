@@ -11,6 +11,7 @@ import { EventBasicInfo } from "./components/EventBasicInfo";
 import { EventDescription } from "./components/EventDescription";
 import { EventDetailError } from "./components/EventDetailError";
 import { EventDetailSkeleton } from "./components/EventDetailSkeleton";
+import { EventGroups } from "./components/EventGroups";
 import { EventHero } from "./components/EventHero";
 import { EventHost } from "./components/EventHost";
 import { EventLineup } from "./components/EventLineup";
@@ -312,8 +313,10 @@ export const EventDetail: React.FC = () => {
           <CommunityBar event={event} />
         </div>
       </div>
-
-      <CommentSection eventId={eventId || ""} />
+      <div>
+        <EventGroups event={event} />
+        <CommentSection eventId={eventId || ""} />
+      </div>
     </div>
   );
 };

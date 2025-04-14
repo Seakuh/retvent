@@ -1,7 +1,8 @@
-import { Calendar, LogOut, Settings, Trash2, UserPlus } from "lucide-react";
+import { Calendar, LogOut, Settings, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./ChatHeaderMenue.css";
 import { useChat } from "./chatProvider";
+import { leaveGroup } from "./service";
 export const ChatHeaderMenu = () => {
   const { currentGroupId, currentEventId } = useChat();
   console.log("currentGroupId", currentGroupId);
@@ -27,6 +28,8 @@ export const ChatHeaderMenu = () => {
 
   const handleLeaveGroup = () => {
     console.log("Leave Group");
+    leaveGroup(currentGroupId!);
+    navigate(-1);
   };
 
   const handleDeleteGroup = () => {
@@ -66,13 +69,13 @@ export const ChatHeaderMenu = () => {
           <span>Leave Group</span>
         </button>
 
-        <button
+        {/* <button
           className="menu-item menu-item-danger"
           onClick={handleDeleteGroup}
         >
           <Trash2 />
           <span>Delete Group</span>
-        </button>
+        </button> */}
       </div>
     </div>
   );
