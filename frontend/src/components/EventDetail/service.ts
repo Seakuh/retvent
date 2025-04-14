@@ -1,4 +1,4 @@
-import { Event } from "../../utils";
+import { API_URL, Event, groupTypesWithEmoji } from "../../utils";
 
 export const shareEvent = async (eventToShare: Event) => {
   if (!eventToShare) return;
@@ -66,4 +66,48 @@ export const handleAddToCalendar = (event: {
   )}&location=${encodeURIComponent(event.city || "")}`;
 
   window.open(googleCalendarUrl, "_blank");
+};
+
+export class CreateGroupDto {
+  name?: string;
+  eventId?: string;
+  description?: string;
+  creatorId?: string;
+  isPublic?: boolean;
+  imageUrl?: string;
+  memberIds?: string[];
+}
+
+export const createOrJoinGroupService = async (event: Event, group: string) => {
+  const token = localStorage.getItem("access_token");
+  console.log(event);
+  const groupEmoji = groupTypesWithEmoji
+    .find((g) => g.name === group)
+    ?.emoji.toUpperCase();
+  console.log(groupEmoji, group);
+  if (!groupEmoji) {
+    return { error: "Invalid group type" };
+  }
+  try {
+    const createGroupDto: CreateGroupDto = {
+      name: `${groupEmoji} ${group} | ${event.title} `,
+      description: `${group} Group for ${event.title}`,
+      eventId: event.id,
+      isPublic: true,
+      imageUrl: event.imageUrl,
+    };
+    const response = await fetch(`${API_URL}groups/create-or-join`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(createGroupDto),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error creating or joining group:", error);
+  }
 };

@@ -25,6 +25,14 @@ export const categoriesToFilter = [
   "Protest",
 ];
 
+export const groupTypesWithEmoji = [
+  { name: "helper", emoji: "👥" },
+  { name: "driver", emoji: "🚗" },
+  { name: "artist", emoji: "🎨" },
+  { name: "sleep", emoji: "💤" },
+  { name: "lost-found", emoji: "🔍" },
+];
+
 export interface SendMessageDto {
   groupId: string;
   content: string;
