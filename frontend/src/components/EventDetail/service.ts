@@ -96,13 +96,19 @@ export const createOrJoinGroupService = async (event: Event, group: string) => {
       isPublic: true,
       imageUrl: event.imageUrl,
     };
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}groups/create-or-join`, {
       method: "POST",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
       body: JSON.stringify(createGroupDto),
     });
     const data = await response.json();

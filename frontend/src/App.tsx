@@ -81,14 +81,7 @@ const App: React.FC = () => {
                       path="/comment-guidelines"
                       element={<CommentGuidelines />}
                     />
-                    <Route
-                      path="/group/:groupId"
-                      element={
-                        <ProtectedRoute>
-                          <GroupChat />
-                        </ProtectedRoute>
-                      }
-                    />
+                    <Route path="/group/:groupId" element={<GroupChat />} />
                     <Route
                       path="/me"
                       element={

@@ -1,10 +1,16 @@
 import { Bed, Car, HeartHandshake, Palette, Plus, Shirt } from "lucide-react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../contexts/UserContext";
 import { Event } from "../../../utils";
+import { GroupInviteModal } from "../../CommunityDetailBar/Modals/GroupInviteModal";
 import { createOrJoinGroupService } from "../service";
 import "./EventGroups.css";
 export const EventGroups = ({ event }: { event: Event }) => {
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
+  const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
+
   const createOrJoinGroup = (group: string) => {
     console.log("createOrJoinGroup", group);
     createOrJoinGroupService(event, group).then((data) => {
@@ -20,7 +26,14 @@ export const EventGroups = ({ event }: { event: Event }) => {
 
   return (
     <div className="event-groups-container">
-      <h2>Groups</h2>
+      {isGroupInviteModalOpen && (
+        <GroupInviteModal
+          onClose={() => setIsGroupInviteModalOpen(false)}
+          event={event}
+          userId={user?.id || ""}
+        />
+      )}
+      <h2>Chats</h2>
       <ul className="event-groups-community-list">
         <li
           className="event-groups-community-item"
