@@ -47,7 +47,7 @@ export class GroupController {
   }
 
   @Post('/leave/:groupId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GroupGuard)
   leaveGroup(@Req() req, @Param('groupId') groupId: string) {
     return this.groupService.leaveGroup(req.user.id, groupId);
   }
