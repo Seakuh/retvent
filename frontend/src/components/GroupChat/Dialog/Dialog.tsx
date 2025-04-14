@@ -1,4 +1,4 @@
-import { Send } from "lucide-react";
+import { Image, MapPin, Send } from "lucide-react";
 import React, { useContext, useEffect } from "react";
 import { Socket } from "socket.io-client";
 import { UserContext } from "../../../contexts/UserContext";
@@ -65,6 +65,14 @@ const Dialog: React.FC<DialogProps> = ({
 
     await onSend(input);
     setInput("");
+  };
+
+  const handleSendLocation = () => {
+    console.log("Send Location");
+  };
+
+  const handleSendImage = () => {
+    console.log("Send Image");
   };
 
   const toTime = (date: Date | undefined) => {
@@ -141,6 +149,12 @@ const Dialog: React.FC<DialogProps> = ({
           {/* <button onClick={handleImageUpload} className="send-button">
             <Image className="send-icon" size={24} />
           </button> */}
+          <button onClick={handleSendImage} className="send-button">
+            <Image className="send-icon" size={24} />
+          </button>
+          <button onClick={handleSendLocation} className="send-button">
+            <MapPin className="send-icon" size={24} />
+          </button>
           <button onClick={handleSendMessage} className="send-button">
             <Send className="send-icon" size={24} />
           </button>
