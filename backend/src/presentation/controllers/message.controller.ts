@@ -28,7 +28,6 @@ export class MessageController {
   @Get('/guard/:groupId')
   @UseGuards(GroupGuard)
   async getMessagesWithGuard(@Req() req, @Param('groupId') groupId: string) {
-    console.log(req.user);
     const isInGroup = await this.groupService.isUserInGroup(
       groupId,
       req.user.id,

@@ -1,48 +1,27 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { OptionalJwtAuthGuard } from './jwt-optional-auth.guard';
 
 @Injectable()
-export class GroupGuard implements CanActivate {
+export class GroupGuard extends OptionalJwtAuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) {
+    super();
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const authHeader = request.headers.authorization;
-    console.log(request.user);
+
+    // Versuche den JWT Token zu validieren
+    const result = await super.canActivate(context);
+
     if (!request.user) {
       request.user = { id: 'public' };
-      return true;
     }
 
-    try {
-      const token = authHeader.split(' ')[1];
-      const secret =
-        this.configService.get<string>('JWT_SECRET') ||
-        'SuperSichererSchluessel';
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: secret,
-      });
-
-      // Füge den dekodierten User zum Request hinzu
-      request.user = {
-        id: payload.sub,
-        email: payload.email,
-        username: payload.username,
-      };
-
-      return true;
-    } catch (error) {
-      console.error('UploadGuard - Token verification failed:', error.message);
-      throw new UnauthorizedException('Invalid token');
-    }
+    return true;
   }
 }
