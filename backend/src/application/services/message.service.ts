@@ -24,12 +24,7 @@ export class MessageService {
 
   async sendMessage(userId: string, dto: SendMessageDto) {
     console.log(dto);
-    const isInGroup = await this.groupService.isUserInGroup(
-      dto.groupId,
-      userId,
-    );
-    if (!isInGroup) throw new ForbiddenException('Access denied');
-
+    console.log(userId);
     return this.create(dto.groupId, userId, dto.content);
   }
 

@@ -35,12 +35,15 @@ export class GroupService {
   }
 
   async createOrJoinGroup(userId: string, dto: CreateGroupDto) {
+    console.log('createOrJoinGroup', userId, dto);
+    const group = await this.groupRepository.findByGroupName(dto.name);
     if (userId) {
-      const group = await this.groupRepository.findByGroupName(dto.name);
       if (group) {
         return this.addMemberToGroup(group.id, userId);
       }
-      return this.createGroup(userId, dto);
+    }
+    if (group) {
+      return group;
     }
     return this.createGroup(null, dto);
   }
