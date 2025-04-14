@@ -3,6 +3,7 @@ import React, { useContext, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import { UserContext } from "../../../contexts/UserContext";
 import { API_URL, Message } from "../../../utils";
+import { useChat } from "../chatProvider";
 import "./Dialog.css";
 interface DialogProps {
   messages: Message[];
@@ -18,11 +19,13 @@ const Dialog: React.FC<DialogProps> = ({
   groupId,
 }) => {
   const { user, loggedIn, setLoggedIn } = useContext(UserContext);
+  const { currentGroupId } = useChat();
 
   const userId = user?.id;
   const [input, setInput] = React.useState("");
   const [socket, setSocket] = React.useState<Socket | null>(null);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  console.log(user);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -33,43 +36,71 @@ const Dialog: React.FC<DialogProps> = ({
   }, [messages]); // Scrollt nach unten wenn neue Nachrichten ankommen
 
   useEffect(() => {
-    // Socket.io Client initialisieren
-    const token = localStorage.getItem("access_token");
-    const newSocket = io(API_URL, {
-      // Hier nur API_URL ohne /messages
-      auth: {
-        token: token,
-      },
-      path: "/socket.io/", // Standard Socket.IO Pfad
-      transports: ["websocket", "polling"], // Explizit die Transportmethoden angeben
-    });
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+    const reconnectDelay = 2000; // 2 Sekunden
 
-    // Socket Event Listener
-    newSocket.on("connect", () => {
-      console.log("Connected to WebSocket");
-      // Der Gruppe beitreten
-      newSocket.emit("joinGroup", groupId);
-    });
+    const connectSocket = () => {
+      const token = localStorage.getItem("access_token");
 
-    newSocket.on("connect_error", (error) => {
-      console.error("Connection Error:", error);
-    });
+      if (!token) {
+        console.error("Kein Token gefunden");
+        return;
+      }
 
-    newSocket.on("newMessage", (message: Message) => {
-      // Hier können Sie die neue Nachricht verarbeiten
-      console.log("Message from socket:", message);
-      // Aktualisieren Sie Ihre Messages-State hier
-    });
+      const newSocket = io(API_URL, {
+        auth: { token },
+        path: "/socket.io/",
+        transports: ["websocket", "polling"],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+        timeout: 10000, // 10 Sekunden Timeout
+      });
 
-    newSocket.on("errorMessage", (error: string) => {
-      console.error("WebSocket Error:", error);
-    });
+      newSocket.on("connect", () => {
+        console.log("Mit WebSocket verbunden");
+        reconnectAttempts = 0; // Reset der Versuche bei erfolgreicher Verbindung
+        newSocket.emit("joinGroup", currentGroupId);
+      });
 
-    setSocket(newSocket);
+      newSocket.on("connect_error", (error) => {
+        console.error("Verbindungsfehler:", error);
+        reconnectAttempts++;
 
-    // Cleanup beim Unmount
+        if (reconnectAttempts < maxReconnectAttempts) {
+          console.log(
+            `Verbindungsversuch ${reconnectAttempts} von ${maxReconnectAttempts}`
+          );
+          setTimeout(connectSocket, reconnectDelay);
+        } else {
+          console.error("Maximal 5 tries reached");
+        }
+      });
+
+      newSocket.on("newMessage", (message: Message) => {
+        // Hier können Sie die neue Nachricht verarbeiten
+        console.log("Message from socket:", message);
+        // Aktualisieren Sie Ihre Messages-State hier
+      });
+
+      newSocket.on("errorMessage", (error: string) => {
+        console.error("WebSocket Error:", error);
+      });
+
+      setSocket(newSocket);
+
+      return () => {
+        newSocket.disconnect();
+      };
+    };
+
+    connectSocket();
+
     return () => {
-      newSocket.close();
+      if (socket) {
+        socket.disconnect();
+      }
     };
   }, [groupId]);
 

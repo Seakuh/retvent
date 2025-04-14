@@ -1,14 +1,13 @@
-import {
-  Calendar,
-  LogOut,
-  Search,
-  Settings,
-  Trash2,
-  UserPlus,
-} from "lucide-react";
+import { Calendar, LogOut, Settings, Trash2, UserPlus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import "./ChatHeaderMenue.css";
-
+import { useChat } from "./chatProvider";
 export const ChatHeaderMenu = () => {
+  const { currentGroupId, currentEventId } = useChat();
+  console.log("currentGroupId", currentGroupId);
+  console.log("currentEventId", currentEventId);
+  const navigate = useNavigate();
+
   const handleGroupSettings = () => {
     console.log("Group Settings");
   };
@@ -23,6 +22,7 @@ export const ChatHeaderMenu = () => {
 
   const handleViewEvent = () => {
     console.log("View Event");
+    navigate(`/event/${currentEventId}`);
   };
 
   const handleLeaveGroup = () => {
@@ -45,11 +45,11 @@ export const ChatHeaderMenu = () => {
           <UserPlus />
           <span>Add Member</span>
         </button>
-
+        {/* 
         <button className="menu-item" onClick={handleSearch}>
           <Search />
           <span>Search</span>
-        </button>
+        </button> */}
 
         <button className="menu-item" onClick={handleViewEvent}>
           <Calendar />

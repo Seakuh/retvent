@@ -1,6 +1,5 @@
 import { MessageCircleDashed } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { Group } from "../../utils";
 import { ChatHeader } from "./ChatHeader";
@@ -9,7 +8,6 @@ import { GroupListItem } from "./GroupListItem";
 import { getGroups } from "./service";
 export const GroupChatPage = () => {
   const user = useContext(UserContext);
-  const navigate = useNavigate();
   const [groups, setGroups] = useState<Group[]>([]);
 
   useEffect(() => {
