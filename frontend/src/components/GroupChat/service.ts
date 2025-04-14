@@ -37,16 +37,23 @@ export const getGroup = async (groupId: string) => {
 export const sendMessage = async (
   groupId: string,
   message: string,
-  file?: File
+  file?: File,
+  latitude?: number,
+  longitude?: number
 ) => {
   const token = localStorage.getItem("access_token");
   const sendMessageDto: SendMessageDto = {
     groupId: groupId,
     content: message,
-    messageType: file ? "image" : "text",
   };
   if (file) {
     sendMessageDto.file = file;
+    sendMessageDto.type = "image";
+  }
+  if (latitude && longitude) {
+    sendMessageDto.latitude = latitude;
+    sendMessageDto.longitude = longitude;
+    sendMessageDto.type = "location";
   }
   console.log(sendMessageDto);
   const response = await fetch(`${API_URL}messages/`, {

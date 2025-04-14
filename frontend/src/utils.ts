@@ -37,7 +37,7 @@ export interface SendMessageDto {
   groupId: string;
   content: string;
   file?: File;
-  messageType?: "text" | "image" | "location";
+  type?: "text" | "image" | "location";
   latitude?: number;
   longitude?: number;
 }
@@ -52,6 +52,7 @@ export class Message {
   file?: File;
   createdAt?: Date;
   fileUrl?: string;
+  type?: "text" | "image" | "location";
 }
 
 export class Group {

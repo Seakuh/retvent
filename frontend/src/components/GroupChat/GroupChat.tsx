@@ -37,9 +37,20 @@ export const GroupChat: React.FC = () => {
     loadData();
   }, [groupId]);
 
-  const onSend = async (message: string, file?: File) => {
+  const onSend = async (
+    message: string,
+    file?: File,
+    latitude?: number,
+    longitude?: number
+  ) => {
     try {
-      const newMessage = await sendMessage(groupId || "", message, file);
+      const newMessage = await sendMessage(
+        groupId || "",
+        message,
+        file,
+        latitude,
+        longitude
+      );
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     } catch (error) {
       console.error("Error sending message:", error);

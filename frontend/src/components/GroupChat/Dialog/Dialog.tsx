@@ -7,7 +7,12 @@ import { useChat } from "../chatProvider";
 import "./Dialog.css";
 interface DialogProps {
   messages: Message[];
-  onSend: (message: string, file?: File) => Promise<void>;
+  onSend: (
+    message: string,
+    file?: File,
+    latitude?: number,
+    longitude?: number
+  ) => Promise<void>;
   loading: boolean;
   groupId: string; // Neue Prop für die Gruppen-ID
 }
@@ -67,8 +72,12 @@ const Dialog: React.FC<DialogProps> = ({
     setInput("");
   };
 
-  const handleSendLocation = () => {
-    console.log("Send Location");
+  const handleSendLocation = async () => {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      console.log(latitude, longitude);
+      await onSend("", null, latitude, longitude);
+    });
   };
 
   const handleSendImage = async () => {
@@ -140,26 +149,32 @@ const Dialog: React.FC<DialogProps> = ({
               )}
 
               {/* Standortnachricht */}
-              {msg.messageType === "location" &&
-                msg.latitude &&
-                msg.longitude && (
-                  <div className="location-message">
-                    <img
-                      src={`https://maps.googleapis.com/maps/api/staticmap?center=${msg.latitude},${msg.longitude}&zoom=15&size=200x200&markers=${msg.latitude},${msg.longitude}&key=YOUR_API_KEY`}
-                      alt="Standort"
-                      className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() =>
-                        window.open(
-                          `https://www.google.com/maps?q=${msg.latitude},${msg.longitude}`,
-                          "_blank"
-                        )
-                      }
-                    />
-                    <div className="text-sm text-gray-500 mt-1">
-                      📍 Standort anzeigen
-                    </div>
-                  </div>
-                )}
+              {msg.type === "location" && msg.latitude && msg.longitude && (
+                <div className="location-message">
+                  <img
+                    src={`https://tile.openstreetmap.org/15/${Math.floor(
+                      ((msg.longitude + 180) / 360) * Math.pow(2, 15)
+                    )}/${Math.floor(
+                      ((1 -
+                        Math.log(
+                          Math.tan((msg.latitude * Math.PI) / 180) +
+                            1 / Math.cos((msg.latitude * Math.PI) / 180)
+                        ) /
+                          Math.PI) /
+                        2) *
+                        Math.pow(2, 15)
+                    )}.png`}
+                    alt="Standort"
+                    className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity w-[400px] h-[200px] object-cover"
+                    onClick={() =>
+                      window.open(
+                        `https://www.google.com/maps?q=${msg.latitude},${msg.longitude}`,
+                        "_blank"
+                      )
+                    }
+                  />
+                </div>
+              )}
 
               {/* Bildnachricht */}
               {msg.fileUrl && (
