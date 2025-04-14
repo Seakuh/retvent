@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Group, Message } from "../../utils";
 import { ChatHeader } from "./ChatHeader";
+import { useChat } from "./chatProvider";
 import { ChatWindow } from "./ChatWindow";
 import "./GroupChat.css";
 import { getGroup, getGroupChat, sendMessage } from "./service";
-
 export const GroupChat: React.FC = () => {
   const { groupId } = useParams();
   const navigate = useNavigate();
+  const { setCurrentGroup, setCurrentEvent } = useChat();
   const [group, setGroup] = useState<Group | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,6 +24,8 @@ export const GroupChat: React.FC = () => {
         ]);
         setGroup(groupData);
         setMessages(messagesData);
+        setCurrentGroup(groupData);
+        setCurrentEvent(groupData.eventId!);
       } catch (error) {
         console.error("Error loading data:", error);
         // Could add an error state here

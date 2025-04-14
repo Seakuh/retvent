@@ -26,11 +26,11 @@ export const categoriesToFilter = [
 ];
 
 export const groupTypesWithEmoji = [
-  { name: "helper", emoji: "👥" },
-  { name: "driver", emoji: "🚗" },
-  { name: "artist", emoji: "🎨" },
-  { name: "sleep", emoji: "💤" },
-  { name: "lost-found", emoji: "🔍" },
+  { name: "Helper", emoji: "👥" },
+  { name: "Driver", emoji: "🚗" },
+  { name: "Artist", emoji: "🎨" },
+  { name: "Sleep", emoji: "💤" },
+  { name: "Lost-Found", emoji: "🔍" },
 ];
 
 export interface SendMessageDto {

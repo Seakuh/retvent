@@ -37,42 +37,42 @@ export const EventGroups = ({ event }: { event: Event }) => {
       <ul className="event-groups-community-list">
         <li
           className="event-groups-community-item"
-          onClick={() => createOrJoinGroup("helper")}
+          onClick={() => createOrJoinGroup("Helper")}
         >
           <HeartHandshake size={20} />
           <h3>Helper</h3>
         </li>
         <li
           className="event-groups-community-item"
-          onClick={() => createOrJoinGroup("driver")}
+          onClick={() => createOrJoinGroup("Driver")}
         >
           <Car size={20} />
           <h3>Driver</h3>
         </li>
         <li
           className="event-groups-community-item"
-          onClick={() => createOrJoinGroup("artist")}
+          onClick={() => createOrJoinGroup("Artist")}
         >
           <Palette size={20} />
           <h3>Artist</h3>
         </li>
         <li
           className="event-groups-community-item"
-          onClick={() => createOrJoinGroup("sleep")}
+          onClick={() => createOrJoinGroup("Sleep")}
         >
           <Bed size={20} />
           <h3>Sleep</h3>
         </li>
         <li
           className="event-groups-community-item"
-          onClick={() => createOrJoinGroup("lost-found")}
+          onClick={() => createOrJoinGroup("Lost-Found")}
         >
           <Shirt size={20} />
           <h3>Lost & Found</h3>
         </li>
         <li
           className="event-groups-community-item"
-          onClick={() => createOrJoinGroup("other")}
+          onClick={() => createOrJoinGroup("Other")}
         >
           <Plus size={20} />
           <h3>Create</h3>
