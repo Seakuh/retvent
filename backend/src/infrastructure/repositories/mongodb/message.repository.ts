@@ -9,6 +9,7 @@ export class MongoMessageRepository implements IMessageRepository {
   constructor(@InjectModel('Message') private messageModel: Model<Message>) {}
 
   async create(message: Message): Promise<Message> {
+    console.log('################message', message);
     const newMessage = new this.messageModel(message);
     return newMessage.save();
   }

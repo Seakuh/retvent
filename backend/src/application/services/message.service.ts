@@ -20,12 +20,18 @@ export class MessageService {
     senderId: string,
     content: string,
     fileUrl: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    type?: string | null,
   ) {
     const msg = await this.messageRepository.create({
       groupId,
       senderId,
       content,
       fileUrl: fileUrl,
+      latitude: latitude || null,
+      longitude: longitude || null,
+      type: type || null,
     });
     return msg;
   }
@@ -35,7 +41,17 @@ export class MessageService {
       const fileUrl = await this.imageService.uploadImage(dto.file);
       dto.fileUrl = fileUrl;
     }
-    console.log('################fileUrl', dto.fileUrl);
+    if (dto.latitude && dto.longitude) {
+      return this.create(
+        dto.groupId,
+        userId,
+        dto.content || '',
+        dto.fileUrl || '',
+        dto.latitude,
+        dto.longitude,
+        dto.type,
+      );
+    }
     return this.create(
       dto.groupId,
       userId,

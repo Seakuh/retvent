@@ -7,4 +7,6 @@ export class Message implements IMessage {
   type?: string;
   createdAt?: Date;
   fileUrl?: string;
+  latitude?: number;
+  longitude?: number;
 }

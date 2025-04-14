@@ -5,4 +5,6 @@ export interface IMessage {
   type?: string;
   createdAt?: Date;
   fileUrl?: string;
+  latitude?: number;
+  longitude?: number;
 }

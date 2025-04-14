@@ -22,6 +22,7 @@ export class MessageController {
   @Post()
   @UseGuards(GroupGuard)
   async sendMessage(@Req() req, @Body() dto: SendMessageDto) {
+    console.log('################dto', dto);
     return this.messageService.sendMessage(req.user.id, dto);
   }
 

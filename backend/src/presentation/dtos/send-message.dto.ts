@@ -3,4 +3,7 @@ export class SendMessageDto {
   content?: string;
   file?: Express.Multer.File;
   fileUrl?: string;
+  latitude?: number;
+  longitude?: number;
+  type?: string;
 }
