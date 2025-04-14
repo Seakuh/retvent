@@ -19,13 +19,20 @@ export class MongoGroupRepository implements IGroupRepository {
     return this.groupModel.findByIdAndDelete(id);
   }
 
-  async createGroup(userId: string, group: Partial<Group>): Promise<Group> {
+  findByGroupName(name: string): Promise<Group | null> {
+    return this.groupModel.findOne({ name });
+  }
+
+  async createGroup(
+    userId: string | null,
+    group: Partial<Group>,
+  ): Promise<Group> {
     const groupToSave = {
       name: group.name,
       description: group.description,
       isPublic: group.isPublic,
       memberIds: [userId],
-      creatorId: userId,
+      creatorId: userId || null,
       eventId: group.eventId,
       imageUrl: group.imageUrl,
       createdAt: new Date(),
@@ -42,6 +49,16 @@ export class MongoGroupRepository implements IGroupRepository {
     console.log(group);
     const newGroup = new this.groupModel(group);
     return newGroup.save();
+  }
+
+  joinOrCreateGroup(groupId: string, userId: string): Promise<Group | null> {
+    return this.groupModel.findOneAndUpdate(
+      { _id: groupId },
+      {
+        $push: { memberIds: userId },
+      },
+      { new: true },
+    );
   }
 
   findByInviteToken(token: string): Promise<Group | null> {

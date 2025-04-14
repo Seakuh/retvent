@@ -34,6 +34,17 @@ export class GroupService {
     return this.groupRepository.update(groupId, group);
   }
 
+  async createOrJoinGroup(userId: string, dto: CreateGroupDto) {
+    if (userId) {
+      const group = await this.groupRepository.findByGroupName(dto.name);
+      if (group) {
+        return this.addMemberToGroup(group.id, userId);
+      }
+      return this.createGroup(userId, dto);
+    }
+    return this.createGroup(null, dto);
+  }
+
   async createGroupWithEvent(userId: string, dto: CreateGroupDto) {
     const inviteToken = uuidv4();
     console.log(dto, userId);

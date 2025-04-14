@@ -34,6 +34,11 @@ export class GroupController {
     return this.groupService.createGroupWithEvent(req.user.id, dto);
   }
 
+  @Post('/create-or-join')
+  createOrJoinGroup(@Body() dto: CreateGroupDto) {
+    return this.groupService.createOrJoinGroup(null, dto);
+  }
+
   @Post('/:groupId/members')
   @UseGuards(GroupGuard)
   addMemberToGroup(@Req() req, @Param('groupId') groupId: string) {

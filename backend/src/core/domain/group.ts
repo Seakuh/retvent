@@ -3,7 +3,7 @@ export class Group {
   name?: string;
   description?: string;
   memberIds: string[];
-  creatorId: string;
+  creatorId?: string;
   eventId?: string;
   imageUrl?: string;
   inviteToken?: string;

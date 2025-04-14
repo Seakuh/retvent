@@ -7,7 +7,7 @@ export const GroupSchema = new Schema({
   eventId: { type: String, required: true },
   isPublic: { type: Boolean, required: true },
   memberIds: [{ type: String }],
-  creatorId: { type: String, required: true },
+  creatorId: { type: String, required: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   imageUrl: { type: String },

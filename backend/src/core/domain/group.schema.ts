@@ -4,7 +4,7 @@ export interface IGroup extends Document {
   name?: string;
   description?: string;
   memberIds?: string[];
-  creatorId: string;
+  creatorId?: string;
   eventId?: string;
   imageUrl?: string;
   isPublic?: boolean;
@@ -18,7 +18,7 @@ const GroupSchema = new Schema<IGroup>(
     name: { type: String },
     description: { type: String },
     memberIds: [{ type: String }],
-    creatorId: { type: String, required: true },
+    creatorId: { type: String, required: false },
     eventId: { type: String },
     imageUrl: { type: String },
     isPublic: { type: Boolean },

@@ -26,7 +26,7 @@ export class MessageController {
     return this.messageService.sendMessage(req.user.id, dto);
   }
 
-  @Get(':groupId')
+  @Get('/guard/:groupId')
   @UseGuards(GroupGuard)
   async getMessagesWithGuard(@Req() req, @Param('groupId') groupId: string) {
     console.log(req.user);
@@ -39,5 +39,10 @@ export class MessageController {
     }
 
     return this.messageService.findByGroup(req.user.id, groupId);
+  }
+
+  @Get(':groupId')
+  async getMessages(@Param('groupId') groupId: string) {
+    return this.messageService.findByPublicGroup(groupId);
   }
 }

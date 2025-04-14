@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { MongoMessageRepository } from 'src/infrastructure/repositories/mongodb/message.repository';
 import { SendMessageDto } from 'src/presentation/dtos/send-message.dto';
 import { GroupService } from './group.service';
@@ -37,6 +41,13 @@ export class MessageService {
 
   async findByGroupAndSender(groupId: string, senderId: string) {
     return this.messageRepository.findByGroupIdAndSenderId(groupId, senderId);
+  }
+
+  async findByPublicGroup(groupId: string, limit = 50) {
+    const group = await this.groupService.getGroupById(groupId);
+    if (!group) throw new NotFoundException('Group not found');
+    if (!group.isPublic) throw new ForbiddenException('Access denied');
+    return this.messageRepository.findByGroupId(groupId, limit);
   }
 
   async findByGroupAndSenderAndContent(
