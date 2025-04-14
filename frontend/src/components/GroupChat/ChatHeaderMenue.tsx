@@ -1,53 +1,37 @@
-import { Calendar, LogOut, Settings, UserPlus } from "lucide-react";
+import { Calendar, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./ChatHeaderMenue.css";
 import { useChat } from "./chatProvider";
 import { leaveGroup } from "./service";
 export const ChatHeaderMenu = () => {
   const { currentGroupId, currentEventId } = useChat();
-  console.log("currentGroupId", currentGroupId);
-  console.log("currentEventId", currentEventId);
   const navigate = useNavigate();
 
-  const handleGroupSettings = () => {
-    console.log("Group Settings");
-  };
-
-  const handleAddMember = () => {
-    console.log("Add Member");
-  };
-
-  const handleSearch = () => {
-    console.log("Search");
-  };
+  const handleGroupSettings = () => {};
 
   const handleViewEvent = () => {
-    console.log("View Event");
     navigate(`/event/${currentEventId}`);
   };
 
   const handleLeaveGroup = () => {
-    console.log("Leave Group");
-    leaveGroup(currentGroupId!);
-    navigate(-1);
-  };
-
-  const handleDeleteGroup = () => {
-    console.log("Delete Group");
+    if (currentGroupId) {
+      leaveGroup(currentGroupId);
+      navigate(-1);
+    }
   };
 
   return (
     <div className="menu-container">
       <div className="menu-items">
-        <button className="menu-item" onClick={handleGroupSettings}>
+        {/* <button className="menu-item" onClick={handleGroupSettings}>
           <Settings />
           <span>Group Settings</span>
-        </button>
+        </button> */}
 
-        <button className="menu-item" onClick={handleAddMember}>
+        {/* <button className="menu-item" onClick={handleAddMember}>
           <UserPlus />
           <span>Add Member</span>
-        </button>
+        </button> */}
         {/* 
         <button className="menu-item" onClick={handleSearch}>
           <Search />

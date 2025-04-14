@@ -40,7 +40,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         [groupId]: groupMessages,
       }));
     } catch (error) {
-      console.error("Fehler beim Laden der Nachrichten:", error);
+      console.error("Error loading messages:", error);
     }
   };
 
@@ -64,6 +64,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const setCurrentGroup = (groupId: string) => {
+    console.log("setCurrentGroup", groupId);
     setCurrentGroupId(groupId);
     loadMessages(groupId);
   };

@@ -23,7 +23,7 @@ const Dialog: React.FC<DialogProps> = ({
   loading,
   groupId,
 }) => {
-  const { user, loggedIn, setLoggedIn } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const { currentGroupId } = useChat();
   const userId = user?.id;
   const [input, setInput] = React.useState("");
@@ -46,10 +46,6 @@ const Dialog: React.FC<DialogProps> = ({
     } else if (e.key === "Enter" && e.shiftKey) {
       e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`; // Dynamische Größe
     }
-  };
-
-  const handleImageUpload = () => {
-    console.log("Image upload");
   };
 
   const handleSendMessage = async () => {
@@ -75,13 +71,11 @@ const Dialog: React.FC<DialogProps> = ({
   const handleSendLocation = async () => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const { latitude, longitude } = position.coords;
-      console.log(latitude, longitude);
-      await onSend("", null, latitude, longitude);
+      await onSend("", undefined, latitude, longitude);
     });
   };
 
   const handleSendImage = async () => {
-    console.log("Send Image");
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/*";
@@ -165,7 +159,7 @@ const Dialog: React.FC<DialogProps> = ({
                         Math.pow(2, 15)
                     )}.png`}
                     alt="Standort"
-                    className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity w-[400px] h-[200px] object-cover"
+                    className="dialog-map-message rounded-lg cursor-pointer hover:opacity-90 transition-opacity w-[400px] h-[200px] object-cover"
                     onClick={() =>
                       window.open(
                         `https://www.google.com/maps?q=${msg.latitude},${msg.longitude}`,

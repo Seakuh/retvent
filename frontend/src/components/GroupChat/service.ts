@@ -1,4 +1,4 @@
-import { API_URL, SendMessageDto } from "../../utils";
+import { API_URL, Group, SendMessageDto } from "../../utils";
 
 export const getGroups = async () => {
   const token = localStorage.getItem("access_token");
@@ -82,12 +82,12 @@ const addMember = async (groupId: string, userId: string) => {
 //   return this.groupService.leaveGroup(req.user.id, groupId);
 // }
 
-export const leaveGroup = async (groupId: string) => {
+export const leaveGroup = async (group: Group) => {
   const token = localStorage.getItem("access_token");
-  console.log("groupId", groupId);
+  console.log("groupId", group._id);
   console.log("token", token);
 
-  const response = await fetch(`${API_URL}groups/leave/${groupId}`, {
+  const response = await fetch(`${API_URL}groups/leave/${group._id}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

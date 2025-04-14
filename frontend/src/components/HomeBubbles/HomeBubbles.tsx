@@ -24,7 +24,7 @@ const BUBBLES: Bubble[] = [
   // { id: "liked", title: "Likes", route: "/liked", icon: LucideHeart },
   {
     id: "my-groups",
-    title: "My Chats",
+    title: "Chats",
     route: "/my-groups",
     icon: MessageSquareIcon,
   },
