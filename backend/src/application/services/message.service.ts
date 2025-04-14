@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { MongoMessageRepository } from 'src/infrastructure/repositories/mongodb/message.repository';
+import { ImageService } from 'src/infrastructure/services/image.service';
 import { SendMessageDto } from 'src/presentation/dtos/send-message.dto';
 import { GroupService } from './group.service';
 @Injectable()
@@ -11,21 +12,36 @@ export class MessageService {
   constructor(
     private readonly messageRepository: MongoMessageRepository,
     private readonly groupService: GroupService,
+    private readonly imageService: ImageService,
   ) {}
 
-  async create(groupId: string, senderId: string, content: string) {
+  async create(
+    groupId: string,
+    senderId: string,
+    content: string,
+    fileUrl: string,
+  ) {
     const msg = await this.messageRepository.create({
       groupId,
       senderId,
       content,
+      fileUrl: fileUrl,
     });
     return msg;
   }
 
   async sendMessage(userId: string, dto: SendMessageDto) {
-    console.log(dto);
-    console.log(userId);
-    return this.create(dto.groupId, userId, dto.content);
+    if (dto.file) {
+      const fileUrl = await this.imageService.uploadImage(dto.file);
+      dto.fileUrl = fileUrl;
+    }
+    console.log('################fileUrl', dto.fileUrl);
+    return this.create(
+      dto.groupId,
+      userId,
+      dto.content || '',
+      dto.fileUrl || '',
+    );
   }
 
   async findByGroup(userId: string, groupId: string, limit = 50) {

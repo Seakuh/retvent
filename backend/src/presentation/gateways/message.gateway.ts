@@ -57,7 +57,12 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayInit {
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
     @MessageBody()
-    payload: { groupId: string; senderId: string; content: string },
+    payload: {
+      groupId: string;
+      senderId: string;
+      content: string;
+      fileUrl: string;
+    },
     @ConnectedSocket() client: Socket,
   ) {
     const userId = (client as any).user?.userId;
@@ -75,6 +80,7 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayInit {
       payload.groupId,
       userId,
       payload.content,
+      payload.fileUrl || '',
     );
     this.server.to(payload.groupId).emit('newMessage', msg);
   }
