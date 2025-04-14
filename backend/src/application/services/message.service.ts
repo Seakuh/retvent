@@ -37,6 +37,9 @@ export class MessageService {
   }
 
   async sendMessage(userId: string, dto: SendMessageDto) {
+    if (userId) {
+      await this.groupService.addMemberToGroup(dto.groupId, userId);
+    }
     if (dto.file) {
       const fileUrl = await this.imageService.uploadImage(dto.file);
       dto.fileUrl = fileUrl;
