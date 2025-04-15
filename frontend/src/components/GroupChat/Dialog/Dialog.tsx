@@ -1,6 +1,5 @@
 import { Image, MapPin, Send } from "lucide-react";
 import React, { useContext, useEffect } from "react";
-import { Socket } from "socket.io-client";
 import { UserContext } from "../../../contexts/UserContext";
 import { Message } from "../../../utils";
 import { useChat } from "../chatProvider";
@@ -27,7 +26,6 @@ const Dialog: React.FC<DialogProps> = ({
   const { currentGroupId } = useChat();
   const userId = user?.id;
   const [input, setInput] = React.useState("");
-  const [socket, setSocket] = React.useState<Socket | null>(null);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
@@ -54,15 +52,6 @@ const Dialog: React.FC<DialogProps> = ({
     // Reset textarea height after sending
     const textarea = document.querySelector("textarea");
     if (textarea) textarea.style.height = "auto";
-
-    if (socket) {
-      // Nachricht über WebSocket senden
-      socket.emit("sendMessage", {
-        groupId: groupId,
-        senderId: userId,
-        content: input,
-      });
-    }
 
     await onSend(input);
     setInput("");
