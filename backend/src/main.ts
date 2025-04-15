@@ -60,6 +60,17 @@ async function bootstrap() {
     }
   });
 
+  app.use((req, res, next) => {
+    const originalSet = res.setHeader;
+    res.setHeader = function (key, value) {
+      if (key.toLowerCase() === 'access-control-allow-credentials') {
+        console.log('🚨 Double Header?', value);
+      }
+      return originalSet.call(this, key, value);
+    };
+    next();
+  });
+
   const port = process.env.PORT || 4000;
 
   await app.listen(port, '0.0.0.0');

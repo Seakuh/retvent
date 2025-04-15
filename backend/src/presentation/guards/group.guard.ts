@@ -1,17 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { OptionalJwtAuthGuard } from './jwt-optional-auth.guard';
 
 @Injectable()
 export class GroupGuard extends OptionalJwtAuthGuard implements CanActivate {
-  constructor(
-    private jwtService: JwtService,
-    private configService: ConfigService,
-  ) {
-    super();
-  }
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
