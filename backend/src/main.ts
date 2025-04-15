@@ -31,6 +31,7 @@ async function bootstrap() {
       'https://www.event-scanner.com',
       'https://api.event-scanner.com',
       'https://api.avanti-kollektiv.com',
+      'https://vartakt.com',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

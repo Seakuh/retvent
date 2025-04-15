@@ -10,7 +10,6 @@ import {
 import { GroupService } from 'src/application/services/group.service';
 import { CreateGroupDto } from '../dtos/create-group.dto';
 import { GroupGuard } from '../guards/group.guard';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 @Controller('groups')
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
@@ -58,13 +57,13 @@ export class GroupController {
   }
 
   @Get('/:groupId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GroupGuard)
   getGroup(@Req() req, @Param('groupId') groupId: string) {
     return this.groupService.getGroupById(groupId);
   }
 
   @Get('items/:groupId/')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GroupGuard)
   getGroupWithLatestMessage(@Req() req, @Param('groupId') groupId: string) {
     return this.groupService.getGroupWithLatestMessage(req.user.id, groupId);
   }
