@@ -18,10 +18,6 @@ export const GroupChatPage = () => {
     fetchGroups();
   }, []);
 
-  const handleBack = () => {
-    navigate("/");
-  };
-
   return (
     <div className="group-chat-page">
       <ChatHeader
@@ -32,16 +28,18 @@ export const GroupChatPage = () => {
           memberIds: [],
         }}
       />
-      {groups.length === 0 ? (
-        <div className="no-groups">
+      <div className="group-chat-page-content">
+        {groups.length === 0 ? (
           <div className="no-groups">
-            <MessageCircleDashed size={100} />
-            You have not joined any groups yet.
+            <div className="no-groups">
+              <MessageCircleDashed size={100} />
+              You have not joined any groups yet.
+            </div>
           </div>
-        </div>
-      ) : (
-        groups.map((group) => <GroupListItem key={group.id} group={group} />)
-      )}
+        ) : (
+          groups.map((group) => <GroupListItem key={group.id} group={group} />)
+        )}
+      </div>
     </div>
   );
 };

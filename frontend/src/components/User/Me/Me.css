@@ -1,5 +1,7 @@
 .me-container {
   min-height: 100vh;
+  max-width: 80rem;
+  margin: 0 auto;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
