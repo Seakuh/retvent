@@ -72,7 +72,11 @@ export class FeedService {
     // Sortieren nach profileId alphabetisch (optional)
     return Promise.all(
       Object.entries(grouped)
-        .sort(([a], [b]) => a.localeCompare(b))
+        .sort((a, b) => {
+          const latestA = a[1][0]?.createdAt || '';
+          const latestB = b[1][0]?.createdAt || '';
+          return latestB.localeCompare(latestA);
+        })
         .map(async ([profileId, feedItems]): Promise<FeedResponse> => {
           const feedProfile =
             await this.profileService.getEventProfile(profileId);
