@@ -17,6 +17,5 @@ export const EventHero: React.FC<EventHeroProps> = ({
       alt={title}
       className="event-hero-image"
     />
-    <div className="event-hero-overlay">{/* <h1>{title}</h1> */}</div>
   </div>
 );
