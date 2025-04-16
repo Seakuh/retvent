@@ -1,0 +1,70 @@
+.profile-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.profile-card-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: black; /* oder dein Hintergrund */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile-card-border {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(315deg,
+                rgba(var(--color-neon-blue-rgb), 0.8),
+                rgba(var(--color-neon-purple-rgb), 0.8));
+    animation: spin 4s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+.profile-card-wrapper {
+    width: 5rem;
+    height: 5rem; /* quadratisch für perfekten Kreis */
+    padding: 2px;
+    border-radius: 50%;
+    background: linear-gradient(315deg,
+                rgba(var(--color-neon-blue-rgb), 0.8),
+                rgba(var(--color-neon-purple-rgb), 0.8));
+    animation: spin 4s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.profile-card-username {
+  font-size: 1rem;
+  color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 4rem;
+  max-width: 4rem;
+}

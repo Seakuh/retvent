@@ -16,6 +16,7 @@ import { CityBar } from "./components/CityBar/CityBar";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
+import { ProfileFeed } from "./components/Feed/ProfileFeed";
 import SearchModal from "./components/SearchModal/SearchModal";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
@@ -399,9 +400,8 @@ function LandingPage() {
               category={category}
               onCategoryChange={handleCategoryChange}
               onViewModeChange={handleViewChange}
-              // onDateChange={handleDateChange}
-              // onShowDateFilter={setShowDateFilter}
             />
+            <ProfileFeed />
           </div>
           {loading ? (
             <div className="search-loading">
