@@ -47,11 +47,12 @@ export const FeedModal = ({
       prev > 0 ? prev - 1 : feedItem.feedItems!.length - 1
     );
   };
-
   const handleNext = () => {
-    setCurrentImageIndex((prev) =>
-      prev < feedItem.feedItems!.length - 1 ? prev + 1 : 0
-    );
+    if (currentImageIndex < feedItem.feedItems!.length - 1) {
+      setCurrentImageIndex(currentImageIndex + 1);
+    } else {
+      setShowFeedModal(false);
+    }
   };
 
   const handlers = useSwipeable({

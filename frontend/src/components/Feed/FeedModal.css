@@ -14,6 +14,7 @@
 
 .feed-modal-content {
   position: relative;
+  cursor: default;
   width: 100%;
   max-width: 80rem;
   height: 100%;
@@ -38,7 +39,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 1rem;
   top: 2.5rem;
   left: 1rem;
   z-index: 100000;
@@ -94,6 +95,7 @@
 
 .feed-modal-image {
   cursor: pointer;
+  max-height: 80vh;
   object-fit: contain;
   margin: 0 auto;
   border-radius: 1rem;
