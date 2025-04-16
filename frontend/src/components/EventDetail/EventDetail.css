@@ -92,7 +92,6 @@
      ============================================================= */
   .event-hero {
     width: 100%;
-    height: 60vh;
     margin-top: 1rem;
     overflow: hidden;
     cursor: pointer;
@@ -100,7 +99,8 @@
   }
   
   .event-hero-image {
-    max-width: 935px;
+    width: 935px;
+    height: auto;
     margin: 0 auto;
     border-radius: 1rem;
     height: 100%;
