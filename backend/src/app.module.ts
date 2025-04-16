@@ -6,6 +6,7 @@ import * as crypto from 'crypto';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import { CommentController } from './presentation/controllers/comment.controller';
 import { EventController } from './presentation/controllers/event.controller';
+import { FeedController } from './presentation/controllers/feed.controller';
 import { GroovecastController } from './presentation/controllers/groovecast.controller';
 import { GroupController } from './presentation/controllers/group.controller';
 import { MessageController } from './presentation/controllers/message.controller';
@@ -29,6 +30,7 @@ const MONGODB_URI = 'mongodb://localhost:27017';
     SearchController,
     MessageController,
     GroupController,
+    FeedController,
   ],
 })
 export class AppModule {}

@@ -33,7 +33,7 @@ export class ProfileController {
 
   @Get()
   async getAllProfiles(
-    @Query('limit') limit: number = 10,
+    @Query('limit') limit: number = 20,
     @Query('offset') offset: number = 0,
   ): Promise<Profile[]> {
     console.log('getAllProfiles', limit, offset);

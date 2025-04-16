@@ -1,5 +1,6 @@
 export { MongoCommentRepository } from './comment.repository';
 export { MongoEventRepository } from './event.repository';
+export { MongoFeedRepository } from './feed.repository';
 export { MongoGrooveCastRepository } from './groovecast.repository';
 export { MongoGroupRepository } from './group.repository';
 export { MongoLocationRepository } from './location.repository';

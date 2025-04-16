@@ -27,6 +27,14 @@ export class MongoProfileRepository implements IProfileRepository {
     );
   }
 
+  getProfileFeed(
+    id: string,
+    limit: number,
+    offset: number,
+  ): Profile[] | PromiseLike<Profile[]> {
+    throw new Error('Method not implemented.');
+  }
+
   updateProfileEmbedding(id: any, embedding: number[]) {
     return this.profileModel.findByIdAndUpdate(
       id,
