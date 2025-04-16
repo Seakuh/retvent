@@ -22,7 +22,6 @@ export const FeedModal = ({
   const navigate = useNavigate();
   const startProgress = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
-
     setProgress(0);
     intervalRef.current = setInterval(() => {
       setProgress((prev) => {

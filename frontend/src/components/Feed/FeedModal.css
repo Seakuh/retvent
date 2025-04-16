@@ -89,13 +89,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 100000;
-  border-radius: 1rem;
   cursor: pointer;
 }
 
 .feed-modal-image {
-  width: 60vh;
-  height: 60vh;
   cursor: pointer;
   object-fit: contain;
   margin: 0 auto;
@@ -169,8 +166,6 @@
   }
 
   .feed-modal-image {
-    width: 80vw;
-    height: 80vh;
     margin: auto;
     object-fit: contain;
   }
