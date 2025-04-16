@@ -35,48 +35,48 @@ export const EventGroups = ({ event }: { event: Event }) => {
       )}
       <h2>Chats</h2>
       <ul className="event-groups-community-list">
-        <li
+        <button
           className="event-groups-community-item"
           onClick={() => createOrJoinGroup("Helper")}
         >
           <HeartHandshake size={20} />
           <h3>Helper</h3>
-        </li>
-        <li
+        </button>
+        <button
           className="event-groups-community-item"
           onClick={() => createOrJoinGroup("Driver")}
         >
           <Car size={20} />
           <h3>Driver</h3>
-        </li>
-        <li
+        </button>
+        <button
           className="event-groups-community-item"
           onClick={() => createOrJoinGroup("Artist")}
         >
           <Palette size={20} />
           <h3>Artist</h3>
-        </li>
-        <li
+        </button>
+        <button
           className="event-groups-community-item"
           onClick={() => createOrJoinGroup("Sleep")}
         >
           <Bed size={20} />
           <h3>Sleep</h3>
-        </li>
-        <li
+        </button>
+        <button
           className="event-groups-community-item"
           onClick={() => createOrJoinGroup("Lost-Found")}
         >
           <Shirt size={20} />
           <h3>Lost & Found</h3>
-        </li>
-        <li
+        </button>
+        <button
           className="event-groups-community-item"
           onClick={() => createOrJoinGroup("Other")}
         >
           <Plus size={20} />
-          <h3>Create</h3>
-        </li>
+          <h3>Other</h3>
+        </button>
       </ul>
     </div>
   );

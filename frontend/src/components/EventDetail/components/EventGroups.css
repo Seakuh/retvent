@@ -30,6 +30,7 @@
 
 .event-groups-community-item {
   display: flex;
+  user-select: none;
   justify-content: space-evenly;
   gap: 1rem;
   cursor: pointer;
