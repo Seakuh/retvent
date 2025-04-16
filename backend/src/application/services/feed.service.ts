@@ -32,4 +32,9 @@ export class FeedService {
     const feed = await this.feedRepository.findByProfileId(id);
     return feed;
   }
+
+  async getProfileFeeds(profileIds: string[]): Promise<Feed[]> {
+    const feed = await this.feedRepository.findByProfileIds(profileIds);
+    return feed;
+  }
 }

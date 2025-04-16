@@ -19,4 +19,9 @@ export class FeedController {
   async getLatestAll(): Promise<Feed[]> {
     return this.feedService.getLatestAll();
   }
+
+  @Get('profile-feeds/:ids')
+  async getProfileFeeds(@Param('ids') ids: string[]): Promise<Feed[]> {
+    return this.feedService.getProfileFeeds(ids);
+  }
 }

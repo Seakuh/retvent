@@ -19,6 +19,12 @@ export class MongoFeedRepository implements IFeedRepository {
     return this.feedModel.find({ profileId }).sort({ createdAt: -1 });
   }
 
+  async findByProfileIds(profileIds: string[]): Promise<Feed[]> {
+    return this.feedModel.find({ profileId: { $in: profileIds } }).sort({
+      createdAt: -1,
+    });
+  }
+
   async findByEventId(eventId: string): Promise<Feed[]> {
     return this.feedModel.find({ eventId }).sort({ createdAt: -1 });
   }

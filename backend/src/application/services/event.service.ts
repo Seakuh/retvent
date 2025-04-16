@@ -361,6 +361,8 @@ export class EventService {
       const createdEvent = await this.eventRepository.create(eventData);
       await this.profileService.addCreatedEvent(userId, createdEvent.id);
       await this.userService.addUserPoints(userId, 20);
+
+      // Add feed item to feed
       await this.feedService.pushFeedItemFromEvent(createdEvent, 'event');
       return createdEvent;
     } catch (error) {
