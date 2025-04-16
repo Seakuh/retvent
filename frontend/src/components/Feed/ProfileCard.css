@@ -4,51 +4,52 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  margin-top: 1rem;
 }
+
+.profile-card-border {
+    position: relative;  /* Neu */
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+}
+
+/* Neue Klasse für den rotierenden Rahmen */
+.profile-card-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(315deg,
+                rgba(var(--color-neon-blue-rgb), 0.8),
+                rgba(var(--color-neon-purple-rgb), 0.8));
+    animation: spin 4s linear infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                 linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
 .profile-card-inner {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: black; /* oder dein Hintergrund */
+    background: black;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+}
   
-  .profile-card-border {
-    width: 6rem;
-    height: 6rem;
-    border-radius: 50%;
-    padding: 2px;
-    background: linear-gradient(315deg,
-                rgba(var(--color-neon-blue-rgb), 0.8),
-                rgba(var(--color-neon-purple-rgb), 0.8));
-    animation: spin 4s linear infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-.profile-card-wrapper {
-    width: 5rem;
-    height: 5rem; /* quadratisch für perfekten Kreis */
-    padding: 2px;
-    border-radius: 50%;
-    background: linear-gradient(315deg,
-                rgba(var(--color-neon-blue-rgb), 0.8),
-                rgba(var(--color-neon-purple-rgb), 0.8));
-    animation: spin 4s linear infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .profile-card-image {
+.profile-card-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
-  }
+}
   
 @keyframes spin {
   from {
