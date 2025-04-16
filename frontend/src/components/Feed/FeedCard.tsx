@@ -1,10 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { defaultProfileImage, FeedResponse } from "../../utils";
 import "./FeedCard.css";
 import { FeedModal } from "./FeedModal";
 export const FeedCard = ({ feed }: { feed: FeedResponse }) => {
-  const [showFeedModal, setShowFeedModal] = useState(false);
   console.log("###########FEEDCARD", feed);
+  const [showFeedModal, setShowFeedModal] = useState(false);
+  const [showNextFeed, setShowNextFeed] = useState(false);
+
+  useEffect(() => {
+    if (feed.feedItems?.length && feed.feedItems.length > 1) {
+      setShowNextFeed(true);
+    }
+  }, [feed.feedItems]);
+
+  const showNextFeedForUser = () => {
+    if (feed.feedItems?.length && feed.feedItems.length > 1) {
+      setShowFeedModal(true);
+    }
+  };
   return (
     <div className="profile-card-container">
       <div
@@ -29,6 +42,7 @@ export const FeedCard = ({ feed }: { feed: FeedResponse }) => {
           showFeedModal={showFeedModal}
           setShowFeedModal={setShowFeedModal}
           feedItem={feed}
+          showNextFeed={showNextFeedForUser}
         />
       )}
     </div>

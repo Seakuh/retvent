@@ -46,6 +46,7 @@ const Register: React.FC = () => {
           <input
             type="text"
             placeholder="Username"
+            name="username"
             value={formData.username}
             onChange={(e) =>
               setFormData({ ...formData, username: e.target.value })

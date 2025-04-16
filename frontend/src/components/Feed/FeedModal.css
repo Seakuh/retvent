@@ -15,6 +15,7 @@
 .feed-modal-content {
   position: relative;
   width: 100%;
+  max-width: 80rem;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -30,6 +31,24 @@
   left: 0;
   right: 0;
   z-index: 2;
+}
+
+.feed-modal-profile-container {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  top: 2.5rem;
+  left: 1rem;
+  z-index: 100000;
+  cursor: pointer;
+}
+
+.feed-modal-profile-image {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
 }
 
 .progress-bar-container {
@@ -62,12 +81,22 @@
 .progress-bar {
   height: 100%;
   background: white;
-  transition: width 0.1s linear;
+}
+
+.feed-modal-image-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100000;
+  border-radius: 1rem;
+  cursor: pointer;
 }
 
 .feed-modal-image {
   width: 60vh;
   height: 60vh;
+  cursor: pointer;
   object-fit: contain;
   margin: 0 auto;
   border-radius: 1rem;
@@ -105,12 +134,48 @@
 
 /* Mobile Styles */
 @media (max-width: 768px) {
+  .feed-modal-overlay {
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .feed-modal-content {
     max-width: 100%;
     max-height: 100%;
+    margin: 0 auto;
+  }
+
+  .feed-modal-profile-image {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .feed-modal-profile-container {
+    top: 2.5rem;
+    left: 1rem;
+  }
+
+  .feed-modal-image-container {
+    width: 80vw;
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .feed-modal-image {
+    width: 80vw;
+    height: 80vh;
+    margin: auto;
+    object-fit: contain;
   }
 
   .nav-button {
-    display: none; /* Navigation Buttons auf Mobile ausblenden */
+    z-index: 100000;
   }
 }
