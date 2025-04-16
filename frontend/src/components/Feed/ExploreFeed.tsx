@@ -22,7 +22,7 @@ export const ExploreFeed = () => {
         </div>
       ) : (
         <div>
-          <div className="section-title">Explore </div>
+          {/* <div className="section-title">Explore </div> */}
           <div className="explore-feed-container">
             {feeds.map((feed) => (
               <FeedCard key={feed.profileId} feed={feed} />
