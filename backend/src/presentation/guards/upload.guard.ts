@@ -25,7 +25,6 @@ export class UploadGuard implements CanActivate {
 
     try {
       const token = authHeader.split(' ')[1];
-      console.log('UploadGuard - Attempting to verify token');
 
       const secret =
         this.configService.get<string>('JWT_SECRET') ||
@@ -33,8 +32,6 @@ export class UploadGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: secret,
       });
-
-      console.log('UploadGuard - Token verified, payload:', payload);
 
       // Füge den dekodierten User zum Request hinzu
       request.user = {

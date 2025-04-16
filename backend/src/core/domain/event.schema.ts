@@ -81,7 +81,6 @@ EventSchema.index({ 'location.coordinates': '2dsphere' });
 
 // Pre-Hook für Debugging
 EventSchema.pre('save', function (next) {
-  console.log('Saving event:', this.toObject());
   next();
 });
 

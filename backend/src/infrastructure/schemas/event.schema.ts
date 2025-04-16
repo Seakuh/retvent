@@ -71,7 +71,6 @@ export const EventSchema = new Schema(
 );
 
 EventSchema.pre('save', function (next) {
-  console.log('Saving event:', this.toObject());
   next();
 });
 

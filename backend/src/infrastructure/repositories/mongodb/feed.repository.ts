@@ -9,22 +9,29 @@ export class MongoFeedRepository implements IFeedRepository {
   constructor(@InjectModel('Feed') private feedModel: Model<Feed>) {}
 
   async create(feed: Feed): Promise<Feed> {
-    return this.feedModel.create(feed);
+    console.log('#######################Feed created:', feed);
+    const newFeed = await this.feedModel.create(feed);
+    console.log('#######################New feed:', newFeed);
+    return newFeed;
   }
 
   async findByProfileId(profileId: string): Promise<Feed[]> {
-    return this.feedModel.find({ profileId });
+    return this.feedModel.find({ profileId }).sort({ createdAt: -1 });
   }
 
   async findByEventId(eventId: string): Promise<Feed[]> {
-    return this.feedModel.find({ eventId });
+    return this.feedModel.find({ eventId }).sort({ createdAt: -1 });
   }
 
   async findByGroupId(groupId: string): Promise<Feed[]> {
-    return this.feedModel.find({ groupId });
+    return this.feedModel.find({ groupId }).sort({ createdAt: -1 });
   }
 
   async findByUserId(userId: string): Promise<Feed[]> {
-    return this.feedModel.find({ userId });
+    return this.feedModel.find({ userId }).sort({ createdAt: -1 });
+  }
+
+  async findAll(): Promise<Feed[]> {
+    return this.feedModel.find().sort({ createdAt: -1 });
   }
 }

@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { FeedService } from 'src/application/services/feed.service';
-import { Profile } from 'src/core/domain/profile';
+import { Feed } from 'src/core/domain';
 
 @Controller('feed')
 export class FeedController {
@@ -11,7 +11,12 @@ export class FeedController {
     @Param('id') id: string,
     @Query('limit') limit: number = 20,
     @Query('offset') offset: number = 0,
-  ): Promise<Profile[]> {
+  ): Promise<Feed[]> {
     return this.feedService.getProfileFeed(id, limit, offset);
+  }
+
+  @Get('latest/all')
+  async getLatestAll(): Promise<Feed[]> {
+    return this.feedService.getLatestAll();
   }
 }

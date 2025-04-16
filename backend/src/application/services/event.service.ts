@@ -6,6 +6,7 @@ import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event, EventWithHost } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
 import { ImageService } from '../../infrastructure/services/image.service';
+import { FeedService } from './feed.service';
 import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 @Injectable()
@@ -17,6 +18,7 @@ export class EventService {
     private readonly geolocationService: GeolocationService,
     private readonly profileService: ProfileService,
     private readonly userService: UserService,
+    private readonly feedService: FeedService,
   ) {}
   getEventsByTag(tag: string) {
     return this.eventRepository.getEventsByTag(tag);
@@ -181,7 +183,10 @@ export class EventService {
         updatedAt: new Date(),
       };
 
-      return this.eventRepository.createEventFromFormData(eventWithImage);
+      const newEvent =
+        await this.eventRepository.createEventFromFormData(eventWithImage);
+      await this.feedService.pushFeedItemFromEvent(newEvent, 'event');
+      return newEvent;
     } catch (error) {
       throw new BadRequestException(`Failed to create event: ${error.message}`);
     }
@@ -248,6 +253,8 @@ export class EventService {
       };
 
       const createdEvent = await this.eventRepository.create(eventData);
+      console.log('#######################Created event:', createdEvent);
+      await this.feedService.pushFeedItemFromEvent(createdEvent, 'event');
       return createdEvent;
     } catch (error) {
       console.error('Failed to process event image upload:', error);
@@ -263,6 +270,7 @@ export class EventService {
     lon?: number,
     userId?: string,
   ): Promise<Event> {
+    console.info('[EventService] Processing new event (v2)');
     try {
       // 1. Upload image and get URL
       const uploadedImageUrl = await this.imageService.uploadImage(image);
@@ -299,6 +307,7 @@ export class EventService {
 
       const createdEvent = await this.eventRepository.create(eventData);
       await this.profileService.addCreatedEvent(userId, createdEvent.id);
+      await this.feedService.pushFeedItemFromEvent(createdEvent, 'event');
       return createdEvent;
     } catch (error) {
       console.error('Failed to process event image upload:', error);
@@ -314,6 +323,7 @@ export class EventService {
     lon?: number,
     userId?: string,
   ): Promise<Event> {
+    console.info('[EventService] Processing new event (v4)');
     try {
       // 1. Upload image and get URL
       const uploadedImageUrl = await this.imageService.uploadImage(image);
@@ -351,6 +361,7 @@ export class EventService {
       const createdEvent = await this.eventRepository.create(eventData);
       await this.profileService.addCreatedEvent(userId, createdEvent.id);
       await this.userService.addUserPoints(userId, 20);
+      await this.feedService.pushFeedItemFromEvent(createdEvent, 'event');
       return createdEvent;
     } catch (error) {
       console.error('Failed to process event image upload:', error);

@@ -273,11 +273,6 @@ export class MongoEventRepository implements IEventRepository {
 
   async create(eventData: Partial<Event>): Promise<Event> {
     try {
-      console.log(
-        'Creating event with data:',
-        JSON.stringify(eventData, null, 2),
-      );
-
       const eventDataWithLocation = {
         ...eventData,
         views: 0,
@@ -351,11 +346,6 @@ export class MongoEventRepository implements IEventRepository {
 
   async createEventFromFormData(eventData: Partial<Event>): Promise<Event> {
     try {
-      console.log(
-        'Creating event with data:',
-        JSON.stringify(eventData, null, 2),
-      );
-
       // Create new event document
       const event = new this.eventModel(eventData);
 
