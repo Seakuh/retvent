@@ -5,14 +5,17 @@ import {
   FeedResponse,
 } from 'src/presentation/dtos/feed-response.dto';
 import { MongoFeedRepository } from '../../infrastructure/repositories/mongodb';
+import { ProfileService } from './profile.service';
 
 @Injectable()
 export class FeedService {
-  constructor(private readonly feedRepository: MongoFeedRepository) {}
+  constructor(
+    private readonly feedRepository: MongoFeedRepository,
+    private readonly profileService: ProfileService,
+  ) {}
 
   async pushFeedItemFromEvent(event: Event, type: string): Promise<Feed> {
     const feed = await this.feedRepository.create({
-      userName: event.hostUsername || 'public',
       eventId: event.id,
       profileId: event.hostId,
       type,
@@ -21,9 +24,7 @@ export class FeedService {
       updatedAt: new Date(),
     });
 
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('📥 Feed created:', feed);
-    }
+    console.log('📥 Feed created:', feed);
 
     return feed;
   }
@@ -43,7 +44,7 @@ export class FeedService {
     return this.groupFeedsByProfile(feeds);
   }
 
-  private groupFeedsByProfile(feeds: Feed[]): FeedResponse[] {
+  private async groupFeedsByProfile(feeds: Feed[]): Promise<FeedResponse[]> {
     const grouped: Record<string, FeedItemResponse[]> = {};
 
     feeds.forEach((feed) => {
@@ -69,17 +70,19 @@ export class FeedService {
     });
 
     // Sortieren nach profileId alphabetisch (optional)
-    return Object.entries(grouped)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([profileId, feedItems]): FeedResponse => {
-        const firstFeed = feedItems[0]; // Nehmen wir als Quelle für den Namen
-
-        return {
-          profileId,
-          profileName: firstFeed.userName ?? 'Unknown',
-          profileImageUrl: firstFeed.feedImageUrl ?? '', // optional: falls Bild mitgegeben wird
-          feedItems,
-        };
-      });
+    return Promise.all(
+      Object.entries(grouped)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(async ([profileId, feedItems]): Promise<FeedResponse> => {
+          const feedProfile =
+            await this.profileService.getEventProfile(profileId);
+          return {
+            profileId,
+            profileName: feedProfile.username ?? 'Unknown',
+            profileImageUrl: feedProfile.profileImageUrl ?? '', // optional: falls Bild mitgegeben wird
+            feedItems,
+          };
+        }),
+    );
   }
 }
