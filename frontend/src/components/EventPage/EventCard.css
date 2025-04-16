@@ -35,7 +35,6 @@
   font-size: 1.3rem;
   font-weight: bold;
   color: white;
-  margin-bottom: 0.5rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -44,6 +43,15 @@
 .event-card-tags {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.event-card-description {
+  color: gray;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-right: 0.5rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .event-card-details {
@@ -128,19 +136,26 @@
 
 
 @media (max-width: 768px) {
+  .event-card-container {
+    width: 15rem;
+    height: 30rem;
+  }
+
   .event-card-details {
     margin-top: 0.01rem;
   }
 
   .event-card-image-container {
-    height: 100%;
+    height: 35rem;
   }
   .event-card-info-container {
-    height: 50%;
-    padding: 0.5rem;
+    height: 20rem;
   }
   .event-card-title {
     font-size: 1rem;
+  }
+  .event-card-description {
+    font-size: 0.9rem;
   }
   .event-card-details {
     font-size: 0.8rem;
