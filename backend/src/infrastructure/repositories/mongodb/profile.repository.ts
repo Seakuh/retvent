@@ -27,6 +27,14 @@ export class MongoProfileRepository implements IProfileRepository {
     );
   }
 
+  findAllLatest() {
+    return this.profileModel.find().sort({ createdAt: -1 }).exec();
+  }
+
+  findByIds(ids: string[]) {
+    return this.profileModel.find({ userId: { $in: ids } });
+  }
+
   getProfileFeed(
     id: string,
     limit: number,

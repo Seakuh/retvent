@@ -105,7 +105,6 @@ export class EventService {
   }
 
   async getEventsByIds(ids: string[]): Promise<Event[]> {
-    console.log('Getting events by ids:', ids);
     return this.eventRepository.getUserFavorites(ids);
   }
 

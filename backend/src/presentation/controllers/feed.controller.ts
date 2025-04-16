@@ -1,7 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { FeedService } from 'src/application/services/feed.service';
-import { Feed } from 'src/core/domain';
-
+import { FeedResponse } from '../dtos/feed-response.dto';
 @Controller('feed')
 export class FeedController {
   constructor(private readonly feedService: FeedService) {}
@@ -11,17 +10,18 @@ export class FeedController {
     @Param('id') id: string,
     @Query('limit') limit: number = 20,
     @Query('offset') offset: number = 0,
-  ): Promise<Feed[]> {
-    return this.feedService.getProfileFeed(id, limit, offset);
+  ): Promise<FeedResponse[]> {
+    return this.feedService.getProfileFeed(id);
   }
 
   @Get('latest/all')
-  async getLatestAll(): Promise<Feed[]> {
+  async getLatestAll(): Promise<FeedResponse[]> {
     return this.feedService.getLatestAll();
   }
 
   @Get('profile-feeds/:ids')
-  async getProfileFeeds(@Param('ids') ids: string[]): Promise<Feed[]> {
-    return this.feedService.getProfileFeeds(ids);
+  async getProfileFeeds(@Param('ids') ids: string[]): Promise<FeedResponse[]> {
+    console.log('+++++++++++++++ids', ids);
+    return this.feedService.getProfilesFeeds(ids);
   }
 }
