@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import { Feed } from "../../utils";
+import { FeedResponse } from "../../utils";
 import "./ExploreFeed.css";
 import { FeedCard } from "./FeedCard";
 import { getLatestFeedAll } from "./service";
 
 export const ExploreFeed = () => {
-  const [feeds, setFeeds] = useState<Feed[]>([]);
+  const [feeds, setFeeds] = useState<FeedResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    getLatestFeedAll().then((feeds) => {
-      setFeeds(feeds);
+    getLatestFeedAll().then((feedsResponse: FeedResponse[]) => {
+      setFeeds(feedsResponse || []);
       setIsLoading(false);
+      console.log("###########FEEDSFIIIIRSSTT", feeds);
     });
   }, []);
   return (
@@ -22,9 +23,9 @@ export const ExploreFeed = () => {
       ) : (
         <div>
           <div className="section-title">Explore </div>
-          <div className="Explore-feed-container">
+          <div className="explore-feed-container">
             {feeds.map((feed) => (
-              <FeedCard key={feed._id} feed={feed} />
+              <FeedCard key={feed.profileId} feed={feed} />
             ))}
           </div>
         </div>
