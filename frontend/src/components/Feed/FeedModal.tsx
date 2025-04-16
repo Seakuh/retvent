@@ -74,11 +74,11 @@ export const FeedModal = ({
           if (e.target === e.currentTarget) setShowFeedModal(false);
         }}
       >
-        <div className="progress-container">
+        <div className="feed-progress-container">
           {feedItem.feedItems!.map((_, idx) => (
-            <div key={idx} className="progress-bar-container ">
+            <div key={idx} className="feed-progress-bar-container ">
               <div
-                className="progress-bar"
+                className="feed-progress-bar"
                 style={{
                   width: `${
                     idx === currentImageIndex
