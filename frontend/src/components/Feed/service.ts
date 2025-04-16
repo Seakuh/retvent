@@ -11,3 +11,17 @@ export async function getProfileFeed() {
   const data = await response.json();
   return data;
 }
+
+export async function getLatestFeedAll() {
+  const response = await fetch(`${API_URL}feed/latest/all`);
+  console.log("##############RESPONSE", await response.json());
+  const data = await response.json();
+  return data;
+}
+
+export async function getLatestFeedByProfileId(profileId: string) {
+  const response = await fetch(`${API_URL}feed/latest/${profileId}`);
+  console.log("##############RESPONSE", await response.json());
+  const data = await response.json();
+  return data;
+}

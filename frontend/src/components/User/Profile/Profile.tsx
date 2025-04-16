@@ -10,6 +10,7 @@ import {
   type Profile as ProfileType,
 } from "../../../utils";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
+import { ActionComponent } from "./ActionComponent";
 import "./Profile.css";
 import { ProfileCommentList } from "./ProfileCommentList";
 import { ProfileHeader } from "./ProfileHeader";
@@ -22,6 +23,9 @@ export const Profile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<ProfileType | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [isFollowing, setIsFollowing] = useState(
+    JSON.parse(localStorage.getItem("following") || "[]").includes(userId || "")
+  );
   const [commentsCount, setCommentsCount] = useState(0);
   useEffect(() => {
     let isMounted = true;
@@ -157,6 +161,22 @@ export const Profile: React.FC = () => {
     return events.reduce((acc, event) => acc + (event.views || 0), 0);
   };
 
+  const handleFollow = () => {
+    const following = JSON.parse(localStorage.getItem("following") || "[]");
+    if (isFollowing) {
+      const newFollowing = following.filter((id: string) => id !== user._id);
+      localStorage.setItem("following", JSON.stringify(newFollowing));
+    } else {
+      following.push(user._id);
+      localStorage.setItem("following", JSON.stringify(following));
+    }
+    setIsFollowing(!isFollowing);
+  };
+
+  const handleMessage = () => {
+    console.log("Message");
+  };
+
   const ProfileMeta = () => {
     if (!user) return null;
     const userImageString = user.profileImageUrl || defaultProfileImage;
@@ -226,11 +246,11 @@ export const Profile: React.FC = () => {
                   viewsCount={countEventViews()}
                 />
               </div>
-              {/* <ActionComponent
-              isFollowingWIP={false}
-              onFollow={() => {}}
-              onMessage={() => {}}
-            /> */}
+              <ActionComponent
+                isFollowingWIP={isFollowing}
+                onFollow={handleFollow}
+                onMessage={handleMessage}
+              />
             </div>
           </div>
         </div>

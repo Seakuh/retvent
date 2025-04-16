@@ -16,7 +16,7 @@ import { CityBar } from "./components/CityBar/CityBar";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
-import { ProfileFeed } from "./components/Feed/ProfileFeed";
+import { ExploreFeed } from "./components/Feed/ExploreFeed";
 import SearchModal from "./components/SearchModal/SearchModal";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
@@ -401,7 +401,6 @@ function LandingPage() {
               onCategoryChange={handleCategoryChange}
               onViewModeChange={handleViewChange}
             />
-            <ProfileFeed />
           </div>
           {loading ? (
             <div className="search-loading">
@@ -421,6 +420,8 @@ function LandingPage() {
             <EventPage />
           ) : (
             <div>
+              <ExploreFeed />
+
               <h2 className="section-title">Popular</h2>
               <EventSection
                 events={events.sort((a, b) => (b.views || 0) - (a.views || 0))}

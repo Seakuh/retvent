@@ -1,5 +1,4 @@
-
-.profile-feed-container {
+.explore-feed-container {
   padding: 1rem;
   display: flex;
   flex-direction: row;
@@ -9,6 +8,6 @@
   -ms-overflow-style: none;
 }
 
-.profile-feed-container::-webkit-scrollbar {
+.explore-feed-container::-webkit-scrollbar {
   display: none;
 }
