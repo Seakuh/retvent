@@ -10,6 +10,9 @@ import { useFeed } from "./useFeed";
 export const ExploreFeed = () => {
   const [feeds, setFeeds] = useState<FeedResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAtStart, setIsAtStart] = useState(true);
+  const [isAtEnd, setIsAtEnd] = useState(false);
+
   const {
     setCurrentFeedItem,
     setFeedItems,
@@ -23,11 +26,25 @@ export const ExploreFeed = () => {
 
   const scrollContainer = useRef<HTMLDivElement>(null);
 
+  const checkScrollPosition = () => {
+    const el = scrollContainer.current;
+    if (!el) return;
+
+    setIsAtStart(el.scrollLeft === 0);
+    setIsAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 1);
+  };
+
   const scroll = (direction: "left" | "right") => {
-    if (scrollContainer.current) {
-      const scrollAmount = 300; // Anpassen nach Bedarf
-      scrollContainer.current.scrollLeft +=
-        direction === "left" ? -scrollAmount : scrollAmount;
+    const el = scrollContainer.current;
+    if (el) {
+      const scrollAmount = 300;
+      el.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+
+      // Timeout gibt dem scrollBy Zeit, damit checkScrollPosition danach richtig greift
+      setTimeout(checkScrollPosition, 100);
     }
   };
 
@@ -39,6 +56,16 @@ export const ExploreFeed = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const el = scrollContainer.current;
+    if (!el) return;
+
+    el.addEventListener("scroll", checkScrollPosition);
+    checkScrollPosition(); // initialer Check
+
+    return () => el.removeEventListener("scroll", checkScrollPosition);
+  }, [feedItems]);
+
   return (
     <div>
       {isLoading ? (
@@ -49,12 +76,14 @@ export const ExploreFeed = () => {
         </div>
       ) : (
         <div className="explore-feed-wrapper">
-          <button
-            className="scroll-button scroll-button-left"
-            onClick={() => scroll("left")}
-          >
-            <ChevronLeft />
-          </button>
+          {!isAtStart && (
+            <button
+              className="scroll-button scroll-button-left"
+              onClick={() => scroll("left")}
+            >
+              <ChevronLeft />
+            </button>
+          )}
 
           <div ref={scrollContainer} className="explore-feed-container">
             {feedItems.map((feed) => (
@@ -67,12 +96,14 @@ export const ExploreFeed = () => {
             ))}
           </div>
 
-          <button
-            className="scroll-button scroll-button-right"
-            onClick={() => scroll("right")}
-          >
-            <ChevronRight />
-          </button>
+          {!isAtEnd && (
+            <button
+              className="scroll-button scroll-button-right"
+              onClick={() => scroll("right")}
+            >
+              <ChevronRight />
+            </button>
+          )}
 
           {isFeedModalOpen && (
             <FeedModal
