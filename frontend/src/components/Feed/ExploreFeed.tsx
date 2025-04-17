@@ -8,7 +8,6 @@ import { getLatestFeedAll } from "./service";
 import { useFeed } from "./useFeed";
 
 export const ExploreFeed = () => {
-  const [feeds, setFeeds] = useState<FeedResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
@@ -17,11 +16,12 @@ export const ExploreFeed = () => {
     setCurrentFeedItem,
     setFeedItems,
     feedItems,
+    currentFeedItem,
     isFeedModalOpen,
     setIsFeedModalOpen,
-    currentImageIndex,
-    setCurrentImageIndex,
     showNextFeed,
+    setFeedItemIndex,
+    feedItemIndex,
   } = useFeed();
 
   const scrollContainer = useRef<HTMLDivElement>(null);
@@ -51,7 +51,6 @@ export const ExploreFeed = () => {
   useEffect(() => {
     getLatestFeedAll().then((feedsResponse: FeedResponse[]) => {
       setIsLoading(false);
-      setCurrentFeedItem(feedsResponse[0]);
       setFeedItems(feedsResponse);
     });
   }, []);
@@ -90,8 +89,8 @@ export const ExploreFeed = () => {
               <FeedCard
                 key={feed.profileId}
                 feed={feed}
-                isFeedModalOpen={isFeedModalOpen}
-                setIsFeedModalOpen={setIsFeedModalOpen}
+                setShowFeedModal={setIsFeedModalOpen}
+                setCurrentFeedItem={setCurrentFeedItem}
               />
             ))}
           </div>
@@ -107,11 +106,11 @@ export const ExploreFeed = () => {
 
           {isFeedModalOpen && (
             <FeedModal
-              feedItem={feeds[currentImageIndex]}
+              showFeedModal={isFeedModalOpen}
+              feedItem={currentFeedItem!}
               setShowFeedModal={setIsFeedModalOpen}
-              currentImageIndex={currentImageIndex}
-              setCurrentImageIndex={setCurrentImageIndex}
               showNextFeed={showNextFeed}
+              setFeedItemIndex={setFeedItemIndex}
             />
           )}
         </div>

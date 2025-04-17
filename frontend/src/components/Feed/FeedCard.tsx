@@ -1,28 +1,22 @@
-import { useEffect, useState } from "react";
-import { defaultProfileImage, FeedResponse } from "../../utils";
+import { defaultProfileImage, Feed, FeedResponse } from "../../utils";
 import "./FeedCard.css";
-import { FeedModal } from "./FeedModal";
-export const FeedCard = ({ feed }: { feed: FeedResponse }) => {
-  console.log("###########FEEDCARD", feed);
-  const [showFeedModal, setShowFeedModal] = useState(false);
-  const [showNextFeed, setShowNextFeed] = useState(false);
-
-  useEffect(() => {
-    if (feed.feedItems?.length && feed.feedItems.length > 1) {
-      setShowNextFeed(true);
-    }
-  }, [feed.feedItems]);
-
-  const showNextFeedForUser = () => {
-    if (feed.feedItems?.length && feed.feedItems.length > 1) {
-      setShowFeedModal(true);
-    }
-  };
+export const FeedCard = ({
+  feed,
+  setShowFeedModal,
+  setCurrentFeedItem,
+}: {
+  feed: FeedResponse;
+  setShowFeedModal: (showFeedModal: boolean) => void;
+  setCurrentFeedItem: (currentFeedItem: Feed) => void;
+}) => {
   return (
     <div className="profile-card-container">
       <div
         className="profile-card-border"
-        onClick={() => setShowFeedModal(true)}
+        onClick={() => {
+          setCurrentFeedItem(feed);
+          setShowFeedModal(true);
+        }}
       >
         <div className="profile-card-inner">
           <img
@@ -37,14 +31,6 @@ export const FeedCard = ({ feed }: { feed: FeedResponse }) => {
           {feed.profileName || "Profile"}
         </h3>
       </div>
-      {showFeedModal && (
-        <FeedModal
-          showFeedModal={showFeedModal}
-          setShowFeedModal={setShowFeedModal}
-          feedItem={feed}
-          showNextFeed={showNextFeedForUser}
-        />
-      )}
     </div>
   );
 };
