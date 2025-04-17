@@ -71,10 +71,10 @@ export const LikedEvents: React.FC = () => {
 
   return (
     <div className="liked-events-container">
-      <div className="your-next-events-container">
+      {/* <div className="your-next-events-container">
         <Heart color="white " size={30} />
         <h1 className="your-next-events-heading">Your next Events</h1>
-      </div>
+      </div> */}
       {/* <h1 className="section-title">❤️</h1> */}
       <EventGalleryII events={events} title="Liked Events" key={events[0].id} />
     </div>

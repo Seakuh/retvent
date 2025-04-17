@@ -13,18 +13,18 @@ export async function getProfileFeed() {
 }
 
 export async function getLatestFeedAll(): Promise<FeedResponse[]> {
-  if (localStorage.getItem("following") === null) {
-    const response = await fetch(`${API_URL}feed/latest/all`);
-    const data = await response.json();
-    return data;
-  } else {
-    const following = JSON.parse(localStorage.getItem("following") || "[]");
-    const response = await fetch(
-      `${API_URL}feed/profile-feeds/${following.join(",")}`
-    );
-    const data = await response.json();
-    return data;
-  }
+  const response = await fetch(`${API_URL}feed/latest/all`);
+  const data = await response.json();
+  return data;
+}
+
+export async function getLatestFeedByFollowing(): Promise<FeedResponse[]> {
+  const following = JSON.parse(localStorage.getItem("following") || "[]");
+  const response = await fetch(
+    `${API_URL}feed/byIds?ids=${following.join(",")}`
+  );
+  const data = await response.json();
+  return data;
 }
 
 export async function getLatestFeedByProfileId(profileId: string) {

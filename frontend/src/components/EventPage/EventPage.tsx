@@ -1,11 +1,11 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
-import { Event } from "../../utils";
-import { HomeBubbles } from "../HomeBubbles/HomeBubbles";
+import { Event, FeedResponse } from "../../utils";
+import { ExploreFeed } from "../Feed/ExploreFeed";
+import { getLatestFeedByFollowing } from "../Feed/service";
 import { LikedEvents } from "../LikedEvents/LikedEvents";
 import "./EventPage.css";
 import { fetchFavoriteEvents } from "./service";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export const EventPage = () => {
   const { location, favoriteEventIds } = useContext(UserContext);
@@ -14,41 +14,7 @@ export const EventPage = () => {
   const [selectedNearbyEvent, setSelectedNearbyEvent] = useState<Event | null>(
     null
   );
-  const [map, setMap] = useState<any>(null);
-  const [userLocation, setUserLocation] = useState<[number, number]>([
-    52.520008, 13.404954,
-  ]);
-
-  const loadNearbyEvents = useCallback(async (lat: number, lon: number) => {
-    try {
-      const response = await fetch(
-        `${API_URL}events/nearby?lat=${lat}&lon=${lon}&distance=${100}&limit=${100}`
-      );
-      if (!response.ok) throw new Error("Failed to fetch events");
-      const events: Event[] = await response.json();
-      setNearbyEvents(events);
-    } catch (error) {
-      console.error("Error loading events:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (location) {
-      loadNearbyEvents(location.latitude, location.longitude);
-    }
-  }, [location, loadNearbyEvents]);
-
-  const handleEventSelect = (event: Event) => {
-    setSelectedNearbyEvent(event);
-    const element = document.querySelector(`.card-${event.id}`);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      element.classList.add("hover-effect");
-      setTimeout(() => {
-        element.classList.remove("hover-effect");
-      }, 2000);
-    }
-  };
+  const [followedProfiles, setFollowedProfiles] = useState<FeedResponse[]>([]);
 
   useEffect(() => {
     const fetchFavorite = async () => {
@@ -56,34 +22,50 @@ export const EventPage = () => {
       setFavoriteEvents(favoriteEvents);
     };
     fetchFavorite();
-  }, [location]);
 
-  // useEffect(() => {
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       const { latitude, longitude } = position.coords;
-  //       setUserLocation([latitude, longitude]);
-  //       if (map) {
-  //         map.setView([latitude, longitude]);
-  //       }
-  //       loadNearbyEvents(latitude, longitude);
-  //     },
-  //     (error) => {
-  //       console.error("Geolocation error:", error);
-  //       const defaultLocation: [number, number] = [52.520008, 13.404954];
-  //       setUserLocation(defaultLocation);
-  //       loadNearbyEvents(defaultLocation[0], defaultLocation[1]);
-  //     }
-  //   );
-  // }, [map]);
+    const fetchFollowedProfiles = async () => {
+      const followedProfiles = await getLatestFeedByFollowing();
+      setFollowedProfiles(followedProfiles);
+    };
+    fetchFollowedProfiles();
+  }, []);
 
   return (
     <div>
-      <HomeBubbles />
+      <ExploreFeed feedItemsResponse={followedProfiles} />
+      {/* <HomeBubbles /> */}
       <div className="event-favorites-container">
         <LikedEvents />
       </div>
-      {/* <h1 className="section-title">Nearby</h1>
+    </div>
+  );
+};
+
+// const [map, setMap] = useState<any>(null);
+// const [userLocation, setUserLocation] = useState<[number, number]>([
+//   52.520008, 13.404954,
+// ]);
+
+// useEffect(() => {
+//   navigator.geolocation.getCurrentPosition(
+//     (position) => {
+//       const { latitude, longitude } = position.coords;
+//       setUserLocation([latitude, longitude]);
+//       if (map) {
+//         map.setView([latitude, longitude]);
+//       }
+//       loadNearbyEvents(latitude, longitude);
+//     },
+//     (error) => {
+//       console.error("Geolocation error:", error);
+//       const defaultLocation: [number, number] = [52.520008, 13.404954];
+//       setUserLocation(defaultLocation);
+//       loadNearbyEvents(defaultLocation[0], defaultLocation[1]);
+//     }
+//   );
+// }, [map]);
+
+/* <h1 className="section-title">Nearby</h1>
       <div className="nearby-section-container">
         <EventSection
           events={nearbyEvents}
@@ -91,8 +73,9 @@ export const EventPage = () => {
           onEventSelect={setSelectedNearbyEvent}
           className="nearby-section"
         />
-      </div> */}
-      {/* <div className="map-view-container">
+      </div> */
+
+/* <div className="map-view-container">
         <MapView
           events={nearbyEvents}
           selectedEvent={selectedNearbyEvent}
@@ -102,7 +85,35 @@ export const EventPage = () => {
           ]}
           onEventSelect={handleEventSelect}
         />
-      </div> */}
-    </div>
-  );
-};
+      </div> */
+
+// const handleEventSelect = (event: Event) => {
+//   setSelectedNearbyEvent(event);
+//   const element = document.querySelector(`.card-${event.id}`);
+//   if (element) {
+//     element.scrollIntoView({ behavior: "smooth" });
+//     element.classList.add("hover-effect");
+//     setTimeout(() => {
+//       element.classList.remove("hover-effect");
+//     }, 2000);
+//   }
+// };
+
+// const loadNearbyEvents = useCallback(async (lat: number, lon: number) => {
+//   try {
+//     const response = await fetch(
+//       `${API_URL}events/nearby?lat=${lat}&lon=${lon}&distance=${100}&limit=${100}`
+//     );
+//     if (!response.ok) throw new Error("Failed to fetch events");
+//     const events: Event[] = await response.json();
+//     setNearbyEvents(events);
+//   } catch (error) {
+//     console.error("Error loading events:", error);
+//   }
+// }, []);
+
+// useEffect(() => {
+//   if (location) {
+//     loadNearbyEvents(location.latitude, location.longitude);
+//   }
+// }, [location, loadNearbyEvents]);

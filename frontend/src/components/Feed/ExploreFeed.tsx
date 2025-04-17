@@ -4,11 +4,13 @@ import { FeedResponse } from "../../utils";
 import "./ExploreFeed.css";
 import { FeedCard } from "./FeedCard";
 import { FeedModal } from "./FeedModal";
-import { getLatestFeedAll } from "./service";
 import { useFeed } from "./useFeed";
 
-export const ExploreFeed = () => {
-  const [isLoading, setIsLoading] = useState(true);
+interface ExploreFeedProps {
+  feedItemsResponse: FeedResponse[];
+}
+
+export const ExploreFeed = ({ feedItemsResponse }: ExploreFeedProps) => {
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
 
@@ -19,9 +21,9 @@ export const ExploreFeed = () => {
     currentFeedItem,
     isFeedModalOpen,
     setIsFeedModalOpen,
-    setFeedItemIndex,
-    feedItemIndex,
   } = useFeed();
+
+  setFeedItems(feedItemsResponse);
 
   const scrollContainer = useRef<HTMLDivElement>(null);
 
@@ -46,13 +48,6 @@ export const ExploreFeed = () => {
       setTimeout(checkScrollPosition, 100);
     }
   };
-
-  useEffect(() => {
-    getLatestFeedAll().then((feedsResponse: FeedResponse[]) => {
-      setIsLoading(false);
-      setFeedItems(feedsResponse);
-    });
-  }, []);
 
   useEffect(() => {
     const el = scrollContainer.current;
@@ -85,54 +80,44 @@ export const ExploreFeed = () => {
   };
 
   return (
-    <div>
-      {isLoading ? (
-        <div className="loading container">
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-          </div>
-        </div>
-      ) : (
-        <div className="explore-feed-wrapper">
-          {!isAtStart && (
-            <button
-              className="scroll-button scroll-button-left"
-              onClick={() => scroll("left")}
-            >
-              <ChevronLeft />
-            </button>
-          )}
+    <div className="explore-feed-wrapper">
+      {!isAtStart && (
+        <button
+          className="scroll-button scroll-button-left"
+          onClick={() => scroll("left")}
+        >
+          <ChevronLeft />
+        </button>
+      )}
 
-          <div ref={scrollContainer} className="explore-feed-container">
-            {feedItems.map((feed) => (
-              <FeedCard
-                key={feed.profileId}
-                feed={feed}
-                setShowFeedModal={setIsFeedModalOpen}
-                setCurrentFeedItem={setCurrentFeedItem}
-              />
-            ))}
-          </div>
+      <div ref={scrollContainer} className="explore-feed-container">
+        {feedItems.map((feed) => (
+          <FeedCard
+            key={feed.profileId}
+            feed={feed}
+            setShowFeedModal={setIsFeedModalOpen}
+            setCurrentFeedItem={setCurrentFeedItem}
+          />
+        ))}
+      </div>
 
-          {!isAtEnd && (
-            <button
-              className="scroll-button scroll-button-right"
-              onClick={() => scroll("right")}
-            >
-              <ChevronRight />
-            </button>
-          )}
+      {!isAtEnd && (
+        <button
+          className="scroll-button scroll-button-right"
+          onClick={() => scroll("right")}
+        >
+          <ChevronRight />
+        </button>
+      )}
 
-          {isFeedModalOpen && (
-            <FeedModal
-              showFeedModal={isFeedModalOpen}
-              feedItem={currentFeedItem!}
-              setShowFeedModal={setIsFeedModalOpen}
-              showNextFeed={showNextFeed}
-              showPreviousFeed={showPreviousFeed}
-            />
-          )}
-        </div>
+      {isFeedModalOpen && (
+        <FeedModal
+          showFeedModal={isFeedModalOpen}
+          feedItem={currentFeedItem!}
+          setShowFeedModal={setIsFeedModalOpen}
+          showNextFeed={showNextFeed}
+          showPreviousFeed={showPreviousFeed}
+        />
       )}
     </div>
   );

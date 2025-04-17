@@ -17,6 +17,7 @@ import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
 import { ExploreFeed } from "./components/Feed/ExploreFeed";
+import { getLatestFeedAll } from "./components/Feed/service";
 import SearchModal from "./components/SearchModal/SearchModal";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
@@ -24,7 +25,7 @@ import { useLandingSearch } from "./LandinSearchContext";
 import { searchEvents } from "./service";
 import { ViewMode } from "./types/event";
 import { UploadModal } from "./UploadModal/UploadModal";
-import { Event } from "./utils";
+import { Event, FeedResponse } from "./utils";
 function LandingPage() {
   // Search State
   const { location, date, category, prompt, view, setSearchState } =
@@ -45,6 +46,11 @@ function LandingPage() {
 
   // Navigation State
   const navigate = useNavigate();
+
+  // Feed State
+  const [feedItemsResponse, setFeedItemsResponse] = useState<FeedResponse[]>(
+    []
+  );
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -150,6 +156,12 @@ function LandingPage() {
       }
     };
 
+    const loadFeedItems = async () => {
+      const feedItemsResponse = await getLatestFeedAll();
+      setFeedItemsResponse(feedItemsResponse);
+    };
+
+    loadFeedItems();
     loadEvents();
     // loadProfiles();
   }, [location, category, prompt]);
@@ -420,7 +432,7 @@ function LandingPage() {
             <EventPage />
           ) : (
             <div>
-              <ExploreFeed />
+              <ExploreFeed feedItemsResponse={feedItemsResponse} />
 
               <h2 className="section-title">Popular</h2>
               <EventSection

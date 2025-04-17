@@ -164,10 +164,10 @@ export const Profile: React.FC = () => {
   const handleFollow = () => {
     const following = JSON.parse(localStorage.getItem("following") || "[]");
     if (isFollowing) {
-      const newFollowing = following.filter((id: string) => id !== user._id);
+      const newFollowing = following.filter((id: string) => id !== userId);
       localStorage.setItem("following", JSON.stringify(newFollowing));
     } else {
-      following.push(user._id);
+      following.push(userId);
       localStorage.setItem("following", JSON.stringify(following));
     }
     setIsFollowing(!isFollowing);
