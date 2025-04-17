@@ -40,8 +40,7 @@
   right: 0.5rem;
 }
 
-/* Buttons nur anzeigen, wenn der Content scrollbar ist */
-@media (max-width: 80rem) {
+@media (max-width: 768px) {
   .scroll-button {
     display: none;
   }
