@@ -1,3 +1,9 @@
+.explore-feed-wrapper {
+  position: relative;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
 .explore-feed-container {
   padding: 1rem;
   display: flex;
@@ -6,10 +12,39 @@
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-behavior: smooth; /* Für sanftes Scrollen */
 }
 
-.explore-feed-container::-webkit-scrollbar {
-  display: none;
+.scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.scroll-button-left {
+  left: 0.5rem;
+}
+
+.scroll-button-right {
+  right: 0.5rem;
+}
+
+/* Buttons nur anzeigen, wenn der Content scrollbar ist */
+@media (max-width: 80rem) {
+  .scroll-button {
+    display: none;
+  }
 }
 
 .loading-container {

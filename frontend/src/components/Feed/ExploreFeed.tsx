@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { FeedResponse } from "../../utils";
 import "./ExploreFeed.css";
 import { FeedCard } from "./FeedCard";
@@ -20,6 +21,16 @@ export const ExploreFeed = () => {
     showNextFeed,
   } = useFeed();
 
+  const scrollContainer = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainer.current) {
+      const scrollAmount = 300; // Anpassen nach Bedarf
+      scrollContainer.current.scrollLeft +=
+        direction === "left" ? -scrollAmount : scrollAmount;
+    }
+  };
+
   useEffect(() => {
     getLatestFeedAll().then((feedsResponse: FeedResponse[]) => {
       setIsLoading(false);
@@ -37,9 +48,15 @@ export const ExploreFeed = () => {
           </div>
         </div>
       ) : (
-        <div>
-          {/* <div className="section-title">Explore </div> */}
-          <div className="explore-feed-container">
+        <div className="explore-feed-wrapper">
+          <button
+            className="scroll-button scroll-button-left"
+            onClick={() => scroll("left")}
+          >
+            <ChevronLeft />
+          </button>
+
+          <div ref={scrollContainer} className="explore-feed-container">
             {feedItems.map((feed) => (
               <FeedCard
                 key={feed.profileId}
@@ -49,6 +66,14 @@ export const ExploreFeed = () => {
               />
             ))}
           </div>
+
+          <button
+            className="scroll-button scroll-button-right"
+            onClick={() => scroll("right")}
+          >
+            <ChevronRight />
+          </button>
+
           {isFeedModalOpen && (
             <FeedModal
               feedItem={feeds[currentImageIndex]}
