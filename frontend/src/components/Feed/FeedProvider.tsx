@@ -1,10 +1,10 @@
 import { createContext, useState } from "react";
-import { Feed } from "../../utils";
+import { Feed, FeedResponse } from "../../utils";
 interface FeedContextType {
-  feedItems: Feed[];
+  feedItems: FeedResponse[];
   currentFeedItem: Feed | undefined;
   setCurrentFeedItem: (feedItem: Feed) => void;
-  setFeedItems: (feedItems: Feed[]) => void;
+  setFeedItems: (feedItems: FeedResponse[]) => void;
   currentFeedItemIndex: number;
   setCurrentFeedItemIndex: (index: number) => void;
 }
@@ -21,9 +21,6 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     undefined
   );
   const [currentFeedItemIndex, setCurrentFeedItemIndex] = useState<number>(0);
-  const [alreadyWatchedFeedItems, setAlreadyWatchedFeedItems] = useState<
-    string[]
-  >([]);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [isFeedModalOpen, setIsFeedModalOpen] = useState<boolean>(false);
 
@@ -37,8 +34,6 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     currentFeedItem,
     setCurrentFeedItem,
     setFeedItems,
-    alreadyWatchedFeedItems,
-    setAlreadyWatchedFeedItems,
     showNextFeed,
     currentFeedItemIndex,
     setCurrentFeedItemIndex,

@@ -16,6 +16,7 @@ export const FeedModal = ({
   feedItem,
   showNextFeed,
 }: FeedModalProps) => {
+  console.log("###########FEEDITEM", feedItem);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -51,7 +52,8 @@ export const FeedModal = ({
     if (currentImageIndex < feedItem.feedItems!.length - 1) {
       setCurrentImageIndex(currentImageIndex + 1);
     } else {
-      setShowFeedModal(false);
+      setCurrentImageIndex(0);
+      showNextFeed();
     }
   };
 

@@ -19,7 +19,6 @@ export const ExploreFeed = () => {
     currentFeedItem,
     isFeedModalOpen,
     setIsFeedModalOpen,
-    showNextFeed,
     setFeedItemIndex,
     feedItemIndex,
   } = useFeed();
@@ -64,6 +63,15 @@ export const ExploreFeed = () => {
 
     return () => el.removeEventListener("scroll", checkScrollPosition);
   }, [feedItems]);
+
+  const showNextFeed = () => {
+    console.log("###########SHOWNEXTFEED", currentFeedItem);
+    const currentIndex = feedItems.findIndex(
+      (item) => item.profileId === currentFeedItem?.profileId
+    );
+    console.log("###########FEEDITEMS", feedItems[currentIndex + 1]);
+    setCurrentFeedItem(feedItems[currentIndex + 1]);
+  };
 
   return (
     <div>
