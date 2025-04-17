@@ -73,6 +73,13 @@ export const ExploreFeed = () => {
     setCurrentFeedItem(feedItems[currentIndex + 1]);
   };
 
+  const showPreviousFeed = () => {
+    const currentIndex = feedItems.findIndex(
+      (item) => item.profileId === currentFeedItem?.profileId
+    );
+    setCurrentFeedItem(feedItems[currentIndex - 1]);
+  };
+
   return (
     <div>
       {isLoading ? (
@@ -118,7 +125,7 @@ export const ExploreFeed = () => {
               feedItem={currentFeedItem!}
               setShowFeedModal={setIsFeedModalOpen}
               showNextFeed={showNextFeed}
-              setFeedItemIndex={setFeedItemIndex}
+              showPreviousFeed={showPreviousFeed}
             />
           )}
         </div>

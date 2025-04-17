@@ -9,12 +9,14 @@ interface FeedModalProps {
   setShowFeedModal: (showFeedModal: boolean) => void;
   feedItem: FeedResponse;
   showNextFeed: () => void;
+  showPreviousFeed: () => void;
 }
 
 export const FeedModal = ({
   setShowFeedModal,
   feedItem,
   showNextFeed,
+  showPreviousFeed,
 }: FeedModalProps) => {
   console.log("###########FEEDITEM", feedItem);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -44,9 +46,12 @@ export const FeedModal = ({
   }, [currentImageIndex]);
 
   const handlePrev = () => {
-    setCurrentImageIndex((prev) =>
-      prev > 0 ? prev - 1 : feedItem.feedItems!.length - 1
-    );
+    if (currentImageIndex > 0) {
+      setCurrentImageIndex(currentImageIndex - 1);
+    } else {
+      setCurrentImageIndex(0);
+      showPreviousFeed();
+    }
   };
   const handleNext = () => {
     if (currentImageIndex < feedItem.feedItems!.length - 1) {
@@ -57,9 +62,19 @@ export const FeedModal = ({
     }
   };
 
+  const switchToNextFeed = () => {
+    setCurrentImageIndex(0);
+    showNextFeed();
+  };
+
+  const switchToPreviousFeed = () => {
+    setCurrentImageIndex(0);
+    showPreviousFeed();
+  };
+
   const handlers = useSwipeable({
-    onSwipedLeft: handleNext,
-    onSwipedRight: handlePrev,
+    onSwipedLeft: switchToNextFeed,
+    onSwipedRight: switchToPreviousFeed,
   });
 
   return (
