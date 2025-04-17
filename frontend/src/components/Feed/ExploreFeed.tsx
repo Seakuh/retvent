@@ -65,11 +65,12 @@ export const ExploreFeed = () => {
   }, [feedItems]);
 
   const showNextFeed = () => {
-    console.log("###########SHOWNEXTFEED", currentFeedItem);
     const currentIndex = feedItems.findIndex(
       (item) => item.profileId === currentFeedItem?.profileId
     );
-    console.log("###########FEEDITEMS", feedItems[currentIndex + 1]);
+    if (currentIndex === feedItems.length - 1) {
+      setIsFeedModalOpen(false);
+    }
     setCurrentFeedItem(feedItems[currentIndex + 1]);
   };
 
@@ -77,6 +78,9 @@ export const ExploreFeed = () => {
     const currentIndex = feedItems.findIndex(
       (item) => item.profileId === currentFeedItem?.profileId
     );
+    if (currentIndex === 0) {
+      setIsFeedModalOpen(false);
+    }
     setCurrentFeedItem(feedItems[currentIndex - 1]);
   };
 

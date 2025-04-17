@@ -175,3 +175,40 @@
     z-index: 100000;
   }
 }
+
+
+.feed-progress-bar-container {
+  flex: 1;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.3);
+  margin: 0 2px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.feed-progress-bar {
+  height: 100%;
+  width: 0;
+  background-color: white;
+  border-radius: 2px;
+}
+
+/* Progress bar that's already completed */
+.feed-progress-bar.completed {
+  width: 100%;
+}
+
+/* Actively animating progress bar */
+.feed-progress-bar.active {
+  width: 0;
+  animation: progress-animation 5s linear forwards;
+}
+
+@keyframes progress-animation {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}

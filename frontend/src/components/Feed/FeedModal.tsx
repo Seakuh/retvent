@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
 import { FeedResponse } from "../../utils";
 import "./FeedModal.css";
+
 interface FeedModalProps {
   showFeedModal: boolean;
   setShowFeedModal: (showFeedModal: boolean) => void;
@@ -18,32 +19,24 @@ export const FeedModal = ({
   showNextFeed,
   showPreviousFeed,
 }: FeedModalProps) => {
-  console.log("###########FEEDITEM", feedItem);
+  // Remove console.log to avoid unnecessary work
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
-  const startProgress = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    setProgress(0);
-    intervalRef.current = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(intervalRef.current!);
-          handleNext(); // Weiter zum nächsten Bild
-          return 0;
-        }
-        return prev + (100 / 5000) * 100; // 5000ms = 5 Sekunden
-      });
-    }, 100);
-  };
 
+  // Reset timer when image changes
   useEffect(() => {
-    startProgress();
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    // Use a single timeout instead of interval for advancing to next image
+    timerRef.current = setTimeout(() => {
+      handleNext();
+    }, 5000); // 5 seconds per image
+
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [currentImageIndex]);
+  }, [currentImageIndex, feedItem]);
 
   const handlePrev = () => {
     if (currentImageIndex > 0) {
@@ -53,6 +46,7 @@ export const FeedModal = ({
       showPreviousFeed();
     }
   };
+
   const handleNext = () => {
     if (currentImageIndex < feedItem.feedItems!.length - 1) {
       setCurrentImageIndex(currentImageIndex + 1);
@@ -62,19 +56,19 @@ export const FeedModal = ({
     }
   };
 
-  const switchToNextFeed = () => {
-    setCurrentImageIndex(0);
-    showNextFeed();
-  };
-
-  const switchToPreviousFeed = () => {
-    setCurrentImageIndex(0);
-    showPreviousFeed();
-  };
-
   const handlers = useSwipeable({
-    onSwipedLeft: switchToNextFeed,
-    onSwipedRight: switchToPreviousFeed,
+    onSwipedLeft: () => {
+      // Clear timer and move to next feed
+      if (timerRef.current) clearTimeout(timerRef.current);
+      setCurrentImageIndex(0);
+      showNextFeed();
+    },
+    onSwipedRight: () => {
+      // Clear timer and move to previous feed
+      if (timerRef.current) clearTimeout(timerRef.current);
+      setCurrentImageIndex(0);
+      showPreviousFeed();
+    },
   });
 
   return (
@@ -93,18 +87,11 @@ export const FeedModal = ({
       >
         <div className="feed-progress-container">
           {feedItem.feedItems!.map((_, idx) => (
-            <div key={idx} className="feed-progress-bar-container ">
+            <div key={idx} className="feed-progress-bar-container">
               <div
-                className="feed-progress-bar"
-                style={{
-                  width: `${
-                    idx === currentImageIndex
-                      ? progress
-                      : idx < currentImageIndex
-                      ? 100
-                      : 0
-                  }%`,
-                }}
+                className={`feed-progress-bar ${
+                  idx === currentImageIndex ? "active" : ""
+                } ${idx < currentImageIndex ? "completed" : ""}`}
               />
             </div>
           ))}
