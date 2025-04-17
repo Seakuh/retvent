@@ -19,19 +19,22 @@ export const FeedModal = ({
   showNextFeed,
   showPreviousFeed,
 }: FeedModalProps) => {
-  // Remove console.log to avoid unnecessary work
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // Add a key to force animation reset
+  const [animationKey, setAnimationKey] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
 
-  // Reset timer when image changes
+  // Reset animation and timer when image changes
   useEffect(() => {
+    // Reset animation by updating the key
+    setAnimationKey((prevKey) => prevKey + 1);
+
     if (timerRef.current) clearTimeout(timerRef.current);
 
-    // Use a single timeout instead of interval for advancing to next image
     timerRef.current = setTimeout(() => {
       handleNext();
-    }, 5000); // 5 seconds per image
+    }, 5000);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
@@ -58,13 +61,11 @@ export const FeedModal = ({
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
-      // Clear timer and move to next feed
       if (timerRef.current) clearTimeout(timerRef.current);
       setCurrentImageIndex(0);
       showNextFeed();
     },
     onSwipedRight: () => {
-      // Clear timer and move to previous feed
       if (timerRef.current) clearTimeout(timerRef.current);
       setCurrentImageIndex(0);
       showPreviousFeed();
@@ -88,11 +89,16 @@ export const FeedModal = ({
         <div className="feed-progress-container">
           {feedItem.feedItems!.map((_, idx) => (
             <div key={idx} className="feed-progress-bar-container">
-              <div
-                className={`feed-progress-bar ${
-                  idx === currentImageIndex ? "active" : ""
-                } ${idx < currentImageIndex ? "completed" : ""}`}
-              />
+              {idx === currentImageIndex ? (
+                // Key-based approach to reset animation
+                <div key={animationKey} className="feed-progress-bar active" />
+              ) : (
+                <div
+                  className={`feed-progress-bar ${
+                    idx < currentImageIndex ? "completed" : ""
+                  }`}
+                />
+              )}
             </div>
           ))}
         </div>
