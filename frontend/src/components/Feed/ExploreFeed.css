@@ -11,3 +11,14 @@
 .explore-feed-container::-webkit-scrollbar {
   display: none;
 }
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem !important;
+}
+
+.loading-container .loading-spinner {
+  height: 3rem !important;
+}

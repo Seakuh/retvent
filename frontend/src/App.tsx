@@ -17,6 +17,7 @@ import Register from "./components/Auth/Register";
 import CommentGuidelines from "./components/CommentGuidelines/CommentGuidelines";
 import { GroupInvite } from "./components/CommunityDetailBar/GroupInvite/GroupInvite";
 import { EventDetail } from "./components/EventDetail/EventDetail";
+import { FeedProvider } from "./components/Feed/FeedProvider";
 import { GroupChat } from "./components/GroupChat/GroupChat";
 import { GroupChatPage } from "./components/GroupChat/GroupChatPage";
 import { ChatProvider } from "./components/GroupChat/chatProvider";
@@ -44,53 +45,54 @@ const App: React.FC = () => {
   return (
     <HelmetProvider>
       <LandingPageProvider>
-        <ChatProvider>
-          <QueryClientProvider client={queryClient}>
-            <UserContextProvider>
-              <div className="app">
-                <main>
-                  <Routes>
-                    <Route path="/" element={<LandingPage />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/profile/:userId" element={<Profile />} />
-                    <Route path="/event/:eventId" element={<EventDetail />} />
-                    <Route path="/liked" element={<LikedEvents />} />
-                    <Route
-                      path="/category/:category"
-                      element={<LandingPage />}
-                    />
-                    <Route path="/privacy" element={<Privacy />} />
-                    <Route path="/imprint" element={<Imprint />} />
-                    <Route path="/terms" element={<Terms />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/imprint" element={<Imprint />} />
-                    <Route
-                      path="/group/invite/:userId/:tokenId"
-                      element={<GroupInvite />}
-                    />
-                    <Route
-                      path="/my-groups"
-                      element={
-                        <ProtectedRoute>
-                          <GroupChatPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/comment-guidelines"
-                      element={<CommentGuidelines />}
-                    />
-                    <Route path="/group/:groupId" element={<GroupChat />} />
-                    <Route
-                      path="/me"
-                      element={
-                        <ProtectedRoute>
-                          <Me />
-                        </ProtectedRoute>
-                      }
-                    />
-                    {/* <Route
+        <FeedProvider>
+          <ChatProvider>
+            <QueryClientProvider client={queryClient}>
+              <UserContextProvider>
+                <div className="app">
+                  <main>
+                    <Routes>
+                      <Route path="/" element={<LandingPage />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/profile/:userId" element={<Profile />} />
+                      <Route path="/event/:eventId" element={<EventDetail />} />
+                      <Route path="/liked" element={<LikedEvents />} />
+                      <Route
+                        path="/category/:category"
+                        element={<LandingPage />}
+                      />
+                      <Route path="/privacy" element={<Privacy />} />
+                      <Route path="/imprint" element={<Imprint />} />
+                      <Route path="/terms" element={<Terms />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/imprint" element={<Imprint />} />
+                      <Route
+                        path="/group/invite/:userId/:tokenId"
+                        element={<GroupInvite />}
+                      />
+                      <Route
+                        path="/my-groups"
+                        element={
+                          <ProtectedRoute>
+                            <GroupChatPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/comment-guidelines"
+                        element={<CommentGuidelines />}
+                      />
+                      <Route path="/group/:groupId" element={<GroupChat />} />
+                      <Route
+                        path="/me"
+                        element={
+                          <ProtectedRoute>
+                            <Me />
+                          </ProtectedRoute>
+                        }
+                      />
+                      {/* <Route
                   path="/admin/dashboard"
                   element={
                     <ProtectedRoute>
@@ -98,37 +100,38 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 /> */}
-                    <Route
-                      path="/admin/events"
-                      element={
-                        <ProtectedRoute>
-                          <AdminEvents />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/events/create"
-                      element={
-                        <ProtectedRoute>
-                          <CreateEvent />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/events/edit/:eventId"
-                      element={
-                        <ProtectedRoute>
-                          <EditEvent />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="*" element={<LandingPage />} />
-                  </Routes>
-                </main>
-              </div>
-            </UserContextProvider>
-          </QueryClientProvider>
-        </ChatProvider>
+                      <Route
+                        path="/admin/events"
+                        element={
+                          <ProtectedRoute>
+                            <AdminEvents />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/events/create"
+                        element={
+                          <ProtectedRoute>
+                            <CreateEvent />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/events/edit/:eventId"
+                        element={
+                          <ProtectedRoute>
+                            <EditEvent />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route path="*" element={<LandingPage />} />
+                    </Routes>
+                  </main>
+                </div>
+              </UserContextProvider>
+            </QueryClientProvider>
+          </ChatProvider>
+        </FeedProvider>
       </LandingPageProvider>
     </HelmetProvider>
   );
