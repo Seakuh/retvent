@@ -50,6 +50,9 @@ export class EventService {
     const cityNameEvents = await this.eventRepository.searchByCity(city, limit);
     return [...cityLocationEvents, ...cityNameEvents];
   }
+  updateLineupProfile(eventId: string, profileId: string, userId: string) {
+    return this.eventRepository.updateLineupProfile(eventId, profileId, userId);
+  }
 
   getPopularEventsNearby(lat: number, lon: number, limit: number) {
     return this.eventRepository.getPopularEventsNearby(lat, lon, limit);
