@@ -16,6 +16,7 @@ export const ProfileSchema = new Schema({
   links: { type: [String], maxLength: 3 },
   doorPolicy: { type: String },
   queue: { type: String },
+  giphyLinks: { type: [String] },
   followers: { type: [String] },
   following: { type: [String] },
   createdAt: { type: Date, default: Date.now },

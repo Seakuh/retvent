@@ -11,6 +11,7 @@ export class Profile implements IProfile {
   category?: string;
   followerCount?: number;
   bio?: string;
+  giphyLinks?: string[];
   followedLocationIds?: string[];
   likedEventIds?: string[];
   createdEventIds?: string[];

@@ -15,6 +15,7 @@ export interface IProfile {
   links?: string[];
   followers?: string[];
   following?: string[];
+  giphyLinks?: string[];
   createdAt: Date;
   updatedAt: Date;
   queue?: string;

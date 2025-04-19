@@ -216,6 +216,7 @@ Analyze the flyer carefully, ensuring accurate data extraction and logical fallb
     category: 'organizer' | 'musician' | 'visual_artist' | 'technician' | 'doorman' | 'helper' | 'cook',
     profileImageUrl?: string, // optional image link if available
     headerImageUrl?: string, // optional header image link
+    giphyLinks?: string[], // optional giphy link
   }
   
   Instructions:
