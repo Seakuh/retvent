@@ -283,6 +283,14 @@ export interface Profile {
   likes: number;
 }
 
+export interface Artist extends Profile {
+  _id?: string;
+  profileImageUrl?: string;
+  headerImageUrl?: string;
+  gallery?: string[];
+  links?: string[];
+}
+
 export interface Comment {
   _id?: string;
   text: string;

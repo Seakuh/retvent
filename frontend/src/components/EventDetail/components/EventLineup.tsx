@@ -1,20 +1,36 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { defaultProfileImage } from "../../../utils";
 interface LineupArtist {
   name: string;
   role?: string;
   startTime?: string;
   _id: string;
+  profileId?: string;
 }
 
 export const EventLineup: React.FC<{ lineup: LineupArtist[] }> = ({
   lineup,
 }) => {
+  const navigate = useNavigate();
+  const [isArtistModalOpen, setIsArtistModalOpen] = useState(false);
   const handleOnArtistClick = (artist: LineupArtist) => {
     console.log(artist);
+    navigate(`/artist/${artist.name}`);
   };
+  const [artist, setArtist] = useState<LineupArtist | null>(null);
+
+  // const handleOnArtistClose = () => {
+  //   console.log("closing");
+  //   setIsArtistModalOpen(false);
+  //   setArtist(null);
+  // };
 
   return (
     <div className="event-lineup">
+      {/* {isArtistModalOpen && (
+        <ArtistModal onClose={handleOnArtistClose} artist={artist} />
+      )} */}
       <div className="lineup-grid">
         <h2 className="section-headline">Artists</h2>
         {lineup.map((artist) => (

@@ -1,0 +1,30 @@
+.play-music-card-iframe {
+}
+
+
+.play-music-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-music-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+} 
+
+.play-music-card {
+  padding: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-neon-blue-light);
+}
+
+.play-music-card-iframe {
+  display: none;
+}

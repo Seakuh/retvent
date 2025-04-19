@@ -1,6 +1,20 @@
-export const setUpNewArtist = async (artist: Artist) => {
-  const token = localStorage.getItem("access_token");
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
+import { API_URL } from "../../utils";
+
+export const setUpNewArtist = async (
+  artistname: string,
+  image: File,
+  description: string
+) => {
+  const formData = new FormData();
+  formData.append("image", image);
+  formData.append("name", artistname);
+  formData.append("prompt", description);
+
+  console.log(formData);
+
+  const response = await fetch(`${API_URL}artists/new`, {
+    method: "POST",
+    body: formData,
+  });
+  return response.json();
 };

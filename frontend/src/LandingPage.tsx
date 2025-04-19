@@ -5,6 +5,7 @@ import {
   Menu,
   Plus,
   Search,
+  Send,
   Upload,
   User as UserIcon,
 } from "lucide-react";
@@ -297,6 +298,12 @@ function LandingPage() {
                   onClick={() => setIsSearchOpen(true)}
                 >
                   <Search size={24} color="white" />
+                </button>
+                <button
+                  className="search-icon"
+                  onClick={() => navigate("/my-groups")}
+                >
+                  <Send size={24} color="white" />
                 </button>
                 {/* <ViewToggle view={viewMode} onViewChange={setViewMode} /> */}
                 <div className="relative">

@@ -1,0 +1,95 @@
+.artist-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  background: linear-gradient(135deg, #000046 0%, #000000 100%);
+  gap: 10rem;
+}
+
+.artist-modal-content {
+  max-width: 80rem;
+  padding: 20px;
+  border-radius: 1rem;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-subtitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.artist-image-input {
+  background-color: var(--color-neon-blue-light);
+  border: 2px solid var(--color-neon-blue);
+  border-radius: 1rem;
+  text-align: center;
+  width: 100%;
+  color: white;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.artist-description-input {
+  width: 100%;
+  min-height: 120px;
+  border-radius: 1rem;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 2px solid var(--color-neon-blue);
+  background-color: var(--color-neon-blue-light);
+  color: white;
+}
+
+.artist-submit-button {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--color-neon-blue);
+  border-radius: 10px;
+  border: 2px solid var(--color-neon-blue);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.artist-description-input-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.image-preview-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.image-preview {
+  height: 100px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid white;
+}
+
+.artist-web-search-link {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 2rem;
+  cursor: pointer;
+}
+
+

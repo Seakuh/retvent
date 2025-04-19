@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { Route, Routes } from "react-router-dom";
+import { ArtistPage } from "./Artist/ArtistPage";
 import { About } from "./Footer/About";
 import { Imprint } from "./Footer/Imprint";
 import { Privacy } from "./Footer/Privacy";
@@ -90,6 +91,11 @@ const App: React.FC = () => {
                       <Route path="/imprint" element={<Imprint />} />
                       <Route path="/terms" element={<Terms />} />
                       <Route path="/about" element={<About />} />
+                      <Route
+                        path="/artist/:artistName"
+                        element={<ArtistPage />}
+                      />
+
                       <Route path="/imprint" element={<Imprint />} />
                       <Route
                         path="/group/invite/:userId/:tokenId"
