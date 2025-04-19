@@ -53,6 +53,14 @@ export class ProfileService {
     return profile;
   }
 
+  async getArtistByName(name: string) {
+    const profile = await this.profileRepository.getProfileByName(name);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+    return profile;
+  }
+
   async createNewArtist(
     image: Express.Multer.File,
     createArtistDto: CreateArtistDto,

@@ -39,6 +39,10 @@ export class EventService {
     );
   }
 
+  getEventsByArtistName(name: string) {
+    return this.eventRepository.getEventsByArtistName(name);
+  }
+
   async findLatestEventsCity(city: string, limit: number) {
     const coordinates = await this.geolocationService.getCoordinates(city);
     const cityLocationEvents = await this.findNearbyEvents(

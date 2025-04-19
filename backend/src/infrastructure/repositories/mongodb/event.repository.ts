@@ -79,6 +79,12 @@ export class MongoEventRepository implements IEventRepository {
     }));
   }
 
+  getEventsByArtistName(name: string) {
+    return this.eventModel
+      .find({ lineup: { $elemMatch: { name: name } } })
+      .exec();
+  }
+
   updateLineupProfile(eventId: string, profileId: string, userId: string) {
     return this.eventModel.findByIdAndUpdate(eventId, {
       $set: {

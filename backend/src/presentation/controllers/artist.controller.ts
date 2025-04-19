@@ -8,17 +8,25 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { EventService } from '../../application/services/event.service';
 import { ProfileService } from '../../application/services/profile.service';
 import { CreateArtistDto } from '../dtos/create-artist.dto';
-
 @Controller('artists')
 export class ArtistController {
-  constructor(private readonly profileService: ProfileService) {}
+  constructor(
+    private readonly profileService: ProfileService,
+    private readonly eventService: EventService,
+  ) {}
 
   @Get('name')
   async getByName(@Query('name') name: string) {
     console.log('name', name);
-    return this.profileService.getProfileByName(name);
+    const events = await this.eventService.getEventsByArtistName(name);
+    const artistInfo = await this.profileService.getArtistByName(name);
+    return {
+      artistInfo,
+      events,
+    };
   }
 
   // create new artist
