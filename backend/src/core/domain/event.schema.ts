@@ -76,6 +76,8 @@ const EventSchema = new Schema<IEvent>(
   },
 );
 
+EventSchema.index({ 'lineup.userId': 1 });
+
 // Index für Performance bei Geo-Queries
 EventSchema.index({ 'location.coordinates': '2dsphere' });
 
