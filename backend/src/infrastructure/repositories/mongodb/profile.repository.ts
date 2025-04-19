@@ -256,4 +256,16 @@ export class MongoProfileRepository implements IProfileRepository {
       { new: true },
     );
   }
+
+  // ----------------------------------------------- Artist
+  createNewArtist(artistProfile: Partial<Profile>) {
+    console.log('createNewArtist - artistProfile:', artistProfile);
+    return this.profileModel.create({
+      ...artistProfile,
+      followerCount: 0,
+      followingCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+  }
 }

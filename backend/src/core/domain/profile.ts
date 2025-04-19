@@ -23,6 +23,12 @@ export class Profile implements IProfile {
   doorPolicy?: string;
   preferences?: UserPreferences;
   embedding?: number[];
+  isArtist?: boolean;
+  sets?: string[]; // Mixcloud/Soundcloud/YouTube URLs
+  socialMediaLinks?: string[];
+  releases?: string[]; // Spotify, Bandcamp etc.
+  references?: string[]; // Club IDs oder Namen
+  pressImages?: string[]; // Extra Galerie
   constructor(data: Partial<IProfile>) {
     Object.assign(this, data);
   }

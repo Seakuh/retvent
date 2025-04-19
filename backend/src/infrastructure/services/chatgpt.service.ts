@@ -1,6 +1,7 @@
 // src/infrastructure/services/chatgpt.service.ts
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
+import { Profile } from 'src/core/domain/profile';
 import { z } from 'zod';
 import { Event } from '../../core/domain/event';
 
@@ -198,5 +199,59 @@ Analyze the flyer carefully, ensuring accurate data extraction and logical fallb
     const extractedText = response.choices[0]?.message?.content?.trim();
     console.info('Extracted text:', extractedText);
     return extractedText || 'Kein Text erkannt';
+  }
+
+  async generateArtistProfile(
+    inputFromUser: string,
+  ): Promise<Partial<Profile>> {
+    const artistPrompt = `
+  You are a helpful assistant that extracts structured profile information from an artist introduction or description text.
+  
+  Your goal is to generate a structured JavaScript object that matches this shape:
+  
+  {
+    bio: string,
+    links: string[], // social media or music platform links (e.g. SoundCloud, Instagram, Bandcamp, etc.)
+    gallery: string[], // optional image URLs, if mentioned
+    category: 'organizer' | 'musician' | 'visual_artist' | 'technician' | 'doorman' | 'helper' | 'cook',
+    profileImageUrl?: string, // optional image link if available
+    headerImageUrl?: string, // optional header image link
+  }
+  
+  Instructions:
+  - Extract the **bio** from the input text and improve the grammar while keeping the artist’s style.
+  - Extract all **links** (SoundCloud, Instagram, Bandcamp, Facebook, personal website, etc.).
+  - If image URLs are included, add them to the gallery field.
+  - Assign a matching **category** based on the artist’s role. Possible values:  
+    - "organizer", "musician", "visual_artist", "technician", "doorman", "helper", "cook"
+  - Return only the final JavaScript object as your response (no explanation).
+  
+  Here is the artist text:
+  
+  "${inputFromUser}"
+
+Ensure proper JSON formatting, and validate all fields before returning the result.
+
+  `;
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: artistPrompt }],
+      response_format: { type: 'json_object' },
+    });
+
+    const rawOutput = response.choices[0]?.message?.content;
+
+    if (!rawOutput) {
+      throw new Error('No response from OpenAI');
+    }
+
+    try {
+      const parsed = eval('(' + rawOutput + ')') as Partial<Profile>;
+      return parsed;
+    } catch (error) {
+      console.error('Failed to parse artist profile:', rawOutput);
+      throw new Error('Could not parse OpenAI response');
+    }
   }
 }

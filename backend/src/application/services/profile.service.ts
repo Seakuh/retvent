@@ -5,12 +5,15 @@ import {
   UserPreferences,
 } from 'src/core/domain/profile';
 import { MongoProfileRepository } from 'src/infrastructure/repositories/mongodb/profile.repository';
+import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { ImageService } from 'src/infrastructure/services/image.service';
+import { CreateArtistDto } from 'src/presentation/dtos/create-artist.dto';
 @Injectable()
 export class ProfileService {
   constructor(
     private readonly profileRepository: MongoProfileRepository,
     private readonly imageService: ImageService,
+    private readonly chatGptService: ChatGPTService,
   ) {}
 
   getAllProfiles(limit: number, offset: number): Promise<Profile[]> {
@@ -40,6 +43,21 @@ export class ProfileService {
 
   findMissingProfileEmbeddings(BATCH_SIZE: number) {
     return this.profileRepository.findMissingProfileEmbeddings(BATCH_SIZE);
+  }
+
+  async createNewArtist(
+    image: Express.Multer.File,
+    createArtistDto: CreateArtistDto,
+  ): Promise<Profile> {
+    const imageUrl = await this.imageService.uploadImage(image);
+    const artistProfile = await this.chatGptService.generateArtistProfile(
+      createArtistDto.prompt,
+    );
+    const profile = await this.profileRepository.createNewArtist({
+      ...artistProfile,
+      profileImageUrl: imageUrl,
+    });
+    return profile;
   }
 
   async getEventProfile(id: string): Promise<ProfileEventDetail> {
