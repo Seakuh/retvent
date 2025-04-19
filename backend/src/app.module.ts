@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import * as crypto from 'crypto';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
+import { ArtistController } from './presentation/controllers/artist.controller';
 import { CommentController } from './presentation/controllers/comment.controller';
 import { EventController } from './presentation/controllers/event.controller';
 import { FeedController } from './presentation/controllers/feed.controller';
@@ -31,6 +32,7 @@ const MONGODB_URI = 'mongodb://localhost:27017';
     MessageController,
     GroupController,
     FeedController,
+    ArtistController,
   ],
 })
 export class AppModule {}

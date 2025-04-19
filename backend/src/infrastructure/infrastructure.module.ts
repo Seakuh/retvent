@@ -11,6 +11,7 @@ import { GroupService } from 'src/application/services/group.service';
 import { MessageService } from 'src/application/services/message.service';
 import { ProfileService } from 'src/application/services/profile.service';
 import { MessageSchema } from 'src/core/domain/message.schema';
+import { ArtistController } from 'src/presentation/controllers/artist.controller';
 import { CommentController } from 'src/presentation/controllers/comment.controller';
 import { FeedController } from 'src/presentation/controllers/feed.controller';
 import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
@@ -96,6 +97,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     GroupController,
     MessageController,
     FeedController,
+    ArtistController,
   ],
   providers: [
     EventService,

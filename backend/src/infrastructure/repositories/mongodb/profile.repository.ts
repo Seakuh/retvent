@@ -6,6 +6,9 @@ import { IProfileRepository } from '../../../core/repositories/profile.repositor
 
 @Injectable()
 export class MongoProfileRepository implements IProfileRepository {
+  getProfileByName(name: string) {
+    return this.profileModel.findOne({ username: name });
+  }
   getAllProfiles(limit: number, offset: number): Promise<Profile[]> {
     return this.profileModel.find().skip(offset).limit(limit).exec();
   }

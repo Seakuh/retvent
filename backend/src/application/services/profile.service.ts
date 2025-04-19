@@ -1,4 +1,4 @@
-import { Injectable, UploadedFile } from '@nestjs/common';
+import { Injectable, NotFoundException, UploadedFile } from '@nestjs/common';
 import {
   Profile,
   ProfileEventDetail,
@@ -43,6 +43,14 @@ export class ProfileService {
 
   findMissingProfileEmbeddings(BATCH_SIZE: number) {
     return this.profileRepository.findMissingProfileEmbeddings(BATCH_SIZE);
+  }
+
+  async getProfileByName(name: string) {
+    const profile = await this.profileRepository.getProfileByName(name);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+    return profile;
   }
 
   async createNewArtist(
