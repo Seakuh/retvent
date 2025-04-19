@@ -82,9 +82,20 @@
     font-size: 5rem;
     font-weight: bold;
   }
+
+
+  .lineup-artist-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
   
   .artist-role {
     color: gray;
+  }
+
+  .lineup-artist-info {
+    cursor: pointer;
   }
   
   /* =============================================================
@@ -318,10 +329,24 @@
     flex-direction: column;
   }
   
+  .lineup-profile-sectaion {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .artist-header-link-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
   .artist-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   .artist-search-link {

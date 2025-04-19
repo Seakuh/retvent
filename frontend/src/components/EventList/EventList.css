@@ -94,3 +94,11 @@
 .action-button.favorite {
   color: var(--color-neon-pink);
 }
+
+
+.artist-search-link-icons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
