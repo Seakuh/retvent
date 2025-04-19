@@ -24,6 +24,11 @@ export const EventSchema = new Schema(
         name: { type: String },
         role: { type: String },
         startTime: { type: String },
+        profileId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Profile',
+          required: false,
+        },
       }),
     ],
     email: { type: String },
@@ -73,6 +78,8 @@ export const EventSchema = new Schema(
 EventSchema.pre('save', function (next) {
   next();
 });
+
+EventSchema.index({ 'lineup.userId': 1 });
 
 // Create indexes
 EventSchema.index({ 'location.city': 1 });

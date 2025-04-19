@@ -217,6 +217,19 @@ export class EventController {
     return this.eventService.getEventsByTag(tag);
   }
 
+  @Post('update/lineup/profile')
+  @UseGuards(JwtAuthGuard)
+  async updateLineupProfile(
+    @Body() body: { eventId: string; profileId: string },
+    @Request() req,
+  ) {
+    return this.eventService.updateLineupProfile(
+      body.eventId,
+      body.profileId,
+      req.user.id,
+    );
+  }
+
   @Get('search/all')
   async searchEventsWithUserInput(
     @Query('location') location?: string,
