@@ -3,7 +3,7 @@ import { Schema } from 'mongoose';
 export const ProfileSchema = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: false },
-  userId: { type: String, required: true },
+  userId: { type: String, required: false },
   profileImageUrl: { type: String },
   category: { type: String },
   followerCount: { type: Number, default: 0 },
@@ -25,4 +25,3 @@ export const ProfileSchema = new Schema({
 });
 
 ProfileSchema.index({ username: 1 }, { unique: true });
-ProfileSchema.index({ userId: 1 }, { unique: true });

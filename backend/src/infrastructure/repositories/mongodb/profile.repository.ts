@@ -261,14 +261,27 @@ export class MongoProfileRepository implements IProfileRepository {
   }
 
   // ----------------------------------------------- Artist
-  createNewArtist(artistProfile: Partial<Profile>) {
+  async createNewArtist(artistProfile: Partial<Profile>) {
     console.log('createNewArtist - artistProfile:', artistProfile);
-    return this.profileModel.create({
+    // const existingArtist = await this.profileModel.findOne({
+    //   username: artistProfile.username,
+    // });
+    // if (existingArtist) {
+    //   throw new BadRequestException('Artist already exists');
+    // }
+
+    const userId = '67ee59034f4662d626db6fe1'; // ADMIN USER ID
+
+    const newArtist = await this.profileModel.create({
       ...artistProfile,
+      userId: userId,
       followerCount: 0,
       followingCount: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    console.log('newArtist', newArtist);
+    return newArtist;
   }
 }

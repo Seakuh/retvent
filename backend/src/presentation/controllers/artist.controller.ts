@@ -5,7 +5,9 @@ import {
   Post,
   Query,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfileService } from '../../application/services/profile.service';
 import { CreateArtistDto } from '../dtos/create-artist.dto';
 
@@ -21,10 +23,13 @@ export class ArtistController {
 
   // create new artist
   @Post('new')
+  @UseInterceptors(FileInterceptor('image')) // <-- Wichtig!
   async create(
     @Body() createArtistDto: CreateArtistDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
+    console.log('createArtistDto', createArtistDto);
+    console.log('image', image);
     return this.profileService.createNewArtist(image, createArtistDto);
   }
 }

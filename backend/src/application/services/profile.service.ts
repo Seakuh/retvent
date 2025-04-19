@@ -57,13 +57,17 @@ export class ProfileService {
     image: Express.Multer.File,
     createArtistDto: CreateArtistDto,
   ): Promise<Profile> {
+    console.log('createArtistDto', createArtistDto);
+    console.log('image', image);
     const imageUrl = await this.imageService.uploadImage(image);
     const artistProfile = await this.chatGptService.generateArtistProfile(
       createArtistDto.prompt,
     );
     const profile = await this.profileRepository.createNewArtist({
       ...artistProfile,
+      username: createArtistDto.name,
       profileImageUrl: imageUrl,
+      isArtist: true,
     });
     return profile;
   }

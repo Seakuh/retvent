@@ -3,7 +3,7 @@ export interface IProfile {
   email?: string;
   gallery?: string[];
   // reference to user id
-  userId: string;
+  userId?: string;
   profileImageUrl?: string;
   headerImageUrl?: string;
   category?: string;
