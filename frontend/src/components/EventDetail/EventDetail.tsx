@@ -21,10 +21,12 @@ import { shareEvent } from "./service";
 
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
+  const { user } = useContext(UserContext);
   const { event, loading, error, host } = useEvent(eventId);
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0); // Falls die Seite nicht ganz oben startet
@@ -34,6 +36,10 @@ export const EventDetail: React.FC = () => {
     if (event) {
       document.title = `${event.title} | EventScanner`;
     }
+    if (event?.hostId === user?.id) {
+      setIsOwner(true);
+    }
+    console.log(isOwner);
   }, [event]);
 
   const handleAddToCalendar = () => {
