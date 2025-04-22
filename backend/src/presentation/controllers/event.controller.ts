@@ -347,12 +347,7 @@ export class EventController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 40,
   ) {
-    const skip = (page - 1) * limit;
-    const result = await this.eventService.findAndCountBySlug(
-      slug,
-      skip,
-      limit,
-    );
+    const result = await this.eventService.findAndCountBySlug(slug);
     const { events, total } = result;
     console.log('events', events);
     console.log('total', total);

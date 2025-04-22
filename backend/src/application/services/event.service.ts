@@ -524,19 +524,23 @@ export class EventService {
 
   async findAndCountBySlug(
     slug: string,
-    skip: number,
-    limit: number,
   ): Promise<{ events: Event[]; total: number }> {
-    const isObjectId = /^[a-f\d]{24}$/i.test(slug); // Prüfe, ob slug eine MongoDB ObjectId ist
+    const isObjectId = /^[a-f\d]{24}$/i.test(slug);
 
-    // Events und Gesamtanzahl parallel laden – je nach ID oder Username
-    const { events, total } = isObjectId
-      ? await this.eventRepository.findAndCountByHostId(slug, skip, limit)
-      : await this.eventRepository.findAndCountByHostUsername(
-          slug,
-          skip,
-          limit,
-        );
+    let userId = null;
+    let userName = null;
+
+    if (isObjectId) {
+      const user = await this.userService.findById(slug);
+      userId = slug;
+      userName = user.username;
+    } else {
+      userName = slug;
+    }
+
+    console.log('userName', userName);
+    const { events, total } =
+      await this.eventRepository.findAndCountByHostUsername(userName, userId);
 
     return { events, total };
   }

@@ -579,14 +579,22 @@ export class MongoEventRepository implements IEventRepository {
 
   async findAndCountByHostUsername(
     slug: string,
-    skip: number,
-    limit: number,
+    userId?: string,
   ): Promise<{ events: Event[]; total: number }> {
-    const orConditions = [{ hostUsername: slug }, { 'lineup.name': slug }];
+    console.log('userId', userId);
+
+    const orConditions = [
+      { 'host.username': slug },
+      { 'lineup.name': slug },
+      ...(userId ? [{ hostId: userId }] : []),
+    ];
     const filter = { $or: orConditions };
     console.log('filter', filter);
     const [events, total] = await Promise.all([
-      this.eventModel.find(filter).skip(skip).limit(limit).exec(),
+      this.eventModel
+        .find(filter)
+        .select('id title imageUrl startDate city views commentCount')
+        .exec(),
       this.eventModel.countDocuments(filter),
     ]);
 
