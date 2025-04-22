@@ -82,6 +82,7 @@ EventSchema.pre('save', function (next) {
 });
 
 EventSchema.index({ 'lineup.userId': 1 });
+EventSchema.index({ 'lineup.name': 1 });
 
 // Create indexes
 EventSchema.index({ 'location.city': 1 });

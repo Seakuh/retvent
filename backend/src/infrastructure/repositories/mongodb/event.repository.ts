@@ -551,18 +551,43 @@ export class MongoEventRepository implements IEventRepository {
     return { events: events.map((e) => this.toEntity(e)), total };
   }
 
+  async findAndCountBySlug(
+    slug: string,
+    skip: number,
+    limit: number,
+  ): Promise<{ events: Event[]; total: number }> {
+    const isObjectId = /^[a-f\d]{24}$/i.test(slug);
+
+    // Baue die OR-Bedingungen dynamisch
+    const orConditions = isObjectId
+      ? [{ hostId: slug }, { 'lineup.name': slug }]
+      : [{ 'host.username': slug }, { 'lineup.name': slug }];
+
+    const filter = { $or: orConditions };
+    console.log('filter', filter);
+
+    const [events, total] = await Promise.all([
+      this.eventModel.find(filter).skip(skip).limit(limit).exec(),
+      this.eventModel.countDocuments(filter),
+    ]);
+
+    return {
+      events: events.map((e) => this.toEntity(e)),
+      total,
+    };
+  }
+
   async findAndCountByHostUsername(
     slug: string,
     skip: number,
     limit: number,
   ): Promise<{ events: Event[]; total: number }> {
+    const orConditions = [{ hostUsername: slug }, { 'lineup.name': slug }];
+    const filter = { $or: orConditions };
+    console.log('filter', filter);
     const [events, total] = await Promise.all([
-      this.eventModel
-        .find({ hostUsername: slug })
-        .skip(skip)
-        .limit(limit)
-        .exec(),
-      this.eventModel.countDocuments({ 'host.username': slug }),
+      this.eventModel.find(filter).skip(skip).limit(limit).exec(),
+      this.eventModel.countDocuments(filter),
     ]);
 
     return { events: events.map((event) => this.toEntity(event)), total };
