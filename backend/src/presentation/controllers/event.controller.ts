@@ -12,6 +12,7 @@ import {
   Put,
   Query,
   Request,
+  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -486,5 +487,53 @@ export class EventController {
       }
       throw error;
     }
+  }
+
+  @Post('picture/upload')
+  @UseGuards(UploadGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadEventPicture(
+    @UploadedFile() image: Express.Multer.File[],
+    @Body() body: { eventId: string },
+    @Request() req,
+  ) {
+    if (!req.user) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+    return this.eventService.uploadEventPictures(
+      body.eventId,
+      image,
+      req.user.id,
+    );
+  }
+
+  @Post('video/upload')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('video', {
+      limits: {
+        fileSize: 100 * 1024 * 1024, // 100 MB Limit (anpassbar)
+      },
+      fileFilter: (req, file, callback) => {
+        if (!file.mimetype.startsWith('video/')) {
+          return callback(
+            new BadRequestException('Only video files are allowed'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async uploadEventVideo(
+    @UploadedFile() video: Express.Multer.File,
+    @Body() body: { eventId: string },
+    @Request() req,
+  ) {
+    if (!req.user) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    return this.eventService.uploadEventVideo(body.eventId, video, req.user.id);
   }
 }

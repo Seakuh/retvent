@@ -16,7 +16,6 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ProfileService } from 'src/application/services/profile.service';
 import { Profile, UserPreferences } from 'src/core/domain/profile';
 import { ImageService } from 'src/infrastructure/services/image.service';
-import { CreateArtistDto } from '../dtos/create-artist.dto';
 import { UpdateUserProfileDto } from '../dtos/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { ProfileOwnerGuard } from '../guards/profile-owner.guard';
@@ -41,13 +40,16 @@ export class ProfileController {
     return this.profileService.getAllProfiles(limit, offset);
   }
 
-  @Post('new-artist')
-  async createNewArtist(
-    @UploadedFile() image: Express.Multer.File,
-    @Body() createArtistDto: CreateArtistDto,
-  ): Promise<Profile> {
-    return this.profileService.createNewArtist(image, createArtistDto);
-  }
+  // @Post('new-artist')
+  // async createNewArtist(
+  //   @UploadedFile() image: Express.Multer.File,
+  //   @Body() createArtistDto: CreateArtistDto,
+  // ): Promise<Profile> {
+  //   return this.profileService.createNewArtist(
+  //     image,
+  //     createArtistDto,
+  //   );
+  // }
 
   @Post()
   async createProfile(@Body() profile: Profile): Promise<Profile> {

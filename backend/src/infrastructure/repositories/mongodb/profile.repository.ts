@@ -261,7 +261,7 @@ export class MongoProfileRepository implements IProfileRepository {
   }
 
   // ----------------------------------------------- Artist
-  async createNewArtist(artistProfile: Partial<Profile>) {
+  async createNewArtist(artistProfile: Partial<Profile>, userId: string) {
     console.log('createNewArtist - artistProfile:', artistProfile);
     // const existingArtist = await this.profileModel.findOne({
     //   username: artistProfile.username,
@@ -269,8 +269,6 @@ export class MongoProfileRepository implements IProfileRepository {
     // if (existingArtist) {
     //   throw new BadRequestException('Artist already exists');
     // }
-
-    const userId = '67ee59034f4662d626db6fe1'; // ADMIN USER ID
 
     const newArtist = await this.profileModel.create({
       ...artistProfile,
