@@ -64,6 +64,7 @@ export class ProfileService {
   async createNewArtist(
     image: Express.Multer.File,
     createArtistDto: CreateArtistDto,
+    userId: string,
   ): Promise<Profile> {
     console.log('createArtistDto', createArtistDto);
     console.log('image', image);
@@ -71,12 +72,17 @@ export class ProfileService {
     const artistProfile = await this.chatGptService.generateArtistProfile(
       createArtistDto.prompt,
     );
-    const profile = await this.profileRepository.createNewArtist({
-      ...artistProfile,
-      username: createArtistDto.name,
-      profileImageUrl: imageUrl,
-      isArtist: true,
-    });
+
+    const profile = await this.profileRepository.createNewArtist(
+      {
+        ...artistProfile,
+        username: createArtistDto.name,
+        profileImageUrl: imageUrl,
+        isArtist: true,
+        userId,
+      },
+      userId,
+    );
     return profile;
   }
 
