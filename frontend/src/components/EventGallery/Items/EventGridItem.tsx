@@ -15,7 +15,7 @@ export const EventGridItem: React.FC<EventGridItemProps> = ({
   return (
     <a
       key={event.id}
-      onClick={() => handleEventClick(event.id)}
+      onClick={() => handleEventClick(event.id || event._id || "")}
       className={`event-grid-item ${isPast ? "past" : ""}`}
     >
       <div className="event-grid-item-image">

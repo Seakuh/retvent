@@ -81,7 +81,7 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
               : (sectionData as Event[])
             ).map((event) => (
               <EventGridItem
-                key={event.id}
+                key={event.id || event._id}
                 event={event}
                 handleEventClick={handleEventClick}
                 isPast={section === "past"}
