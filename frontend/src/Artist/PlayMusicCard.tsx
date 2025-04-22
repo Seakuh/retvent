@@ -3,15 +3,13 @@ import { useState } from "react";
 import "./PlayMusicCard.css";
 
 interface PlayMusicCardProps {
-  links?: string[] | undefined;
   trackId: string;
 }
 
-export const PlayMusicCard = ({ links, trackId }: PlayMusicCardProps) => {
+export const PlayMusicCard = ({ trackId }: PlayMusicCardProps) => {
   const [play, setPlay] = useState<boolean>(false);
 
-  console.log(links);
-  if (!links) {
+  if (!trackId) {
     return null;
   }
 
