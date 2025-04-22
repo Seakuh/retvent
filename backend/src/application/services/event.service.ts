@@ -463,6 +463,25 @@ export class EventService {
     return this.eventRepository.findByHostId(hostId, skip, limit);
   }
 
+  async findBySlug(
+    slug: string,
+    skip: number = 0,
+    limit: number = 10,
+  ): Promise<Event> {
+    const isObjectId = /^[a-f\d]{24}$/i.test(slug); // MongoDB ID Check
+
+    // User ermitteln
+    const user = isObjectId
+      ? await this.userService.findById(slug)
+      : await this.userService.findByUsername(slug);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.eventRepository.findBySlug(slug, skip, limit);
+  }
+
   async findEventsByHost(username: string): Promise<Event[]> {
     return this.eventRepository.findByHostUsername(username);
   }
@@ -501,5 +520,24 @@ export class EventService {
   }
   findMissingEmbeddings(batchSize: number) {
     return this.eventRepository.findMissingEmbeddings(batchSize);
+  }
+
+  async findAndCountBySlug(
+    slug: string,
+    skip: number,
+    limit: number,
+  ): Promise<{ events: Event[]; total: number }> {
+    const isObjectId = /^[a-f\d]{24}$/i.test(slug); // Prüfe, ob slug eine MongoDB ObjectId ist
+
+    // Events und Gesamtanzahl parallel laden – je nach ID oder Username
+    const { events, total } = isObjectId
+      ? await this.eventRepository.findAndCountByHostId(slug, skip, limit)
+      : await this.eventRepository.findAndCountByHostUsername(
+          slug,
+          skip,
+          limit,
+        );
+
+    return { events, total };
   }
 }

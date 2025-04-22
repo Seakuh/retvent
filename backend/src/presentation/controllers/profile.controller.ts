@@ -37,6 +37,15 @@ export class ProfileController {
       : this.profileService.getProfileByUsername(slug);
   }
 
+  @Get('page/:slug')
+  async getProfilePage(@Param('slug') slug: string): Promise<Profile> {
+    const isObjectId = /^[a-f\d]{24}$/i.test(slug); // z. B. MongoDB ID
+
+    return isObjectId
+      ? this.profileService.getProfilePageById(slug)
+      : this.profileService.getProfilePageByUsername(slug);
+  }
+
   @Get()
   async getAllProfiles(
     @Query('limit') limit: number = 20,

@@ -341,17 +341,21 @@ export class EventController {
     return this.eventService.findLatestEventsByHost(username);
   }
 
-  @Get('host/id/:hostId')
+  @Get('host/id/:slug')
   async getEventsByHostId(
-    @Param('hostId') hostId: string,
+    @Param('slug') slug: string,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 40,
   ) {
     const skip = (page - 1) * limit;
-    const [events, total] = await Promise.all([
-      this.eventService.findByHostId(hostId, skip, limit),
-      this.eventService.countByHostId(hostId),
-    ]);
+    const result = await this.eventService.findAndCountBySlug(
+      slug,
+      skip,
+      limit,
+    );
+    const { events, total } = result;
+    console.log('events', events);
+    console.log('total', total);
 
     return {
       events,

@@ -219,4 +219,11 @@ export class ProfileService {
   ): Promise<Profile | null> {
     return this.profileRepository.addCreatedEvent(userId, eventId);
   }
+
+  getProfilePageByUsername(slug: string): Profile | PromiseLike<Profile> {
+    throw new Error('Method not implemented.');
+  }
+  getProfilePageById(slug: string): Profile | PromiseLike<Profile> {
+    throw new Error('Method not implemented.');
+  }
 }

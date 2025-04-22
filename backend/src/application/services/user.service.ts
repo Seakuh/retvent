@@ -59,6 +59,10 @@ export class UserService {
     return this.userRepository.findByEmail(email);
   }
 
+  async findByUsername(username: string) {
+    return this.userRepository.findByUsername(username);
+  }
+
   async getProfileInfo(userId: string): Promise<ProfileInfoDto> {
     const user = await this.findById(userId);
     if (!user) {

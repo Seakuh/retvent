@@ -89,6 +89,10 @@ export class MongoUserRepository implements IUserRepository {
     return updated ? this.toEntity(updated) : null;
   }
 
+  findByUsername(username: string) {
+    return this.userModel.findOne({ username }).exec();
+  }
+
   async removeLikedEvent(
     userId: string,
     eventId: string,

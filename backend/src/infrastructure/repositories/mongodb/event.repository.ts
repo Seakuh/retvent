@@ -538,6 +538,36 @@ export class MongoEventRepository implements IEventRepository {
     return events.map((event) => this.toEntity(event));
   }
 
+  async findAndCountByHostId(
+    hostId: string,
+    skip: number,
+    limit: number,
+  ): Promise<{ events: Event[]; total: number }> {
+    const [events, total] = await Promise.all([
+      this.eventModel.find({ hostId }).skip(skip).limit(limit).exec(),
+      this.eventModel.countDocuments({ hostId }),
+    ]);
+
+    return { events: events.map((e) => this.toEntity(e)), total };
+  }
+
+  async findAndCountByHostUsername(
+    slug: string,
+    skip: number,
+    limit: number,
+  ): Promise<{ events: Event[]; total: number }> {
+    const [events, total] = await Promise.all([
+      this.eventModel
+        .find({ hostUsername: slug })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.eventModel.countDocuments({ 'host.username': slug }),
+    ]);
+
+    return { events: events.map((event) => this.toEntity(event)), total };
+  }
+
   async countByHostId(hostId: string): Promise<number> {
     return this.eventModel.countDocuments({ hostId }).exec();
   }
@@ -704,5 +734,9 @@ export class MongoEventRepository implements IEventRepository {
     ]);
 
     return event;
+  }
+
+  findBySlug(slug: string, skip: any, limit: any): Event | PromiseLike<Event> {
+    return this.eventModel.findOne({ slug }).exec();
   }
 }
