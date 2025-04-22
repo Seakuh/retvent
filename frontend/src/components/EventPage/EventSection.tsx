@@ -1,3 +1,5 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Event } from "../../utils";
 import { EventCard } from "./EventCard";
 import "./EventSection.css";
@@ -17,20 +19,76 @@ export const EventSection = ({ title, events }: EventSectionProps) => {
     startDate: new Date(),
     description: "",
   };
+
+  const scrollContainer = useRef<HTMLDivElement>(null);
+  const [isAtStart, setIsAtStart] = useState(true);
+  const [isAtEnd, setIsAtEnd] = useState(false);
+
+  const checkScrollPosition = () => {
+    const el = scrollContainer.current;
+    if (!el) return;
+
+    setIsAtStart(el.scrollLeft <= 0);
+    setIsAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 1);
+  };
+
+  const scroll = (direction: "left" | "right") => {
+    const el = scrollContainer.current;
+    if (el) {
+      const scrollAmount = 800;
+      el.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+
+      setTimeout(checkScrollPosition, 300); // nach dem Scrollen Position neu prüfen
+    }
+  };
+
+  useEffect(() => {
+    const el = scrollContainer.current;
+    if (!el) return;
+
+    el.addEventListener("scroll", checkScrollPosition);
+    checkScrollPosition(); // Initial check
+
+    return () => el.removeEventListener("scroll", checkScrollPosition);
+  }, []);
+
   return (
     <>
       <h1 className="section-title-event-section">{title}</h1>
-      <div className="event-list-container">
-        {events.length === 0 ? (
-          <div className="event-card-list-item">
-            <EventCard event={emptyEvent} />
-          </div>
-        ) : (
-          events.map((event) => (
-            <div className="event-card-list-item" key={event.id || event._id}>
-              <EventCard event={event} />
+      <div className="event-list-wrapper">
+        {!isAtStart && events.length > 0 && (
+          <button
+            className="scroll-button scroll-button-left"
+            onClick={() => scroll("left")}
+          >
+            <ChevronLeft />
+          </button>
+        )}
+
+        <div className="event-list-container" ref={scrollContainer}>
+          {events.length === 0 ? (
+            <div className="event-card-list-item">
+              <EventCard event={emptyEvent} />
             </div>
-          ))
+          ) : (
+            events.map((event) => (
+              <div className="event-card-list-item" key={event.id || event._id}>
+                <EventCard event={event} />
+              </div>
+            ))
+          )}
+        </div>
+
+        {!isAtEnd && events.length > 0 && (
+          <button
+            className="scroll-button scroll-button-right"
+            onClick={() => scroll("right")}
+          >
+            <ChevronRight />
+          </button>
         )}
       </div>
     </>

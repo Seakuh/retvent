@@ -39,3 +39,46 @@
     padding: 0.5rem;
   }
 }
+
+.event-list-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.event-list-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1rem;
+  padding: 1rem 0;
+  scrollbar-width: none; /* optional: versteckt Scrollbar */
+}
+
+.event-list-container::-webkit-scrollbar {
+  display: none;
+}
+
+.event-card-list-item {
+  min-width: 250px;
+  flex-shrink: 0;
+}
+
+.scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  padding: 0.5rem;
+  z-index: 10;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.scroll-button-left {
+  left: 0;
+}
+
+.scroll-button-right {
+  right: 0;
+}
