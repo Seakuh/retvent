@@ -1,29 +1,19 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Comment as CommentType } from "../../../utils";
 import { Comment } from "../../Comment/Comment";
 import "./ProfileCommentList.css";
-import { fetchProfileComments } from "./service";
 
 interface ProfileCommentListProps {
   userName: string;
-  commentsCount: number;
-  setCommentsCount: (count: number) => void;
+  comments: CommentType[];
 }
 
 export const ProfileCommentList = ({
   userName,
-  setCommentsCount,
+  comments,
 }: ProfileCommentListProps) => {
-  const [comments, setComments] = useState<CommentType[]>([]);
-  const userId = JSON.parse(localStorage.getItem("user") || "{}").id;
   const navigate = useNavigate();
-  useEffect(() => {
-    fetchProfileComments(userId).then(({ comments, count }) => {
-      setComments(comments);
-      setCommentsCount(count);
-    });
-  }, [userId]);
+  console.log(comments.map((comment) => comment.text));
 
   const handleCommentClick = (eventId: string) => {
     navigate(`/event/${eventId}`);
@@ -31,7 +21,7 @@ export const ProfileCommentList = ({
 
   return (
     <div className="profile-comment-list">
-      <h2 className="comments-by">Comments by {userName}</h2>
+      <h2 className="comments-by">latest comments by {userName}</h2>
       <div className="user-comments-section">
         {comments.map((comment) => (
           <a

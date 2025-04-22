@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../../../Footer/Footer";
 import {
+  Comment as CommentType,
   defaultProfileImage,
   Event,
   formatProfileDate,
@@ -15,7 +16,13 @@ import "./Profile.css";
 import { ProfileCommentList } from "./ProfileCommentList";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileInfo } from "./ProfileInfo";
-import { getProfile, getUserEvents, shareProfile } from "./service";
+
+import {
+  fetchProfileComments,
+  getProfile,
+  getUserEvents,
+  shareProfile,
+} from "./service";
 export const Profile: React.FC = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -26,6 +33,7 @@ export const Profile: React.FC = () => {
   const [isFollowing, setIsFollowing] = useState(
     JSON.parse(localStorage.getItem("following") || "[]").includes(userId || "")
   );
+  const [comments, setComments] = useState<CommentType[]>([]);
   const [commentsCount, setCommentsCount] = useState(0);
   useEffect(() => {
     let isMounted = true;
@@ -46,6 +54,13 @@ export const Profile: React.FC = () => {
           getProfile(userId),
           getUserEvents(userId),
         ]);
+        console.log("profileData", profileData);
+        fetchProfileComments(profileData?.userId || "").then(
+          ({ comments, count }) => {
+            setComments(comments);
+            setCommentsCount(count);
+          }
+        );
 
         if (isMounted) {
           setUser(profileData);
@@ -149,7 +164,7 @@ export const Profile: React.FC = () => {
   if (error || !user) {
     return (
       <div className="error-container">
-        <p>{error || "User not found"}</p>
+        <p>{error || "Profile not found"}</p>
         <button onClick={handleBack} className="back-button">
           <ChevronLeft className="h-5 w-5" />{" "}
         </button>
@@ -261,11 +276,7 @@ export const Profile: React.FC = () => {
             title={`${user.username}'s Events`}
           />
         </div>
-        <ProfileCommentList
-          userName={user.username}
-          commentsCount={commentsCount}
-          setCommentsCount={setCommentsCount}
-        />
+        <ProfileCommentList userName={user.username} comments={comments} />
         <div className="member-since-profile">
           Member since {formatProfileDate(new Date(user.createdAt || ""))}
         </div>
