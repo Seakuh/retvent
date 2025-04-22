@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -8,14 +9,17 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { randomBytes } from 'crypto';
 import { EventService } from '../../application/services/event.service';
 import { ProfileService } from '../../application/services/profile.service';
+import { AuthService } from '../../infrastructure/services/auth.service';
 import { CreateArtistDto } from '../dtos/create-artist.dto';
 @Controller('artists')
 export class ArtistController {
   constructor(
     private readonly profileService: ProfileService,
     private readonly eventService: EventService,
+    private readonly authService: AuthService,
   ) {}
 
   @Get('name')
@@ -38,6 +42,19 @@ export class ArtistController {
   ) {
     console.log('createArtistDto', createArtistDto);
     console.log('image', image);
-    return this.profileService.createNewArtist(image, createArtistDto);
+    const user = await this.authService.register({
+      email: createArtistDto.name + '@gmail.com',
+      password: randomBytes(10).toString('hex'),
+      username: createArtistDto.name,
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    const profile = await this.profileService.createNewArtist(
+      image,
+      createArtistDto,
+      user.user.id,
+    );
+    return profile;
   }
 }
