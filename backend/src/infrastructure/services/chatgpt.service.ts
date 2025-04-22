@@ -220,7 +220,7 @@ Analyze the flyer carefully, ensuring accurate data extraction and logical fallb
   }
   
   Instructions:
-  - Extract the **bio** from the input text and improve the grammar while keeping the artist’s style.
+  - Extract the **bio** from the input text and improve the grammar while keeping the artist’s style. if there is a bio, add it to the bio plain field.
   - Extract all **links** (SoundCloud, Instagram, Bandcamp, Facebook, personal website, etc.).
   - If image URLs are included, add them to the gallery field.
   - Assign a matching **category** based on the artist’s role. Possible values:  
