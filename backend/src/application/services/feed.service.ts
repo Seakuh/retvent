@@ -29,6 +29,25 @@ export class FeedService {
     return feed;
   }
 
+  async pushFeedItemFromEventPictures(
+    event: Event,
+    type: string,
+    imageUrls: string[],
+  ): Promise<void> {
+    for (const imageUrl of imageUrls) {
+      const feed = await this.feedRepository.create({
+        eventId: event.id,
+        profileId: event.hostId,
+        type,
+        feedImageUrl: imageUrl,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      console.log('📥 Feed created:', feed);
+    }
+  }
+
   async getLatestAll(): Promise<FeedResponse[]> {
     const feeds = await this.feedRepository.findAll();
     return this.groupFeedsByProfile(feeds);
