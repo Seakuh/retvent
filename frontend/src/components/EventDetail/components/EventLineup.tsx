@@ -15,8 +15,7 @@ export const EventLineup: React.FC<{ lineup: LineupArtist[] }> = ({
   const navigate = useNavigate();
   const [isArtistModalOpen, setIsArtistModalOpen] = useState(false);
   const handleOnArtistClick = (artist: LineupArtist) => {
-    console.log(artist);
-    navigate(`/artist/${artist.name}`);
+    navigate(`/profile/${artist.name}`);
   };
   const [artist, setArtist] = useState<LineupArtist | null>(null);
 
