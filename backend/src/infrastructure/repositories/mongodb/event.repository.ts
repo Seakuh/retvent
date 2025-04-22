@@ -79,6 +79,14 @@ export class MongoEventRepository implements IEventRepository {
     }));
   }
 
+  uploadEventLinupPicture(eventId: string, imageUrl: string) {
+    return this.eventModel.findByIdAndUpdate(eventId, {
+      $push: {
+        lineupPictureUrl: imageUrl,
+      },
+    });
+  }
+
   getEventsByArtistName(name: string) {
     return this.eventModel
       .find({ lineup: { $elemMatch: { name: name } } })
@@ -90,6 +98,14 @@ export class MongoEventRepository implements IEventRepository {
       $set: {
         'lineup.$.profileId': profileId,
         'lineup.$.userId': userId,
+      },
+    });
+  }
+
+  uploadEventPictures(eventId: string, image: Express.Multer.File[]) {
+    return this.eventModel.findByIdAndUpdate(eventId, {
+      $push: {
+        eventPictures: image,
       },
     });
   }
