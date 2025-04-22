@@ -37,8 +37,12 @@ export class ProfileService {
   getProfileByUserId(userId: string): Promise<Profile> {
     return this.profileRepository.findByUserId(userId);
   }
-  async getProfile(id: string): Promise<Profile> {
+  async getProfileById(id: string): Promise<Profile> {
     return this.profileRepository.findByUserId(id);
+  }
+
+  async getProfileByUsername(username: string): Promise<Profile> {
+    return this.profileRepository.findByUsername(username);
   }
 
   findMissingProfileEmbeddings(BATCH_SIZE: number) {

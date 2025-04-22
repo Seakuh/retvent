@@ -20,7 +20,7 @@ export class ProfileOwnerGuard implements CanActivate {
     }
 
     // Hole das Profil
-    const profile = await this.profileService.getProfile(profileId);
+    const profile = await this.profileService.getProfileById(profileId);
 
     // Prüfe ob das Profil existiert und dem User gehört
     if (!profile || profile.userId !== user.sub) {

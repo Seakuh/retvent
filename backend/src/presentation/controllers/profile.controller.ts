@@ -26,9 +26,15 @@ export class ProfileController {
     private readonly imageService: ImageService,
   ) {}
 
-  @Get(':id')
-  async getProfile(@Param('id') id: string): Promise<Profile> {
-    return this.profileService.getProfile(id);
+  @Get(':slug')
+  async getProfile(@Param('slug') slug: string): Promise<Profile> {
+    console.log('getProfile', slug);
+
+    const isObjectId = /^[a-f\d]{24}$/i.test(slug); // z. B. MongoDB ID
+
+    return isObjectId
+      ? this.profileService.getProfileById(slug)
+      : this.profileService.getProfileByUsername(slug);
   }
 
   @Get()
