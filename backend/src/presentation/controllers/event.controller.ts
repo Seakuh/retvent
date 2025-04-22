@@ -349,9 +349,6 @@ export class EventController {
   ) {
     const result = await this.eventService.findAndCountBySlug(slug);
     const { events, total } = result;
-    console.log('events', events);
-    console.log('total', total);
-
     return {
       events,
       meta: {
@@ -389,8 +386,6 @@ export class EventController {
       this.eventService.findByCategory(category, skip, limit, location),
       this.eventService.countByCategory(category),
     ]);
-    console.log('events', events);
-
     return {
       events: events,
       meta: {

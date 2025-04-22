@@ -15,7 +15,10 @@ export class MongoCommentRepository implements ICommentRepository {
     this.commentModel.collection.createIndex({ eventId: 1 });
   }
   async findByUserIdAndAmount(userId: string) {
-    const comments = await this.commentModel.find({ userId }).limit(5);
+    const comments = await this.commentModel
+      .find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(5);
     const count = await this.commentModel.countDocuments({ userId });
     return { comments, count };
   }
@@ -77,5 +80,13 @@ export class MongoCommentRepository implements ICommentRepository {
       comments,
       total,
     };
+  }
+
+  async findByUsernameAndAmount(username: string) {
+    const [comments, total] = await Promise.all([
+      this.commentModel.find({ username }).sort({ createdAt: -1 }).lean(),
+      this.commentModel.countDocuments({ username }),
+    ]);
+    return { comments, total };
   }
 }

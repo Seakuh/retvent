@@ -538,7 +538,6 @@ export class EventService {
       userName = slug;
     }
 
-    console.log('userName', userName);
     const { events, total } =
       await this.eventRepository.findAndCountByHostUsername(userName, userId);
 

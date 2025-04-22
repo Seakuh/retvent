@@ -581,15 +581,12 @@ export class MongoEventRepository implements IEventRepository {
     slug: string,
     userId?: string,
   ): Promise<{ events: Event[]; total: number }> {
-    console.log('userId', userId);
-
     const orConditions = [
       { 'host.username': slug },
       { 'lineup.name': slug },
       ...(userId ? [{ hostId: userId }] : []),
     ];
     const filter = { $or: orConditions };
-    console.log('filter', filter);
     const [events, total] = await Promise.all([
       this.eventModel
         .find(filter)
@@ -606,12 +603,10 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async findByHostUsername(username: string): Promise<Event[]> {
-    console.log(`Finding events for host: ${username}`); // Debug log
     const events = await this.eventModel
       .find({ hostUsername: username })
       .sort({ createdAt: -1 })
       .exec();
-    console.log(`Found ${events.length} events`); // Debug log
     return events.map((event) => this.toEntity(event));
   }
 
