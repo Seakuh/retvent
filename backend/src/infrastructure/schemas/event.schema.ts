@@ -19,6 +19,8 @@ export const EventSchema = new Schema(
     category: { type: String },
     price: Schema.Types.Mixed,
     ticketLink: { type: String },
+    lineupPictureUrl: { type: String },
+    videoUrls: { type: [String] },
     lineup: [
       new Schema({
         name: { type: String },
