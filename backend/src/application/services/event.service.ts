@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { GeolocationService } from 'src/infrastructure/services/geolocation.service';
 import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
@@ -109,6 +114,60 @@ export class EventService {
       ...event,
       host: profile,
     };
+  }
+
+  async uploadEventLinupPicture(
+    eventId: string,
+    image: Express.Multer.File,
+    userId: string,
+  ) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to upload pictures to this event',
+      );
+    }
+    const imageUrl = await this.imageService.uploadImage(image);
+    await this.eventRepository.uploadEventLinupPicture(eventId, imageUrl);
+    await this.feedService.pushFeedItemFromEventPictures(event, 'lineup', [
+      imageUrl,
+    ]);
+    return event;
+  }
+
+  async uploadEventPictures(
+    eventId: string,
+    images: Express.Multer.File[],
+    userId: string,
+  ) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to upload pictures to this event',
+      );
+    }
+    const imageUrls = [];
+    for (const image of images) {
+      const imageUrl = await this.imageService.uploadImage(image);
+      imageUrls.push(imageUrl);
+    }
+    await this.eventRepository.uploadEventPictures(eventId, imageUrls);
+    await this.feedService.pushFeedItemFromEventPictures(
+      event,
+      'picture',
+      imageUrls,
+    );
+    return event;
+  }
+
+  uploadEventVideo(eventId: string, video: Express.Multer.File, id: any) {
+    throw new Error('Method not implemented.');
   }
 
   async getEventsByIds(ids: string[]): Promise<Event[]> {
