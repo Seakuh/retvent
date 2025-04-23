@@ -50,7 +50,6 @@
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
-  gap: 1rem;
   padding: 1rem 0;
   scrollbar-width: none; /* optional: versteckt Scrollbar */
 }
