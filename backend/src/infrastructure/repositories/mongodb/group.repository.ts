@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { User } from 'src/core/domain';
 import { Group } from '../../../core/domain/group';
 import { IGroupRepository } from '../../../core/repositories/group.repository.interface';
 @Injectable()
@@ -63,5 +64,18 @@ export class MongoGroupRepository implements IGroupRepository {
 
   findByInviteToken(token: string): Promise<Group | null> {
     return this.groupModel.findOne({ inviteToken: token });
+  }
+
+  createUserChat(sender: User, receiver: User) {
+    const newGroup = new this.groupModel({
+      name: `${sender.username} - ${receiver.username}`,
+      description: 'User Chat',
+      isPublic: false,
+      memberIds: [sender.id, receiver.id],
+      creatorId: sender.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    return newGroup.save();
   }
 }

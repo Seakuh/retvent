@@ -73,10 +73,14 @@ export class MessageService {
     return this.messageRepository.findByGroupIdAndSenderId(groupId, senderId);
   }
 
-  async findByPublicGroup(groupId: string, limit = 50) {
+  async findByPublicGroup(userId: string, groupId: string, limit = 50) {
     const group = await this.groupService.getGroupById(groupId);
     if (!group) throw new NotFoundException('Group not found');
-    if (!group.isPublic) throw new ForbiddenException('Access denied');
+    if (!group.isPublic) {
+      const isInGroup = await this.groupService.isUserInGroup(groupId, userId);
+      if (!isInGroup) throw new ForbiddenException('Access denied');
+    }
+
     return this.messageRepository.findByGroupId(groupId, limit);
   }
 

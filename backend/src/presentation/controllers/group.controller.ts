@@ -27,6 +27,13 @@ export class GroupController {
     return this.groupService.getGroupsByUserId(userId);
   }
 
+  @Post('create-user-chat')
+  @UseGuards(GroupGuard)
+  createUserChat(@Req() req, @Body() body: { receiverId: string }) {
+    console.log('++++++++++++++++++++' + req.user.id, body.receiverId);
+    return this.groupService.createUserChat(req.user.id, body.receiverId);
+  }
+
   @Post()
   @UseGuards(GroupGuard)
   createWithEvent(@Req() req, @Body() dto: CreateGroupDto) {

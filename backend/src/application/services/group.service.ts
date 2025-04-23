@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   NotImplementedException,
@@ -7,9 +8,13 @@ import { CreateGroupDto } from 'src/presentation/dtos/create-group.dto';
 import { UpdateGroupDto } from 'src/presentation/dtos/update-group.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { MongoGroupRepository } from '../../infrastructure/repositories/mongodb/group.repository';
+import { UserService } from './user.service';
 @Injectable()
 export class GroupService {
-  constructor(private readonly groupRepository: MongoGroupRepository) {}
+  constructor(
+    private readonly groupRepository: MongoGroupRepository,
+    private readonly userService: UserService,
+  ) {}
 
   async createGroup(userId: string, dto: CreateGroupDto) {
     return await this.groupRepository.createGroup(userId, dto);
@@ -61,6 +66,20 @@ export class GroupService {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+  }
+
+  async createUserChat(userId: string, receiverId: string) {
+    const receiver = await this.userService.findById(receiverId);
+    const sender = await this.userService.findById(userId);
+
+    if (!receiver) throw new NotFoundException('Receiver not found');
+    if (sender.id === receiver.id)
+      throw new BadRequestException('You cannot create a chat with yourself');
+    const group = await this.groupRepository.findByGroupName(
+      `${sender.username} - ${receiver.username}`,
+    );
+    if (group) return group;
+    return this.groupRepository.createUserChat(sender, receiver);
   }
 
   async joinGroup(userId: string, token: string) {

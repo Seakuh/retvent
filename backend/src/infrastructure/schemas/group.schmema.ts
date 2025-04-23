@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const GroupSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  eventId: { type: String, required: true },
+  eventId: { type: String, required: false },
   isPublic: { type: Boolean, required: true },
   memberIds: [{ type: String }],
   creatorId: { type: String, required: false },
