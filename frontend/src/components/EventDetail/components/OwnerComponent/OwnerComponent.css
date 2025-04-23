@@ -1,0 +1,21 @@
+.event-owner-info {
+  display: flex;
+  justify-content: space-between;
+  margin: 3rem;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+}
+
+  .event-owner-info-button {
+    padding: 1rem;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid currentColor;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .event-owner-info-button:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }

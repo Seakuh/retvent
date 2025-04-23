@@ -16,6 +16,7 @@ import { EventHero } from "./components/EventHero";
 import { EventHost } from "./components/EventHost";
 import { EventLineup } from "./components/EventLineup";
 import { EventTags } from "./components/EventTags";
+import { OwnerComponent } from "./components/OwnerComponent/OwnerComponent";
 import "./EventDetail.css";
 import { shareEvent } from "./service";
 
@@ -233,6 +234,7 @@ export const EventDetail: React.FC = () => {
         </button>
 
         <div className="event-content">
+          {isOwner && <OwnerComponent />}
           <div className="event-important-info-contain">
             <div className="event-title-container">
               <a
