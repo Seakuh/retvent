@@ -56,3 +56,26 @@ export const fetchProfileComments = async (userId: string) => {
     return [];
   }
 };
+
+export const createChat = async (chatRequestProfileId: string) => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}groups/create-user-chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ receiverId: chatRequestProfileId }),
+  });
+  return response.json();
+};
+
+export class CreateGroupDto {
+  name?: string;
+  eventId?: string;
+  description?: string;
+  creatorId?: string;
+  isPublic?: boolean;
+  imageUrl?: string;
+  memberIds?: string[];
+}
