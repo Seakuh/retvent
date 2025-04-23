@@ -1,5 +1,6 @@
 import { Image, MapPin, Send } from "lucide-react";
 import React, { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
 import { Message } from "../../../utils";
 import { useChat } from "../chatProvider";
@@ -24,6 +25,7 @@ const Dialog: React.FC<DialogProps> = ({
 }) => {
   const { user } = useContext(UserContext);
   const { currentGroupId } = useChat();
+  const navigate = useNavigate();
   const userId = user?.id;
   const [input, setInput] = React.useState("");
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
@@ -105,6 +107,11 @@ const Dialog: React.FC<DialogProps> = ({
     }
   };
 
+  const handleOnMessageClick = (senderId: string) => {
+    console.log(senderId);
+    navigate(`/profile/${senderId}`);
+  };
+
   return (
     <div className="dialog-container">
       <div className="dialog-messages">
@@ -117,6 +124,9 @@ const Dialog: React.FC<DialogProps> = ({
           })
           .map((msg, index) => (
             <div
+              onClick={() => {
+                handleOnMessageClick(msg.senderId || "");
+              }}
               key={index}
               className={`message ${
                 msg.senderId === userId ? "user-message" : "bot-message"
