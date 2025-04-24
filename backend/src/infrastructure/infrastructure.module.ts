@@ -53,6 +53,7 @@ import { ChatGPTService } from './services/chatgpt.service';
 import { GeolocationService } from './services/geolocation.service';
 import { GroovecastService } from './services/groovecast.service';
 import { ImageService } from './services/image.service';
+import { VideoService } from './services/video.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 @Module({
   imports: [
@@ -109,6 +110,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     FeedService,
     EventEmbeddingService,
     ImageService,
+    VideoService,
     GeolocationService,
     LocationService,
     AuthService,
@@ -170,6 +172,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     AuthService,
     GroupService,
     ImageService,
+    VideoService,
     ChatGPTService,
     JwtAuthGuard,
     OwnerGuard,
