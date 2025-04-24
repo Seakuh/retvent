@@ -32,7 +32,7 @@ export class Event implements IEvent {
   website?: string;
   likeIds?: string[];
   eventPictures?: string[];
-  lineupPictureUrl: string;
+  lineupPictureUrl?: string[];
   videoUrls?: string[];
 
   email?: string;

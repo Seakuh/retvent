@@ -767,4 +767,24 @@ export class MongoEventRepository implements IEventRepository {
   findBySlug(slug: string, skip: any, limit: any): Event | PromiseLike<Event> {
     return this.eventModel.findOne({ slug }).exec();
   }
+
+  uploadLineupPictures(eventId: string, imageUrls: string[], id: any) {
+    return this.eventModel
+      .findByIdAndUpdate(
+        eventId,
+        { $push: { lineupPictureUrl: { $each: imageUrls } } },
+        { new: true },
+      )
+      .exec();
+  }
+
+  uploadEventVideo(eventId: string, videoUrl: string) {
+    return this.eventModel
+      .findByIdAndUpdate(
+        eventId,
+        { $push: { videoUrls: videoUrl } },
+        { new: true },
+      )
+      .exec();
+  }
 }

@@ -31,10 +31,6 @@ export class ImageService {
 
   async uploadImage(image: Express.Multer.File): Promise<string> {
     try {
-      if (process.env.NODE_ENV === 'test') {
-        return 'https://hel1.your-objectstorage.com/imagebucket/events/2edf0ca5-be33-4fa9-9ac3-28da8094e6fa.jpg';
-      }
-
       const fileExtension = image.originalname.split('.').pop() || 'jpg';
       const fileName = `${uuidv4()}.${fileExtension}`;
 

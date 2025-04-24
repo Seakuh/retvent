@@ -483,6 +483,31 @@ export class EventController {
     }
   }
 
+  @Post('lineup/upload')
+  @UseGuards(UploadGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadLineupPicture(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() body: { eventId: string },
+    @Request() req,
+  ) {
+    if (!req.user) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+    console.log(
+      'uploadLineupPicture',
+      body.eventId,
+      image,
+      req.user.id,
+      image.path,
+    );
+    return this.eventService.uploadLineupPictures(
+      body.eventId,
+      image,
+      req.user.id,
+    );
+  }
+
   @Post('picture/upload')
   @UseGuards(UploadGuard)
   @UseInterceptors(FileInterceptor('image'))

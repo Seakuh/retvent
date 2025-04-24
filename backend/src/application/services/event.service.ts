@@ -11,6 +11,7 @@ import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event, EventWithHost } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
 import { ImageService } from '../../infrastructure/services/image.service';
+import { VideoService } from '../../infrastructure/services/video.service';
 import { FeedService } from './feed.service';
 import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
@@ -24,6 +25,7 @@ export class EventService {
     private readonly profileService: ProfileService,
     private readonly userService: UserService,
     private readonly feedService: FeedService,
+    private readonly videoService: VideoService,
   ) {}
   getEventsByTag(tag: string) {
     return this.eventRepository.getEventsByTag(tag);
@@ -166,8 +168,24 @@ export class EventService {
     return event;
   }
 
-  uploadEventVideo(eventId: string, video: Express.Multer.File, id: any) {
-    throw new Error('Method not implemented.');
+  async uploadEventVideo(
+    eventId: string,
+    video: Express.Multer.File,
+    userId: string,
+  ) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to upload pictures to this event',
+      );
+    }
+    const videoUrl = await this.videoService.uploadVideo(video);
+    await this.eventRepository.uploadEventVideo(eventId, videoUrl);
+    await this.feedService.pushFeedItemFromEvent(event, 'video');
+    return event;
   }
 
   async getEventsByIds(ids: string[]): Promise<Event[]> {
@@ -542,5 +560,15 @@ export class EventService {
       await this.eventRepository.findAndCountByHostUsername(userName, userId);
 
     return { events, total };
+  }
+
+  async uploadLineupPictures(
+    eventId: string,
+    image: Express.Multer.File,
+    id: any,
+  ) {
+    console.log('uploadLineupPictures', eventId, image, id);
+    const imageUrl = await this.imageService.uploadImage(image);
+    return this.eventRepository.uploadLineupPictures(eventId, [imageUrl], id);
   }
 }
