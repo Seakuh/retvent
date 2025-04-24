@@ -21,8 +21,13 @@ export const FeedCard = ({
         <div className="profile-card-inner">
           <img
             className="profile-card-image"
-            src={feed.profileImageUrl || defaultProfileImage}
+            src={
+              feed.profileImageUrl
+                ? `https://img.event-scanner.com/insecure/rs:fill:96:96/plain/${feed.profileImageUrl}@webp`
+                : defaultProfileImage
+            }
             alt={feed.profileName || "Profile"}
+            loading="lazy"
           />
         </div>
       </div>

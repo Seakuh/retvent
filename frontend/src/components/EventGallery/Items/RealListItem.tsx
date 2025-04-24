@@ -4,7 +4,7 @@ import { MapPin } from "lucide-react";
 
 import { Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { DEFAULT_IMAGE, Event } from "../../../utils";
+import { Event } from "../../../utils";
 import "./RealListItem.css";
 
 export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
@@ -20,9 +20,10 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
     >
       <div className="real-event-thumbnail">
         <img
-          src={event.imageUrl || DEFAULT_IMAGE}
+          src={`https://img.event-scanner.com/insecure/rs:fill:500:281/q:70/plain/${event.imageUrl}@webp`}
           alt={event.title}
           loading="lazy"
+          decoding="async"
         />
       </div>
       <div className="miniature-event-info">

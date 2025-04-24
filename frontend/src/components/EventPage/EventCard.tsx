@@ -26,7 +26,9 @@ export const EventCard = ({ event }: { event: Event }) => {
       <div className="event-card-image-container">
         <img
           className="event-card-image"
-          src={event.imageUrl}
+          loading="lazy"
+          decoding="async"
+          src={`https://img.event-scanner.com/insecure/rs:fill:320:560/q:70/plain/${event.imageUrl}@webp`}
           alt={event.title}
         />
       </div>

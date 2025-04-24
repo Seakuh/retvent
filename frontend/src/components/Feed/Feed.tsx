@@ -12,7 +12,12 @@ export const FeedComponent = ({ feeds }: FeedProps) => {
       <div className="section-title">Explore </div>
       <div className="profile-feed-container">
         {feeds.map((feed) => (
-          <FeedCard key={feed._id} feed={feed} />
+          <FeedCard
+            key={feed._id}
+            feed={feed}
+            setShowFeedModal={() => {}}
+            setCurrentFeedItem={() => {}}
+          />
         ))}
       </div>
     </div>
