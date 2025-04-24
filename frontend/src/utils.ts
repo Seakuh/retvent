@@ -54,6 +54,7 @@ export const groupTypesWithEmoji = [
   { name: "Artist", emoji: "🎨" },
   { name: "Sleep", emoji: "💤" },
   { name: "Lost-Found", emoji: "🔍" },
+  { name: "Queue", emoji: "👥" },
 ];
 
 export interface SendMessageDto {

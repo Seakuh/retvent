@@ -1,5 +1,26 @@
 import { API_URL, Event, groupTypesWithEmoji } from "../../utils";
 
+export const shareEventId = async (eventId: string) => {
+  const shareData = {
+    url: `https://event-scanner.com/event/${eventId}`,
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+        shareData.url
+      )}`;
+      window.open(whatsappUrl, "_blank");
+    }
+  } catch (error) {
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+      shareData.url
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  }
+};
+
 export const shareEvent = async (eventToShare: Event) => {
   if (!eventToShare) return;
 

@@ -307,7 +307,6 @@
   }
 
   .calendar-text-container:hover {
-    color: #00ff87;
   }
 
   .navigation-info-icon{
@@ -335,9 +334,17 @@
 
   .event-detail-subtitle{
     margin: 2rem;
-    color: #00ff87;
   }
   
+  .event-detail-content-container{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;  
+    max-width: 935px;
+    margin: 0 auto;
+  }
+
   /* =============================================================
      LINEUP SECTION
      ============================================================= */
@@ -756,7 +763,6 @@
   }
   
   .location-text {
-    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -764,7 +770,6 @@
   }
   
   .location-text:hover {
-    color: var(--color-neon-pink) !important;
   }
 
   .action-bar-container {

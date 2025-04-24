@@ -1,4 +1,4 @@
-import { CalendarPlus, ChevronLeft, Heart, Share2 } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,10 +15,9 @@ import { EventHero } from "./components/EventHero";
 import { EventHost } from "./components/EventHost";
 import { EventLineup } from "./components/EventLineup";
 import { EventTags } from "./components/EventTags";
+import { MetaBar } from "./components/MetaBar";
 import { OwnerComponent } from "./components/OwnerComponent/OwnerComponent";
 import "./EventDetail.css";
-import { shareEvent } from "./service";
-
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
   const { user } = useContext(UserContext);
@@ -184,7 +183,7 @@ export const EventDetail: React.FC = () => {
           } as React.CSSProperties
         }
       >
-        <div className="share-buttons">
+        {/* <div className="share-buttons">
           <button
             onClick={handleAddToCalendar}
             className="share-button"
@@ -216,13 +215,14 @@ export const EventDetail: React.FC = () => {
               }`}
             />
           </button>
-        </div>
+        </div> */}
 
         <EventHero
           imageUrl={event.imageUrl}
           title={event.title}
           onImageClick={() => setShowImageModal(true)}
         />
+        <MetaBar {...event} />
         {/* <CommunitySection
           views={event.views ?? 0}
           commentCount={event.commentCount ?? 0}
@@ -244,7 +244,6 @@ export const EventDetail: React.FC = () => {
                 rel="noopener noreferrer"
               >
                 <h1 className="event-title-detail">{event.title}</h1>
-                <p className="event-detail-subtitle">{event.description}</p>
               </a>
             </div>
             <EventBasicInfo

@@ -1,4 +1,11 @@
-import { Bed, Car, HeartHandshake, Palette, Plus, Shirt } from "lucide-react";
+import {
+  Bed,
+  Car,
+  HeartHandshake,
+  Palette,
+  Shirt,
+  Snowflake,
+} from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
@@ -72,9 +79,9 @@ export const EventGroups = ({ event }: { event: Event }) => {
         </button>
         <button
           className="event-groups-community-item"
-          onClick={() => createOrJoinGroup("Other")}
+          onClick={() => createOrJoinGroup("Queue")}
         >
-          <Plus size={20} />
+          <Snowflake size={20} />
           <h3>Queue</h3>
         </button>
       </ul>

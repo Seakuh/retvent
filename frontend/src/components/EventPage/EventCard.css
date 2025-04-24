@@ -97,6 +97,10 @@
   color: grey;
 }
 
+.event-card-like-container {
+  cursor: pointer;
+}
+
 .hover-effect {
   transform: translateY(-4px);
   box-shadow: 0 0 20px var(--color-neon-blue);

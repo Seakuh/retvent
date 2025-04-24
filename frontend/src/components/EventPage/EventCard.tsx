@@ -1,10 +1,14 @@
-import { Eye, MapPin, MessageCircle } from "lucide-react";
+import { Eye, Heart, MapPin, MessageCircle } from "lucide-react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../contexts/UserContext";
 import { Event } from "../../utils";
 import "./EventCard.css";
 
 export const EventCard = ({ event }: { event: Event }) => {
   const navigate = useNavigate();
+  const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
+  const [isLiked, setIsLiked] = useState(false);
 
   const formatDate = (date: string) => {
     const d = new Date(date);
@@ -16,6 +20,20 @@ export const EventCard = ({ event }: { event: Event }) => {
       })
       .toUpperCase();
   };
+
+  const handleLike = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
+
+    if (isFavorite(event.id!)) {
+      // Nutze isFavorite statt lokalem State
+      removeFavorite(event.id!);
+    } else {
+      addFavorite(event.id!);
+    }
+    // setIsLiked nicht nötig, da wir isFavorite vom Context nutzen
+  };
+
   return (
     <div
       onClick={() => {
@@ -59,6 +77,20 @@ export const EventCard = ({ event }: { event: Event }) => {
               <div className="event-card-comments-container">
                 <MessageCircle size={16} />
                 <p>{event.commentCount || 0}</p>
+              </div>
+            </div>
+            <div className="event-card-user-interaction">
+              <div className="event-card-user-interaction-left">
+                <div
+                  onClick={(e) => handleLike(e)}
+                  className="event-card-like-container"
+                >
+                  <Heart
+                    size={16}
+                    color={isFavorite(event.id!) ? "red" : "white"}
+                    fill={isFavorite(event.id!) ? "red" : "none"}
+                  />
+                </div>
               </div>
             </div>
           </div>
