@@ -111,7 +111,7 @@ export const FeedModal = ({
         >
           <img
             className="feed-modal-profile-image"
-            src={feedItem.profileImageUrl}
+            src={`https://img.event-scanner.com/insecure/rs:fill:96:96/plain/${feedItem.profileImageUrl}@webp`}
             alt={feedItem.profileName}
           />
           <h2 className="feed-modal-profile-name">{feedItem.profileName}</h2>
@@ -129,7 +129,9 @@ export const FeedModal = ({
                 `/event/${feedItem.feedItems![currentImageIndex].eventId}`
               );
             }}
-            src={feedItem.feedItems![currentImageIndex].feedImageUrl}
+            src={`https://img.event-scanner.com/insecure/rs:auto/plain/${
+              feedItem.feedItems![currentImageIndex].feedImageUrl
+            }@webp`}
             alt={`${feedItem.profileName} - Picture ${currentImageIndex + 1}`}
           />
         </div>
