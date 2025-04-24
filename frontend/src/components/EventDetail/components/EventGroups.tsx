@@ -75,7 +75,7 @@ export const EventGroups = ({ event }: { event: Event }) => {
           onClick={() => createOrJoinGroup("Other")}
         >
           <Plus size={20} />
-          <h3>Other</h3>
+          <h3>Queue</h3>
         </button>
       </ul>
     </div>

@@ -8,7 +8,6 @@ import CommentSection from "../Comment/CommentSection";
 import { CommunityBar } from "../CommunityDetailBar/CommunityBar";
 import { ImageModal } from "../ImageModal/ImageModal";
 import { EventBasicInfo } from "./components/EventBasicInfo";
-import { EventDescription } from "./components/EventDescription";
 import { EventDetailError } from "./components/EventDetailError";
 import { EventDetailSkeleton } from "./components/EventDetailSkeleton";
 import { EventGroups } from "./components/EventGroups";
@@ -245,24 +244,26 @@ export const EventDetail: React.FC = () => {
                 rel="noopener noreferrer"
               >
                 <h1 className="event-title-detail">{event.title}</h1>
+                <p className="event-detail-subtitle">{event.description}</p>
               </a>
             </div>
             <EventBasicInfo
               startDate={event.startDate?.toString() || ""}
               startTime={event.startTime}
               city={event.city}
+              description={event.description}
               category={event.category}
               address={event.address}
               handleAddToCalendar={handleAddToCalendar}
             />
           </div>
 
-          <EventDescription
+          {/* <EventDescription
             title={event.title}
             description={event.description}
             price={event.price}
             ticketLink={event.ticketLink}
-          />
+          /> */}
 
           {event.lineup && event.lineup.length > 0 && (
             <EventLineup lineup={event.lineup} />
