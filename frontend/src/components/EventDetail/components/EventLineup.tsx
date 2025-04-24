@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { defaultProfileImage } from "../../../utils";
@@ -45,24 +46,29 @@ export const EventLineup: React.FC<{ lineup: LineupArtist[] }> = ({
                   alt={artist.name}
                 />
               </div>
-              <div className="lineup-artist-info">
-                <div className="artist-header-link-container">
-                  <div className="artist-header">
-                    <a
-                      href={`https://www.google.com/search?q=${encodeURIComponent(
-                        artist.name + " " + artist.role || " DJ"
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="artist-search-link"
-                    >
-                      <h3 className="lineup-artist-name">{artist.name}</h3>
-                      {artist.role && (
-                        <span className="artist-role">{artist.role}</span>
-                      )}
-                    </a>
+              <div className="lineup-artist-info-container">
+                <div className="lineup-artist-info">
+                  <div className="artist-header-link-container">
+                    <div className="artist-header">
+                      <a onClick={() => handleOnArtistClick(artist)}>
+                        <h3 className="lineup-artist-name">{artist.name}</h3>
+                        {artist.role && (
+                          <span className="artist-role">{artist.role}</span>
+                        )}
+                      </a>
+                    </div>
                   </div>
                 </div>
+                <a
+                  href={`https://www.google.com/search?q=${encodeURIComponent(
+                    artist.name + " " + artist.role || " DJ"
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="linup-search-link"
+                >
+                  <ExternalLink className="h-5 w-5" />
+                </a>
               </div>
             </div>
           </div>

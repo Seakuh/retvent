@@ -248,7 +248,7 @@ export interface Event {
 }
 
 export const defaultProfileImage =
-  "https://hel1.your-objectstorage.com/imagebucket/events/8d703697-caf7-4438-abda-4ccd8e5939e9.png";
+  "https://img.event-scanner.com/insecure/rs:auto/plain/https://hel1.your-objectstorage.com/imagebucket/events/8d703697-caf7-4438-abda-4ccd8e5939e9.png@webp";
 
 export interface Profile {
   _id?: string;

@@ -751,3 +751,18 @@
     }
   }
   
+
+  .linup-search-link {
+    color: var(--color-neon-blue);
+    transition: transform 0.2s ease, color 0.2s ease;
+    cursor: pointer;  
+  }
+  
+  
+  .lineup-artist-info-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
