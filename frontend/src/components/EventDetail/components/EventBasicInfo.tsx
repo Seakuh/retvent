@@ -28,10 +28,7 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
   return (
     <div className="event-basic-info">
       {/* <h2 className="section-headline">Date & Time</h2> */}
-      <div
-        className="info-item calendar-text-container"
-        onClick={handleAddToCalendar}
-      >
+      <div className="info-item calendar-text-container">
         <div className="info-text">
           <span className="icon">
             <Calendar className="h-5 w-5" />
@@ -50,29 +47,12 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
           </div>
         </div>
         <div className="map-plus-calendar-container">
-          <CalendarPlus className="h-5 w-5" />
+          <CalendarPlus onClick={handleAddToCalendar} className="h-5 w-5" />
         </div>
       </div>
 
       <div className="info-item location-text">
-        <div
-          className="info-text"
-          onClick={() => {
-            if (
-              address &&
-              address.street &&
-              address.houseNumber &&
-              address.city
-            ) {
-              window.open(
-                `https://www.google.com/maps?q=${address.street}, ${address.houseNumber}, ${address.city}`,
-                "_blank"
-              );
-            } else if (city) {
-              window.open(`https://www.google.com/maps?q=${city}`, "_blank");
-            }
-          }}
-        >
+        <div className="info-text">
           <span className="icon">
             <MapPin className="h-5 w-5" />
           </span>
@@ -86,7 +66,24 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
           </div>
         </div>
         <div className="map-plus-calendar-container">
-          <MapPinned className="navigation-info-icon h-5 w-5" />
+          <MapPinned
+            onClick={() => {
+              if (
+                address &&
+                address.street &&
+                address.houseNumber &&
+                address.city
+              ) {
+                window.open(
+                  `https://www.google.com/maps?q=${address.street}, ${address.houseNumber}, ${address.city}`,
+                  "_blank"
+                );
+              } else if (city) {
+                window.open(`https://www.google.com/maps?q=${city}`, "_blank");
+              }
+            }}
+            className="navigation-info-icon h-5 w-5"
+          />
         </div>
       </div>
     </div>
