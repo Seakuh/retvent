@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./EventDescription.css";
+
 interface EventDescriptionProps {
   title: string;
   description?: string;
@@ -12,6 +13,19 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
   description,
 }) => {
   const [expanded, setExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      const lineHeight = parseInt(
+        window.getComputedStyle(textRef.current).lineHeight
+      );
+      const height = textRef.current.scrollHeight;
+      const maxHeight = lineHeight * 3;
+      setIsOverflowing(height > maxHeight);
+    }
+  }, [description]);
 
   if (!description) return null;
 
@@ -21,18 +35,21 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
         className={`event-description-section ${
           expanded ? "expanded" : "collapsed"
         }`}
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => isOverflowing && setExpanded(!expanded)}
       >
-        <div className="event-description-text">{description}</div>
-        {expanded ? (
-          <div className="expand-hint">
-            <ChevronUp className="more-info-icon h-5 w-5" />
-          </div>
-        ) : (
-          <div className="expand-hint">
-            <ChevronDown className="more-info-icon h-5 w-5" />
-          </div>
-        )}
+        <div className="event-description-text" ref={textRef}>
+          {description}
+        </div>
+        {isOverflowing &&
+          (expanded ? (
+            <div className="expand-hint">
+              <ChevronUp className="more-info-icon h-5 w-5" />
+            </div>
+          ) : (
+            <div className="expand-hint">
+              <ChevronDown className="more-info-icon h-5 w-5" />
+            </div>
+          ))}
       </div>
     </div>
   );
