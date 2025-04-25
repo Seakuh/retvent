@@ -8,6 +8,7 @@ import CommentSection from "../Comment/CommentSection";
 import { CommunityBar } from "../CommunityDetailBar/CommunityBar";
 import { ImageModal } from "../ImageModal/ImageModal";
 import { EventBasicInfo } from "./components/EventBasicInfo";
+import { EventDescription } from "./components/EventDescription";
 import { EventDetailError } from "./components/EventDetailError";
 import { EventDetailSkeleton } from "./components/EventDetailSkeleton";
 import { EventGroups } from "./components/EventGroups";
@@ -257,12 +258,12 @@ export const EventDetail: React.FC = () => {
             />
           </div>
 
-          {/* <EventDescription
+          <EventDescription
             title={event.title}
             description={event.description}
             price={event.price}
             ticketLink={event.ticketLink}
-          /> */}
+          />
 
           {((event.lineup && event.lineup.length > 0) ||
             event.lineupPictureUrl) && (
