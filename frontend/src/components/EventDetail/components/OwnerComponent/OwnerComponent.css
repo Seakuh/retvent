@@ -1,9 +1,14 @@
 .event-owner-info {
   display: flex;
   justify-content: space-between;
-  margin: 3rem;
-  gap: 1rem;
+  align-items: center;
+  margin: 0 auto;
+  width: 100%;
+  margin-top: 1rem;
   padding: 1rem;
+  max-width: 935px;
+  background-color: black;
+  border-radius: 8rem;
 }
 
   .event-owner-info-button {
@@ -21,8 +26,10 @@
 
   @media (max-width: 768px) {
     .event-owner-info {
-      margin: 1rem;
       padding: 0;
       align-items: center;
+      width: 100%;
+      border-radius: 0;
+      margin-top: 0;
     }
   }

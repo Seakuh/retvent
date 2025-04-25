@@ -176,12 +176,12 @@ export const EventDetail: React.FC = () => {
           commentCount={event.commentCount ?? 0}
           city={event.city ?? ""}
         /> */}
+        {isOwner && <OwnerComponent />}
         <button className="back-button" onClick={handleBack}>
           <ChevronLeft className="h-5 w-5" />
         </button>
 
         <div className="event-content">
-          {isOwner && <OwnerComponent />}
           <div className="event-important-info-contain">
             <div className="event-title-container">
               <a
