@@ -336,6 +336,7 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
 
   extractEventFromPrompt = async (
     prompt: string,
+    event: Event,
   ): Promise<Partial<Event> | null> => {
     const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
 
@@ -344,72 +345,99 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
       messages: [
         {
           role: 'user',
-          content: [
+          content: ` You are an intelligent assistant helping to update a structured event object based on new user input. Your task is to carefully review the current event data and selectively update it using the provided user prompt.
+            
+            ---
+            
+            ### 🧠 Objective:
+            Update the event fields **only if** the user prompt provides **better, more specific, or missing information**.
+            
+            If a field in the current event already contains a well-written or complete value (e.g. a clear title or detailed description), **retain it**.
+            
+            ---
+            
+            ### 📅 Today's Date:
+            Today's date is **${today}**.
+            Use this as fallback \`startDate\` if no specific date is mentioned.
+            
+            ---
+            
+            ### 🔍 Event Context:
+            **Current Event JSON**:
+            json
+            ${JSON.stringify(event)}
+            
+            
+            **User Prompt**:
+            
+            ${prompt}
+            
+            
+            ---
+            
+            ### 🛠 Update Logic:
+            
+            Apply the following rules:
+            
+            - **title**: Update only if the prompt clearly provides a better or more accurate event title.
+            - **description**: Keep existing if already detailed and precise. Otherwise, summarize the flyer text briefly and informatively.
+            - **startDate**: Extract from the prompt. If missing, use today's date (**${today}**) in format YYYY-MM-DD.
+            - **startTime**: Extract if mentioned; fallback: "08:00".
+            - **imageUrl**: Extract if found; otherwise leave empty.
+            - **city**: Extract location or city.
+            - **category**: Use one word like "Concert", "Exhibition", "Workshop", etc. No slashes or multiple values.
+            - **price**: Use the number as string if found (e.g. "12.00"), otherwise "Free" or "N/A".
+            - **ticketLink**: Extract ticket purchase link or leave empty.
+            - **lineup**: If present, extract names, roles, and (optional) start times of performers/speakers.
+            - **socialMediaLinks**: Extract Facebook, Instagram, and Twitter URLs. If missing, fallback to:
+              - Instagram: https://www.instagram.com
+              - Facebook: https://www.facebook.com
+              - Twitter: https://www.twitter.com
+            - **tags**: Generate exactly 5 relevant keywords based on the event’s content.
+            - **email**: Extract if present.
+            - **address**: Include street, houseNumber, and city. Leave values empty if unknown.
+            
+            ---
+            
+            ### ✅ Final Output:
+            Return the **updated event object only** as valid, parseable **JSON** with this structure:
+            
+            json
             {
-              type: 'text',
-              text: `Extract the key information from the provided user input 
-              
-              ${prompt}
-              
-              and generate a structured JSON object based on the following rules:
-
-            ### **Current Date:**  
-Today's date is **${today}**. If the flyer does not mention a date, use this as the event start date in the format YYYY-MM-DD.
-
-
-### Extraction Rules:
-- **Title (title)**: Extract the event name.
-- **Description (description)**: Summarize the event flyer text concisely, capturing essential details.
-- **Start Date (startDate)**: If no date is provided, set it to today's date in YYYY-MM-DD format.
-- **Start Time (startTime)**: If no time is mentioned, default to "08:00" in HH:mm format.
-- **Image URL (imageUrl)**: Extract the main image URL if available; otherwise, leave it empty.
-- **City (city)**: Identify the event's location (city).
-- **Category (category)**: Assign one single category that best describes the event (e.g., "Concert", "Exhibition", "Workshop"). Avoid slashes (/) or multiple categories.
-- **Price (price)**: Extract the ticket price as a decimal number (e.g., "15.00") or a meaningful label if not found (e.g., "Free", "N/A").
-- **Ticket Link (ticketLink)**: Extract the URL for ticket purchases if available; otherwise, leave it empty.
-- **Line-Up (lineup)**: If performers or speakers are listed, extract their names, roles, and scheduled start times.
-- **Social Media Links (socialMediaLinks)**: Extract Instagram, Facebook, and Twitter links. If a platform-specific link is missing, use the general platform URL as a fallback.
-- **Fallbacks:**
-- Instagram → "https://www.instagram.com"
-- Facebook → "https://www.facebook.com"
-- Twitter → "https://www.twitter.com"
-- **Tags (tags)**: Always include **five** relevant tags based on the event’s theme.
-- **Email (email)**: Extract the email address from the event flyer.
-
-### Response Format (JSON):
-{
-"title": "string",
-"description": "string",
-"startDate": "YYYY-MM-DD",
-"startTime": "HH:mm",
-"city": "string",
-"category": "string",
-"price": "string",
-"ticketLink": "string",
-"address": {
-"street": "string",
-"houseNumber": "string",
-"city": "string"
-},
-"lineup": [
-{
-  "name": "string",
-  "role": "string",
-  "startTime": "HH:mm"
-}
-],
-"socialMediaLinks": {
-"instagram": "string",
-"facebook": "string",
-"twitter": "string"
-},
-"tags": ["string", "string", "string", "string", "string"],
-"email": "string"
-}
-
-Analyze the flyer carefully, ensuring accurate data extraction and logical fallback values. Ensure proper JSON formatting, and validate all fields before returning the result.`,
-            },
-          ],
+              "title": "string",
+              "description": "string",
+              "startDate": "YYYY-MM-DD",
+              "startTime": "HH:mm",
+              "city": "string",
+              "category": "string",
+              "price": "string",
+              "ticketLink": "string",
+              "address": {
+                "street": "string",
+                "houseNumber": "string",
+                "city": "string"
+              },
+              "lineup": [
+                {
+                  "name": "string",
+                  "role": "string",
+                  "startTime": "HH:mm"
+                }
+              ],
+              "socialMediaLinks": {
+                "instagram": "string",
+                "facebook": "string",
+                "twitter": "string"
+              },
+              "tags": ["string", "string", "string", "string", "string"],
+              "email": "string"
+            }
+            
+            
+            ---
+            
+            Do not explain the data. Just return the final JSON with updated values.
+            `,
         },
       ],
       response_format: { type: 'json_object' },
