@@ -23,7 +23,7 @@
   }
   
   .collapsed .event-description-text {
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
   }
 
   .more-info-icon{

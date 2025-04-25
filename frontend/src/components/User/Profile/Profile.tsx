@@ -10,13 +10,13 @@ import {
   formatProfileDate,
   type Profile as ProfileType,
 } from "../../../utils";
+import ArtistModal from "../../ArtistModal/ArtistModal";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import { ActionComponent } from "./ActionComponent";
 import "./Profile.css";
 import { ProfileCommentList } from "./ProfileCommentList";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileInfo } from "./ProfileInfo";
-
 import {
   createChat,
   fetchProfileComments,
@@ -165,7 +165,7 @@ export const Profile: React.FC = () => {
   if (error || !user) {
     return (
       <div className="error-container">
-        <p>{error || "Profile not found"}</p>
+        <ArtistModal onClose={() => {}} artistName={userId || ""} />
         <button onClick={handleBack} className="back-button">
           <ChevronLeft className="h-5 w-5" />{" "}
         </button>

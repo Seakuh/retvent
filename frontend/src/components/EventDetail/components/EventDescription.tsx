@@ -22,7 +22,7 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
         window.getComputedStyle(textRef.current).lineHeight
       );
       const height = textRef.current.scrollHeight;
-      const maxHeight = lineHeight * 3;
+      const maxHeight = lineHeight * 4;
       setIsOverflowing(height > maxHeight);
     }
   }, [description]);

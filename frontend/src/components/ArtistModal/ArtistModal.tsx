@@ -13,9 +13,11 @@ export const ArtistModal = ({
 }) => {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [description, setDescription] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     if (selectedImages.length > 0) {
       const response = await setUpNewArtist(
         artistName,
@@ -26,6 +28,8 @@ export const ArtistModal = ({
     } else {
       console.log("No image selected");
     }
+    setIsLoading(false);
+    navigate("/profile/" + artistName);
   };
 
   const handleBack = () => {
@@ -41,6 +45,7 @@ export const ArtistModal = ({
 
   return (
     <div className="artist-modal-overlay" onClick={onClose}>
+      {isLoading && <div className="loading-spinner"></div>}
       <button onClick={handleBack} className="back-button">
         <ChevronLeft className="h-5 w-5" />
       </button>
