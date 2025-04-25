@@ -4,7 +4,7 @@
   gap: 1rem;
   padding: 1rem;
   background-color: black;
-  border-radius: 1rem;
+  border-radius:  0 0 1rem 1rem ;
   margin: 1rem;
   flex-direction: row;
   max-width: 935px;

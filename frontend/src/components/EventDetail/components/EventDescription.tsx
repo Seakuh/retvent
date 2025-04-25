@@ -1,3 +1,5 @@
+import "./EventDescription.css";
+
 interface EventDescriptionProps {
   title: string;
   description?: string;
@@ -7,11 +9,17 @@ interface EventDescriptionProps {
 
 export const EventDescription: React.FC<EventDescriptionProps> = ({
   description,
-}) => (
-  <div className="event-description-container">
-    <div className="event-description-section">
-      <h2 className="section-headline">Description</h2>
-      {description && <p className="event-description">{description}</p>}
-    </div>
-  </div>
-);
+}) => {
+  return (
+    <>
+      {description && (
+        <div className="event-description-container">
+          <div className="event-description-section">
+            <h2 className="section-headline">Description</h2>
+            <div className="event-description-text">{description}</div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};

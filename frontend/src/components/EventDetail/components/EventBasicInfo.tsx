@@ -86,6 +86,9 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
           />
         </div>
       </div>
+      {/* <hr className="border-gray-700" /> */}
+      {/* <div className="event-basic-info-description"> */}
+      {/* <div className="event-description-text">{description}</div> */}
     </div>
   );
 };

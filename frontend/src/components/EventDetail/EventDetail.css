@@ -113,7 +113,7 @@
     width: 935px;
     height: auto;
     margin: 0 auto;
-    border-radius: 1rem;
+    border-radius: 1rem 1rem 0 0;
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
@@ -314,36 +314,6 @@
     color: var(--color-neon-blue);
   }
   
-  /* =============================================================
-     EVENT DESCRIPTION
-     ============================================================= */
-  .event-description-section {
-    margin: 2rem 0;
-    padding: 2rem;
-    background: black;
-    color: white !important;
-    border-radius: 1rem;
-    backdrop-filter: blur(10px);
-  }
-  
-  .event-description {
-    color: white !important;
-    font-size: 1.1rem;
-    line-height: 1.6;
-  }
-
-  .event-detail-subtitle{
-    margin: 2rem;
-  }
-  
-  .event-detail-content-container{
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    width: 100%;  
-    max-width: 935px;
-    margin: 0 auto;
-  }
 
   /* =============================================================
      LINEUP SECTION
