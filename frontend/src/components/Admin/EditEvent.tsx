@@ -2,7 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EventService } from "../../services/event.service";
-import { categories, Event } from "../../utils";
+import { API_URL, categories, Event } from "../../utils";
 import "./EditEvent.css";
 
 const EditEvent: React.FC = () => {
@@ -168,6 +168,18 @@ const EditEvent: React.FC = () => {
     return <div className="loading">Loading event details... ⌛</div>;
   if (error) return <div className="error">{error}</div>;
 
+  async function handlePromptUpdate(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): Promise<void> {
+    const prompt = document.getElementById(
+      "edit-event-prompt"
+    ) as HTMLTextAreaElement;
+    const promptText = prompt.value;
+    console.log(promptText);
+    await eventService.updateEventPrompt(eventId!, promptText);
+    navigate(API_URL + "/event/" + eventId);
+  }
+
   return (
     <div className="edit-event-container">
       <button onClick={handleBack} className="back-button">
@@ -221,7 +233,23 @@ const EditEvent: React.FC = () => {
             onChange={handleInputChange}
           />
         </div>
-
+        <div className="prompt-update">
+          <p className="prompt-update-text">
+            <textarea
+              className="edit-event-prompt"
+              name="edit-event-prompt"
+              id="edit-event-prompt"
+              placeholder="Magic update your event put in everything"
+            />
+          </p>
+          <button
+            type="button"
+            className="save-prompt-btn"
+            onClick={handlePromptUpdate}
+          >
+            Magic Update
+          </button>
+        </div>
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="startDate">Start Date 📅</label>
@@ -312,7 +340,6 @@ const EditEvent: React.FC = () => {
         <div className="form-group">
           <label htmlFor="ticketLink">Ticket Link 🎟️</label>
           <input
-            type="url"
             id="ticketLink"
             name="ticketLink"
             value={formData.ticketLink}
@@ -323,7 +350,6 @@ const EditEvent: React.FC = () => {
         <div className="form-group">
           <label htmlFor="website">Website 🌐</label>
           <input
-            type="url"
             id="website"
             name="website"
             value={formData.website}
@@ -334,7 +360,6 @@ const EditEvent: React.FC = () => {
         <div className="form-group">
           <label htmlFor="email">Contact Email 📧</label>
           <input
-            type="email"
             id="email"
             name="email"
             value={formData.email}

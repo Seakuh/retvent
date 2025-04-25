@@ -42,9 +42,9 @@ export const EventLineup: React.FC<{
         {lineupPictureUrl && (
           <img
             className="lineup-picture"
-            src={`https://img.event-scanner.com/insecure/rs:fit:600:400/q:70/plain/${lineupPictureUrl}@webp`}
+            src={`https://img.event-scanner.com/insecure/q:70/plain/${lineupPictureUrl}@webp`}
             alt="Lineup"
-            onClick={() => handleOnLineupClick(lineupPictureUrl[0])}
+            onClick={() => handleOnLineupClick(lineupPictureUrl)}
           />
         )}
         {lineup.map((artist) => (
@@ -90,7 +90,7 @@ export const EventLineup: React.FC<{
       </div>
       {showImageModal && (
         <ImageModal
-          imageUrl={lineupPictureUrl[0]}
+          imageUrl={lineupPictureUrl}
           onClose={() => setShowImageModal(false)}
         />
       )}

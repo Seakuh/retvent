@@ -58,7 +58,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }}
       >
         <Telescope size={20} />
-        All
+        Explore
       </button>
       <button
         className={`category-button ${viewMode === "Filter" ? "active" : ""}`}

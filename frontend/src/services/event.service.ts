@@ -96,4 +96,28 @@ export class EventService {
       throw error;
     }
   }
+
+  async updateEventPrompt(eventId: string, prompt: string): Promise<Event> {
+    const accessToken = localStorage.getItem("access_token");
+    try {
+      const response = await fetch(`${this.baseUrl}/${eventId}/prompt`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to update event prompt");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Update event prompt error:", error);
+      throw error;
+    }
+  }
 }

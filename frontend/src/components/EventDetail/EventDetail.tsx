@@ -264,10 +264,11 @@ export const EventDetail: React.FC = () => {
             ticketLink={event.ticketLink}
           /> */}
 
-          {event.lineup && event.lineup.length > 0 && (
+          {((event.lineup && event.lineup.length > 0) ||
+            event.lineupPictureUrl) && (
             <EventLineup
               lineup={event.lineup}
-              lineupPictureUrl={event.lineupPictureUrl || ""}
+              lineupPictureUrl={event.lineupPictureUrl?.[0] || ""}
             />
           )}
 
