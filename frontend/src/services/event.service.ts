@@ -13,6 +13,32 @@ export class EventService {
     };
   }
 
+  async updateEventImage(eventId: string, file: File): Promise<Event> {
+    const accessToken = localStorage.getItem("access_token");
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("eventId", eventId);
+      const response = await fetch(`${this.baseUrl}/${eventId}/image`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to update event image");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Update event image error:", error);
+      throw error;
+    }
+  }
+
   async createEvent(eventData: Event, image?: File): Promise<Event> {
     try {
       const formData = new FormData();

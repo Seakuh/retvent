@@ -100,6 +100,7 @@ const EditEvent: React.FC = () => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("handleImageChange");
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
@@ -108,6 +109,8 @@ const EditEvent: React.FC = () => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+      console.log(file);
+      eventService.updateEventImage(eventId!, file);
     }
   };
 
