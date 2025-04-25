@@ -26,6 +26,7 @@ export const EventSchema = new Schema(
         name: { type: String },
         role: { type: String },
         startTime: { type: String },
+        endTime: { type: String },
         profileId: {
           type: Schema.Types.ObjectId,
           ref: 'Profile',

@@ -84,6 +84,17 @@ export class EventController {
     );
   }
 
+  @Put(':eventId/image')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async updateEventImage(
+    @Param('eventId') eventId: string,
+    @UploadedFile() image: Express.Multer.File,
+    @Request() req,
+  ) {
+    return this.eventService.updateEventImage(eventId, image, req.user.sub);
+  }
+
   @Post('v2/upload/event-image')
   @UseGuards(UploadGuard)
   @UseInterceptors(FileInterceptor('image'))
@@ -554,5 +565,21 @@ export class EventController {
     }
 
     return this.eventService.uploadEventVideo(body.eventId, video, req.user.id);
+  }
+
+  @Put(':eventId/prompt')
+  @UseGuards(JwtAuthGuard)
+  async updateEventFromPrompt(
+    @Param('eventId') eventId: string,
+    @Body() body: { prompt: string },
+    @Request() req,
+  ) {
+    console.log('updateEventFromPrompt', eventId, body.prompt, req.user.sub);
+
+    return this.eventService.updateEventFromPrompt(
+      req.user.sub,
+      eventId,
+      body.prompt,
+    );
   }
 }

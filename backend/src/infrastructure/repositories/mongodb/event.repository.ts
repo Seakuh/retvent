@@ -396,6 +396,12 @@ export class MongoEventRepository implements IEventRepository {
     return updated ? this.toEntity(updated) : null;
   }
 
+  updateFromPrompt(eventId: string, eventFromPrompt: UpdateEventDto) {
+    return this.eventModel.findByIdAndUpdate(eventId, eventFromPrompt, {
+      new: true,
+    });
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.eventModel.deleteOne({ _id: id }).exec();
     return result.deletedCount === 1;
@@ -417,6 +423,15 @@ export class MongoEventRepository implements IEventRepository {
     eventData: UpdateEventDto,
   ): Promise<Event | null> {
     return this.update(id, eventData);
+  }
+
+  async updateEventImage(
+    eventId: string,
+    imageUrl: string,
+  ): Promise<Event | null> {
+    return this.eventModel
+      .findByIdAndUpdate(eventId, { imageUrl }, { new: true })
+      .exec();
   }
 
   async addLike(eventId: string, userId: string): Promise<Event | null> {
@@ -785,6 +800,15 @@ export class MongoEventRepository implements IEventRepository {
         { $push: { videoUrls: videoUrl } },
         { new: true },
       )
+      .exec();
+  }
+
+  updateLineupFromImage(
+    eventId: string,
+    lineUp: Partial<Array<{ name: string; role?: string; startTime?: string }>>,
+  ) {
+    return this.eventModel
+      .findByIdAndUpdate(eventId, { $set: { lineup: lineUp } }, { new: true })
       .exec();
   }
 }

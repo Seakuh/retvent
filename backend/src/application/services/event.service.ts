@@ -569,6 +569,60 @@ export class EventService {
   ) {
     console.log('uploadLineupPictures', eventId, image, id);
     const imageUrl = await this.imageService.uploadImage(image);
-    return this.eventRepository.uploadLineupPictures(eventId, [imageUrl], id);
+
+    const event = await this.eventRepository.uploadLineupPictures(
+      eventId,
+      [imageUrl],
+      id,
+    );
+    void this.chatGptService.extractLineUpFromFlyer(imageUrl).then((lineUp) => {
+      this.eventRepository.updateLineupFromImage(eventId, lineUp);
+    });
+    void this.feedService.pushFeedItemFromEventPictures(event, 'lineup', [
+      imageUrl,
+    ]);
+    return event;
+  }
+
+  async updateEventFromPrompt(userId: string, eventId: string, prompt: string) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to update this event',
+      );
+    }
+    // extract event from prompt
+    const eventFromPrompt: UpdateEventDto =
+      await this.chatGptService.extractEventFromPrompt(prompt);
+    console.log('eventFromPrompt', eventFromPrompt);
+
+    // update event with eventFromPrompt
+    return await this.eventRepository.updateFromPrompt(
+      eventId,
+      eventFromPrompt,
+    );
+
+    // return this.eventRepository.updateEventFromPrompt(eventId, prompt);
+  }
+
+  async updateEventImage(
+    eventId: string,
+    image: Express.Multer.File,
+    userId: string,
+  ) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (userId !== event.hostId) {
+      throw new UnauthorizedException(
+        'You are not authorized to update this event',
+      );
+    }
+    const imageUrl = await this.imageService.uploadImage(image);
+    return this.eventRepository.updateEventImage(eventId, imageUrl);
   }
 }

@@ -255,4 +255,178 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
       throw new Error('Could not parse OpenAI response');
     }
   }
+
+  extractLineUpFromFlyer = async (
+    imageUrl: string,
+  ): Promise<
+    Array<{
+      name: string;
+      role?: string;
+      startTime?: string;
+      endTime?: string;
+    }>
+  > => {
+    const prompt = `
+  You are an expert in event flyer analysis.
+  
+  Task:
+  Analyze the image at the following URL and extract the performing artists (line-up), including their names, roles (e.g., DJ, live, VJ), and scheduled times if available.
+  
+  Image URL: ${imageUrl}
+  
+  Instructions:
+  - Extract all performer/artist names visible on the flyer
+  - If roles (e.g., DJ, live act, VJ, host) are specified, include them
+  - If start times are shown, include them in HH:mm format
+  - If end times are shown, include them in HH:mm format
+  - If only names are visible with no additional information, extract just the names
+  
+  Response Format (JSON only):
+  {
+    "lineup": [
+      {
+        "name": "string",
+        "role": "string or null if unavailable",
+        "startTime": "HH:mm or null if unavailable",
+        "endTime": "HH:mm or null if unavailable"
+      }
+    ]
+  }
+  
+  Important: Extract ALL names that appear to be part of the lineup, even if they don't have additional information.
+  Do NOT include any explanations or additional text, only return the JSON result.
+  `;
+
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+      });
+
+      const content = response.choices[0]?.message?.content;
+
+      if (!content) {
+        console.error('Empty response from OpenAI');
+        return [];
+      }
+
+      try {
+        const parsed = JSON.parse(content);
+
+        console.log('parsed', parsed);
+        // Ensure all lineup entries have at least a name
+        return (parsed.lineup || []).filter(
+          (entry) => entry.name && entry.name.trim() !== '',
+        );
+      } catch (parseError) {
+        console.error('Failed to parse OpenAI response:', parseError);
+        console.log('Raw response:', content);
+        return [];
+      }
+    } catch (apiError) {
+      console.error('OpenAI API error:', apiError);
+      return [];
+    }
+  };
+
+  extractEventFromPrompt = async (
+    prompt: string,
+  ): Promise<Partial<Event> | null> => {
+    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: `Extract the key information from the provided user input 
+              
+              ${prompt}
+              
+              and generate a structured JSON object based on the following rules:
+
+            ### **Current Date:**  
+Today's date is **${today}**. If the flyer does not mention a date, use this as the event start date in the format YYYY-MM-DD.
+
+
+### Extraction Rules:
+- **Title (title)**: Extract the event name.
+- **Description (description)**: Summarize the event flyer text concisely, capturing essential details.
+- **Start Date (startDate)**: If no date is provided, set it to today's date in YYYY-MM-DD format.
+- **Start Time (startTime)**: If no time is mentioned, default to "08:00" in HH:mm format.
+- **Image URL (imageUrl)**: Extract the main image URL if available; otherwise, leave it empty.
+- **City (city)**: Identify the event's location (city).
+- **Category (category)**: Assign one single category that best describes the event (e.g., "Concert", "Exhibition", "Workshop"). Avoid slashes (/) or multiple categories.
+- **Price (price)**: Extract the ticket price as a decimal number (e.g., "15.00") or a meaningful label if not found (e.g., "Free", "N/A").
+- **Ticket Link (ticketLink)**: Extract the URL for ticket purchases if available; otherwise, leave it empty.
+- **Line-Up (lineup)**: If performers or speakers are listed, extract their names, roles, and scheduled start times.
+- **Social Media Links (socialMediaLinks)**: Extract Instagram, Facebook, and Twitter links. If a platform-specific link is missing, use the general platform URL as a fallback.
+- **Fallbacks:**
+- Instagram → "https://www.instagram.com"
+- Facebook → "https://www.facebook.com"
+- Twitter → "https://www.twitter.com"
+- **Tags (tags)**: Always include **five** relevant tags based on the event’s theme.
+- **Email (email)**: Extract the email address from the event flyer.
+
+### Response Format (JSON):
+{
+"title": "string",
+"description": "string",
+"startDate": "YYYY-MM-DD",
+"startTime": "HH:mm",
+"city": "string",
+"category": "string",
+"price": "string",
+"ticketLink": "string",
+"address": {
+"street": "string",
+"houseNumber": "string",
+"city": "string"
+},
+"lineup": [
+{
+  "name": "string",
+  "role": "string",
+  "startTime": "HH:mm"
+}
+],
+"socialMediaLinks": {
+"instagram": "string",
+"facebook": "string",
+"twitter": "string"
+},
+"tags": ["string", "string", "string", "string", "string"],
+"email": "string"
+}
+
+Analyze the flyer carefully, ensuring accurate data extraction and logical fallback values. Ensure proper JSON formatting, and validate all fields before returning the result.`,
+            },
+          ],
+        },
+      ],
+      response_format: { type: 'json_object' },
+    });
+
+    const rawOutput = response.choices[0]?.message?.content;
+
+    if (!rawOutput) {
+      throw new Error('No response from OpenAI');
+    }
+
+    try {
+      const parsed = JSON.parse(rawOutput);
+      return parsed;
+    } catch (error) {
+      console.error('Failed to parse OpenAI response:', error);
+      return null;
+    }
+  };
 }

@@ -8,7 +8,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ConfigService) {
     const jwtSecret =
       configService.get<string>('JWT_SECRET') || 'SuperSichererSchluessel';
-    console.log('JWT Strategy - Using secret:', jwtSecret);
+    // console.log('JWT Strategy - Using secret:', jwtSecret);
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -20,12 +20,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     try {
       if (!payload) {
-        console.log('JWT Strategy - No payload found');
+        // console.log('JWT Strategy - No payload found');
         throw new UnauthorizedException('Invalid token payload');
       }
 
       if (!payload.sub) {
-        console.log('JWT Strategy - No sub (user id) found in payload');
+        // console.log('JWT Strategy - No sub (user id) found in payload');
         throw new UnauthorizedException('Invalid token structure');
       }
 
@@ -35,7 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         username: payload.username,
       };
 
-      console.log('JWT Strategy - Validated user:', user);
+      // console.log('JWT Strategy - Validated user:', user);
       return user;
     } catch (error) {
       console.error('JWT Strategy - Validation error:', error);

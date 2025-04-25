@@ -22,7 +22,12 @@ export class Event implements IEvent {
   category?: string;
   price?: string;
   ticketLink?: string;
-  lineup?: Array<{ name: string; role?: string; startTime?: string }>;
+  lineup?: Array<{
+    name: string;
+    role?: string;
+    startTime?: string;
+    endTime?: string;
+  }>;
   socialMediaLinks?: {
     instagram?: string;
     facebook?: string;
