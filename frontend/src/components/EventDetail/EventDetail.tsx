@@ -256,14 +256,13 @@ export const EventDetail: React.FC = () => {
               address={event.address}
               handleAddToCalendar={handleAddToCalendar}
             />
+            <EventDescription
+              title={event.title}
+              description={event.description}
+              price={event.price}
+              ticketLink={event.ticketLink}
+            />
           </div>
-
-          <EventDescription
-            title={event.title}
-            description={event.description}
-            price={event.price}
-            ticketLink={event.ticketLink}
-          />
 
           {((event.lineup && event.lineup.length > 0) ||
             event.lineupPictureUrl) && (

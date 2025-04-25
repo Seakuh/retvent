@@ -1,27 +1,43 @@
+/* EventDescription.css */
+
 .event-description-section {
-  margin: 2rem 0;
-  padding: 2rem;
-  background: black;
-  color: white !important;
-  border-radius: 1rem;
-  backdrop-filter: blur(10px);
-}
+    padding: 2rem;
+    background: black;
+    color: white;
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .event-description-text {
+    color: lightgray;
+    text-align: left;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    transition: all 0.3s ease;
+  }
+  
+  .collapsed .event-description-text {
+    -webkit-line-clamp: 3;
+  }
 
-.event-description-text {
-  color: white;
-  font-size: 1.1rem;
-  line-height: 1.6;
-}
-
-.event-detail-subtitle {
-  margin: 2rem;
-}
-
-.event-detail-content-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  width: 100%;
-  max-width: 935px;
-  margin: 0 auto;
-}
+  .more-info-icon{
+    margin: 0 auto;
+  }
+  
+  .expanded .event-description-text {
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+  
+  .expand-hint {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+  

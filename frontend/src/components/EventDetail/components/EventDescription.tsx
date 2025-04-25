@@ -1,5 +1,6 @@
+import { ChevronDown, ChevronUp } from "lucide-react";
+import React, { useState } from "react";
 import "./EventDescription.css";
-
 interface EventDescriptionProps {
   title: string;
   description?: string;
@@ -10,16 +11,29 @@ interface EventDescriptionProps {
 export const EventDescription: React.FC<EventDescriptionProps> = ({
   description,
 }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  if (!description) return null;
+
   return (
-    <>
-      {description && (
-        <div className="event-description-container">
-          <div className="event-description-section">
-            <h2 className="section-headline">Description</h2>
-            <div className="event-description-text">{description}</div>
+    <div className="event-description-container">
+      <div
+        className={`event-description-section ${
+          expanded ? "expanded" : "collapsed"
+        }`}
+        onClick={() => setExpanded(!expanded)}
+      >
+        <div className="event-description-text">{description}</div>
+        {expanded ? (
+          <div className="expand-hint">
+            <ChevronUp className="more-info-icon h-5 w-5" />
           </div>
-        </div>
-      )}
-    </>
+        ) : (
+          <div className="expand-hint">
+            <ChevronDown className="more-info-icon h-5 w-5" />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
