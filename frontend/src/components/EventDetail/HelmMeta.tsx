@@ -7,7 +7,6 @@ interface HelmetMetaProps {
 
 const HelmetMeta = ({ event, eventId }: HelmetMetaProps) => {
   if (!event) return null;
-
   const formattedDate = event.startDate
     ? new Date(event.startDate).toLocaleDateString("de-DE")
     : "";

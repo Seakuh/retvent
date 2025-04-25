@@ -146,7 +146,6 @@ function LandingPage() {
           startDateQuery,
           endDateQuery
         );
-        console.log("events", events);
         if (Array.isArray(events)) {
           setEvents(events.reverse());
         }

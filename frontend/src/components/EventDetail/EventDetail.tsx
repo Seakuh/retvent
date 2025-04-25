@@ -39,7 +39,6 @@ export const EventDetail: React.FC = () => {
     if (event?.hostId === user?.id) {
       setIsOwner(true);
     }
-    console.log(isOwner);
   }, [event]);
 
   const handleAddToCalendar = () => {

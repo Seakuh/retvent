@@ -13,7 +13,6 @@ export const ProfileCommentList = ({
   comments,
 }: ProfileCommentListProps) => {
   const navigate = useNavigate();
-  console.log(comments.map((comment) => comment.text));
 
   const handleCommentClick = (eventId: string) => {
     navigate(`/event/${eventId}`);

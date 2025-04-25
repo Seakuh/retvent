@@ -38,7 +38,6 @@ export const LandingPageProvider: React.FC<{ children: React.ReactNode }> = ({
   const setSearchState = (newValues: Partial<SearchState>) => {
     const updatedState = { ...searchState, ...newValues };
     setSearchStateInternal(updatedState);
-    console.log("updatedState", updatedState);
     localStorage.setItem("landingSearch", JSON.stringify(updatedState));
   };
 

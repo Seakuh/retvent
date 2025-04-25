@@ -24,19 +24,9 @@ export const EventLineup: React.FC<{
   const handleOnLineupClick = (lineupPictureUrl: string) => {
     setShowImageModal(true);
   };
-  const [artist, setArtist] = useState<LineupArtist | null>(null);
-  console.log(lineupPictureUrl);
-  // const handleOnArtistClose = () => {
-  //   console.log("closing");
-  //   setIsArtistModalOpen(false);
-  //   setArtist(null);
-  // };
 
   return (
     <div className="event-lineup">
-      {/* {isArtistModalOpen && (
-        <ArtistModal onClose={handleOnArtistClose} artist={artist} />
-      )} */}
       <div className="lineup-grid">
         <h2 className="section-headline">Artists</h2>
         {lineupPictureUrl && (

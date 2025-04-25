@@ -190,12 +190,10 @@ export const Profile: React.FC = () => {
   };
 
   const handleMessage = async () => {
-    console.log("Message");
     if (userId === localStorage.getItem("user.id")) {
       return;
     }
     const response = await createChat(userId || "");
-    console.log("response", response);
     navigate(`/group/${response._id}`);
   };
 

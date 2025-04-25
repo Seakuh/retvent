@@ -19,10 +19,8 @@ export const EventGroups = ({ event }: { event: Event }) => {
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
 
   const createOrJoinGroup = (group: string) => {
-    console.log("createOrJoinGroup", group);
     createOrJoinGroupService(event, group).then((data) => {
       if (data) {
-        console.log("data", data);
         navigate(`/group/${data._id!}`);
       }
       if (data.error) {
