@@ -42,7 +42,7 @@ export const EventLineup: React.FC<{
         {lineupPictureUrl && (
           <img
             className="lineup-picture"
-            src={lineupPictureUrl[0]}
+            src={`https://img.event-scanner.com/insecure/rs:fit:600:400/q:70/plain/${lineupPictureUrl}@webp`}
             alt="Lineup"
             onClick={() => handleOnLineupClick(lineupPictureUrl[0])}
           />
