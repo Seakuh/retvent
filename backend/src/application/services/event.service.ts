@@ -596,7 +596,7 @@ export class EventService {
     }
     // extract event from prompt
     const eventFromPrompt: UpdateEventDto =
-      await this.chatGptService.extractEventFromPrompt(prompt);
+      await this.chatGptService.extractEventFromPrompt(prompt, event);
     console.log('eventFromPrompt', eventFromPrompt);
 
     // update event with eventFromPrompt
