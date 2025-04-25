@@ -265,7 +265,10 @@ export const EventDetail: React.FC = () => {
           /> */}
 
           {event.lineup && event.lineup.length > 0 && (
-            <EventLineup lineup={event.lineup} />
+            <EventLineup
+              lineup={event.lineup}
+              lineupPictureUrl={event.lineupPictureUrl || ""}
+            />
           )}
 
           {/* {event.uploadLat && event.uploadLon && (

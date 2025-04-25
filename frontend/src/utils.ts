@@ -244,6 +244,7 @@ export interface Event {
   // views
   views?: number;
 
+  lineupPictureUrl?: string;
   // comments
   commentCount?: number;
 }
