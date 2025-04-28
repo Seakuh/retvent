@@ -1,13 +1,11 @@
 .lineup-picture {
-  width: 100%;
-  max-width: 22rem;
+  width: 30rem;
   height: auto;
-  aspect-ratio: 3/4;
   border-radius: 1rem;
   cursor: pointer;
   margin-bottom: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin:  0 auto;
+  margin: 0 auto;
 }

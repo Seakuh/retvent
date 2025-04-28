@@ -14,8 +14,8 @@ interface LineupArtist {
 
 export const EventLineup: React.FC<{
   lineup: LineupArtist[];
-  lineupPictureUrl: string;
-}> = ({ lineup, lineupPictureUrl }) => {
+  lineupPictureUrls: string[];
+}> = ({ lineup, lineupPictureUrls }) => {
   const navigate = useNavigate();
   const [showImageModal, setShowImageModal] = useState(false);
   const handleOnArtistClick = (artist: LineupArtist) => {
@@ -29,14 +29,15 @@ export const EventLineup: React.FC<{
     <div className="event-lineup">
       <div className="lineup-grid">
         <h2 className="section-headline">Artists</h2>
-        {lineupPictureUrl && (
-          <img
-            className="lineup-picture"
-            src={`https://img.event-scanner.com/insecure/q:70/plain/${lineupPictureUrl}@webp`}
-            alt="Lineup"
-            onClick={() => handleOnLineupClick(lineupPictureUrl)}
-          />
-        )}
+        {lineupPictureUrls.length > 0 &&
+          lineupPictureUrls.map((url) => (
+            <img
+              className="lineup-picture"
+              src={`https://img.event-scanner.com/insecure/plain/${url}@webp`}
+              alt="Lineup"
+              onClick={() => handleOnLineupClick(url)}
+            />
+          ))}
         {lineup.map((artist) => (
           <div key={artist._id} className="lineup-artist">
             <div className="lineup-profile-sectaion">
@@ -80,7 +81,7 @@ export const EventLineup: React.FC<{
       </div>
       {showImageModal && (
         <ImageModal
-          imageUrl={lineupPictureUrl}
+          imageUrl={lineupPictureUrls[0]}
           onClose={() => setShowImageModal(false)}
         />
       )}

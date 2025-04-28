@@ -215,7 +215,7 @@ export const EventDetail: React.FC = () => {
             event.lineupPictureUrl) && (
             <EventLineup
               lineup={event.lineup}
-              lineupPictureUrl={event.lineupPictureUrl?.[0] || ""}
+              lineupPictureUrls={event.lineupPictureUrl || []}
             />
           )}
 
