@@ -37,6 +37,8 @@ export const EventDetail: React.FC = () => {
       document.title = `${event.title} | EventScanner`;
     }
     if (event?.hostId === user?.id) {
+      console.log("event", event?.hostId, user?.id);
+
       setIsOwner(true);
     }
   }, [event]);
