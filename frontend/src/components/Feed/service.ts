@@ -13,9 +13,18 @@ export async function getProfileFeed() {
 }
 
 export async function getLatestFeedAll(): Promise<FeedResponse[]> {
-  const response = await fetch(`${API_URL}feed/latest/all`);
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch(`${API_URL}feed/latest/all`);
+    const data = await response.json();
+    console.log("data", data);
+    if (response.status === 500) {
+      return [];
+    }
+    return data;
+  } catch (error) {
+    console.error("Error fetching latest feed:", error);
+    return [];
+  }
 }
 
 export async function getLatestFeedByFollowing(): Promise<FeedResponse[]> {
