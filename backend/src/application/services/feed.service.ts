@@ -15,6 +15,9 @@ export class FeedService {
   ) {}
 
   async pushFeedItemFromEvent(event: Event, type: string): Promise<Feed> {
+    if (event.hostId === 'public') {
+      return;
+    }
     const feed = await this.feedRepository.create({
       eventId: event.id,
       profileId: event.hostId,
