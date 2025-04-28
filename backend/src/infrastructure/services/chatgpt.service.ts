@@ -4,7 +4,6 @@ import OpenAI from 'openai';
 import { Profile } from 'src/core/domain/profile';
 import { z } from 'zod';
 import { Event } from '../../core/domain/event';
-
 // Definiere ein Schema für die API-Validierung
 const EventResponseSchema = z.object({
   id: z.string(),
@@ -88,7 +87,7 @@ Today's date is **${today}**. If the flyer does not mention a date, use this as 
     - Instagram → "https://www.instagram.com"
     - Facebook → "https://www.facebook.com"
     - Twitter → "https://www.twitter.com"
-- **Tags (tags)**: Always include **five** relevant tags based on the event’s theme.
+- **Tags (tags)**: Always include **five** relevant tags based on the event's theme.
 - **Email (email)**: Extract the email address from the event flyer.
 
 ### Response Format (JSON):
@@ -220,10 +219,10 @@ Analyze the flyer carefully, ensuring accurate data extraction and logical fallb
   }
   
   Instructions:
-  - Extract the **bio** from the input text and improve the grammar while keeping the artist’s style. if there is a bio, add it to the bio plain field.
+  - Extract the **bio** from the input text and improve the grammar while keeping the artist's style. if there is a bio, add it to the bio plain field.
   - Extract all **links** (SoundCloud, Instagram, Bandcamp, Facebook, personal website, etc.).
   - If image URLs are included, add them to the gallery field.
-  - Assign a matching **category** based on the artist’s role. Possible values:  
+  - Assign a matching **category** based on the artist's role. Possible values:  
     - "organizer", "musician", "visual_artist", "technician", "doorman", "helper", "cook"
   - Return only the final JavaScript object as your response (no explanation).
   
@@ -258,6 +257,12 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
 
   extractLineUpFromFlyer = async (
     imageUrl: string,
+    currentLineup?: {
+      name: string;
+      role?: string;
+      startTime?: string;
+      endTime?: string;
+    }[],
   ): Promise<
     Array<{
       name: string;
@@ -267,35 +272,37 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
     }>
   > => {
     const prompt = `
-  You are an expert in event flyer analysis.
-  
-  Task:
-  Analyze the image at the following URL and extract the performing artists (line-up), including their names, roles (e.g., DJ, live, VJ), and scheduled times if available.
-  
-  Image URL: ${imageUrl}
-  
-  Instructions:
-  - Extract all performer/artist names visible on the flyer
-  - If roles (e.g., DJ, live act, VJ, host) are specified, include them
-  - If start times are shown, include them in HH:mm format
-  - If end times are shown, include them in HH:mm format
-  - If only names are visible with no additional information, extract just the names
-  
-  Response Format (JSON only):
-  {
-    "lineup": [
-      {
-        "name": "string",
-        "role": "string or null if unavailable",
-        "startTime": "HH:mm or null if unavailable",
-        "endTime": "HH:mm or null if unavailable"
-      }
-    ]
-  }
-  
-  Important: Extract ALL names that appear to be part of the lineup, even if they don't have additional information.
-  Do NOT include any explanations or additional text, only return the JSON result.
-  `;
+            You are an expert in event flyer analysis.
+              
+            Task:
+            Analyze the image at the following URL and extract the performing artists (line-up), including their names, roles (e.g., DJ, live, VJ), and scheduled times if available.
+              
+            Image URL: ${imageUrl}
+              
+            Current Lineup (do not include these again, only add new names you find):
+            ${JSON.stringify(currentLineup || [])}
+              
+            Instructions:
+            - Extract all performer/artist names visible on the flyer that are NOT already in the current lineup
+            - If roles (e.g., DJ, live act, VJ, host) are specified, include them
+            - If start times are shown, include them in HH:mm format
+            - If end times are shown, include them in HH:mm format
+            - If only names are visible with no additional information, extract just the names
+              
+            Response Format (JSON only):
+            {
+              "lineup": [
+                {
+                  "name": "string",
+                  "role": "string or null if unavailable",
+                  "startTime": "HH:mm or null if unavailable",
+                  "endTime": "HH:mm or null if unavailable"
+                }
+              ]
+            }
+              
+            Important: Only return new names that are not already in the current lineup. Do NOT include any explanations or additional text, only return the JSON result.
+            `;
 
     try {
       const response = await this.openai.chat.completions.create({
@@ -303,11 +310,15 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
         messages: [
           {
             role: 'user',
-            content: prompt,
+            content: [
+              { type: 'text', text: prompt },
+              { type: 'image_url', image_url: { url: imageUrl } },
+            ],
           },
         ],
+        response_format: { type: 'json_object' },
       });
-
+      console.log('response', response);
       const content = response.choices[0]?.message?.content;
 
       if (!content) {
@@ -320,9 +331,15 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
 
         console.log('parsed', parsed);
         // Ensure all lineup entries have at least a name
-        return (parsed.lineup || []).filter(
-          (entry) => entry.name && entry.name.trim() !== '',
+        const existingNames = new Set(
+          (currentLineup || []).map((e) => e.name.trim().toLowerCase()),
         );
+        const newEntries = (parsed.lineup || []).filter(
+          (entry) =>
+            entry.name && !existingNames.has(entry.name.trim().toLowerCase()),
+        );
+
+        return [...(currentLineup || []), ...newEntries];
       } catch (parseError) {
         console.error('Failed to parse OpenAI response:', parseError);
         console.log('Raw response:', content);
@@ -393,7 +410,7 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
               - Instagram: https://www.instagram.com
               - Facebook: https://www.facebook.com
               - Twitter: https://www.twitter.com
-            - **tags**: Generate exactly 5 relevant keywords based on the event’s content.
+            - **tags**: Generate exactly 5 relevant keywords based on the event's content.
             - **email**: Extract if present.
             - **address**: Include street, houseNumber, and city. Leave values empty if unknown.
             
