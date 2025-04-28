@@ -35,11 +35,11 @@ export const EventDetail: React.FC = () => {
   useEffect(() => {
     if (event) {
       document.title = `${event.title} | EventScanner`;
-    }
-    if (event?.hostId === user?.id) {
-      console.log("event", event?.hostId, user?.id);
+      if (event?.hostId === user?.id) {
+        console.log("event", event?.hostId, user?.id);
 
-      setIsOwner(true);
+        setIsOwner(true);
+      }
     }
   }, [event]);
 
