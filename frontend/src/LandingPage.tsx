@@ -98,7 +98,6 @@ function LandingPage() {
         category,
         searchTerm
       );
-      console.log("searchResults", searchResults);
       setEvents(searchResults as Event[]);
       setIsSearchOpen(false);
     } catch (error) {

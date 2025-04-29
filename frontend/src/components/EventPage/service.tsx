@@ -30,24 +30,33 @@ export const fetchFavoriteEvents = async (
     return [];
   }
 
-  const params = new URLSearchParams();
-  params.append("ids", ids.join(","));
-
-  if (eventPageParams?.startDate) {
-    params.append("startDate", eventPageParams.startDate);
-  }
-  if (eventPageParams?.endDate) {
-    params.append("endDate", eventPageParams.endDate);
-  }
-  if (eventPageParams?.category) {
-    params.append("category", eventPageParams.category);
-  }
-  if (eventPageParams?.location) {
-    params.append("location", eventPageParams.location);
-  }
+  // Filtere leere Strings aus den Page Params
+  const filteredParams = eventPageParams
+    ? {
+        ...(eventPageParams.startDate && {
+          startDate: eventPageParams.startDate,
+        }),
+        ...(eventPageParams.endDate && { endDate: eventPageParams.endDate }),
+        ...(eventPageParams.location &&
+          eventPageParams.location !== "Worldwide" && {
+            location: eventPageParams.location,
+          }),
+        ...(eventPageParams.category && { category: eventPageParams.category }),
+      }
+    : {};
 
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL}events/byIds?${params.toString()}`
+    `${import.meta.env.VITE_API_URL}events/favorite/byIds`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ids: ids,
+        ...filteredParams,
+      }),
+    }
   );
   return response.json();
 };

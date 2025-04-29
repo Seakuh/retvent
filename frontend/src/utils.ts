@@ -694,4 +694,5 @@ export class EventPageParams {
   endDate?: string;
   category?: string;
   location?: string;
+  prompt?: string;
 }

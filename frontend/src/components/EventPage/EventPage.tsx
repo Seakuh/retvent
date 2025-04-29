@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { Event, EventPageParams, FeedResponse } from "../../utils";
+import { EventGalleryII } from "../EventGallery/EventGalleryII";
 import { ExploreFeed } from "../Feed/ExploreFeed";
 import { getLatestFeedByFollowing } from "../Feed/service";
-import { LikedEvents } from "../LikedEvents/LikedEvents";
 import "./EventPage.css";
 import { fetchFavoriteEvents } from "./service";
 
@@ -12,6 +12,7 @@ export const EventPage = ({
   endDate,
   category,
   location,
+  prompt,
 }: EventPageParams) => {
   const { location: UserLocation, favoriteEventIds } = useContext(UserContext);
   const [favoriteEvents, setFavoriteEvents] = useState<Event[]>([]);
@@ -24,15 +25,21 @@ export const EventPage = ({
   useEffect(() => {
     const fetchFavorite = async () => {
       const favoriteEvents = await fetchFavoriteEvents(favoriteEventIds, {
-        startDate,
-        endDate,
-        category,
-        location,
+        startDate: startDate,
+        endDate: endDate,
+        category: category,
+        location: location,
+        prompt: prompt,
       });
       setFavoriteEvents(favoriteEvents);
     };
-    fetchFavorite();
 
+    if (favoriteEventIds.length > 0) {
+      fetchFavorite();
+    }
+  }, [favoriteEventIds, startDate, endDate, category, location, prompt]);
+
+  useEffect(() => {
     const fetchFollowedProfiles = async () => {
       try {
         const followedProfiles = await getLatestFeedByFollowing();
@@ -49,7 +56,7 @@ export const EventPage = ({
       <ExploreFeed feedItemsResponse={followedProfiles} />
       {/* <HomeBubbles /> */}
       <div className="event-favorites-container">
-        <LikedEvents />
+        <EventGalleryII events={favoriteEvents} title="Liked Events" />
       </div>
     </div>
   );

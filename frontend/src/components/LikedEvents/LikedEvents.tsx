@@ -1,54 +1,46 @@
-import axios from "axios";
 import { ChevronLeft, Heart } from "lucide-react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../contexts/UserContext";
 import { Event } from "../../utils";
 import { EventGalleryII } from "../EventGallery/EventGalleryII";
 import "./LikedEvents.css";
 
-export const LikedEvents: React.FC = () => {
-  const { favoriteEventIds } = useContext(UserContext);
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+export const LikedEvents: React.FC<{ events: Event[] }> = ({ events }) => {
+  // const { favoriteEventIds } = useContext(UserContext);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const handleBack = () => {
     navigate(-1);
   };
-  useEffect(() => {
-    const fetchLikedEvents = async () => {
-      if (!favoriteEventIds.length) {
-        setEvents([]);
-        setLoading(false);
-        return;
-      }
+  // useEffect(() => {
+  //   const fetchLikedEvents = async () => {
+  //     if (!favoriteEventIds.length) {
+  //       setEvents([]);
+  //       setLoading(false);
+  //       return;
+  //     }
 
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}events/byIds`,
-          {
-            params: {
-              ids: favoriteEventIds.join(","),
-            },
-          }
-        );
-        response.data;
-        setEvents(response.data);
-      } catch (err) {
-        setError("Error fetching liked events");
-        console.error("Error fetching liked events:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //     try {
+  //       const response = await axios.get(
+  //         `${import.meta.env.VITE_API_URL}events/byIds`,
+  //         {
+  //           params: {
+  //             ids: favoriteEventIds.join(","),
+  //           },
+  //         }
+  //       );
+  //       response.data;
+  //       setEvents(response.data);
+  //     } catch (err) {
+  //       setError("Error fetching liked events");
+  //       console.error("Error fetching liked events:", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchLikedEvents();
-  }, [favoriteEventIds]);
-
-  if (loading) {
-    return <div>Loading liked events...</div>;
-  }
+  //   fetchLikedEvents();
+  // }, [favoriteEventIds]);
 
   if (error) {
     return <div>{error}</div>;

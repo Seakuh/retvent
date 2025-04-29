@@ -21,7 +21,6 @@ import { FeedProvider } from "./components/Feed/FeedProvider";
 import { GroupChat } from "./components/GroupChat/GroupChat";
 import { GroupChatPage } from "./components/GroupChat/GroupChatPage";
 import { ChatProvider } from "./components/GroupChat/chatProvider";
-import { LikedEvents } from "./components/LikedEvents/LikedEvents";
 import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
@@ -87,7 +86,6 @@ const App: React.FC = () => {
                     <Route path="/register" element={<Register />} />
                     <Route path="/profile/:userId" element={<Profile />} />
                     <Route path="/event/:eventId" element={<EventDetail />} />
-                    <Route path="/liked" element={<LikedEvents />} />
                     <Route
                       path="/category/:category"
                       element={<LandingPage />}
