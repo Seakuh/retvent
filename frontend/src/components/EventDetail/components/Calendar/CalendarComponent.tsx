@@ -6,7 +6,7 @@ import "./CalendarComponent.css";
 interface CalendarComponentProps {
   events: Event[];
   onClose: () => void;
-  setDateRange: (dateRange: { startDate: Date; endDate: Date }) => void;
+  setDateRange: (dateRange: { startDate: Date; endDate: Date } | null) => void;
 }
 
 export const CalendarComponent = ({
@@ -110,8 +110,7 @@ export const CalendarComponent = ({
   };
 
   const handleReset = () => {
-    setSelectedStart(null);
-    setSelectedEnd(null);
+    setDateRange(null);
     onClose();
   };
 
