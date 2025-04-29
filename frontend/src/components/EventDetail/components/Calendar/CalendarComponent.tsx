@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
-import { Event } from "../../../../types/event";
+import { Event } from "../../../../utils";
 import "./CalendarComponent.css";
 
 interface CalendarComponentProps {
@@ -106,13 +106,6 @@ export const CalendarComponent = ({
     }
   };
 
-  const hasEventOnDay = (day: Date) => {
-    return events.some((event) => {
-      const eventDate = new Date(event.date);
-      return eventDate.toDateString() === day.toDateString();
-    });
-  };
-
   const isDayInRange = (day: Date) => {
     if (!selectedStart || !selectedEnd) return false;
     return day >= selectedStart && day <= selectedEnd;
@@ -153,7 +146,7 @@ export const CalendarComponent = ({
                   : isDayInRange(day)
                   ? "in-range"
                   : ""
-              } ${hasEventOnDay(day) ? "has-event" : ""}`}
+              }`}
               onClick={() => handleDayClick(day)}
             >
               {day.getDate()}
