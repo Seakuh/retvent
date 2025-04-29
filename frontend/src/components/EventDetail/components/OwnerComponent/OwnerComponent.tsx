@@ -39,6 +39,7 @@ export const OwnerComponent = () => {
 
       console.log("Upload erfolgreich");
       setIsLoading(false);
+      navigate(`/event/${eventId}`);
     } catch (error) {
       console.error("Fehler beim Upload:", error);
     }
@@ -61,9 +62,15 @@ export const OwnerComponent = () => {
     setIsOpen(false);
   };
 
+  if (isLoading)
+    return (
+      <div className="loading-spinner-owner-component-container">
+        <div className="loading-spinner"></div>
+      </div>
+    );
+
   return (
     <div className="event-owner-info">
-      {isLoading && <div className="loading-spinner"></div>}
       {/* Update hinzufügen */}
       <button
         className="event-owner-info-button"

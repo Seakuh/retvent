@@ -11,12 +11,19 @@
   border-radius: 8rem;
 }
 
-  .event-owner-info-button {
-    padding: 1rem;
-    border-radius: 50%;
-    background: transparent;
-    border: 1px solid currentColor;
-    cursor: pointer;
+.loading-spinner-owner-component-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.event-owner-info-button {
+  padding: 1rem;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid currentColor;
+  cursor: pointer;
     transition: all 0.2s;
   }
   
