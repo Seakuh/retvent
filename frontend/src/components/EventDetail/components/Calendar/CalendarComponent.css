@@ -30,7 +30,7 @@
 .calendar-day {
     aspect-ratio: 1;
     font-weight: bold;
-    border: 6px solid var(--color-neon-blue-light);
+    border: 2px solid var(--color-neon-blue);
     border-radius: 50%;
     display: flex;
     background-color: var(--color-neon-blue-light);
