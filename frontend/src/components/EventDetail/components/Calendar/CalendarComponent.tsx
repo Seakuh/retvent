@@ -16,9 +16,14 @@ export const CalendarComponent = ({
   onClose,
   setDateRange,
   onReset,
+  prevDateRange,
 }: CalendarComponentProps) => {
-  const [selectedStart, setSelectedStart] = useState<Date | null>(null);
-  const [selectedEnd, setSelectedEnd] = useState<Date | null>(null);
+  const [selectedStart, setSelectedStart] = useState<Date | null>(
+    prevDateRange?.startDate || null
+  );
+  const [selectedEnd, setSelectedEnd] = useState<Date | null>(
+    prevDateRange?.endDate || null
+  );
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];

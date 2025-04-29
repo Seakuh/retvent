@@ -7,6 +7,7 @@ import "./CategoryFilter.css";
 import { GenreModal } from "./GenreModal";
 interface CategoryFilterProps {
   category: string | null;
+  prevDateRange: { startDate: Date | null; endDate: Date | null } | null;
   onCategoryChange: (category: string | null) => void;
   setDateRange: (dateRange: {
     startDate: Date | null;
@@ -29,6 +30,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   viewMode,
   events,
   setDateRange,
+  prevDateRange,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showGenreModal, setShowGenreModal] = useState(false);
@@ -134,6 +136,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             setShowDateModal(false);
           }}
           setDateRange={onDateSelect}
+          prevDateRange={prevDateRange}
           onReset={onDateReset}
         />
       )}

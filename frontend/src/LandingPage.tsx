@@ -442,6 +442,10 @@ function LandingPage() {
               selectedLocation={location}
             />
             <CategoryFilter
+              prevDateRange={{
+                startDate: startDate ? new Date(startDate) : null,
+                endDate: endDate ? new Date(endDate) : null,
+              }}
               events={events}
               viewMode={viewMode}
               category={category}
