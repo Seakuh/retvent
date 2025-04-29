@@ -10,6 +10,8 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    display: flex;
+    flex-direction: column;
 }
 
 .calendar-content {
@@ -78,3 +80,20 @@
 .calendar-confirm-button:hover {
     background-color: #0056b3;
 }
+
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px;
+  }
+  
+  .calendar-header select {
+    border: 1px solid var(--color-neon-blue-light);
+    background-color: var(--color-neon-blue-light);
+    color: white;
+    border-radius: 8rem;
+    margin: 1rem;
+    font-weight: bold;
+  }
+  

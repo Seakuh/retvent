@@ -18,6 +18,8 @@ export const CalendarComponent = ({
 }: CalendarComponentProps) => {
   const [selectedStart, setSelectedStart] = useState<Date | null>(null);
   const [selectedEnd, setSelectedEnd] = useState<Date | null>(null);
+  const [currentMonth, setCurrentMonth] = useState<number>();
+  const [currentYear, setCurrentYear] = useState<number>();
 
   const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
@@ -87,6 +89,30 @@ export const CalendarComponent = ({
       onClick={(e) => e.target === e.currentTarget && onClose()}
       className="calendar-container"
     >
+      <div className="calendar-header">
+        <select
+          value={currentMonth}
+          onChange={(e) => setCurrentMonth(parseInt(e.target.value))}
+        >
+          {Array.from({ length: 12 }, (_, i) => (
+            <option key={i} value={i}>
+              {new Date(0, i).toLocaleString("default", { month: "long" })}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={currentYear}
+          onChange={(e) => setCurrentYear(parseInt(e.target.value))}
+        >
+          {Array.from({ length: 10 }, (_, i) => (
+            <option key={i} value={new Date().getFullYear() - 5 + i}>
+              {new Date().getFullYear() - 5 + i}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="calendar-content" onClick={(e) => e.stopPropagation()}>
         <div className="calendar-grid">
           {weekDays.map((day) => (
