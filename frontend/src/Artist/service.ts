@@ -9,7 +9,6 @@ export const getArtist = async (artistName: string): Promise<Artist | null> => {
       return null;
     }
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("No artist found:", error);

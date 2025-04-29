@@ -26,7 +26,6 @@ export const createGroup = async (event: Event) => {
 
     if (!response.ok) throw new Error("Failed to create group");
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (err) {
     // setError("Failed to create group");
