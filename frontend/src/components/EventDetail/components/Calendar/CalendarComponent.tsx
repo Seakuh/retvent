@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Event } from "../../../../types/event";
 import "./CalendarComponent.css";
@@ -18,26 +19,59 @@ export const CalendarComponent = ({
 }: CalendarComponentProps) => {
   const [selectedStart, setSelectedStart] = useState<Date | null>(null);
   const [selectedEnd, setSelectedEnd] = useState<Date | null>(null);
-  const [currentMonth, setCurrentMonth] = useState<number>();
-  const [currentYear, setCurrentYear] = useState<number>();
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const handlePrevMonth = () => {
+    setCurrentDate((prev) => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() - 1);
+      return newDate;
+    });
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate((prev) => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() + 1);
+      return newDate;
+    });
+  };
+
   const generateCalendarDays = () => {
     const days: Date[] = [];
-    const start = dateRange?.startDate
-      ? new Date(dateRange.startDate)
-      : new Date();
-    const end = dateRange?.endDate ? new Date(dateRange.endDate) : new Date();
-    end.setMonth(end.getMonth() + 1);
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
 
-    const firstDay = new Date(start);
+    // Erster Tag des Monats
+    const firstDay = new Date(year, month, 1);
+    // Letzter Tag des Monats
+    const lastDay = new Date(year, month + 1, 0);
+
+    // Zum Montag der ersten Woche zurückgehen
     while (firstDay.getDay() !== 1) {
       firstDay.setDate(firstDay.getDate() - 1);
     }
 
+    // Alle Tage generieren
     const current = new Date(firstDay);
-    while (current <= end) {
+    while (current <= lastDay || current.getDay() !== 1) {
       days.push(new Date(current));
       current.setDate(current.getDate() + 1);
     }
@@ -89,31 +123,19 @@ export const CalendarComponent = ({
       onClick={(e) => e.target === e.currentTarget && onClose()}
       className="calendar-container"
     >
-      <div className="calendar-header">
-        <select
-          value={currentMonth}
-          onChange={(e) => setCurrentMonth(parseInt(e.target.value))}
-        >
-          {Array.from({ length: 12 }, (_, i) => (
-            <option key={i} value={i}>
-              {new Date(0, i).toLocaleString("default", { month: "long" })}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={currentYear}
-          onChange={(e) => setCurrentYear(parseInt(e.target.value))}
-        >
-          {Array.from({ length: 10 }, (_, i) => (
-            <option key={i} value={new Date().getFullYear() - 5 + i}>
-              {new Date().getFullYear() - 5 + i}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <div className="calendar-content" onClick={(e) => e.stopPropagation()}>
+        <div className="calendar-header">
+          <button onClick={handlePrevMonth} className="month-nav-button">
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <h2 className="month-year-display">
+            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+          </h2>
+          <button onClick={handleNextMonth} className="month-nav-button">
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
         <div className="calendar-grid">
           {weekDays.map((day) => (
             <div key={day} className="weekday-header">
