@@ -79,3 +79,15 @@ export class CreateGroupDto {
   imageUrl?: string;
   memberIds?: string[];
 }
+
+export const getFeedItems = async (profileId: string) => {
+  try {
+    const response = await fetch(`${API_URL}feed/profile-feed/${profileId}`);
+    const data = await response.json();
+    console.log("data", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching feed items:", error);
+    return [];
+  }
+};

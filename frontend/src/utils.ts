@@ -9,6 +9,8 @@ export class Feed {
   username?: string;
   profileImageUrl?: string;
   profileId?: string;
+  startDate?: Date;
+
   eventId?: string;
   groupId?: string;
   messageId?: string;
@@ -24,6 +26,7 @@ export class FeedResponse {
   profileId?: string;
   profileName?: string;
   profileImageUrl?: string;
+  createdAt?: string;
   feedItems?: Feed[];
 }
 

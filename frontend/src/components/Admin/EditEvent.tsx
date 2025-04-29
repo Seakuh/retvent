@@ -100,6 +100,7 @@ const EditEvent: React.FC = () => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
     console.log("handleImageChange");
     const file = e.target.files?.[0];
     if (file) {
@@ -112,6 +113,7 @@ const EditEvent: React.FC = () => {
       console.log(file);
       eventService.updateEventImage(eventId!, file);
     }
+    setLoading(false);
   };
 
   const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,12 +170,17 @@ const EditEvent: React.FC = () => {
   };
 
   if (loading)
-    return <div className="loading">Loading event details... ⌛</div>;
+    return (
+      <div className="loading-spinner-container">
+        <div className="loading-spinner-inner"></div>
+      </div>
+    );
   if (error) return <div className="error">{error}</div>;
 
   async function handlePromptUpdate(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): Promise<void> {
+    setLoading(true);
     const prompt = document.getElementById(
       "edit-event-prompt"
     ) as HTMLTextAreaElement;
@@ -181,10 +188,16 @@ const EditEvent: React.FC = () => {
     console.log(promptText);
     await eventService.updateEventPrompt(eventId!, promptText);
     navigate(API_URL + "/event/" + eventId);
+    setLoading(false);
   }
 
   return (
     <div className="edit-event-container">
+      {loading && (
+        <div className="loading-screen">
+          <div className="loading-spinner"></div>
+        </div>
+      )}
       <button onClick={handleBack} className="back-button">
         <ChevronLeft className="h-5 w-5" />{" "}
       </button>

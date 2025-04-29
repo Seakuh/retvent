@@ -212,3 +212,10 @@
     width: 100%;
   }
 }
+
+
+.feed-modal-profile-created-at {
+  font-size: 0.8rem;
+  color: var(--color-neon-blue);
+  font-weight: 500;
+}

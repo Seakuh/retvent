@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
-import { FeedResponse } from "../../utils";
+import { FeedResponse, formatDate } from "../../utils";
 import "./FeedModal.css";
 
 interface FeedModalProps {
@@ -115,6 +115,13 @@ export const FeedModal = ({
             alt={feedItem.profileName}
           />
           <h2 className="feed-modal-profile-name">{feedItem.profileName}</h2>
+          <p className="feed-modal-profile-created-at">
+            {feedItem.feedItems![currentImageIndex].startDate
+              ? formatDate(
+                  feedItem.feedItems![currentImageIndex].startDate.toString()
+                )
+              : "asdsad"}
+          </p>
         </div>
         <div
           className="feed-modal-image-container"
