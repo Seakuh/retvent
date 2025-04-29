@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Event } from "../../../../utils";
 import "./CalendarComponent.css";
 
@@ -25,9 +25,11 @@ export const CalendarComponent = ({
     prevDateRange?.endDate || null
   );
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [monthImageCache, setMonthImageCache] = useState<
+    Record<string, string>
+  >({});
 
   const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-
   const monthNames = [
     "January",
     "February",
@@ -63,18 +65,13 @@ export const CalendarComponent = ({
     const days: Date[] = [];
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-
-    // Erster Tag des Monats
     const firstDay = new Date(year, month, 1);
-    // Letzter Tag des Monats
     const lastDay = new Date(year, month + 1, 0);
 
-    // Zum Montag der ersten Woche zurückgehen
     while (firstDay.getDay() !== 1) {
       firstDay.setDate(firstDay.getDate() - 1);
     }
 
-    // Alle Tage generieren
     const current = new Date(firstDay);
     while (current <= lastDay || current.getDay() !== 1) {
       days.push(new Date(current));
@@ -102,14 +99,17 @@ export const CalendarComponent = ({
     if (selectedStart) {
       const start = new Date(selectedStart);
       start.setHours(0, 0, 0, 0);
-
       const end = selectedEnd ? new Date(selectedEnd) : new Date(selectedStart);
       end.setHours(23, 59, 59, 999);
 
-      console.log("Ausgewählter Zeitraum:", { start, end });
       setDateRange({ startDate: start, endDate: end });
       onClose();
     }
+  };
+
+  const handleReset = () => {
+    setDateRange(null);
+    onClose();
   };
 
   const isDayInRange = (day: Date) => {
@@ -117,9 +117,45 @@ export const CalendarComponent = ({
     return day >= selectedStart && day <= selectedEnd;
   };
 
-  const handleReset = () => {
-    setDateRange(null);
-    onClose();
+  // Events als Map für schnellen Zugriff vorbereiten
+  const eventMap = useMemo(() => {
+    const map: Record<string, Event> = {};
+    events.forEach((event) => {
+      const dayString = event.startDate.split("T")[0];
+      map[dayString] = event;
+    });
+    return map;
+  }, [events]);
+
+  // Monatlichen Cache nur ergänzen, nicht neu bauen
+  useEffect(() => {
+    const days = generateCalendarDays();
+    setMonthImageCache((prevCache) => {
+      const newCache = { ...prevCache };
+      let updated = false;
+
+      days.forEach((day) => {
+        const dayString = day.toISOString().split("T")[0];
+        if (!newCache[dayString]) {
+          const event = eventMap[dayString];
+          if (event?.imageUrl) {
+            newCache[
+              dayString
+            ] = `url(https://img.event-scanner.com/insecure/q:30/w:100/plain/${event.imageUrl}@webp)`;
+          } else {
+            newCache[dayString] = "none";
+          }
+          updated = true;
+        }
+      });
+
+      return updated ? newCache : prevCache;
+    });
+  }, [currentDate, eventMap]);
+
+  const getEventBackground = (day: Date) => {
+    const dayString = day.toISOString().split("T")[0];
+    return monthImageCache[dayString] || "none";
   };
 
   return (
@@ -158,12 +194,18 @@ export const CalendarComponent = ({
                   ? "in-range"
                   : ""
               }`}
+              style={{
+                backgroundImage: getEventBackground(day),
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
               onClick={() => handleDayClick(day)}
             >
               {day.getDate()}
             </div>
           ))}
         </div>
+
         <div className="calendar-buttons">
           <button className="calendar-reset-button" onClick={onReset}>
             Reset
