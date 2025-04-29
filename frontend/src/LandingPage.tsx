@@ -14,7 +14,6 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { CityBar } from "./components/CityBar/CityBar";
-import { CalendarComponent } from "./components/EventDetail/components/Calendar/CalendarComponent";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
@@ -116,16 +115,36 @@ function LandingPage() {
   const handleViewChange = (view: ViewMode) => {
     setSearchState({ view });
     if (view == "All") {
-      setSearchState({ prompt: "", category: "", view: "All" });
+      setSearchState({
+        prompt: "",
+        category: "",
+        view: "All",
+        startDate: "",
+        endDate: "",
+      });
       setViewMode("All");
     }
     setViewMode(view);
   };
 
   const handleCategoryChange = (category: string | null) => {
-    console.log("category", category);
-    setSearchState({ category: category || "" });
+    setSearchState({
+      category: category || "",
+      startDate: startDate || "",
+      endDate: endDate || "",
+    });
     setViewMode("Filter");
+  };
+
+  const handleDateChange = (dateRange: {
+    startDate: Date | null;
+    endDate: Date | null;
+  }) => {
+    setSearchState({
+      startDate: dateRange.startDate?.toISOString() || "",
+      endDate: dateRange.endDate?.toISOString() || "",
+    });
+    setViewMode("Calendar");
   };
 
   const handleLocationChange = (location: string) => {
@@ -423,9 +442,11 @@ function LandingPage() {
               selectedLocation={location}
             />
             <CategoryFilter
+              events={events}
               viewMode={viewMode}
               category={category}
               onCategoryChange={handleCategoryChange}
+              setDateRange={handleDateChange}
               onViewModeChange={handleViewChange}
             />
           </div>
@@ -445,20 +466,6 @@ function LandingPage() {
             </div>
           ) : viewMode === "Home" ? (
             <EventPage />
-          ) : viewMode === "Calendar" ? (
-            <CalendarComponent
-              events={events}
-              onClose={() => {
-                setViewMode("All");
-              }}
-              setDateRange={(dateRange) => {
-                console.log(dateRange);
-                setSearchState({
-                  startDate: dateRange ? dateRange.startDate.toISOString() : "",
-                  endDate: dateRange ? dateRange.endDate.toISOString() : "",
-                });
-              }}
-            />
           ) : (
             <div>
               <ExploreFeed feedItemsResponse={feedItemsResponse} />

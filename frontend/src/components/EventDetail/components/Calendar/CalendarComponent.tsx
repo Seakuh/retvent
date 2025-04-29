@@ -6,13 +6,16 @@ import "./CalendarComponent.css";
 interface CalendarComponentProps {
   events: Event[];
   onClose: () => void;
+  onReset: () => void;
   setDateRange: (dateRange: { startDate: Date; endDate: Date } | null) => void;
+  prevDateRange?: { startDate: Date; endDate: Date } | null;
 }
 
 export const CalendarComponent = ({
   events,
   onClose,
   setDateRange,
+  onReset,
 }: CalendarComponentProps) => {
   const [selectedStart, setSelectedStart] = useState<Date | null>(null);
   const [selectedEnd, setSelectedEnd] = useState<Date | null>(null);
@@ -157,7 +160,7 @@ export const CalendarComponent = ({
           ))}
         </div>
         <div className="calendar-buttons">
-          <button className="calendar-reset-button" onClick={handleReset}>
+          <button className="calendar-reset-button" onClick={onReset}>
             Reset
           </button>
           <button className="calendar-confirm-button" onClick={handleConfirm}>

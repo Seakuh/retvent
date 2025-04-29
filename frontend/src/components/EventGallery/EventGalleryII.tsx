@@ -133,30 +133,34 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
       </div>
 
       {/* Past Events Section */}
-      <div className="event-date-section">
-        <div className="event-date-heading-container">
-          <h2 className="section-title past-events-title">Past</h2>
-          <h3 className="event-date-heading-sub">
-            {getDaysPast(new Date()) <= 1 ? "yesterday" : "days ago"}
-          </h3>
-        </div>
-      </div>
-      <div className="event-list">
-        {Object.entries(groupedPastEvents).map(([date, eventsForDate]) => (
-          <div key={date} className="event-date-section">
-            <h2 className="section-title">{date}</h2>
-            <div className="real-event-list-item-container">
-              {eventsForDate.map((event) => (
-                <RealListItem
-                  key={getEventId(event)}
-                  event={event}
-                  isPast={true}
-                />
-              ))}
+      {pastEvents.length > 0 && (
+        <>
+          <div className="event-date-section">
+            <div className="event-date-heading-container">
+              <h2 className="section-title past-events-title">Past</h2>
+              <h3 className="event-date-heading-sub">
+                {getDaysPast(new Date()) <= 1 ? "yesterday" : "days ago"}
+              </h3>
             </div>
           </div>
-        ))}
-      </div>
+          <div className="event-list">
+            {Object.entries(groupedPastEvents).map(([date, eventsForDate]) => (
+              <div key={date} className="event-date-section">
+                <h2 className="section-title">{date}</h2>
+                <div className="real-event-list-item-container">
+                  {eventsForDate.map((event) => (
+                    <RealListItem
+                      key={getEventId(event)}
+                      event={event}
+                      isPast={true}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </>
   );
 };

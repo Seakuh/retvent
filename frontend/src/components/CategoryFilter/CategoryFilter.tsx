@@ -1,14 +1,20 @@
 import { Calendar, Home, SlidersHorizontal, Telescope } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { ViewMode } from "../../types/event";
-import { categoriesToFilter } from "../../utils";
+import { categoriesToFilter, Event } from "../../utils";
+import { CalendarComponent } from "../EventDetail/components/Calendar/CalendarComponent";
 import "./CategoryFilter.css";
 import { GenreModal } from "./GenreModal";
 interface CategoryFilterProps {
   category: string | null;
   onCategoryChange: (category: string | null) => void;
+  setDateRange: (dateRange: {
+    startDate: Date | null;
+    endDate: Date | null;
+  }) => void;
   onViewModeChange: (view: ViewMode) => void;
   viewMode: ViewMode;
+  events: Event[];
 }
 
 interface CachedCategories {
@@ -21,12 +27,28 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onCategoryChange,
   onViewModeChange,
   viewMode,
+  events,
+  setDateRange,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showGenreModal, setShowGenreModal] = useState(false);
-
+  const [showDateModal, setShowDateModal] = useState(false);
   const toggleGenreModal = () => {
     setShowGenreModal(!showGenreModal);
+  };
+
+  const onDateSelect = (dateRange: {
+    startDate: Date | null;
+    endDate: Date | null;
+  }) => {
+    setShowDateModal(false);
+    setDateRange(dateRange);
+  };
+
+  const onDateReset = () => {
+    setShowDateModal(false);
+    setDateRange({ startDate: null, endDate: null });
+    onViewModeChange("All");
   };
 
   const onGenreSelect = (genre: string) => {
@@ -73,8 +95,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       <button
         className={`category-button ${viewMode === "Calendar" ? "active" : ""}`}
         onClick={() => {
-          onCategoryChange(category);
-          onViewModeChange("Calendar");
+          setShowDateModal(true);
         }}
       >
         <Calendar size={20} />
@@ -103,6 +124,17 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
           genres={categoriesToFilter}
           onGenreSelect={onGenreSelect}
           selectedGenre={category}
+        />
+      )}
+
+      {showDateModal && (
+        <CalendarComponent
+          events={events}
+          onClose={() => {
+            setShowDateModal(false);
+          }}
+          setDateRange={onDateSelect}
+          onReset={onDateReset}
         />
       )}
     </div>
