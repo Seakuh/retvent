@@ -141,7 +141,7 @@ export const CalendarComponent = ({
           if (event?.imageUrl) {
             newCache[
               dayString
-            ] = `url(https://img.event-scanner.com/insecure/q:30/w:100/plain/${event.imageUrl}@webp)`;
+            ] = `url(https://img.event-scanner.com/insecure/blur:1/q:20/w:100/plain/${event.imageUrl}@webp)`;
           } else {
             newCache[dayString] = "none";
           }
@@ -186,14 +186,20 @@ export const CalendarComponent = ({
           {generateCalendarDays().map((day, index) => (
             <div
               key={index}
-              className={`calendar-day ${
-                selectedStart?.toDateString() === day.toDateString() ||
-                selectedEnd?.toDateString() === day.toDateString()
-                  ? "selected"
-                  : isDayInRange(day)
-                  ? "in-range"
-                  : ""
-              }`}
+              className={`calendar-day
+                ${
+                  day.toDateString() === new Date().toDateString()
+                    ? "calendar-day-today"
+                    : ""
+                }
+                ${
+                  selectedStart?.toDateString() === day.toDateString() ||
+                  selectedEnd?.toDateString() === day.toDateString()
+                    ? "selected"
+                    : isDayInRange(day)
+                    ? "in-range"
+                    : ""
+                }`}
               style={{
                 backgroundImage: getEventBackground(day),
                 backgroundSize: "cover",
