@@ -64,12 +64,10 @@ export class FeedService {
     return this.groupFeedsByProfile(feeds);
   }
 
-  async getProfilesFeeds(
-    ids: string[],
-  ): Promise<Record<string, FeedItemResponse[]>> {
+  async getProfilesFeeds(ids: string[]): Promise<FeedResponse[]> {
     const feeds = await this.feedRepository.findByProfileIds(ids);
     console.log('🔍 Feeds:', feeds);
-    return this.groupFeedsByType(feeds);
+    return this.groupFeedsByProfile(feeds);
   }
 
   groupFeedsByType(feeds: Feed[]): Record<string, FeedItemResponse[]> {
