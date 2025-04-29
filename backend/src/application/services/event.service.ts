@@ -575,7 +575,7 @@ export class EventService {
       [imageUrl],
       id,
     );
-    void this.chatGptService
+    await this.chatGptService
       .extractLineUpFromFlyer(imageUrl, event.lineup)
       .then((lineUp) => {
         this.eventRepository.updateLineupFromImage(eventId, lineUp);
@@ -627,4 +627,8 @@ export class EventService {
     const imageUrl = await this.imageService.uploadImage(image);
     return this.eventRepository.updateEventImage(eventId, imageUrl);
   }
+
+  // deleteLineupPicture(id: string, userId: string) {
+  //   return this.eventRepository.deleteLineupPicture(id, userId);
+  // }
 }

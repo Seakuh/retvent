@@ -519,6 +519,12 @@ export class EventController {
     );
   }
 
+  // @Delete('lineup/delete/:id')
+  // @UseGuards(JwtAuthGuard)
+  // async deleteLineupPicture(@Param('id') id: string, @Request() req) {
+  //   return this.eventService.deleteLineupPicture(id, req.user.id);
+  // }
+
   @Post('picture/upload')
   @UseGuards(UploadGuard)
   @UseInterceptors(FileInterceptor('image'))
