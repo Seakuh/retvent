@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useSwipeable } from "react-swipeable";
 import { Event } from "../../../../utils";
 import "./CalendarComponent.css";
 
@@ -158,12 +159,24 @@ export const CalendarComponent = ({
     return monthImageCache[dayString] || "none";
   };
 
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => handleNextMonth(),
+    onSwipedRight: () => handlePrevMonth(),
+    swipeDuration: 500,
+    preventScrollOnSwipe: true,
+    trackMouse: false,
+  });
+
   return (
     <div
       onClick={(e) => e.target === e.currentTarget && onClose()}
       className="calendar-container"
     >
-      <div className="calendar-content" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="calendar-content"
+        onClick={(e) => e.stopPropagation()}
+        {...swipeHandlers}
+      >
         <div className="calendar-header">
           <button onClick={handlePrevMonth} className="month-nav-button">
             <ChevronLeft className="h-5 w-5" />
