@@ -66,7 +66,6 @@ export class FeedService {
 
   async getProfilesFeeds(ids: string[]): Promise<FeedResponse[]> {
     const feeds = await this.feedRepository.findByProfileIds(ids);
-    console.log('🔍 Feeds:', feeds);
     return this.groupFeedsByProfile(feeds);
   }
 
