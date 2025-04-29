@@ -258,6 +258,12 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
 
   extractLineUpFromFlyer = async (
     imageUrl: string,
+    currentLineup?: Array<{
+      name: string;
+      role?: string;
+      startTime?: string;
+      endTime?: string;
+    }>,
   ): Promise<
     Array<{
       name: string;
@@ -272,7 +278,10 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
   Task:
   Analyze the image at the following URL and extract the performing artists (line-up), including their names, roles (e.g., DJ, live, VJ), and scheduled times if available.
   
-  Image URL: ${imageUrl}
+
+  Current Lineup (do not include these again, only add new names you find):
+  ${JSON.stringify(currentLineup || [])}
+
   
   Instructions:
   - Extract all performer/artist names visible on the flyer
@@ -303,13 +312,17 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
         messages: [
           {
             role: 'user',
-            content: prompt,
+            content: [
+              { type: 'text', text: prompt },
+              { type: 'image_url', image_url: { url: imageUrl } },
+            ],
           },
         ],
+
+        response_format: { type: 'json_object' },
       });
 
       const content = response.choices[0]?.message?.content;
-
       if (!content) {
         console.error('Empty response from OpenAI');
         return [];
@@ -317,12 +330,15 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
 
       try {
         const parsed = JSON.parse(content);
-
-        console.log('parsed', parsed);
-        // Ensure all lineup entries have at least a name
-        return (parsed.lineup || []).filter(
-          (entry) => entry.name && entry.name.trim() !== '',
+        const existingNames = new Set(
+          (currentLineup || []).map((e) => e.name.trim().toLowerCase()),
         );
+        const newEntries = (parsed.lineup || []).filter(
+          (entry) =>
+            entry.name && !existingNames.has(entry.name.trim().toLowerCase()),
+        );
+
+        return [...(currentLineup || []), ...newEntries];
       } catch (parseError) {
         console.error('Failed to parse OpenAI response:', parseError);
         console.log('Raw response:', content);
