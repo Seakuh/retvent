@@ -14,6 +14,7 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { CityBar } from "./components/CityBar/CityBar";
+import { CalendarComponent } from "./components/EventDetail/components/Calendar/CalendarComponent";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
@@ -436,6 +437,13 @@ function LandingPage() {
             </div>
           ) : viewMode === "Home" ? (
             <EventPage />
+          ) : viewMode === "Calendar" ? (
+            <CalendarComponent
+              events={events}
+              onClose={() => {
+                setViewMode("All");
+              }}
+            />
           ) : (
             <div>
               <ExploreFeed feedItemsResponse={feedItemsResponse} />
