@@ -23,6 +23,7 @@ export class FeedService {
       profileId: event.hostId,
       type,
       feedImageUrl: event.imageUrl,
+      startDate: event.startDate,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -41,6 +42,7 @@ export class FeedService {
       const feed = await this.feedRepository.create({
         eventId: event.id,
         profileId: event.hostId,
+        startDate: event.startDate,
         type,
         feedImageUrl: imageUrl,
         createdAt: new Date(),
@@ -58,12 +60,44 @@ export class FeedService {
 
   async getProfileFeed(id: string): Promise<FeedResponse[]> {
     const feeds = await this.feedRepository.findByProfileId(id);
+    console.log('🔍 Feeds:', feeds);
     return this.groupFeedsByProfile(feeds);
   }
 
-  async getProfilesFeeds(ids: string[]): Promise<FeedResponse[]> {
+  async getProfilesFeeds(
+    ids: string[],
+  ): Promise<Record<string, FeedItemResponse[]>> {
     const feeds = await this.feedRepository.findByProfileIds(ids);
-    return this.groupFeedsByProfile(feeds);
+    console.log('🔍 Feeds:', feeds);
+    return this.groupFeedsByType(feeds);
+  }
+
+  groupFeedsByType(feeds: Feed[]): Record<string, FeedItemResponse[]> {
+    const grouped: Record<string, FeedItemResponse[]> = {};
+
+    feeds.forEach((feed) => {
+      if (!feed.type) return;
+
+      const type = feed.type.trim();
+
+      if (!grouped[type]) {
+        grouped[type] = [];
+      }
+
+      grouped[type].push({
+        id: feed.id,
+        type: feed.type as FeedItemResponse['type'],
+        content: feed.content,
+        feedImageUrl: feed.feedImageUrl,
+        feedGifUrl: feed.feedGifUrl,
+        profileId: feed.profileId,
+        eventId: feed.eventId,
+        messageId: feed.messageId,
+        createdAt: feed.createdAt?.toISOString() ?? '',
+      });
+    });
+
+    return grouped;
   }
 
   private async groupFeedsByProfile(feeds: Feed[]): Promise<FeedResponse[]> {

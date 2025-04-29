@@ -6,6 +6,7 @@ export class Feed {
   messageId?: string;
   type?: string;
   content?: string;
+  startDate?: Date;
   feedImageUrl?: string;
   feedGifUrl?: string;
   createdAt?: Date;

@@ -5,6 +5,13 @@ export class FeedResponse {
   feedItems?: FeedItemResponse[];
 }
 
+export class FeedProfileResponse {
+  id: string;
+  name: string;
+  imageUrl: string;
+  feedItems: FeedItemResponse[];
+}
+
 export class FeedItemResponse {
   id: string;
   type:
@@ -14,7 +21,11 @@ export class FeedItemResponse {
     | 'profile'
     | 'post'
     | 'video'
+    | 'lineup'
     | 'gif'
+    | 'release'
+    | 'playlist'
+    | 'news'
     | 'update';
   content?: string;
   profileId?: string;

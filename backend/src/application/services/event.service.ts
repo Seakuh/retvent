@@ -575,9 +575,9 @@ export class EventService {
       [imageUrl],
       id,
     );
-    // void this.chatGptService.extractLineUpFromFlyer(imageUrl).then((lineUp) => {
-    //   this.eventRepository.updateLineupFromImage(eventId, lineUp);
-    // });
+    void this.chatGptService.extractLineUpFromFlyer(imageUrl).then((lineUp) => {
+      this.eventRepository.updateLineupFromImage(eventId, lineUp);
+    });
     void this.feedService.pushFeedItemFromEventPictures(event, 'lineup', [
       imageUrl,
     ]);

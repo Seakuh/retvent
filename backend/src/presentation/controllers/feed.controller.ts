@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { FeedService } from 'src/application/services/feed.service';
-import { FeedResponse } from '../dtos/feed-response.dto';
+import { FeedItemResponse, FeedResponse } from '../dtos/feed-response.dto';
 @Controller('feed')
 export class FeedController {
   constructor(private readonly feedService: FeedService) {}
@@ -20,7 +20,9 @@ export class FeedController {
   }
 
   @Get('byIds')
-  async getProfileFeeds(@Query('ids') ids: string): Promise<FeedResponse[]> {
+  async getProfileFeeds(
+    @Query('ids') ids: string,
+  ): Promise<Record<string, FeedItemResponse[]>> {
     return this.feedService.getProfilesFeeds(ids.split(','));
   }
 }
