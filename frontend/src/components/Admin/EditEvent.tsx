@@ -2,7 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EventService } from "../../services/event.service";
-import { API_URL, categories, Event } from "../../utils";
+import { categories, Event } from "../../utils";
 import "./EditEvent.css";
 
 const EditEvent: React.FC = () => {
@@ -187,7 +187,7 @@ const EditEvent: React.FC = () => {
     const promptText = prompt.value;
     console.log(promptText);
     await eventService.updateEventPrompt(eventId!, promptText);
-    navigate(API_URL + "/event/" + eventId);
+    navigate(`/event/${eventId}`);
     setLoading(false);
   }
 
