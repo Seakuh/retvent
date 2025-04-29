@@ -526,13 +526,40 @@ export class MongoEventRepository implements IEventRepository {
     return this.eventModel.countDocuments({ category }).exec();
   }
 
-  async getUserFavorites(eventIds: string[]): Promise<Event[]> {
+  async getUserFavorites(
+    eventIds: string[],
+    dateRange?: { startDate?: string; endDate?: string },
+    location?: string,
+    category?: string,
+  ): Promise<Event[]> {
+    const query: any = {
+      _id: { $in: eventIds },
+    };
+
+    if (dateRange?.startDate && dateRange?.endDate) {
+      query.startDate = {
+        $gte: new Date(dateRange.startDate),
+        $lte: new Date(dateRange.endDate),
+      };
+    }
+
+    if (category) {
+      query.category = { $regex: new RegExp(category, 'i') };
+    }
+
+    if (location) {
+      query.city = { $regex: new RegExp(location, 'i') };
+    }
+
+    console.log('query', query);
+
     const events = await this.eventModel
-      .find({ _id: { $in: eventIds } })
+      .find(query)
       .select(
-        'id description title imageUrl lineup startDate city views commentCount tags',
+        'id description title imageUrl lineup startDate endDate city views commentCount tags',
       )
       .exec();
+
     return this.addCommentCountToEvents(events);
   }
 

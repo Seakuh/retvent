@@ -188,8 +188,18 @@ export class EventService {
     return event;
   }
 
-  async getEventsByIds(ids: string[]): Promise<Event[]> {
-    return this.eventRepository.getUserFavorites(ids);
+  async getEventsByIds(
+    ids: string[],
+    dateRange?: { startDate?: string; endDate?: string },
+    category?: string,
+    location?: string,
+  ): Promise<Event[]> {
+    return this.eventRepository.getUserFavorites(
+      ids,
+      dateRange,
+      category,
+      location,
+    );
   }
 
   async findByLocationId(locationId: string): Promise<Event[]> {
@@ -241,8 +251,18 @@ export class EventService {
     );
   }
 
-  async getUserFavorites(eventIds: string[]): Promise<Event[]> {
-    return this.eventRepository.getUserFavorites(eventIds);
+  async getUserFavorites(
+    eventIds: string[],
+    dateRange?: { startDate?: string; endDate?: string },
+    category?: string,
+    location?: string,
+  ): Promise<Event[]> {
+    return this.eventRepository.getUserFavorites(
+      eventIds,
+      dateRange ? dateRange : undefined,
+      location ? location : undefined,
+      category ? category : undefined,
+    );
   }
 
   async create(eventData: Partial<Event>): Promise<Event> {

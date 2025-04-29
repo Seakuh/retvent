@@ -219,9 +219,28 @@ export class EventController {
     return this.eventService.getEventByIdWithHostInformation(id);
   }
 
-  @Get('byIds')
-  async getEventsByIds(@Query('ids') ids: string) {
-    return this.eventService.getEventsByIds(ids.split(','));
+  @Post('favorite/byIds') // statt @Get
+  async getEventsByIds(
+    @Body()
+    body: {
+      ids: string[];
+      startDate?: string;
+      endDate?: string;
+      location?: string;
+      category?: string;
+    },
+  ) {
+    const dateRange =
+      body.startDate && body.endDate
+        ? { startDate: body.startDate, endDate: body.endDate }
+        : undefined;
+
+    return this.eventService.getUserFavorites(
+      body.ids,
+      dateRange,
+      body.category,
+      body.location,
+    );
   }
 
   @Get('byTag')
@@ -330,15 +349,30 @@ export class EventController {
     );
   }
 
-  @Get('favorites')
-  async getUserFavorites(@Query('ids') ids: string) {
-    if (!ids) {
-      return { error: 'Keine Favoriten-IDs angegeben' };
-    }
+  // @Get('favorites')
+  // async getUserFavorites(
+  //   @Query('ids') ids: string,
+  //   @Query('startDate') startDate?: string,
+  //   @Query('endDate') endDate?: string,
+  //   @Query('category') category?: string,
+  //   @Query('location') location?: string,
+  // ) {
+  //   if (!ids) {
+  //     return { error: 'Keine Favoriten-IDs angegeben' };
+  //   }
 
-    const eventIds = ids.split(',');
-    return this.eventService.getUserFavorites(eventIds);
-  }
+  //   const eventIds = ids.split(',');
+  //   const dateRange =
+  //     startDate && endDate
+  //       ? { startDate: startDate, endDate: endDate }
+  //       : undefined;
+  //   return this.eventService.getUserFavorites(
+  //     eventIds,
+  //     dateRange,
+  //     category,
+  //     location,
+  //   );
+  // }
 
   // HOST EVENTS ------------------------------------------------------
   @Get('host/:username')
