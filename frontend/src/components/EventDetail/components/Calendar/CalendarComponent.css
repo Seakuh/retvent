@@ -73,6 +73,10 @@
     color: white;
 }
 
+.calendar-day-today {
+    border: 6px solid red !important; 
+}
+
 
 
 .calendar-header {

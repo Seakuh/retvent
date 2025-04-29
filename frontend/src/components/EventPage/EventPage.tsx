@@ -1,14 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
-import { Event, FeedResponse } from "../../utils";
+import { Event, EventPageParams, FeedResponse } from "../../utils";
 import { ExploreFeed } from "../Feed/ExploreFeed";
 import { getLatestFeedByFollowing } from "../Feed/service";
 import { LikedEvents } from "../LikedEvents/LikedEvents";
 import "./EventPage.css";
 import { fetchFavoriteEvents } from "./service";
 
-export const EventPage = () => {
-  const { location, favoriteEventIds } = useContext(UserContext);
+export const EventPage = ({
+  startDate,
+  endDate,
+  category,
+  location,
+}: EventPageParams) => {
+  const { location: UserLocation, favoriteEventIds } = useContext(UserContext);
   const [favoriteEvents, setFavoriteEvents] = useState<Event[]>([]);
   const [nearbyEvents, setNearbyEvents] = useState<Event[]>([]);
   const [selectedNearbyEvent, setSelectedNearbyEvent] = useState<Event | null>(
@@ -18,7 +23,12 @@ export const EventPage = () => {
 
   useEffect(() => {
     const fetchFavorite = async () => {
-      const favoriteEvents = await fetchFavoriteEvents(favoriteEventIds);
+      const favoriteEvents = await fetchFavoriteEvents(favoriteEventIds, {
+        startDate,
+        endDate,
+        category,
+        location,
+      });
       setFavoriteEvents(favoriteEvents);
     };
     fetchFavorite();
@@ -28,7 +38,6 @@ export const EventPage = () => {
         const followedProfiles = await getLatestFeedByFollowing();
         setFollowedProfiles(followedProfiles);
       } catch (error) {
-        setFollowedProfiles([]);
         console.error("Error fetching followed profiles:", error);
       }
     };

@@ -1,3 +1,5 @@
+import { EventPageParams } from "../../utils";
+
 export const fetchNearbyEvents = async (
   lat: number,
   lon: number,
@@ -20,12 +22,32 @@ export const fetchNewEvents = async () => {
   return response.json();
 };
 
-export const fetchFavoriteEvents = async (ids: string[]) => {
+export const fetchFavoriteEvents = async (
+  ids: string[],
+  eventPageParams?: EventPageParams
+) => {
   if (ids.length === 0) {
     return [];
   }
+
+  const params = new URLSearchParams();
+  params.append("ids", ids.join(","));
+
+  if (eventPageParams?.startDate) {
+    params.append("startDate", eventPageParams.startDate);
+  }
+  if (eventPageParams?.endDate) {
+    params.append("endDate", eventPageParams.endDate);
+  }
+  if (eventPageParams?.category) {
+    params.append("category", eventPageParams.category);
+  }
+  if (eventPageParams?.location) {
+    params.append("location", eventPageParams.location);
+  }
+
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL}events/byIds?ids=${ids.join(",")}`
+    `${import.meta.env.VITE_API_URL}events/byIds?${params.toString()}`
   );
   return response.json();
 };

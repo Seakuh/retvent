@@ -688,3 +688,10 @@ export const getHoursUntilStart = (
     return Math.ceil(diff / (1000 * 60 * 60)); // Stunden
   }
 };
+
+export class EventPageParams {
+  startDate?: string;
+  endDate?: string;
+  category?: string;
+  location?: string;
+}

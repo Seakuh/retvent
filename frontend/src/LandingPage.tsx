@@ -469,7 +469,12 @@ function LandingPage() {
               </div>
             </div>
           ) : viewMode === "Home" ? (
-            <EventPage />
+            <EventPage
+              startDate={startDate}
+              endDate={endDate}
+              category={category}
+              location={location}
+            />
           ) : (
             <div>
               <ExploreFeed feedItemsResponse={feedItemsResponse} />
