@@ -172,21 +172,24 @@ export const CalendarComponent = ({
       onClick={(e) => e.target === e.currentTarget && onClose()}
       className="calendar-container"
     >
+      <div className="month-nav-buttons">
+        <button onClick={handlePrevMonth} className="month-nav-button">
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+
+        <button onClick={handleNextMonth} className="month-nav-button">
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      </div>
       <div
         className="calendar-content"
         onClick={(e) => e.stopPropagation()}
         {...swipeHandlers}
       >
         <div className="calendar-header">
-          <button onClick={handlePrevMonth} className="month-nav-button">
-            <ChevronLeft className="h-5 w-5" />
-          </button>
           <h2 className="month-year-display">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h2>
-          <button onClick={handleNextMonth} className="month-nav-button">
-            <ChevronRight className="h-5 w-5" />
-          </button>
         </div>
 
         <div className="calendar-grid">
