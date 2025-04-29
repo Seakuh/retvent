@@ -132,8 +132,9 @@ function LandingPage() {
       category: category || "",
       startDate: startDate || "",
       endDate: endDate || "",
+      prompt: prompt || "",
+      location: location || "",
     });
-    setViewMode("Filter");
   };
 
   const handleDateChange = (dateRange: {

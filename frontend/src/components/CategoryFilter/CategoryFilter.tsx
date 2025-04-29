@@ -73,7 +73,6 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const handleGenreSelect = (genre: string) => {
     if (genre === category || genre === "") {
       onCategoryChange(null);
-      onViewModeChange("All");
     } else {
       onCategoryChange(genre);
     }
@@ -112,12 +111,9 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
       {/* Filter by genre button */}
       <button
-        className={`category-button ${viewMode === "Filter" ? "active" : ""}`}
+        className={`category-button ${category ? "active" : ""}`}
         onClick={() => {
           toggleGenreModal();
-          if (category) {
-            onViewModeChange("Filter");
-          }
         }}
       >
         <SlidersHorizontal size={20} />

@@ -77,6 +77,10 @@
     border: 6px solid red !important; 
 }
 
+.calendar-day-liked {
+    border: 6px solid greenyellow !important; 
+}
+
 
 
 .calendar-header {
