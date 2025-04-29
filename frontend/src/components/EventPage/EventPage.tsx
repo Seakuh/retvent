@@ -24,8 +24,13 @@ export const EventPage = () => {
     fetchFavorite();
 
     const fetchFollowedProfiles = async () => {
-      const followedProfiles = await getLatestFeedByFollowing();
-      setFollowedProfiles(followedProfiles);
+      try {
+        const followedProfiles = await getLatestFeedByFollowing();
+        setFollowedProfiles(followedProfiles);
+      } catch (error) {
+        setFollowedProfiles([]);
+        console.error("Error fetching followed profiles:", error);
+      }
     };
     fetchFollowedProfiles();
   }, []);

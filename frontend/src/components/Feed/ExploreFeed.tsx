@@ -23,7 +23,7 @@ export const ExploreFeed = ({ feedItemsResponse }: ExploreFeedProps) => {
     setIsFeedModalOpen,
   } = useFeed();
 
-  setFeedItems(feedItemsResponse);
+  setFeedItems(feedItemsResponse || []);
 
   const scrollContainer = useRef<HTMLDivElement>(null);
 
