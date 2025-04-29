@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
@@ -25,6 +26,7 @@ import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
 import { eventService } from "./services/api";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -35,6 +37,12 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
+});
+Sentry.init({
+  dsn: "https://a002b10533132bf43d28a5339d1e4116@o4509235823116288.ingest.de.sentry.io/4509235824623696",
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
+  sendDefaultPii: true,
 });
 
 // Prefetching wichtiger Daten beim App-Start
