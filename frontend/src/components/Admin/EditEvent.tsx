@@ -171,7 +171,7 @@ const EditEvent: React.FC = () => {
 
   if (loading)
     return (
-      <div className="">
+      <div className="loading-spinner-edit-event-container">
         <div className="loading-spinner"></div>
       </div>
     );

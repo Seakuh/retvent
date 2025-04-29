@@ -8,10 +8,13 @@ export const OwnerComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
     type: string
   ) => {
+    setIsLoading(true);
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -35,6 +38,7 @@ export const OwnerComponent = () => {
       }
 
       console.log("Upload erfolgreich");
+      setIsLoading(false);
     } catch (error) {
       console.error("Fehler beim Upload:", error);
     }
@@ -59,6 +63,7 @@ export const OwnerComponent = () => {
 
   return (
     <div className="event-owner-info">
+      {isLoading && <div className="loading-spinner"></div>}
       {/* Update hinzufügen */}
       <button
         className="event-owner-info-button"
