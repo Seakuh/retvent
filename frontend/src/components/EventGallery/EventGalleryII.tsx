@@ -123,7 +123,12 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
             </div>
           ))
         ) : (
-          <RealListItem event={emptyEvent} />
+          <div className="event-date-section">
+            <div className="event-date-heading-container">
+              <h2 className="section-title">Upcoming</h2>
+            </div>
+            <RealListItem event={emptyEvent} />
+          </div>
         )}
       </div>
 
