@@ -4,7 +4,8 @@ import { ViewMode } from "./types/event";
 
 type SearchState = {
   location: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   category: string;
   prompt: string;
   view: ViewMode;
@@ -13,7 +14,8 @@ type SearchState = {
 
 const defaultState: SearchState = {
   location: "Worldwide",
-  date: "",
+  startDate: "",
+  endDate: "",
   category: "",
   prompt: "",
   view: "All",

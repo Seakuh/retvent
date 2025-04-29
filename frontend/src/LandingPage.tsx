@@ -30,8 +30,15 @@ import { UploadModal } from "./UploadModal/UploadModal";
 import { Event, FeedResponse } from "./utils";
 function LandingPage() {
   // Search State
-  const { location, date, category, prompt, view, setSearchState } =
-    useLandingSearch();
+  const {
+    location,
+    startDate,
+    endDate,
+    category,
+    prompt,
+    view,
+    setSearchState,
+  } = useLandingSearch();
   const [viewMode, setViewMode] = useState<ViewMode>(view || "All");
   const { user, loggedIn, setLoggedIn } = useContext(UserContext);
   // Event State
@@ -129,8 +136,8 @@ function LandingPage() {
     const searchQuery = prompt;
     const categoryQuery = category;
     const locationQuery = location;
-    const startDateQuery = date;
-    const endDateQuery = date;
+    const startDateQuery = startDate;
+    const endDateQuery = endDate;
 
     // const loadProfiles = async () => {
     //   const profiles = await searchProfiles();
@@ -165,7 +172,7 @@ function LandingPage() {
     loadFeedItems();
     loadEvents();
     // loadProfiles();
-  }, [location, category, prompt]);
+  }, [location, category, prompt, startDate, endDate]);
 
   const toggleFavorite = (eventId: string) => {
     setFavorites((prev) => {
@@ -276,7 +283,8 @@ function LandingPage() {
                     setSearchState({ view: "All" });
                     setSearchState({ prompt: "" });
                     setSearchState({ location: "Worldwide" });
-                    setSearchState({ date: "" });
+                    setSearchState({ startDate: "" });
+                    setSearchState({ endDate: "" });
                     setSearchState({ category: "" });
                     navigate("/");
                   }}
@@ -442,6 +450,13 @@ function LandingPage() {
               events={events}
               onClose={() => {
                 setViewMode("All");
+              }}
+              setDateRange={(dateRange) => {
+                console.log(dateRange);
+                setSearchState({
+                  startDate: dateRange.startDate.toISOString(),
+                  endDate: dateRange.endDate.toISOString(),
+                });
               }}
             />
           ) : (

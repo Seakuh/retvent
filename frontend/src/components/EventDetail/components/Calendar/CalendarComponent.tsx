@@ -6,16 +6,13 @@ import "./CalendarComponent.css";
 interface CalendarComponentProps {
   events: Event[];
   onClose: () => void;
-  dateRange: {
-    startDate: Date;
-    endDate: Date;
-  };
+  setDateRange: (dateRange: { startDate: Date; endDate: Date }) => void;
 }
 
 export const CalendarComponent = ({
   events,
   onClose,
-  dateRange,
+  setDateRange,
 }: CalendarComponentProps) => {
   const [selectedStart, setSelectedStart] = useState<Date | null>(null);
   const [selectedEnd, setSelectedEnd] = useState<Date | null>(null);
@@ -102,6 +99,7 @@ export const CalendarComponent = ({
       end.setHours(23, 59, 59, 999);
 
       console.log("Ausgewählter Zeitraum:", { start, end });
+      setDateRange({ startDate: start, endDate: end });
       onClose();
     }
   };
@@ -109,6 +107,12 @@ export const CalendarComponent = ({
   const isDayInRange = (day: Date) => {
     if (!selectedStart || !selectedEnd) return false;
     return day >= selectedStart && day <= selectedEnd;
+  };
+
+  const handleReset = () => {
+    setSelectedStart(null);
+    setSelectedEnd(null);
+    onClose();
   };
 
   return (
@@ -153,10 +157,14 @@ export const CalendarComponent = ({
             </div>
           ))}
         </div>
-
-        <button className="calendar-confirm-button" onClick={handleConfirm}>
-          {selectedEnd ? "Confirm" : "Select Date"}
-        </button>
+        <div className="calendar-buttons">
+          <button className="calendar-reset-button" onClick={handleReset}>
+            Reset
+          </button>
+          <button className="calendar-confirm-button" onClick={handleConfirm}>
+            {selectedEnd ? "Confirm" : "Select Date"}
+          </button>
+        </div>
       </div>
     </div>
   );

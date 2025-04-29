@@ -68,24 +68,7 @@
     color: var(--color-neon-blue-dark);
 }
 
-.calendar-confirm-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8rem;
-    cursor: pointer;
-    width: 100%;
-    background: var(--color-neon-blue-light);
-    color: var(--color-neon-blue);
-    border: 1px solid var(--color-neon-blue-light);
-}
 
-.calendar-confirm-button:hover {
-    background-color: var(--color-neon-blue-light-2);
-    color:white;
-}
 
 .calendar-header {
     display: flex;
@@ -129,6 +112,46 @@
     font-weight: bold;
 }
   
+.calendar-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+
+}
+
+.calendar-confirm-button {
+    padding: 10px 20px;
+    color: white;
+    width: 100%;
+    border: none;
+    border-radius: 8rem;
+    cursor: pointer;
+    background: var(--color-neon-blue-light);
+    color: var(--color-neon-blue);
+    border: 1px solid var(--color-neon-blue-light);
+}
+
+.calendar-confirm-button:hover {
+    background-color: var(--color-neon-blue-light-2);
+    color:white;
+}
+
+.calendar-reset-button:hover {
+    background-color: var(--color-neon-pink-light-2);
+    color:white;
+}
+
+.calendar-reset-button {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: var(--color-neon-pink-light);
+    color: var(--color-neon-pink);
+    border: 1px solid var(--color-neon-pink-light);
+    border-radius: 8rem;
+    cursor: pointer;
+}
 
 @media (max-width: 768px) {
     .calendar-container {
