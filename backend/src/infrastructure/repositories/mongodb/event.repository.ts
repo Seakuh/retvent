@@ -30,12 +30,11 @@ export class MongoEventRepository implements IEventRepository {
       query.title = { $regex: new RegExp(prompt, 'i') };
     }
 
-    if (startDate !== undefined) {
-      query.startDate = { $gte: new Date(startDate) };
-    }
-
-    if (endDate !== undefined) {
-      query.endDate = { $lte: new Date(endDate) };
+    if (startDate !== undefined && endDate !== undefined) {
+      query.startDate = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
     }
 
     const events = await this.eventModel
