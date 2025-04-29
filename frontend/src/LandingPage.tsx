@@ -454,8 +454,8 @@ function LandingPage() {
               setDateRange={(dateRange) => {
                 console.log(dateRange);
                 setSearchState({
-                  startDate: dateRange?.startDate.toISOString() || "",
-                  endDate: dateRange?.endDate.toISOString() || "",
+                  startDate: dateRange ? dateRange.startDate.toISOString() : "",
+                  endDate: dateRange ? dateRange.endDate.toISOString() : "",
                 });
               }}
             />

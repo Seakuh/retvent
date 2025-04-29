@@ -11,7 +11,6 @@ interface CategoryFilterProps {
   viewMode: ViewMode;
 }
 
-// Cache-Struktur
 interface CachedCategories {
   categories: string[];
   timestamp: number;
@@ -58,7 +57,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }}
       >
         <Telescope size={20} />
-        Explore
+        All
       </button>
       <button
         className={`category-button ${viewMode === "Filter" ? "active" : ""}`}
