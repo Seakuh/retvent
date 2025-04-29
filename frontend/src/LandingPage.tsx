@@ -119,8 +119,8 @@ function LandingPage() {
         prompt: "",
         category: "",
         view: "All",
-        startDate: "",
-        endDate: "",
+        startDate: startDate || "",
+        endDate: endDate || "",
       });
       setViewMode("All");
     }
@@ -128,6 +128,7 @@ function LandingPage() {
   };
 
   const handleCategoryChange = (category: string | null) => {
+    console.log("category", category);
     setSearchState({
       category: category || "",
       startDate: startDate || "",
@@ -144,7 +145,6 @@ function LandingPage() {
       startDate: dateRange.startDate?.toISOString() || "",
       endDate: dateRange.endDate?.toISOString() || "",
     });
-    setViewMode("Calendar");
   };
 
   const handleLocationChange = (location: string) => {

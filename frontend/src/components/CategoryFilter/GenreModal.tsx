@@ -22,9 +22,11 @@ export const GenreModal = ({
 
   const handleOverlayClick = (e: React.MouseEvent | React.TouchEvent) => {
     if (e.target === e.currentTarget) {
-      onGenreSelect(selectedGenre || "");
+      onGenreSelect("");
     }
   };
+
+  console.log("selectedGenre", selectedGenre);
 
   return (
     <div className="genre-modal-overlay" onClick={handleOverlayClick}>

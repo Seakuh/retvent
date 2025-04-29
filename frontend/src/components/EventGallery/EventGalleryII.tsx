@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Event,
-  emptyEvent,
   formatDate,
   getDaysPast,
   getDaysUntilDate,
@@ -104,7 +103,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
 
       {/* Upcoming Section */}
       <div className="event-list">
-        {Object.keys(groupedUpcomingEvents).length > 0 ? (
+        {Object.keys(groupedUpcomingEvents).length > 0 &&
           Object.entries(groupedUpcomingEvents).map(([date, eventsForDate]) => (
             <div key={date} className="event-date-section">
               <div className="event-date-heading-container">
@@ -121,15 +120,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
                 ))}
               </div>
             </div>
-          ))
-        ) : (
-          <div className="event-date-section">
-            <div className="event-date-heading-container">
-              <h2 className="section-title">Upcoming</h2>
-            </div>
-            <RealListItem event={emptyEvent} />
-          </div>
-        )}
+          ))}
       </div>
 
       {/* Past Events Section */}

@@ -65,7 +65,7 @@
 .weekday-header {
     text-align: center;
     font-weight: bold;
-    color: var(--color-neon-blue-dark);
+    color: white;
 }
 
 
@@ -129,7 +129,7 @@
     border-radius: 8rem;
     cursor: pointer;
     background: var(--color-neon-blue-light);
-    border: 1px solid var(--color-neon-blue-light);
+    border: 1px solid var(--color-neon-blue-dark);
 }
 
 .calendar-confirm-button:hover {
@@ -147,7 +147,7 @@
     padding: 10px 20px;
     background-color: var(--color-neon-pink-light);
     color: white;
-    border: 1px solid var(--color-neon-pink-light);
+    border: 1px solid red;
     border-radius: 8rem;
     cursor: pointer;
 }
