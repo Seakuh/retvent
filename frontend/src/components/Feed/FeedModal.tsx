@@ -120,7 +120,7 @@ export const FeedModal = ({
               ? formatDate(
                   feedItem.feedItems![currentImageIndex].startDate.toString()
                 )
-              : "asdsad"}
+              : ""}
           </p>
         </div>
         <div
