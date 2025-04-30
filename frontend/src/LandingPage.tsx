@@ -6,6 +6,7 @@ import {
   Plus,
   Search,
   Send,
+  Settings,
   Upload,
   User as UserIcon,
 } from "lucide-react";
@@ -274,12 +275,25 @@ function LandingPage() {
 
                       <button
                         onClick={() => {
-                          navigate(`/me`);
+                          if (loggedIn) {
+                            navigate(`/profile/${user?.id}`);
+                          } else {
+                            navigate("/login");
+                          }
                         }}
                         className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
                       >
                         <UserIcon size={20} />
                         <h3>Profile</h3>
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigate(`/me`);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <Settings size={20} />
+                        <h3>Settings</h3>
                       </button>
                       <button
                         onClick={() => {
