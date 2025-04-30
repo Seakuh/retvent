@@ -24,6 +24,7 @@
   object-fit: cover;
   object-position: center; /* zentriert das Bild */
 }
+
 .event-description-real-list-item {
   font-size: 1rem;
   color: gray;
@@ -45,6 +46,7 @@
   padding-top: 0.5rem;
   margin-top: 1rem;
 }
+
 .event-meta-container-left {
   display: flex;
   gap: 0.5rem;
@@ -56,11 +58,11 @@
   align-items: center;
   gap: 6px;
 }
-.event-meta-container{
+
+.event-meta-container {
   display: flex;
   justify-content: space-between !important;
 }
-
 
 .real-list-item-location {
   display: flex;
@@ -72,24 +74,24 @@
 }
 
 .event-tags-real-list-item {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .event-tag {
-    font-size: 0.8rem;
-    color: white;
-    background: linear-gradient(
-        135deg,
-        rgba(var(--color-neon-blue-rgb), 0.2),
-        rgba(var(--color-neon-purple-rgb), 0.2)
-      );    padding: 0.2rem 0.5rem;
-    border: 1px solid var(--color-neon-blue-light);
-    border-radius: 1rem;
+  font-size: 0.8rem;
+  color: white;
+  background: linear-gradient(
+      135deg,
+      rgba(var(--color-neon-blue-rgb), 0.2),
+      rgba(var(--color-neon-purple-rgb), 0.2)
+    );
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--color-neon-blue-light);
+  border-radius: 1rem;
 }
-
 
 .miniature-event-info {
   width: 61.8%; /* Goldener Schnitt: ~61.8% */
@@ -99,40 +101,57 @@
   opacity: 0.5;
 }
 
+/* Mobiles Design (Instagram-Style) */
 @media (max-width: 600px) {
-  .event-info-title-headline {
-    margin-top: 0.5rem;
-    font-size: 1rem;
-  }
-
   .real-event-list-item {
-    border-radius: 0.5rem;
-    flex-direction: row;
+    flex-direction: column;
+    width: 100% !important;
+    gap: 0;
   }
-
+  
   .real-event-thumbnail {
+    max-width: 100%;
+    min-width: 100%;
     width: 100%;
+    aspect-ratio: 4/3; /* Etwas höher für Instagram-Stil */
   }
-
-  .real-event-thumbnail img {
-    object-position: center; /* sicherstellen, dass auch mobil zentriert */
+  
+  .miniature-event-info {
+    width: 100%;
+    padding: 0.75rem;
   }
-
-  .event-tags-real-list-item {
-    margin-bottom: 0.5rem;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  
+  .event-info-title-headline {
+    margin-top: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
   }
-
+  
   .event-description-real-list-item {
     font-size: 0.9rem;
-}
-
+    margin-top: 0.5rem;
+  }
+  
+  .event-tags-real-list-item {
+    margin: 0.75rem 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  
+  .event-tags-real-list-item::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
+  }
+  
   .event-tag {
-    font-size: 0.8rem;
     display: inline-block;
+  }
+  
+  .real-list-item-meta-container {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
   }
 }
