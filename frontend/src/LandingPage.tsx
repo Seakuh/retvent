@@ -97,7 +97,9 @@ function LandingPage() {
       const searchResults = await searchEvents(
         location === "Worldwide" ? undefined : location,
         category,
-        searchTerm
+        searchTerm,
+        startDate,
+        endDate
       );
       setEvents(searchResults as Event[]);
       setIsSearchOpen(false);
@@ -408,6 +410,7 @@ function LandingPage() {
               endDate={endDate}
               category={category}
               location={location}
+              prompt={prompt}
             />
           ) : (
             <div>
