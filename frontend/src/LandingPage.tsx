@@ -77,11 +77,6 @@ function LandingPage() {
         setViewMode("All");
         setSearchState({ view: "All" });
       }
-      // if (e.ctrlKey && e.key.toLowerCase() === "f") {
-      //   e.preventDefault();
-      //   setViewMode("Filter");
-      //   setSearchState({ view: "Filter" });
-      // }
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => {
