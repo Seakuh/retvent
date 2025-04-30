@@ -9,6 +9,8 @@
   -moz-user-select: none;
   -ms-user-select: none;
   scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .category-filter::-webkit-scrollbar {
