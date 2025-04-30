@@ -15,7 +15,7 @@
 
 .nested-comments {
   margin-left: 20px;
-  border-left: 2px solid #e0e0e0;
+  border-left: 1px solid var(--color-neon-blue-light);
   padding-left: 10px;
   position: relative;
 }
