@@ -305,7 +305,7 @@ export class MongoEventRepository implements IEventRepository {
     try {
       const eventDataWithLocation = {
         ...eventData,
-        views: 0,
+        views: 301,
         location: {
           type: 'Point',
           coordinates: [
@@ -836,5 +836,13 @@ export class MongoEventRepository implements IEventRepository {
     return this.eventModel
       .findByIdAndUpdate(eventId, { $set: { lineup: lineUp } }, { new: true })
       .exec();
+  }
+
+  botViewEvent(id: string) {
+    return this.eventModel.findByIdAndUpdate(
+      id,
+      { $inc: { views: 14 } },
+      { new: true },
+    );
   }
 }

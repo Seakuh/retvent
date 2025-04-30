@@ -39,7 +39,7 @@ export class BotService {
   @Cron(CronExpression.EVERY_MINUTE)
   async handleCron() {
     this.logger.log('Cron job executed');
-    const randomNewEvent = (await this.eventService.findLatest(10)).at(
+    const randomNewEvent = (await this.eventService.findLatest(30)).at(
       Math.floor(Math.random() * 10),
     );
     const keys = Array.from(this.profilePrompts.keys());
@@ -58,13 +58,15 @@ export class BotService {
       },
       randomKey,
     );
+
+    await this.eventService.botViewEvent(randomNewEvent.id);
     console.log(comments);
   }
 
   @Cron(CronExpression.EVERY_MINUTE)
   async handleAnswerCron() {
     this.logger.log('Answer Cron job executed');
-    const randomNewEvent = (await this.eventService.findLatest(10)).at(
+    const randomNewEvent = (await this.eventService.findLatest(30)).at(
       Math.floor(Math.random() * 10),
     );
     const keys = Array.from(this.profilePrompts.keys());
@@ -90,6 +92,9 @@ export class BotService {
       },
       randomKey,
     );
+
+    await this.eventService.botViewEvent(randomNewEvent.id);
+
     console.log(replyComment);
   }
 }

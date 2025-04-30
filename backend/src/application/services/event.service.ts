@@ -294,6 +294,10 @@ export class EventService {
     }
   }
 
+  async botViewEvent(id: string) {
+    return this.eventRepository.botViewEvent(id);
+  }
+
   async findTodayEvents(): Promise<Event[]> {
     return this.eventRepository.findTodayEvents();
   }
