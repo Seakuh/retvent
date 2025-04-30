@@ -1,9 +1,7 @@
-import { MessageCircle } from "lucide-react";
-
-import { MapPin } from "lucide-react";
-
-import { Eye } from "lucide-react";
+import { Eye, Heart, MapPin, MessageCircle, Send } from "lucide-react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../contexts/UserContext";
 import { Event } from "../../../utils";
 import "./RealListItem.css";
 
@@ -12,6 +10,33 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   isPast,
 }) => {
   const navigate = useNavigate();
+  const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
+
+  const handleLike = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
+
+    if (isFavorite(event.id!)) {
+      // Nutze isFavorite statt lokalem State
+      removeFavorite(event.id!);
+    } else {
+      addFavorite(event.id!);
+    }
+    // setIsLiked nicht nötig, da wir isFavorite vom Context nutzen
+  };
+
+  const shareEventId = (
+    e: React.MouseEvent<HTMLDivElement>,
+    eventId: string
+  ) => {
+    e.preventDefault();
+    e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
+    const shareData = {
+      url: `https://event-scanner.com/event/${eventId}`,
+    };
+    navigator.share(shareData);
+  };
+
   return (
     <div
       key={event.id || event._id}
@@ -46,7 +71,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           {event.city || "TBA"}
         </span>
         <div className="event-meta-container">
-          <div className="event-meta-container-right">
+          <div className="event-meta-container-left">
             <span className="views">
               <Eye size={16} />
               {event.views}
@@ -55,6 +80,22 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               <MessageCircle size={16} />
               {event.commentCount}
             </span>
+          </div>
+          <div className="event-meta-container-right">
+            <div onClick={(e) => shareEventId(e, event.id!)}>
+              <Send size={16} color="white" />
+            </div>
+
+            <div
+              onClick={(e) => handleLike(e)}
+              className="event-card-like-container"
+            >
+              <Heart
+                size={16}
+                color={isFavorite(event.id!) ? "red" : "white"}
+                fill={isFavorite(event.id!) ? "red" : "none"}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@
 
 .real-event-thumbnail {
   max-width: 38.2%;
+  min-width: 38.2%;
   aspect-ratio: 16/9;
   overflow: hidden;
   display: flex;
@@ -34,6 +35,32 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
+
+.real-list-item-meta-container {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #aaa;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.5rem;
+  margin-top: 1rem;
+}
+.event-meta-container-left {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 0.5rem !important;
+}
+
+.real-list-item-meta-container span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.event-meta-container{
+  display: flex;
+  justify-content: space-between !important;
+}
+
 
 .real-list-item-location {
   display: flex;
