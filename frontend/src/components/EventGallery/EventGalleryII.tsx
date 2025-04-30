@@ -8,6 +8,7 @@ import {
   getHoursUntilStart,
 } from "../../utils";
 import "./EventGalleryII.css";
+import { EventMediaCard } from "./Items/EventMediaCard";
 import { RealListItem } from "./Items/RealListItem";
 
 const DEFAULT_IMAGE =
@@ -95,7 +96,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
           </div>
           <div className="real-event-list-item-container">
             {todayEvents.map((event) => (
-              <RealListItem key={getEventId(event)} event={event} />
+              <EventMediaCard key={getEventId(event)} event={event} />
             ))}
           </div>
         </div>
