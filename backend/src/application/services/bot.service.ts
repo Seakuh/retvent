@@ -36,7 +36,7 @@ export class BotService {
 
   private readonly logger = new Logger(BotService.name);
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_30_SECONDS)
   async handleCron() {
     this.logger.log('Cron job executed');
     const randomNewEvent = (await this.eventService.findLatest(10)).at(
@@ -61,7 +61,7 @@ export class BotService {
     console.log(comments);
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_30_SECONDS)
   async handleAnswerCron() {
     this.logger.log('Answer Cron job executed');
     const randomNewEvent = (await this.eventService.findLatest(10)).at(

@@ -478,7 +478,7 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
     event: Event,
   ): Promise<string> {
     const response = await this.openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
@@ -513,7 +513,7 @@ ${JSON.stringify(event)}
     comment: string,
   ): Promise<string> {
     const response = await this.openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
