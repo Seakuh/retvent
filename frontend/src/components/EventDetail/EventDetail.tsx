@@ -214,7 +214,7 @@ export const EventDetail: React.FC = () => {
           </div>
 
           {((event.lineup && event.lineup.length > 0) ||
-            event.lineupPictureUrl) && (
+            (event.lineupPictureUrl && event.lineupPictureUrl.length > 0)) && (
             <EventLineup
               lineup={event.lineup}
               lineupPictureUrls={event.lineupPictureUrl || []}
