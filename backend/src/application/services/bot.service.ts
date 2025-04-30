@@ -36,10 +36,10 @@ export class BotService {
 
   private readonly logger = new Logger(BotService.name);
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCron() {
     this.logger.log('Cron job executed');
-    const randomNewEvent = (await this.eventService.findLatest(30)).at(
+    const randomNewEvent = (await this.eventService.findLatest(10)).at(
       Math.floor(Math.random() * 10),
     );
     const keys = Array.from(this.profilePrompts.keys());
@@ -61,10 +61,10 @@ export class BotService {
     console.log(comments);
   }
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async handleAnswerCron() {
     this.logger.log('Answer Cron job executed');
-    const randomNewEvent = (await this.eventService.findLatest(30)).at(
+    const randomNewEvent = (await this.eventService.findLatest(10)).at(
       Math.floor(Math.random() * 10),
     );
     const keys = Array.from(this.profilePrompts.keys());
