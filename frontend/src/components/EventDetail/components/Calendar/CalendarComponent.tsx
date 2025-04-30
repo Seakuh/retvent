@@ -233,7 +233,12 @@ export const CalendarComponent = ({
 
         <div className="calendar-grid">
           {weekDays.map((day) => (
-            <div key={day} className="weekday-header">
+            <div
+              key={day}
+              className={`weekday-header ${
+                day === "Sa" || day === "Su" ? "weekend-header" : ""
+              }`}
+            >
               {day}
             </div>
           ))}
@@ -254,6 +259,9 @@ export const CalendarComponent = ({
                     : isDayInRange(day)
                     ? "in-range"
                     : ""
+                }
+                ${
+                  day.getDay() === 0 || day.getDay() === 6 ? "weekend-day" : ""
                 }`}
               style={{
                 backgroundImage: getEventBackground(day),

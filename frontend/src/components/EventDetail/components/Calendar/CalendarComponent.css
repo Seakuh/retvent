@@ -229,3 +229,9 @@
     
 }
 
+.weekend-header {
+  color: var(--color-neon-blue-dark); /* dark blue */
+  font-weight: 600;
+}
+
+
