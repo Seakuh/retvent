@@ -92,7 +92,11 @@ const AdminEvents: React.FC = () => {
               {event.imageUrl && (
                 <div className="admin-event-image">
                   <img
-                    src={event.imageUrl}
+                    src={
+                      "https://img.event-scanner.com/insecure/q:50/rs:auto/plain/" +
+                      event.imageUrl
+                    }
+                    loading="lazy"
                     alt={event.title}
                     onClick={() => handleEdit(event.id)}
                   />
