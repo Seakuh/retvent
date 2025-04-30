@@ -1,3 +1,4 @@
+import { Heart } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { Event, EventPageParams, FeedResponse } from "../../utils";
@@ -14,53 +15,70 @@ export const EventPage = ({
   location,
   prompt,
 }: EventPageParams) => {
-  const { location: UserLocation, favoriteEventIds } = useContext(UserContext);
+  const { favoriteEventIds } = useContext(UserContext);
   const [favoriteEvents, setFavoriteEvents] = useState<Event[]>([]);
-  const [nearbyEvents, setNearbyEvents] = useState<Event[]>([]);
-  const [selectedNearbyEvent, setSelectedNearbyEvent] = useState<Event | null>(
-    null
-  );
+  const [loading, setLoading] = useState(true);
+
   const [followedProfiles, setFollowedProfiles] = useState<FeedResponse[]>([]);
 
   useEffect(() => {
-    const fetchFavorite = async () => {
-      const favoriteEvents = await fetchFavoriteEvents(favoriteEventIds, {
-        startDate: startDate,
-        endDate: endDate,
-        category: category,
-        location: location,
-        prompt: prompt,
-      });
-      setFavoriteEvents(favoriteEvents);
-    };
-
-    if (favoriteEventIds.length > 0) {
-      fetchFavorite();
-    }
-  }, [favoriteEventIds, startDate, endDate, category, location, prompt]);
-
-  useEffect(() => {
-    const fetchFollowedProfiles = async () => {
+    const fetchData = async () => {
       try {
-        const followedProfiles = await getLatestFeedByFollowing();
-        setFollowedProfiles(followedProfiles);
+        if (favoriteEventIds.length > 0) {
+          const [favoriteEvents, followedProfiles] = await Promise.all([
+            fetchFavoriteEvents(favoriteEventIds, {
+              startDate,
+              endDate,
+              category,
+              location,
+              prompt,
+            }),
+            getLatestFeedByFollowing(),
+          ]);
+          setFavoriteEvents(favoriteEvents);
+          setFollowedProfiles(followedProfiles);
+        }
       } catch (error) {
-        console.error("Error fetching followed profiles:", error);
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchFollowedProfiles();
-  }, []);
+
+    fetchData();
+  }, [favoriteEventIds, startDate, endDate, category, location, prompt]);
 
   return (
     <div>
-      <ExploreFeed feedItemsResponse={followedProfiles} />
-      {/* <HomeBubbles /> */}
-      <div className="event-favorites-container">
-        <EventGalleryII events={favoriteEvents} title="Liked Events" />
-      </div>
+      {loading ? (
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <div className="loading-text">Loading...</div>
+        </div>
+      ) : (
+        <>
+          <ExploreFeed feedItemsResponse={followedProfiles} />
+          {favoriteEvents.length === 0 && (
+            <div className="no-liked-events">
+              <Heart size={100} />
+              No liked events for your search. <br></br>Explore and like some
+              events :)
+            </div>
+          )}
+
+          <div className="event-favorites-container">
+            <EventGalleryII events={favoriteEvents} title="Liked Events" />
+          </div>
+        </>
+      )}
     </div>
   );
 };
+
+// const [nearbyEvents, setNearbyEvents] = useState<Event[]>([]);
+// const [selectedNearbyEvent, setSelectedNearbyEvent] = useState<Event | null>(
+//   null
+// );
 
 // const [map, setMap] = useState<any>(null);
 // const [userLocation, setUserLocation] = useState<[number, number]>([

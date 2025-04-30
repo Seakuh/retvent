@@ -28,3 +28,17 @@
   color: white;
   padding-left: 1rem;
 }
+
+
+.no-liked-events {
+  margin-top: 10rem;
+  color: white;
+  gap: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
