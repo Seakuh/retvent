@@ -301,20 +301,10 @@ function LandingPage() {
                         <Plus size={20} />
                         <p>Create Event</p>
                       </button>
-                      {/* <button
-                        onClick={() => {
-                          navigate("/liked");
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                      >
-                        <Heart size={20} />
-                        <p>Liked Events</p>
-                      </button> */}
-                      {/* My Uploads Button */}
                       <button
                         onClick={() => {
                           setShowUploads(!showUploads);
-                          handleOnUpload(); // Lade Events des Nutzers
+                          handleOnUpload();
                           setShowMenu(false);
                         }}
                         className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
@@ -363,15 +353,12 @@ function LandingPage() {
         </header>
 
         <main className="max-w-7xl mx-auto">
-          {/* {showDateFilter && <DateFilter />} */}
           <div className="px-4 py-6">
-            {/* <div>
-              <EventScanner />
-            </div> */}
             <CityBar
               onLocationSelect={handleLocationChange}
               selectedLocation={location}
             />
+
             <CategoryFilter
               prevDateRange={{
                 startDate: startDate ? new Date(startDate) : null,
@@ -423,27 +410,6 @@ function LandingPage() {
               />
             </div>
           )}
-          {/* {showUploads && (
-            <div className="mt-4">
-              <h2 className="text-xl font-bold text-white">
-                Meine hochgeladenen Events
-              </h2>
-              {userEvents.length === 0 ? (
-                <p className="text-white">
-                  Keine hochgeladenen Events gefunden.
-                </p>
-              ) : (
-                <EventList
-                  events={userEvents}
-                  onToggleFavorite={toggleFavorite}
-                  onAddToCalendar={(event) =>
-                    console.log("Add to calendar:", event)
-                  }
-                  favorites={favorites}
-                />
-              )}
-            </div>
-          )} */}
         </main>
         <SearchModal
           prompt={prompt}
