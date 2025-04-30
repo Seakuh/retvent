@@ -7,6 +7,7 @@ import {
   Search,
   Send,
   Settings,
+  Smartphone,
   Upload,
   User as UserIcon,
 } from "lucide-react";
@@ -203,6 +204,10 @@ function LandingPage() {
     });
   };
 
+  const handleInstallClick = async () => {
+    navigate("/install-app");
+  };
+
   return (
     <>
       <HelmetMeta />
@@ -311,6 +316,13 @@ function LandingPage() {
                       >
                         <Upload size={20} />
                         {showUploads ? "Hide My Events" : "My Events"}
+                      </button>
+                      <button
+                        onClick={handleInstallClick}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <Smartphone size={20} />
+                        <p>Install App</p>
                       </button>
                       {/* About Button */}
                       <button
