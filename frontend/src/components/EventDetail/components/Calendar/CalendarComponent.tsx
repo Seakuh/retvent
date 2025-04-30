@@ -29,6 +29,7 @@ export const CalendarComponent = ({
   const [monthImageCache, setMonthImageCache] = useState<
     Record<string, string>
   >({});
+  const [isEditingDate, setIsEditingDate] = useState(false);
 
   const weekDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
   const monthNames = [
@@ -167,6 +168,23 @@ export const CalendarComponent = ({
     trackMouse: false,
   });
 
+  // Hilfsfunktion für Jahresauswahl
+  const getYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: 10 }, (_, i) => currentYear - 2 + i);
+  };
+
+  // Handler für Datum-Änderungen
+  const handleMonthChange = (monthIndex: number) => {
+    setCurrentDate(new Date(currentDate.setMonth(monthIndex)));
+    setIsEditingDate(false);
+  };
+
+  const handleYearChange = (year: number) => {
+    setCurrentDate(new Date(currentDate.setFullYear(year)));
+    setIsEditingDate(false);
+  };
+
   return (
     <div
       onClick={(e) => e.target === e.currentTarget && onClose()}
@@ -187,9 +205,30 @@ export const CalendarComponent = ({
         {...swipeHandlers}
       >
         <div className="calendar-header">
-          <h2 className="month-year-display">
-            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-          </h2>
+          <div className="date-selector-container">
+            <select
+              value={currentDate.getMonth()}
+              onChange={(e) => handleMonthChange(Number(e.target.value))}
+              className="date-selector"
+            >
+              {monthNames.map((month, index) => (
+                <option className="selector-option" key={month} value={index}>
+                  {month}
+                </option>
+              ))}
+            </select>
+            <select
+              value={currentDate.getFullYear()}
+              onChange={(e) => handleYearChange(Number(e.target.value))}
+              className="date-selector"
+            >
+              {getYearOptions().map((year) => (
+                <option className="selector-option" key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="calendar-grid">
@@ -230,7 +269,7 @@ export const CalendarComponent = ({
 
         <div className="calendar-buttons">
           <button className="calendar-reset-button" onClick={onReset}>
-            Reset
+            Today
           </button>
           <button className="calendar-confirm-button" onClick={handleConfirm}>
             {selectedEnd ? "Confirm" : "Select Date"}
