@@ -41,7 +41,7 @@ export const PwaInstall: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   const handleAlreadyInstalled = () => {
@@ -70,8 +70,25 @@ export const PwaInstall: React.FC = () => {
           share their thoughts about events.
         </p>
         <section>
-          <Smartphone className="w-20 h-20 text-white mx-auto mt-4 mb-4" />
           <br />
+          {showButton && (
+            <button
+              id="install-button"
+              className="pwa-install-button"
+              onClick={handleInstallClick}
+            >
+              Install App
+            </button>
+          )}
+          {!showButton && (
+            <button
+              id="install-button"
+              className="pwa-install-button"
+              onClick={handleAlreadyInstalled}
+            >
+              App already installed
+            </button>
+          )}
         </section>
         <p>
           Our Progressive Web App (PWA) combines the best of web and mobile apps
@@ -81,24 +98,10 @@ export const PwaInstall: React.FC = () => {
           experience, even when offline.
         </p>
       </div>
-      {showButton && (
-        <button
-          id="install-button"
-          className="pwa-install-button"
-          onClick={handleInstallClick}
-        >
-          Install App
-        </button>
-      )}
-      {!showButton && (
-        <button
-          id="install-button"
-          className="pwa-install-button"
-          onClick={handleAlreadyInstalled}
-        >
-          App already installed
-        </button>
-      )}
+      <Smartphone
+        onClick={handleInstallClick}
+        className="w-20 h-20 text-white mx-auto mt-4 mb-4"
+      />
     </div>
   );
 };
