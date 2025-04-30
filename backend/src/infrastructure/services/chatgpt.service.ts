@@ -4,7 +4,6 @@ import OpenAI from 'openai';
 import { Profile } from 'src/core/domain/profile';
 import { z } from 'zod';
 import { Event } from '../../core/domain/event';
-
 // Definiere ein Schema für die API-Validierung
 const EventResponseSchema = z.object({
   id: z.string(),
@@ -473,4 +472,72 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
       return null;
     }
   };
+
+  async generateCommentForEvent(
+    charactersPrompt: string,
+    event: Event,
+  ): Promise<string> {
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: charactersPrompt, // e.g. from your profilePrompts map (ScanTIger, GOSI, etc.)
+        },
+        {
+          role: 'user',
+          content: `
+  You are an active user on the EventScanner platform. You want to support the community by sharing helpful, thoughtful comments about events and engaging in discussions.
+  
+  Please write a short and friendly comment about the following event:
+  
+${JSON.stringify(event)}
+  
+  If the event includes artists or acts, mention them and share a quick thought about them. 
+  Feel free to add a personal recommendation, general vibe, or opinion – as long as it's constructive and helpful for others.
+  
+  Write naturally like a real person on a public platform. Keep it max 2 sentences. dont start with an emojy.
+
+  ask also some questions about the event to gether more information.
+          `.trim(),
+        },
+      ],
+    });
+
+    return response.choices[0]?.message?.content || '';
+  }
+
+  async generateReplyCommentForEvent(
+    charactersPrompt: string,
+    event: Event,
+    comment: string,
+  ): Promise<string> {
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: charactersPrompt, // e.g. from your profilePrompts map (ScanTIger, GOSI, etc.)
+        },
+        {
+          role: 'user',
+          content: `
+
+        Please write a short and natural reply to the following user comment about an event. The reply should either:
+          - answer their question,
+          - react positively to their experience,
+          - or ask a thoughtful question to learn more or continue the conversation.
+
+          be supportive. You can show excitement or curiosity, but do not start your message with an emoji. Keep your reply under 2 sentences.
+
+          Event: ${JSON.stringify(event)}
+          Comment: ${JSON.stringify(comment)}
+          if there is no comment, just write a short comment about the event.
+          `.trim(),
+        },
+      ],
+    });
+
+    return response.choices[0]?.message?.content || '';
+  }
 }

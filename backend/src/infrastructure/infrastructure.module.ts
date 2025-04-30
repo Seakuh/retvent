@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { BotService } from 'src/application/services/bot.service';
 import { CommentService } from 'src/application/services/comment.service';
 import { EventEmbeddingService } from 'src/application/services/eventembedding.service';
 import { FeedService } from 'src/application/services/feed.service';
@@ -117,6 +118,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MongoEventRepository,
     MongoGroupRepository,
     MongoLocationRepository,
+    BotService,
     MongoUserRepository,
     MongoGrooveCastRepository,
     MongoCommentRepository,

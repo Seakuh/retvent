@@ -89,4 +89,11 @@ export class MongoCommentRepository implements ICommentRepository {
     ]);
     return { comments, total };
   }
+
+  async getLatestComments(limit?: number) {
+    return this.commentModel
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(limit || 10);
+  }
 }

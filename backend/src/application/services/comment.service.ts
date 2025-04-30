@@ -37,4 +37,8 @@ export class CommentService {
   async findByEventId(eventId: string) {
     return this.commentRepository.findByEventId(eventId);
   }
+
+  async getLatestComments(limit?: number) {
+    return this.commentRepository.getLatestComments(limit || 10);
+  }
 }
