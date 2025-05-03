@@ -487,8 +487,33 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
         {
           role: 'user',
           content: `
+${charactersPrompt}
+          
   You are an active user on the EventScanner platform. You want to support the community by sharing helpful, thoughtful comments about events and engaging in discussions.
-  
+   just write short commands and maybe a emojie at the end 
+
+   schreibe keine begrüßung
+
+
+   schreibe keine geschwungenen anfänge
+
+          ask about the current situation of the event
+
+          ask where to find tickets 
+
+          ask if somewone waants to join the event 
+
+          dont write hey of hi or something like that
+
+          write that you know about the event 
+
+          write naive and use slang sometimes 
+
+          write also in german sometimes 
+
+          use the tags go gether infomation about the vibe
+
+
   Please write a short and friendly comment about the following event:
   
 ${JSON.stringify(event)}
@@ -522,6 +547,29 @@ ${JSON.stringify(event)}
         {
           role: 'user',
           content: `
+
+          ${charactersPrompt}
+
+          just write short commands and maybe a emojie at the end 
+
+          antworte mit nicknamen passend zum event 
+
+
+          ask about the current situation of the event
+
+          ask where to find tickets 
+
+          ask if somewone waants to join the event 
+
+          dont write hey of hi or something like that
+
+          write that you know about the event 
+
+          write naive and use slang sometimes 
+
+          write also in german sometimes 
+
+          use the tags go gether infomation about the vibe
 
         Please write a short and natural reply to the following user comment about an event. The reply should either:
           - answer their question,
