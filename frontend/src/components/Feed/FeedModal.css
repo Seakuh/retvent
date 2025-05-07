@@ -104,7 +104,7 @@
 
 .feed-modal-image {
   max-height: 85vh;
-  max-width: 75rem;
+  max-width: 50vh;
   width: auto;
   cursor: pointer;
   margin: 0 auto;
@@ -259,21 +259,3 @@
   transform: scale(1.1); /* Verhindert weiße Ränder beim Blur */
 }
 
-.go-to-event-button {
-  z-index: 10000000;
-  color: var(--color-neon-blue);
-  display: flex;
-  border-radius: 6rem;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 1.2rem;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--color-neon-blue-light);
-  border: 1px solid var(--color-neon-blue-dark);
-}

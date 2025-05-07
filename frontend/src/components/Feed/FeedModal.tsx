@@ -1,16 +1,10 @@
-import {
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Pause,
-  Play,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
 import { FeedResponse, formatDate } from "../../utils";
 import "./FeedModal.css";
+import { FeedModalActionBar } from "./FeedModalActionBar";
 
 interface FeedModalProps {
   showFeedModal: boolean;
@@ -220,17 +214,11 @@ export const FeedModal = ({
           <X size={30} />
         </button>
 
-        <button
-          className="go-to-event-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(
-              `/event/${feedItem.feedItems![currentImageIndex].eventId}`
-            );
-          }}
-        >
-          <ArrowRight /> go to event
-        </button>
+        {feedItem.feedItems![currentImageIndex].eventId && (
+          <FeedModalActionBar
+            eventId={feedItem.feedItems![currentImageIndex].eventId}
+          />
+        )}
       </div>
     </div>
   );

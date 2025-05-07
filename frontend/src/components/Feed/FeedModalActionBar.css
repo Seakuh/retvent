@@ -1,0 +1,31 @@
+.feed-modal-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  bottom: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+}
+
+.add-to-favorites-button {
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.feed-modal-share-button {
+  color: #fff;
+  border-radius: 5px;
+}
+
+
+.go-to-event-button {
+    color: var(--color-neon-blue);
+    background-color: var(--color-neon-blue-light);
+    border: 1px solid var(--color-neon-blue-dark);
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    border-radius: 6rem;
+}
