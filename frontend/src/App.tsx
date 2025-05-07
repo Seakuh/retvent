@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { About } from "./Footer/About";
 import { Imprint } from "./Footer/Imprint";
@@ -71,6 +71,46 @@ const App: React.FC = () => {
 ----------------------------.-................
 ----------------------.-......................`
   );
+
+  // Optimierte syncFavorites Funktion
+  const syncFavorites = async () => {
+    try {
+      // Parallel beide Fetches starten
+      const [serverFavorites, localFavorites] = await Promise.allSettled([
+        eventService.getFavorites(),
+        Promise.resolve(
+          JSON.parse(localStorage.getItem("favoriteEventIds") || "[]")
+        ),
+      ]);
+
+      // Sichere Extraktion der Werte mit Fallbacks
+      const serverFavs =
+        serverFavorites.status === "fulfilled" ? serverFavorites.value : [];
+      const localFavs =
+        localFavorites.status === "fulfilled" ? localFavorites.value : [];
+
+      // Nur synchronisieren wenn es tatsächlich Änderungen gibt
+      if (serverFavs.length > 0 || localFavs.length > 0) {
+        const mergedFavorites = Array.from(
+          new Set([...serverFavs, ...localFavs])
+        );
+
+        // Asynchron speichern, aber nicht auf das Ergebnis warten
+        eventService.saveFavorites(mergedFavorites).catch(console.error);
+        localStorage.setItem(
+          "favoriteEventIds",
+          JSON.stringify(mergedFavorites)
+        );
+      }
+    } catch (error) {
+      console.error("Error syncing favorites:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Sofort ausführen und nicht auf das Ergebnis warten
+    syncFavorites();
+  }, []);
 
   return (
     <LandingPageProvider>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { eventService } from "../services/api";
 import { Location, User, UserContext } from "./UserContext";
-
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -44,15 +44,19 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!loggedIn) {
       localStorage.removeItem("user");
       localStorage.removeItem("loggedIn");
+      localStorage.removeItem("favoriteEventIds");
+      localStorage.removeItem("following");
       localStorage.removeItem("access_token");
     }
   }, [favoriteEventIds, user, loggedIn]);
 
-  const addFavorite = (eventId: string) => {
+  const addFavorite = async (eventId: string) => {
+    void eventService.addFavorite(eventId);
     setFavoriteEventIds((prev) => [...new Set([...prev, eventId])]);
   };
 
-  const removeFavorite = (eventId: string) => {
+  const removeFavorite = async (eventId: string) => {
+    void eventService.removeFavorite(eventId);
     setFavoriteEventIds((prev) => prev.filter((id) => id !== eventId));
   };
 
