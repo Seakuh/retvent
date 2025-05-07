@@ -264,5 +264,5 @@
   object-fit: cover;
   filter: blur(2rem);
   transform: scale(1.1); /* Verhindert weiße Ränder beim Blur */
-  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.5);
 }
