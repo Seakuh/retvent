@@ -59,7 +59,7 @@
   overflow: hidden;
 }
 
-.close-button {
+.close-feed-modal-button {
   color: white;
   padding: .7rem;
   display: flex;
@@ -69,9 +69,9 @@
   border: none;
   cursor: pointer;
   position: absolute;
-  top: 2rem;
+  top: 1.8rem;
   right: 1rem;
-  z-index: 10;
+  z-index: 1000;
 }
 
 .break-button {
@@ -85,8 +85,8 @@
   cursor: pointer;
   position: absolute;
   top: 2rem;
-  right: 5rem;
-  z-index: 10;
+  right: 4rem;
+  z-index: 1000;
 }
 
 .feed-progress-bar {
@@ -99,7 +99,6 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 100000;
   cursor: pointer;
 }
 
@@ -117,7 +116,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.6);
   border: none;
   border-radius: 50%;
   width: 40px;

@@ -4,6 +4,7 @@ import {
   ChevronRight,
   Pause,
   Play,
+  X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -103,16 +104,16 @@ export const FeedModal = ({
   return (
     <div
       className="feed-modal-overlay"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) setShowFeedModal(false);
-      }}
+      // onClick={(e) => {
+      //   if (e.target === e.currentTarget) setShowFeedModal(false);
+      // }}
     >
       <div
         className="feed-modal-content"
         {...handlers}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) setShowFeedModal(false);
-        }}
+        // onClick={(e) => {
+        //   if (e.target === e.currentTarget) setShowFeedModal(false);
+        // }}
       >
         <div className="feed-modal-blur-background">
           <img
@@ -210,13 +211,13 @@ export const FeedModal = ({
           </button>
         )}
         <button
-          className="close-button"
+          className="close-feed-modal-button"
           onClick={(e) => {
             e.stopPropagation();
             setShowFeedModal(false);
           }}
         >
-          ✕
+          <X size={30} />
         </button>
 
         <button
