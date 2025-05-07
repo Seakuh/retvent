@@ -1,4 +1,10 @@
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
@@ -173,11 +179,11 @@ export const FeedModal = ({
         >
           <img
             className="feed-modal-image"
-            onClick={() => {
-              navigate(
-                `/event/${feedItem.feedItems![currentImageIndex].eventId}`
-              );
-            }}
+            // onClick={() => {
+            //   navigate(
+            //     `/event/${feedItem.feedItems![currentImageIndex].eventId}`
+            //   );
+            // }}
             src={`https://img.event-scanner.com/insecure/rs:auto/plain/${
               feedItem.feedItems![currentImageIndex].feedImageUrl
             }@webp`}
@@ -207,6 +213,18 @@ export const FeedModal = ({
           }}
         >
           ✕
+        </button>
+
+        <button
+          className="go-to-event-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(
+              `/event/${feedItem.feedItems![currentImageIndex].eventId}`
+            );
+          }}
+        >
+          <ArrowRight /> go to event
         </button>
       </div>
     </div>
