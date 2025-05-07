@@ -36,7 +36,7 @@ export const FeedModalActionBar = ({ eventId }: { eventId: string }) => {
             navigate(`/event/${eventId}`);
           }}
         >
-          <ArrowRight />
+          <ArrowRight color="white" />
         </button>
       </div>
       <div className="feed-modal-action-bar-center"></div>
