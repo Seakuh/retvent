@@ -55,6 +55,11 @@ export class ProfileController {
     return this.profileService.getAllProfiles(limit, offset);
   }
 
+  @Get('search')
+  async searchProfiles(@Query('query') query: string): Promise<Profile[]> {
+    return this.profileService.searchProfiles(query);
+  }
+
   // @Post('new-artist')
   // async createNewArtist(
   //   @UploadedFile() image: Express.Multer.File,

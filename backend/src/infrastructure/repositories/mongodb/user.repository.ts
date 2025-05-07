@@ -146,4 +146,27 @@ export class MongoUserRepository implements IUserRepository {
   }
 
   // Ähnliche Implementierungen für Location-Following...
+
+  updateFavorites(userId: any, favoriteEventIds: string[]) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $set: { favoriteEventIds },
+    });
+  }
+
+  async getUserFavorites(id: string) {
+    const user = await this.userModel.findById(id).lean();
+    return user?.favoriteEventIds ?? [];
+  }
+
+  removeFavorite(userId: string, id: string) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $pull: { favoriteEventIds: id },
+    });
+  }
+
+  addFavorite(userId: any, id: string) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $addToSet: { favoriteEventIds: id },
+    });
+  }
 }

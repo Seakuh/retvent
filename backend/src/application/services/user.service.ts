@@ -80,4 +80,31 @@ export class UserService {
       ...profileData,
     } as ProfileInfoDto;
   }
+
+  // <3 Liked Events
+  getFavorites(id: string) {
+    return this.userRepository.getUserFavorites(id);
+  }
+
+  updateFavorites(userId: any, favoriteEventIds: string[]) {
+    return this.userRepository.updateFavorites(userId, favoriteEventIds);
+  }
+
+  async removeFavorite(userId: any, id: string) {
+    try {
+      await this.userRepository.removeFavorite(userId, id);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async addFavorite(userId: any, id: string) {
+    try {
+      await this.userRepository.addFavorite(userId, id);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }

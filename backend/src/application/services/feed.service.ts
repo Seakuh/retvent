@@ -28,7 +28,7 @@ export class FeedService {
       updatedAt: new Date(),
     });
 
-    console.log('📥 Feed created:', feed);
+    // console.log('📥 Feed created:', feed);
 
     return feed;
   }
@@ -49,7 +49,7 @@ export class FeedService {
         updatedAt: new Date(),
       });
 
-      console.log('📥 Feed created:', feed);
+      // console.log('📥 Feed created:', feed);
     }
   }
 
@@ -60,7 +60,7 @@ export class FeedService {
 
   async getProfileFeed(id: string): Promise<FeedResponse[]> {
     const feeds = await this.feedRepository.findByProfileId(id);
-    console.log('🔍 Feeds:', feeds);
+    // console.log('🔍 Feeds:', feeds);
     return this.groupFeedsByProfile(feeds);
   }
 

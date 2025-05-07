@@ -9,6 +9,12 @@ export interface IUserRepository {
   addLikedEvent(userId: string, eventId: string): Promise<User | null>;
   removeLikedEvent(userId: string, eventId: string): Promise<User | null>;
   addFollowedLocation(userId: string, locationId: string): Promise<User | null>;
-  removeFollowedLocation(userId: string, locationId: string): Promise<User | null>;
+  removeFollowedLocation(
+    userId: string,
+    locationId: string,
+  ): Promise<User | null>;
   findByEmailOrUsername(email: string, username: string): Promise<User | null>;
-} 
+  addFavorite(userId: string, id: string): Promise<User | null>;
+  removeFavorite(userId: string, id: string): Promise<User | null>;
+  getUserFavorites(id: string): Promise<string[] | undefined>;
+}

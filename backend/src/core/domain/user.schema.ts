@@ -9,6 +9,7 @@ export const UserSchema = new Schema(
     bio: String,
     followedLocationIds: [String],
     likedEventIds: [String],
+    favoriteEventIds: [String],
     createdEventIds: [String],
     points: { type: Number, default: 0 },
   },

@@ -6,6 +6,7 @@ export interface IUser {
   createdAt?: Date;
   updatedAt?: Date;
   points?: number;
+  favoriteEventIds?: string[];
 }
 
 export type UserResponse = Omit<IUser, 'password'> & {

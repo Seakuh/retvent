@@ -282,4 +282,57 @@ export class MongoProfileRepository implements IProfileRepository {
     console.log('newArtist', newArtist);
     return newArtist;
   }
+
+  searchProfiles(query: string): Profile[] | PromiseLike<Profile[]> {
+    // Normalisiere den Suchbegriff
+    const normalizedQuery = query.toLowerCase().trim();
+
+    // Erstelle ein Regex-Pattern für Tippfehler
+    // Erlaubt 1-2 Buchstaben Unterschied
+    const searchRegex = new RegExp(
+      `^${normalizedQuery.split('').join('.*')}.*$`,
+      'i',
+    );
+
+    return this.profileModel
+      .find({
+        $or: [
+          { username: searchRegex },
+          // Füge eine Levenshtein-Distanz-Bedingung hinzu
+          {
+            $expr: {
+              $lte: [
+                {
+                  $strLenCP: {
+                    $reduce: {
+                      input: { $range: [0, { $strLenCP: '$username' }] },
+                      initialValue: 0,
+                      in: {
+                        $add: [
+                          '$$value',
+                          {
+                            $cond: {
+                              if: {
+                                $ne: [
+                                  { $substr: ['$username', '$$this', 1] },
+                                  { $substr: [normalizedQuery, '$$this', 1] },
+                                ],
+                              },
+                              then: 1,
+                              else: 0,
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+                2, // Maximale Anzahl erlaubter Unterschiede
+              ],
+            },
+          },
+        ],
+      })
+      .exec();
+  }
 }

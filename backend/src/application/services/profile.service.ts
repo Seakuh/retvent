@@ -226,4 +226,7 @@ export class ProfileService {
   getProfilePageById(slug: string): Profile | PromiseLike<Profile> {
     throw new Error('Method not implemented.');
   }
+  async searchProfiles(query: string): Promise<Profile[]> {
+    return this.profileRepository.searchProfiles(query);
+  }
 }

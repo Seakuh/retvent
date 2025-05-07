@@ -12,7 +12,10 @@ export const UserSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   points: { type: Number, default: 0 },
+  favoriteEventIds: { type: [String], default: [] },
 });
+
+UserSchema.index({ favoriteEventIds: 1 });
 
 UserSchema.pre('save', function (next) {
   this.updatedAt = new Date();

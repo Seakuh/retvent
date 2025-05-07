@@ -1,11 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   NotFoundException,
   Param,
+  Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../../application/services/user.service';
@@ -107,6 +110,34 @@ export class UserController {
   @Get('points/:id')
   async getUserPoints(@Param('id') id: string) {
     return this.userService.getUserPoints(id);
+  }
+
+  @Delete('/favorites/:id')
+  @UseGuards(JwtAuthGuard)
+  async removeFavorite(@Param('id') id: string, @Req() req) {
+    const userId = req.user.sub;
+    return this.userService.removeFavorite(userId, id);
+  }
+
+  @Post('/favorites/:id')
+  @UseGuards(JwtAuthGuard)
+  async addFavorite(@Param('id') id: string, @Req() req) {
+    const userId = req.user.sub;
+    return this.userService.addFavorite(userId, id);
+  }
+
+  @Put('/favorites')
+  @UseGuards(JwtAuthGuard)
+  updateFavorites(@Body() favoriteEventIds: string[], @Req() req) {
+    const userId = req.user.sub;
+    return this.userService.updateFavorites(userId, favoriteEventIds);
+  }
+
+  @Get('me/favorites')
+  @UseGuards(JwtAuthGuard)
+  async getFavorites(@UserDecorator() user: User) {
+    console.log(user);
+    return this.userService.getFavorites(user.sub);
   }
 
   // @Get('profile/:id')
