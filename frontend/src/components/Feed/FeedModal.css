@@ -229,6 +229,10 @@
   animation: progress-animation 5s linear forwards;
 }
 
+.feed-progress-bar.paused {
+  animation-play-state: paused;
+}
+
 @keyframes progress-animation {
   from {
     width: 0;

@@ -31,7 +31,6 @@ export const FeedModal = ({
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
-    // Timer nur starten, wenn nicht pausiert
     if (!isPaused) {
       timerRef.current = setTimeout(() => {
         handleNext();
@@ -44,10 +43,18 @@ export const FeedModal = ({
   }, [currentImageIndex, feedItem, isPaused]);
 
   const handlePause = () => {
-    setIsPaused(!isPaused);
+    setIsPaused(true);
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
+  };
+
+  const handlePlay = () => {
+    setIsPaused(false);
+    // Starte den Timer neu
+    timerRef.current = setTimeout(() => {
+      handleNext();
+    }, 5000);
   };
 
   const handlePrev = () => {
@@ -99,8 +106,12 @@ export const FeedModal = ({
           {feedItem.feedItems!.map((_, idx) => (
             <div key={idx} className="feed-progress-bar-container">
               {idx === currentImageIndex ? (
-                // Key-based approach to reset animation
-                <div key={animationKey} className="feed-progress-bar active" />
+                <div
+                  key={animationKey}
+                  className={`feed-progress-bar ${
+                    isPaused ? "paused" : "active"
+                  }`}
+                />
               ) : (
                 <div
                   className={`feed-progress-bar ${
@@ -157,9 +168,15 @@ export const FeedModal = ({
         <button className="nav-button next-button" onClick={handleNext}>
           <ChevronRight />
         </button>
-        <button className="break-button" onClick={handlePause}>
-          {isPaused ? <Pause /> : <Play />}
-        </button>
+        {isPaused ? (
+          <button className="break-button" onClick={handlePlay}>
+            <Play />
+          </button>
+        ) : (
+          <button className="break-button" onClick={handlePause}>
+            <Pause />
+          </button>
+        )}
         <button
           className="close-button"
           onClick={() => setShowFeedModal(false)}
