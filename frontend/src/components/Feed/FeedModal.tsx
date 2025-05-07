@@ -92,6 +92,10 @@ export const FeedModal = ({
       setCurrentImageIndex(0);
       showPreviousFeed();
     },
+    onSwipedDown: () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      setShowFeedModal(false);
+    },
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
