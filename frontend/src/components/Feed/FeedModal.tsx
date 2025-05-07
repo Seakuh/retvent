@@ -187,6 +187,11 @@ export const FeedModal = ({
               feedItem.feedItems![currentImageIndex].feedImageUrl
             }@webp`}
             alt={`${feedItem.profileName} - Picture ${currentImageIndex + 1}`}
+            onClick={() => {
+              navigate(
+                `/event/${feedItem.feedItems![currentImageIndex].eventId}`
+              );
+            }}
           />
         </div>
         <button className="nav-button prev-button" onClick={handlePrev}>
