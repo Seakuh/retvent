@@ -73,17 +73,17 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
         <div className="event-meta-container">
           <div className="event-meta-container-left">
             <span className="views">
-              <Eye size={16} />
+              <Eye size={25} />
               {event.views}
             </span>
             <span className="comments">
-              <MessageCircle size={16} />
+              <MessageCircle size={25} />
               {event.commentCount}
             </span>
           </div>
           <div className="event-meta-container-right">
             <div onClick={(e) => shareEventId(e, event.id!)}>
-              <Send size={16} color="white" />
+              <Send size={25} color="white" />
             </div>
 
             <div
@@ -91,7 +91,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               className="event-card-like-container"
             >
               <Heart
-                size={16}
+                size={25}
                 color={isFavorite(event.id!) ? "red" : "white"}
                 fill={isFavorite(event.id!) ? "red" : "none"}
               />
