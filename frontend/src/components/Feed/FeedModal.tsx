@@ -86,6 +86,8 @@ export const FeedModal = ({
       setCurrentImageIndex(0);
       showPreviousFeed();
     },
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
   });
 
   return (
@@ -155,7 +157,18 @@ export const FeedModal = ({
         <div
           className="feed-modal-image-container"
           onClick={(e) => {
-            if (e.target === e.currentTarget) setShowFeedModal(false);
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const width = rect.width;
+
+            // Wenn auf der linken Seite geklickt wird
+            if (x < width / 2) {
+              handlePrev();
+            }
+            // Wenn auf der rechten Seite geklickt wird
+            else {
+              handleNext();
+            }
           }}
         >
           <img
@@ -188,7 +201,10 @@ export const FeedModal = ({
         )}
         <button
           className="close-button"
-          onClick={() => setShowFeedModal(false)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowFeedModal(false);
+          }}
         >
           ✕
         </button>
