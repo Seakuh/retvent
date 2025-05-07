@@ -15,7 +15,6 @@ import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import { ActionComponent } from "./ActionComponent";
 import "./Profile.css";
 import { ProfileCommentList } from "./ProfileCommentList";
-import { ProfileFeed } from "./ProfileFeed";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileInfo } from "./ProfileInfo";
 import {
@@ -276,7 +275,7 @@ export const Profile: React.FC = () => {
           </div>
         </div>
         <div className="user-events-section">
-          <ProfileFeed profileId={userId || ""} />
+          {/* <ProfileFeed profileId={userId || ""} /> */}
           {/* <h2 className="events-title">Events by {user.username}</h2> */}
           <EventGalleryIII
             events={events}

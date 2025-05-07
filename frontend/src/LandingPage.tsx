@@ -427,7 +427,11 @@ function LandingPage() {
           ) : viewMode === "Home" ? (
             <EventPage
               favoriteEvents={favoriteEvents}
-              feedItemsResponse={followedProfiles}
+              feedItemsResponse={
+                followedProfiles.length > 0
+                  ? followedProfiles
+                  : feedItemsResponse
+              }
             />
           ) : (
             <div>

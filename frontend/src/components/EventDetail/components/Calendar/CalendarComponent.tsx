@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import { Event } from "../../../../utils";
@@ -190,6 +190,15 @@ export const CalendarComponent = ({
       onClick={(e) => e.target === e.currentTarget && onClose()}
       className="calendar-container"
     >
+      <button
+        className="close-feed-modal-button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+        }}
+      >
+        <X size={30} />
+      </button>
       <div className="month-nav-buttons">
         <button onClick={handlePrevMonth} className="month-nav-button">
           <ChevronLeft className="h-5 w-5" />
