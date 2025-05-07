@@ -18,8 +18,12 @@ import { CityBar } from "./components/CityBar/CityBar";
 import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { EventSection } from "./components/EventPage/EventSection";
+import { fetchFavoriteEvents } from "./components/EventPage/service";
 import { ExploreFeed } from "./components/Feed/ExploreFeed";
-import { getLatestFeedAll } from "./components/Feed/service";
+import {
+  getLatestFeedAll,
+  getLatestFeedByFollowing,
+} from "./components/Feed/service";
 import SearchModal from "./components/SearchModal/SearchModal";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
@@ -41,13 +45,20 @@ function LandingPage() {
     setSearchState,
   } = useLandingSearch();
   const [viewMode, setViewMode] = useState<ViewMode>(view || "All");
-  const { user, loggedIn, setLoggedIn } = useContext(UserContext);
+  const { user, loggedIn, setLoggedIn, favoriteEventIds } =
+    useContext(UserContext);
+
   // Event State
   const [events, setEvents] = useState<Event[]>([]);
+  const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
+
+  // User Page
+  const [favoriteEvents, setFavoriteEvents] = useState<Event[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showUploads, setShowUploads] = useState(false);
+  const [followedProfiles, setFollowedProfiles] = useState<FeedResponse[]>([]);
 
   // Search State
   const [searchPerformed, setSearchPerformed] = useState(false);
@@ -151,6 +162,33 @@ function LandingPage() {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (favoriteEventIds.length > 0) {
+          const [favoriteEvents, followedProfiles] = await Promise.all([
+            fetchFavoriteEvents(favoriteEventIds, {
+              startDate,
+              endDate,
+              category,
+              location,
+              prompt,
+            }),
+            getLatestFeedByFollowing(),
+          ]);
+          setFavoriteEvents(favoriteEvents);
+          setFollowedProfiles(followedProfiles);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [favoriteEventIds, startDate, endDate, category, location, prompt]);
+
+  useEffect(() => {
     const searchQuery = prompt;
     const categoryQuery = category;
     const locationQuery = location;
@@ -191,18 +229,6 @@ function LandingPage() {
     loadEvents();
     // loadProfiles();
   }, [location, category, prompt, startDate, endDate]);
-
-  const toggleFavorite = (eventId: string) => {
-    setFavorites((prev) => {
-      const newFavorites = new Set(prev);
-      if (newFavorites.has(eventId)) {
-        newFavorites.delete(eventId);
-      } else {
-        newFavorites.add(eventId);
-      }
-      return newFavorites;
-    });
-  };
 
   const handleInstallClick = async () => {
     navigate("/install-app");
@@ -376,7 +402,7 @@ function LandingPage() {
                 startDate: startDate ? new Date(startDate) : null,
                 endDate: endDate ? new Date(endDate) : null,
               }}
-              events={events}
+              events={favoriteEvents}
               viewMode={viewMode}
               category={category}
               onCategoryChange={handleCategoryChange}
@@ -400,11 +426,8 @@ function LandingPage() {
             </div>
           ) : viewMode === "Home" ? (
             <EventPage
-              startDate={startDate}
-              endDate={endDate}
-              category={category}
-              location={location}
-              prompt={prompt}
+              favoriteEvents={favoriteEvents}
+              feedItemsResponse={followedProfiles}
             />
           ) : (
             <div>
@@ -414,12 +437,7 @@ function LandingPage() {
               <EventSection
                 events={events.sort((a, b) => (b.views || 0) - (a.views || 0))}
               />
-              <EventGalleryII
-                title={category}
-                events={events}
-                favorites={favorites}
-                onToggleFavorite={toggleFavorite}
-              />
+              <EventGalleryII title={category} events={events} />
             </div>
           )}
         </main>

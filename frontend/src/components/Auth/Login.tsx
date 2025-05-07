@@ -30,6 +30,7 @@ const Login: React.FC = () => {
       localStorage.setItem("user", JSON.stringify(response.user));
       syncFavorites();
       setLoggedIn(true);
+
       setUser(response.user as User);
       navigate(`/`);
     } catch (error) {
