@@ -248,3 +248,21 @@
   color: var(--color-neon-blue);
   font-weight: 500;
 }
+
+.feed-modal-blur-background {
+  position: fixed;
+  margin: 0 auto;
+  width: 80rem;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.feed-modal-blur-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(2rem);
+  transform: scale(1.1); /* Verhindert weiße Ränder beim Blur */
+  opacity: 0.8;
+}

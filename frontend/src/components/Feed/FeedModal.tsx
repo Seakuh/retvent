@@ -102,6 +102,15 @@ export const FeedModal = ({
           if (e.target === e.currentTarget) setShowFeedModal(false);
         }}
       >
+        <div className="feed-modal-blur-background">
+          <img
+            src={`https://img.event-scanner.com/insecure/rs:auto/plain/${
+              feedItem.feedItems![currentImageIndex].feedImageUrl
+            }@webp`}
+            alt="blurred background"
+          />
+        </div>
+
         <div className="feed-progress-container">
           {feedItem.feedItems!.map((_, idx) => (
             <div key={idx} className="feed-progress-bar-container">
