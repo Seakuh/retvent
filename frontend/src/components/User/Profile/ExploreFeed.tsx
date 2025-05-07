@@ -1,10 +1,10 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { FeedResponse } from "../../utils";
+import { FeedResponse } from "../../../utils";
+import { FeedCard } from "../../Feed/FeedCard";
+import { FeedModal } from "../../Feed/FeedModal";
+import { useFeed } from "../../Feed/useFeed";
 import "./ExploreFeed.css";
-import { FeedCard } from "./FeedCard";
-import { FeedModal } from "./FeedModal";
-import { useFeed } from "./useFeed";
 
 interface ExploreFeedProps {
   feedItemsResponse: FeedResponse[];

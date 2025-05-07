@@ -10,6 +10,7 @@ import {
   formatProfileDate,
   type Profile as ProfileType,
 } from "../../../utils";
+import { AddFeed } from "../../AddFeed/AddFeed";
 import ArtistModal from "../../ArtistModal/ArtistModal";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
 import { ActionComponent } from "./ActionComponent";
@@ -25,8 +26,10 @@ import {
   getUserEvents,
   shareProfile,
 } from "./service";
+
 export const Profile: React.FC = () => {
   const { userId } = useParams();
+  const currentUserId = JSON.parse(localStorage.getItem("user.id") || "{}");
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +40,7 @@ export const Profile: React.FC = () => {
   );
   const [comments, setComments] = useState<CommentType[]>([]);
   const [commentsCount, setCommentsCount] = useState(0);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -191,9 +195,17 @@ export const Profile: React.FC = () => {
   };
 
   const handleMessage = async () => {
-    if (userId === localStorage.getItem("user.id")) {
+    if (userId === currentUserId) {
+      console.log("userId", userId);
+      console.log("user?.userId", user?.userId);
+      console.log("currentUserId", currentUserId);
+      console.log("You cannot message yourself");
       return;
     }
+    console.log("userId", userId);
+    console.log("user?.userId", user?.userId);
+    console.log("currentUserId", currentUserId);
+    console.log("You cannot message yourself");
     const response = await createChat(userId || "");
     navigate(`/group/${response._id}`);
   };
@@ -276,8 +288,10 @@ export const Profile: React.FC = () => {
           </div>
         </div>
         <div className="user-events-section">
-          <ProfileFeed profileId={userId || ""} />
-          {/* <h2 className="events-title">Events by {user.username}</h2> */}
+          <div className="profile-feed-container">
+            {userId === currentUserId && <AddFeed />}
+            <ProfileFeed profileId={userId || ""} />
+          </div>
           <EventGalleryIII
             events={events}
             title={`${user.username}'s Events`}

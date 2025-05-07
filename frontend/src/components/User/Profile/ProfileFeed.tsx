@@ -13,7 +13,7 @@ export const ProfileFeed = ({ profileId }: { profileId: string }) => {
     fetchFeedItems();
   }, [profileId]);
   return (
-    <div className="profile-feed-container">
+    <div>
       {feedItems.map((item) => (
         <FeedCard
           key={item.id}

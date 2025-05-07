@@ -5,7 +5,7 @@ export const FeedCard = ({
   setShowFeedModal,
   setCurrentFeedItem,
 }: {
-  feed: FeedResponse;
+  feed?: FeedResponse;
   setShowFeedModal: (showFeedModal: boolean) => void;
   setCurrentFeedItem: (currentFeedItem: Feed) => void;
 }) => {
