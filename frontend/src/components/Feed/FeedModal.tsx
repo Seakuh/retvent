@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
@@ -20,26 +20,35 @@ export const FeedModal = ({
   showPreviousFeed,
 }: FeedModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  // Add a key to force animation reset
   const [animationKey, setAnimationKey] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
 
   // Reset animation and timer when image changes
   useEffect(() => {
-    // Reset animation by updating the key
     setAnimationKey((prevKey) => prevKey + 1);
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
-    timerRef.current = setTimeout(() => {
-      handleNext();
-    }, 5000);
+    // Timer nur starten, wenn nicht pausiert
+    if (!isPaused) {
+      timerRef.current = setTimeout(() => {
+        handleNext();
+      }, 5000);
+    }
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [currentImageIndex, feedItem]);
+  }, [currentImageIndex, feedItem, isPaused]);
+
+  const handlePause = () => {
+    setIsPaused(!isPaused);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+  };
 
   const handlePrev = () => {
     if (currentImageIndex > 0) {
@@ -147,6 +156,15 @@ export const FeedModal = ({
         </button>
         <button className="nav-button next-button" onClick={handleNext}>
           <ChevronRight />
+        </button>
+        <button className="break-button" onClick={handlePause}>
+          {isPaused ? <Pause /> : <Play />}
+        </button>
+        <button
+          className="close-button"
+          onClick={() => setShowFeedModal(false)}
+        >
+          ✕
         </button>
       </div>
     </div>

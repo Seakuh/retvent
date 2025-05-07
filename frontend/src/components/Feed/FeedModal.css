@@ -78,6 +78,31 @@
   z-index: 10;
 }
 
+.break-button {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  color: white;
+  padding: .7rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: none;
+  cursor: pointer;
+  position: fixed;
+  top: 2rem;
+  right: 5rem;
+  z-index: 10;
+}
+
+.break-button:hover,
+.close-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.05);
+}
+
 .feed-progress-bar {
   height: 100%;
   background: white;
