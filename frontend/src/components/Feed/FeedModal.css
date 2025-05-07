@@ -104,7 +104,9 @@
 }
 
 .feed-modal-image {
-  max-height: 90vh;
+  max-height: 85vh;
+  max-width: 75rem;
+  width: auto;
   cursor: pointer;
   margin: 0 auto;
   border-radius: 1rem;
@@ -124,6 +126,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  z-index: 100000;
   color: white;
   transition: background 0.3s;
 }
