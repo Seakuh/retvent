@@ -1,4 +1,4 @@
-import { CalendarPlus, Heart, Send } from "lucide-react";
+import { ArrowRight, Heart, Send } from "lucide-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -26,12 +26,10 @@ export const FeedModalActionBar = ({ eventId }: { eventId: string }) => {
   return (
     <div className="feed-modal-action-bar">
       <div className="feed-modal-action-bar-left">
-        <button className="feed-modal-action-bar-left-button">
+        {/* <button className="feed-modal-action-bar-left-button">
           <CalendarPlus size={25} color="white" />
-        </button>
-      </div>
-      <div className="feed-modal-action-bar-center">
-        {/* <button
+        </button> */}
+        <button
           className="go-to-event-button"
           onClick={(e) => {
             e.stopPropagation();
@@ -39,8 +37,9 @@ export const FeedModalActionBar = ({ eventId }: { eventId: string }) => {
           }}
         >
           <ArrowRight />
-        </button> */}
+        </button>
       </div>
+      <div className="feed-modal-action-bar-center"></div>
       <div className="feed-modal-action-bar-right">
         <button
           className={`add-to-favorites-button ${
