@@ -696,3 +696,18 @@ export class EventPageParams {
   location?: string;
   prompt?: string;
 }
+
+export const handleFollow = (userId: string) => {
+  const isFollowing = JSON.parse(
+    localStorage.getItem("following") || "[]"
+  ).includes(userId || "");
+
+  const following = JSON.parse(localStorage.getItem("following") || "[]");
+  if (isFollowing) {
+    const newFollowing = following.filter((id: string) => id !== userId);
+    localStorage.setItem("following", JSON.stringify(newFollowing));
+  } else {
+    following.push(userId);
+    localStorage.setItem("following", JSON.stringify(following));
+  }
+};

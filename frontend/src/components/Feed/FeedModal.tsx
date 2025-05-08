@@ -151,6 +151,12 @@ export const FeedModal = ({
             alt={feedItem.profileName}
           />
           <h2 className="feed-modal-profile-name">{feedItem.profileName}</h2>
+          {/* <button
+            className="follow-button"
+            onClick={() => handleFollow(feedItem.profileId)}
+          >
+            Follow
+          </button> */}
           <p className="feed-modal-profile-created-at">
             {feedItem.feedItems![currentImageIndex].startDate
               ? formatDate(

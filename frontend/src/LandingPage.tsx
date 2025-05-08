@@ -186,7 +186,7 @@ function LandingPage() {
     };
 
     fetchData();
-  }, [favoriteEventIds, startDate, endDate, category, location, prompt]);
+  }, [startDate, endDate, category, location, prompt]);
 
   useEffect(() => {
     const searchQuery = prompt;
