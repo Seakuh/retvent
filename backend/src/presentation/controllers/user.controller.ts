@@ -140,6 +140,26 @@ export class UserController {
     return this.userService.getFavorites(user.sub);
   }
 
+  @Get('me/followedProfiles')
+  @UseGuards(JwtAuthGuard)
+  async getFollowedProfiles(@UserDecorator() user: User) {
+    return this.userService.getFollowedProfiles(user.sub);
+  }
+
+  @Post('me/followedProfiles/:id')
+  @UseGuards(JwtAuthGuard)
+  async addFollowedProfile(@Param('id') id: string, @Req() req) {
+    const userId = req.user.sub;
+    return this.userService.addFollowedProfile(userId, id);
+  }
+
+  @Delete('me/followedProfiles/:id')
+  @UseGuards(JwtAuthGuard)
+  async removeFollowedProfile(@Param('id') id: string, @Req() req) {
+    const userId = req.user.sub;
+    return this.userService.removeFollowedProfile(userId, id);
+  }
+
   // @Get('profile/:id')
   // async getUserProfile(@Param('id') id: string): Promise<User> {
   //   const user = await this.userService.findById(id);

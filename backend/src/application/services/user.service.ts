@@ -107,4 +107,26 @@ export class UserService {
       return false;
     }
   }
+
+  async addFollowedProfile(userId: any, id: string) {
+    try {
+      await this.userRepository.addFollowedProfile(userId, id);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async removeFollowedProfile(userId: any, id: string) {
+    try {
+      await this.userRepository.removeFollowedProfile(userId, id);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async getFollowedProfiles(userId: string) {
+    return this.userRepository.getFollowedProfiles(userId);
+  }
 }

@@ -169,4 +169,22 @@ export class MongoUserRepository implements IUserRepository {
       $addToSet: { favoriteEventIds: id },
     });
   }
+
+  addFollowedProfile(userId: any, id: string) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $addToSet: { followedProfiles: id },
+    });
+  }
+
+  removeFollowedProfile(userId: any, id: string) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $pull: { followedProfiles: id },
+    });
+  }
+
+  getFollowedProfiles(userId: string) {
+    return this.userModel.findById(userId).then((user) => {
+      return user?.followedProfiles ?? [];
+    });
+  }
 }
