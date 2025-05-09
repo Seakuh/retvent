@@ -193,6 +193,10 @@ export const Profile: React.FC = () => {
     if (userId === localStorage.getItem("user.id")) {
       return;
     }
+    if (localStorage.getItem("user.id") === null) {
+      navigate("/login");
+      return;
+    }
     const response = await createChat(userId || "");
     navigate(`/group/${response._id}`);
   };
