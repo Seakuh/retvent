@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, UserContext } from "../../contexts/UserContext";
-import { syncFavorites } from "../../service";
 import { AuthService } from "../../services/auth.service";
 import "./Auth.css";
 
@@ -28,13 +27,11 @@ const Login: React.FC = () => {
       });
       localStorage.setItem("access_token", response.access_token);
       localStorage.setItem("user", JSON.stringify(response.user));
-      syncFavorites();
       setLoggedIn(true);
-
       setUser(response.user as User);
       navigate(`/`);
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Login failed 😢");
+      setError(error instanceof Error ? error.message : "Login failed");
     }
   };
 

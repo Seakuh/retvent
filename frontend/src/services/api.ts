@@ -134,3 +134,22 @@ export const eventService = {
     }
   },
 };
+
+export const profileService = {
+  getFollowedProfiles: async () => {
+    try {
+      const response = await fetch(`${API_URL}users/me/followedProfiles`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Followed profiles could not be loaded");
+      }
+      return response.json();
+    } catch (error) {
+      console.error("Error loading followed profiles:", error);
+      return [];
+    }
+  },
+};

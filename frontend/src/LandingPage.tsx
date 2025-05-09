@@ -186,7 +186,15 @@ function LandingPage() {
     };
 
     fetchData();
-  }, [startDate, endDate, category, location, prompt, favoriteEventIds]);
+  }, [
+    startDate,
+    endDate,
+    category,
+    location,
+    prompt,
+    loggedIn,
+    favoriteEventIds,
+  ]);
 
   useEffect(() => {
     const searchQuery = prompt;
@@ -194,11 +202,6 @@ function LandingPage() {
     const locationQuery = location;
     const startDateQuery = startDate;
     const endDateQuery = endDate;
-
-    // const loadProfiles = async () => {
-    //   const profiles = await searchProfiles();
-    //   console.log("profiles", profiles);
-    // };
 
     const loadEvents = async () => {
       setLoading(true);
@@ -224,11 +227,10 @@ function LandingPage() {
       const feedItemsResponse = await getLatestFeedAll();
       setFeedItemsResponse(feedItemsResponse);
     };
-
     loadFeedItems();
     loadEvents();
     // loadProfiles();
-  }, [location, category, prompt, startDate, endDate]);
+  }, [location, category, prompt, startDate, endDate, loggedIn]);
 
   const handleInstallClick = async () => {
     navigate("/install-app");
@@ -314,16 +316,6 @@ function LandingPage() {
                   </button>
                   {showMenu && (
                     <div className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 menu-container">
-                      {/* <button
-                        onClick={() => {
-                          navigate("/admin/dashboard");
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                      >
-                        <Hexagon size={20} />
-                        <h3>Dashboard</h3>
-                      </button> */}
-
                       <button
                         onClick={() => {
                           if (loggedIn) {
