@@ -44,7 +44,6 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!loggedIn) {
       localStorage.removeItem("user");
       localStorage.removeItem("loggedIn");
-      localStorage.removeItem("favoriteEventIds");
       localStorage.removeItem("following");
       localStorage.removeItem("access_token");
     }

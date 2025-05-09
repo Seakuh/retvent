@@ -137,7 +137,6 @@ function LandingPage() {
   };
 
   const handleCategoryChange = (category: string | null) => {
-    console.log("category", category);
     setSearchState({
       category: category || "",
       startDate: startDate || "",
@@ -176,6 +175,7 @@ function LandingPage() {
             getLatestFeedByFollowing(),
           ]);
           setFavoriteEvents(favoriteEvents);
+          setUserEvents(favoriteEvents);
           setFollowedProfiles(followedProfiles);
         }
       } catch (error) {
@@ -186,7 +186,7 @@ function LandingPage() {
     };
 
     fetchData();
-  }, [favoriteEventIds, startDate, endDate, category, location, prompt]);
+  }, [startDate, endDate, category, location, prompt, favoriteEventIds]);
 
   useEffect(() => {
     const searchQuery = prompt;
