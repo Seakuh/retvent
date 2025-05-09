@@ -234,6 +234,29 @@ function LandingPage() {
     navigate("/install-app");
   };
 
+  // Füge useEffect für den Click-Outside-Listener hinzu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const menuButton = document.querySelector(".menu-button");
+      const menu = document.querySelector(".menu-container");
+
+      if (
+        showMenu &&
+        menu &&
+        !menu.contains(event.target as Node) &&
+        menuButton &&
+        !menuButton.contains(event.target as Node)
+      ) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
+
   return (
     <>
       <HelmetMeta />
@@ -285,12 +308,12 @@ function LandingPage() {
                 <div className="relative">
                   <button
                     onClick={() => setShowMenu(!showMenu)}
-                    className="p-2 rounded-lg glass-effect text-white dark:text-white"
+                    className="p-2 rounded-lg glass-effect text-white dark:text-white menu-button"
                   >
                     <Menu size={24} />
                   </button>
                   {showMenu && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500">
+                    <div className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 menu-container">
                       {/* <button
                         onClick={() => {
                           navigate("/admin/dashboard");
