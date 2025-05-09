@@ -637,6 +637,8 @@ export const userPreferencesTemplate = {
 export const handleLogout = () => {
   localStorage.removeItem("user");
   localStorage.removeItem("access_token");
+  localStorage.removeItem("favoriteEventIds");
+  localStorage.removeItem("following");
 };
 
 export const getDaysUntilDate = (date: string | Date): number => {

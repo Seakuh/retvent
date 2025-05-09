@@ -21,9 +21,11 @@ import { PublicProfile } from "./PublicProfile";
 import {
   createChat,
   fetchProfileComments,
+  followUser,
   getProfile,
   getUserEvents,
   shareProfile,
+  unfollowUser,
 } from "./service";
 export const Profile: React.FC = () => {
   const { userId } = useParams();
@@ -56,7 +58,6 @@ export const Profile: React.FC = () => {
           getProfile(userId),
           getUserEvents(userId),
         ]);
-        console.log("profileData", profileData);
         fetchProfileComments(profileData?.userId || "").then(
           ({ comments, count }) => {
             setComments(comments);
@@ -136,9 +137,11 @@ export const Profile: React.FC = () => {
     if (isFollowing) {
       const newFollowing = following.filter((id: string) => id !== userId);
       localStorage.setItem("following", JSON.stringify(newFollowing));
+      unfollowUser(userId || "");
     } else {
       following.push(userId);
       localStorage.setItem("following", JSON.stringify(following));
+      followUser(userId || "");
     }
     setIsFollowing(!isFollowing);
   };

@@ -1,5 +1,3 @@
-import * as Sentry from "@sentry/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { About } from "./Footer/About";
@@ -26,27 +24,26 @@ import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
 import { syncFavorites } from "./service";
-import { eventService } from "./services/api";
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // Global Defaults
-      staleTime: 2 * 60 * 1000,
-      cacheTime: 15 * 60 * 1000,
-      retry: 2,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-Sentry.init({
-  dsn: "https://a002b10533132bf43d28a5339d1e4116@o4509235823116288.ingest.de.sentry.io/4509235824623696",
-  // Setting this option to true will send default PII data to Sentry.
-  // For example, automatic IP address collection on events
-  sendDefaultPii: true,
-});
+// const queryClient = new QueryClient({
+//   defaultOptions: {
+//     queries: {
+//       // Global Defaults
+//       staleTime: 2 * 60 * 1000,
+//       cacheTime: 15 * 60 * 1000,
+//       retry: 2,
+//       refetchOnWindowFocus: false,
+//     },
+//   },
+// });
+// Sentry.init({
+//   dsn: "https://a002b10533132bf43d28a5339d1e4116@o4509235823116288.ingest.de.sentry.io/4509235824623696",
+//   // Setting this option to true will send default PII data to Sentry.
+//   // For example, automatic IP address collection on events
+//   sendDefaultPii: true,
+// });
 
 // Prefetching wichtiger Daten beim App-Start
-queryClient.prefetchQuery(["events", null], () => eventService.getEvents());
+// queryClient.prefetchQuery(["events", null], () => eventService.getEvents());
 
 const App: React.FC = () => {
   console.log(
@@ -81,54 +78,51 @@ const App: React.FC = () => {
     <LandingPageProvider>
       <FeedProvider>
         <ChatProvider>
-          <QueryClientProvider client={queryClient}>
-            <UserContextProvider>
-              <div className="app">
-                <main>
-                  <Routes>
-                    <Route path="/" element={<LandingPage />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/profile/:userId" element={<Profile />} />
-                    <Route path="/event/:eventId" element={<EventDetail />} />
-                    <Route
-                      path="/category/:category"
-                      element={<LandingPage />}
-                    />
-                    <Route path="/privacy" element={<Privacy />} />
-                    <Route path="/imprint" element={<Imprint />} />
-                    <Route path="/terms" element={<Terms />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/profile/:artistName" element={<Profile />} />
-                    <Route path="/install-app" element={<PwaInstall />} />
+          {/* <QueryClientProvider client={queryClient}> */}
+          <UserContextProvider>
+            <div className="app">
+              <main>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/profile/:userId" element={<Profile />} />
+                  <Route path="/event/:eventId" element={<EventDetail />} />
+                  <Route path="/category/:category" element={<LandingPage />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/imprint" element={<Imprint />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/profile/:artistName" element={<Profile />} />
+                  <Route path="/install-app" element={<PwaInstall />} />
 
-                    <Route path="/imprint" element={<Imprint />} />
-                    <Route
-                      path="/group/invite/:userId/:tokenId"
-                      element={<GroupInvite />}
-                    />
-                    <Route
-                      path="/my-groups"
-                      element={
-                        <ProtectedRoute>
-                          <GroupChatPage />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/comment-guidelines"
-                      element={<CommentGuidelines />}
-                    />
-                    <Route path="/group/:groupId" element={<GroupChat />} />
-                    <Route
-                      path="/me"
-                      element={
-                        <ProtectedRoute>
-                          <Me />
-                        </ProtectedRoute>
-                      }
-                    />
-                    {/* <Route
+                  <Route path="/imprint" element={<Imprint />} />
+                  <Route
+                    path="/group/invite/:userId/:tokenId"
+                    element={<GroupInvite />}
+                  />
+                  <Route
+                    path="/my-groups"
+                    element={
+                      <ProtectedRoute>
+                        <GroupChatPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/comment-guidelines"
+                    element={<CommentGuidelines />}
+                  />
+                  <Route path="/group/:groupId" element={<GroupChat />} />
+                  <Route
+                    path="/me"
+                    element={
+                      <ProtectedRoute>
+                        <Me />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* <Route
                   path="/admin/dashboard"
                   element={
                     <ProtectedRoute>
@@ -136,36 +130,36 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 /> */}
-                    <Route
-                      path="/admin/events"
-                      element={
-                        <ProtectedRoute>
-                          <AdminEvents />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/events/create"
-                      element={
-                        <ProtectedRoute>
-                          <CreateEvent />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/events/edit/:eventId"
-                      element={
-                        <ProtectedRoute>
-                          <EditEvent />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="*" element={<LandingPage />} />
-                  </Routes>
-                </main>
-              </div>
-            </UserContextProvider>
-          </QueryClientProvider>
+                  <Route
+                    path="/admin/events"
+                    element={
+                      <ProtectedRoute>
+                        <AdminEvents />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/events/create"
+                    element={
+                      <ProtectedRoute>
+                        <CreateEvent />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/events/edit/:eventId"
+                    element={
+                      <ProtectedRoute>
+                        <EditEvent />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="*" element={<LandingPage />} />
+                </Routes>
+              </main>
+            </div>
+          </UserContextProvider>
+          {/* </QueryClientProvider> */}
         </ChatProvider>
       </FeedProvider>
     </LandingPageProvider>

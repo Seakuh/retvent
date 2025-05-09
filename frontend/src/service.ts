@@ -1,4 +1,4 @@
-import { eventService } from "./services/api";
+import { eventService, profileService } from "./services/api";
 import { Event } from "./types/event";
 import { Profile } from "./utils";
 
@@ -13,30 +13,32 @@ export const searchProfiles = async (): Promise<Profile[]> => {
 
 export const syncFavorites = async () => {
   try {
-    // Parallel beide Fetches starten
-    const [serverFavorites, localFavorites] = await Promise.allSettled([
+    const [favoritesResult, profilesResult] = await Promise.allSettled([
       eventService.getFavorites(),
-      Promise.resolve(
-        JSON.parse(localStorage.getItem("favoriteEventIds") || "[]")
-      ),
+      profileService.getFollowedProfiles(),
     ]);
 
-    // Sichere Extraktion der Werte mit Fallbacks
-    const serverFavs =
-      serverFavorites.status === "fulfilled" ? serverFavorites.value : [];
-    const localFavs =
-      localFavorites.status === "fulfilled" ? localFavorites.value : [];
+    const localFavorites: string[] = JSON.parse(
+      localStorage.getItem("favoriteEventIds") || "[]"
+    );
+    const localFollowedProfiles: string[] = JSON.parse(
+      localStorage.getItem("following") || "[]"
+    );
 
-    // Nur synchronisieren wenn es tatsächlich Änderungen gibt
-    if (serverFavs.length > 0 || localFavs.length > 0) {
-      const mergedFavorites = Array.from(
-        new Set([...serverFavs, ...localFavs])
-      );
+    const serverFavorites =
+      favoritesResult.status === "fulfilled" ? favoritesResult.value : [];
+    const serverFollowedProfiles =
+      profilesResult.status === "fulfilled" ? profilesResult.value : [];
 
-      // Asynchron speichern, aber nicht auf das Ergebnis warten
-      eventService.saveFavorites(mergedFavorites).catch(console.error);
-      localStorage.setItem("favoriteEventIds", JSON.stringify(mergedFavorites));
-    }
+    const mergedFavorites = Array.from(
+      new Set([...serverFavorites, ...localFavorites])
+    );
+    localStorage.setItem("favoriteEventIds", JSON.stringify(mergedFavorites));
+
+    const mergedFollowedProfiles = Array.from(
+      new Set([...serverFollowedProfiles, ...localFollowedProfiles])
+    );
+    localStorage.setItem("following", JSON.stringify(mergedFollowedProfiles));
   } catch (error) {
     console.error("Error syncing favorites:", error);
   }

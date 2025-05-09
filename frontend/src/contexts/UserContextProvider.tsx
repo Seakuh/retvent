@@ -24,29 +24,16 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   });
   const [location, setLocation] = useState<Location | null>(null);
 
-  // TODO: remove this
   useEffect(() => {
-    // if (navigator.geolocation) {
-    //   navigator.geolocation.getCurrentPosition((position) => {
-    //     setLocation({
-    //       latitude: position.coords.latitude,
-    //       longitude: position.coords.longitude,
-    //     });
-    //   });
-    // }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("loggedIn", JSON.stringify(loggedIn));
-    console.log("loggedIn", loggedIn);
     if (!loggedIn) {
       localStorage.removeItem("user");
       localStorage.removeItem("loggedIn");
+      localStorage.removeItem("favoriteEventIds");
       localStorage.removeItem("following");
       localStorage.removeItem("access_token");
     }
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("loggedIn", JSON.stringify(loggedIn));
   }, [favoriteEventIds, user, loggedIn]);
 
   const addFavorite = async (eventId: string) => {

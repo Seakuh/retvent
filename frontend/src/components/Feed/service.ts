@@ -16,7 +16,6 @@ export async function getLatestFeedAll(): Promise<FeedResponse[]> {
   try {
     const response = await fetch(`${API_URL}feed/latest/all`);
     const data = await response.json();
-    console.log("data", data);
     if (response.status === 500) {
       return [];
     }

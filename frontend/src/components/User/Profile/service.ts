@@ -91,3 +91,33 @@ export const getFeedItems = async (profileId: string) => {
     return [];
   }
 };
+
+export const followUser = async (userId: string) => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(
+    `${API_URL}users/me/followedProfiles/${userId}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.json();
+};
+
+export const unfollowUser = async (userId: string) => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(
+    `${API_URL}users/me/followedProfiles/${userId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.json();
+};
