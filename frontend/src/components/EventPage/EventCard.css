@@ -133,6 +133,12 @@
   margin-top: 1rem;
 }
 
+.event-card-user-interaction-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
 .comment-user-container {
   display: flex;
   flex-direction: row;

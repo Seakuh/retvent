@@ -1,4 +1,4 @@
-import { Eye, Heart, MapPin, MessageCircle } from "lucide-react";
+import { Eye, Heart, MapPin, MessageCircle, Send } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -33,7 +33,33 @@ export const EventCard = ({ event }: { event: Event }) => {
     }
     // setIsLiked nicht nötig, da wir isFavorite vom Context nutzen
   };
+  const shareEventId = (
+    e: React.MouseEvent<HTMLDivElement>,
+    eventId: string
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
 
+    const shareData = {
+      url: `https://event-scanner.com/event/${eventId}`,
+    };
+
+    if (navigator.share) {
+      navigator
+        .share(shareData)
+        .catch((error) => console.log("Fehler beim Teilen:", error));
+    } else {
+      // Fallback für Browser ohne Web Share API
+      navigator.clipboard
+        .writeText(shareData.url)
+        .then(() => {
+          alert("Saved to clipboard!");
+        })
+        .catch(() => {
+          alert("Error saving to clipboard");
+        });
+    }
+  };
   return (
     <div
       onClick={() => {
@@ -64,29 +90,32 @@ export const EventCard = ({ event }: { event: Event }) => {
           ))}
         </div>
         <div className="event-card-location-container">
-          <MapPin size={16} />
+          <MapPin size={25} />
           <p>{event.city || "TBA"}</p>
         </div>
         <div className="event-card-details">
           <div className="event-card-community-container">
             <div className="event-card-community-container-left">
               <div className="event-card-views-container">
-                <Eye size={16} />
+                <Eye size={25} />
                 <p>{event.views || 0}</p>
               </div>
               <div className="event-card-comments-container">
-                <MessageCircle size={16} />
+                <MessageCircle size={25} />
                 <p>{event.commentCount || 0}</p>
               </div>
             </div>
             <div className="event-card-user-interaction">
-              <div className="event-card-user-interaction-left">
+              <div className="event-card-user-interaction-right">
+                <div onClick={(e) => shareEventId(e, event.id!)}>
+                  <Send size={25} color="white" />
+                </div>
                 <div
                   onClick={(e) => handleLike(e)}
                   className="event-card-like-container"
                 >
                   <Heart
-                    size={16}
+                    size={25}
                     color={isFavorite(event.id!) ? "red" : "white"}
                     fill={isFavorite(event.id!) ? "red" : "none"}
                   />
