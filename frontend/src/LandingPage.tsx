@@ -261,6 +261,12 @@ function LandingPage() {
 
               <div className="flex items-center gap-4">
                 <button
+                  className="search-icon"
+                  onClick={() => setIsSearchOpen(true)}
+                >
+                  <Search size={24} color="white" />
+                </button>
+                <button
                   className="upload-icon"
                   onClick={() => {
                     setIsUploadOpen(!isUploadOpen);
@@ -269,12 +275,6 @@ function LandingPage() {
                   <Upload size={24} color="white" />
                 </button>
 
-                <button
-                  className="search-icon"
-                  onClick={() => setIsSearchOpen(true)}
-                >
-                  <Search size={24} color="white" />
-                </button>
                 <button
                   className="search-icon"
                   onClick={() => navigate("/my-groups")}
