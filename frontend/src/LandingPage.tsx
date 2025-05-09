@@ -435,10 +435,7 @@ function LandingPage() {
           </div>
           {loading ? (
             <div className="search-loading">
-              <div className="search-spinner">
-                <div className="search-spinner-inner"></div>
-                <div className="search-spinner-text">Searching events...</div>
-              </div>
+              <div className="search-spinner"></div>
             </div>
           ) : searchPerformed && events.length === 0 ? (
             <div className="no-results mt-10">
