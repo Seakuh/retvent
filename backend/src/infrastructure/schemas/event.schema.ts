@@ -8,7 +8,10 @@ export const EventSchema = new Schema(
     startDate: { type: Date, required: true },
     startTime: { type: String, required: false },
     hostId: { type: String },
-    hostUsername: { type: String },
+    host: {
+      profileImageUrl: { type: String },
+      username: { type: String },
+    },
     locationId: { type: String },
     locationName: { type: String },
     address: {

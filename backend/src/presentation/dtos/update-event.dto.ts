@@ -144,6 +144,13 @@ export class UpdateEventDto {
   uploadLat?: number;
 
   @IsOptional()
+  @IsObject()
+  host?: {
+    profileImageUrl: string;
+    username: string;
+  };
+
+  @IsOptional()
   @IsNumber()
   uploadLon?: number;
 

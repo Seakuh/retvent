@@ -63,6 +63,21 @@ export class BotService {
     console.log(comments);
   }
 
+  // @Cron(CronExpression.EVERY_SECOND)
+  // async handleCron2() {
+  //   const events = await this.eventService.searchEventsWithUserInput();
+  //   for (const event of events) {
+  //     const eventWithHost =
+  //       await this.eventService.getEventByIdWithHostInformation(event.id);
+  //     await this.eventService.update(event.id, {
+  //       host: {
+  //         profileImageUrl: eventWithHost.host.profileImageUrl,
+  //         username: eventWithHost.host.username,
+  //       },
+  //     });
+  //   }
+  // }
+
   @Cron(CronExpression.EVERY_HOUR)
   async handleAnswerCron() {
     this.logger.log('Answer Cron job executed');

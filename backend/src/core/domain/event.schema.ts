@@ -8,8 +8,10 @@ export interface IEvent extends Document {
   startDate: Date;
   startTime: string;
   hostId?: string;
-  hostImageUrl?: string;
-  hostUsername?: string;
+  host?: {
+    profileImageUrl: string;
+    username: string;
+  };
   locationId?: string;
   category?: string;
   price?: string | number;
@@ -48,8 +50,10 @@ const EventSchema = new Schema<IEvent>(
     startDate: { type: Date, required: true },
     startTime: { type: String, required: true },
     hostId: { type: String },
-    hostUsername: { type: String },
-    hostImageUrl: { type: String },
+    host: {
+      profileImageUrl: { type: String },
+      username: { type: String },
+    },
     locationId: { type: String },
     category: { type: String },
     price: { type: Schema.Types.Mixed }, // String oder Number
