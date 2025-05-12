@@ -35,6 +35,9 @@ interface UserContextType {
     } | null
   ) => void;
   setLocation: (location: Location) => void;
+  followedProfiles: User[];
+  setFollowedProfiles: (followedProfiles: User[]) => void;
+  setFavoriteEventIds: (favoriteEventIds: string[]) => void;
 }
 
 export const UserContext = createContext<UserContextType>({
@@ -50,6 +53,9 @@ export const UserContext = createContext<UserContextType>({
   userLocation: null,
   adjustUserLocation: () => {},
   setLocation: () => {},
+  followedProfiles: [],
+  setFollowedProfiles: () => {},
+  setFavoriteEventIds: () => {},
 });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {

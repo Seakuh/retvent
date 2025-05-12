@@ -22,7 +22,7 @@ export const uploadEventImage = async (
 
     // Token holen & API-Endpunkt setzen
     const endpoint = localStorage.getItem("access_token")
-      ? `${API_URL}events/v4/upload/event-image`
+      ? `${API_URL}events/v5/upload/event-image`
       : `${API_URL}events/upload/event-image`;
 
     const token = localStorage.getItem("access_token");

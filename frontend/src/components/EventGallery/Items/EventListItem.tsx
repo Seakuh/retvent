@@ -1,7 +1,7 @@
-import { Eye, MapPin, MessageCircle } from "lucide-react";
+import { Eye, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Event, formatDate } from "../../../utils";
-
+import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
 const DEFAULT_IMAGE =
   "https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png";
 
@@ -22,6 +22,12 @@ export const EventListItem: React.FC<EventListItemProps> = ({
       className={`event-list-item ${isPast ? "past-event" : ""}`}
       onClick={() => navigate(`/event/${event.id || event._id}`)}
     >
+      <RealListItemProfileHeader
+        profileUrl={event.hostImageUrl || event.imageUrl || ""}
+        name={event.hostUsername || ""}
+        id={event.hostId || ""}
+        location={event.city || ""}
+      />
       <div className="event-thumbnail">
         <img
           src={event.imageUrl || DEFAULT_IMAGE}
@@ -45,10 +51,10 @@ export const EventListItem: React.FC<EventListItemProps> = ({
               {event.views}
             </span>
 
-            <span className="location">
+            {/* <span className="location">
               <MapPin size={16} />
               {event.city || "TBA"}
-            </span>
+            </span> */}
           </div>
         </div>
       </div>

@@ -223,7 +223,13 @@ export interface Event {
   endTime?: string;
   // Beziehungen
   hostId?: string;
+  host: {
+    username: string;
+    profileImageUrl: string;
+  };
   hostUsername?: string;
+  hostImageUrl?: string;
+
   city?: string;
   locationId?: string;
   category?: string;

@@ -1,0 +1,42 @@
+.real-list-item-profile-header {
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  width: 100%;
+  color: white;
+}
+
+.real-list-item-profile-header-image {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.real-list-item-profile-header-name {
+  font-size: 1rem;
+  font-weight: 400;
+  color: white;
+}
+
+.real-list-item-profile-header-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  gap: 1rem;
+}
+
+.real-list-item-profile-header-location {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  gap: 0.2rem;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--color-neon-blue);
+}

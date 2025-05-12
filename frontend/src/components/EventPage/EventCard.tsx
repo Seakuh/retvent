@@ -3,8 +3,8 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { Event } from "../../utils";
+import { RealListItemProfileHeader } from "../EventGallery/Items/RealListItemProfileHeader";
 import "./EventCard.css";
-
 export const EventCard = ({ event }: { event: Event }) => {
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
@@ -67,6 +67,12 @@ export const EventCard = ({ event }: { event: Event }) => {
       }}
       className={`event-card-container card-${event.id}`}
     >
+      <RealListItemProfileHeader
+        profileUrl={event.hostImageUrl || event.imageUrl || ""}
+        name={event.hostUsername || ""}
+        id={event.hostId || ""}
+        location={event.city || ""}
+      />
       <div className="event-card-image-container">
         <img
           className="event-card-image"
