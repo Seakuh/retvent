@@ -1,6 +1,5 @@
-import { eventService, profileService } from "./services/api";
 import { Event } from "./types/event";
-import { Profile } from "./utils";
+import { EventPageDto, Profile } from "./utils";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -13,10 +12,7 @@ export const searchProfiles = async (): Promise<Profile[]> => {
 
 export const syncFavorites = async () => {
   try {
-    const [favoritesResult, profilesResult] = await Promise.allSettled([
-      eventService.getFavorites(),
-      profileService.getFollowedProfiles(),
-    ]);
+    const { favoriteEventIds, followedProfiles } = await getUserEventPage();
 
     const localFavorites: string[] = JSON.parse(
       localStorage.getItem("favoriteEventIds") || "[]"
@@ -25,10 +21,8 @@ export const syncFavorites = async () => {
       localStorage.getItem("following") || "[]"
     );
 
-    const serverFavorites =
-      favoritesResult.status === "fulfilled" ? favoritesResult.value : [];
-    const serverFollowedProfiles =
-      profilesResult.status === "fulfilled" ? profilesResult.value : [];
+    const serverFavorites = favoriteEventIds;
+    const serverFollowedProfiles = followedProfiles;
 
     const mergedFavorites = Array.from(
       new Set([...serverFavorites, ...localFavorites])
@@ -103,6 +97,34 @@ export const fetchLatestEventsByLocation = async (
   } catch (error) {
     console.error("Error in fetchLatestEventsByLocation:", error);
     return [];
+  }
+};
+
+export const getUserEventPage = async (): Promise<EventPageDto> => {
+  try {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const response = await fetch(`${API_URL}users/me/eventPage`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch event page data");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching user event page:", error);
+    return {
+      favoriteEventIds: [],
+      followedProfiles: [],
+    };
   }
 };
 

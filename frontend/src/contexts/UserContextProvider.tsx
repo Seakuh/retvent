@@ -39,11 +39,13 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const addFavorite = async (eventId: string) => {
     void eventService.addFavorite(eventId);
     setFavoriteEventIds((prev) => [...new Set([...prev, eventId])]);
+    localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
   };
 
   const removeFavorite = async (eventId: string) => {
     void eventService.removeFavorite(eventId);
     setFavoriteEventIds((prev) => prev.filter((id) => id !== eventId));
+    localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
   };
 
   const isFavorite = (eventId: string): boolean => {
