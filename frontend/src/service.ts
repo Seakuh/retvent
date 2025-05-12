@@ -21,20 +21,26 @@ export const syncFavorites = async () => {
       localStorage.getItem("following") || "[]"
     );
 
-    const serverFavorites = favoriteEventIds;
-    const serverFollowedProfiles = followedProfiles;
-
     const mergedFavorites = Array.from(
-      new Set([...serverFavorites, ...localFavorites])
+      new Set([...favoriteEventIds, ...localFavorites])
     );
-    localStorage.setItem("favoriteEventIds", JSON.stringify(mergedFavorites));
-
     const mergedFollowedProfiles = Array.from(
-      new Set([...serverFollowedProfiles, ...localFollowedProfiles])
+      new Set([...followedProfiles, ...localFollowedProfiles])
     );
+
+    localStorage.setItem("favoriteEventIds", JSON.stringify(mergedFavorites));
     localStorage.setItem("following", JSON.stringify(mergedFollowedProfiles));
+
+    return {
+      favoriteEventIds: mergedFavorites,
+      followedProfiles: mergedFollowedProfiles,
+    };
   } catch (error) {
     console.error("Error syncing favorites:", error);
+    return {
+      favoriteEventIds: [],
+      followedProfiles: [],
+    };
   }
 };
 

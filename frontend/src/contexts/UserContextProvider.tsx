@@ -23,6 +23,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     return saved ? JSON.parse(saved) : [];
   });
   const [location, setLocation] = useState<Location | null>(null);
+  const [followedProfiles, setFollowedProfiles] = useState<User[]>([]);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -40,16 +41,22 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     if (loggedIn) {
       void eventService.addFavorite(eventId);
     }
-    setFavoriteEventIds((prev) => [...new Set([...prev, eventId])]);
-    localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
+    setFavoriteEventIds((prev) => {
+      const newFavorites = [...new Set([...prev, eventId])];
+      localStorage.setItem("favoriteEventIds", JSON.stringify(newFavorites));
+      return newFavorites;
+    });
   };
 
   const removeFavorite = async (eventId: string) => {
     if (loggedIn) {
       void eventService.removeFavorite(eventId);
     }
-    setFavoriteEventIds((prev) => prev.filter((id) => id !== eventId));
-    localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
+    setFavoriteEventIds((prev) => {
+      const newFavorites = prev.filter((id) => id !== eventId);
+      localStorage.setItem("favoriteEventIds", JSON.stringify(newFavorites));
+      return newFavorites;
+    });
   };
 
   const isFavorite = (eventId: string): boolean => {
@@ -75,6 +82,9 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
         user,
         setUser,
         favoriteEventIds,
+        setFavoriteEventIds,
+        followedProfiles,
+        setFollowedProfiles,
         addFavorite,
         removeFavorite,
         isFavorite,
