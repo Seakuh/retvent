@@ -41,7 +41,7 @@ export class MongoEventRepository implements IEventRepository {
       .find(query)
       .sort({ createdAt: -1 })
       .select(
-        'id description title imageUrl startDate city views tags commentCount lineup.name',
+        'id description title imageUrl startDate city views tags commentCount lineup.name hostUsername hostImageUrl',
       )
       .limit(40)
       .exec();
@@ -556,7 +556,7 @@ export class MongoEventRepository implements IEventRepository {
     const events = await this.eventModel
       .find(query)
       .select(
-        'id description title imageUrl lineup startDate endDate city views commentCount tags',
+        'id description title imageUrl lineup startDate endDate city views commentCount tags hostUsername hostImageUrl',
       )
       .exec();
 

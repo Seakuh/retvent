@@ -478,6 +478,65 @@ export class EventService {
       );
     }
   }
+  async processEventImageUploadV5(
+    image: Express.Multer.File,
+    lat?: number,
+    lon?: number,
+    userId?: string,
+  ): Promise<Event> {
+    console.info('[EventService] Processing new event (v4)');
+    try {
+      // 1. Upload image and get URL
+      const uploadedImageUrl = await this.imageService.uploadImage(image);
+      if (!uploadedImageUrl) {
+        throw new BadRequestException('Failed to upload image');
+      }
+
+      // 2. Try to extract event data from image, but don't fail if it doesn't work
+      let extractedEventData = {};
+      try {
+        extractedEventData =
+          await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
+      } catch (error) {
+        console.warn('Failed to extract event data from image:', error);
+      }
+
+      const profile = await this.profileService.getProfileByUserId(userId);
+      const hostImageUrl = profile.profileImageUrl;
+
+      // 4. Create event with all available data
+      const eventData = {
+        ...extractedEventData,
+        imageUrl: uploadedImageUrl,
+        uploadLat: lat,
+        uploadLon: lon,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        location: {
+          coordinates: {
+            lat: lat,
+            lon: lon,
+          },
+        },
+        status: 'pending',
+        hostId: userId || 'public', // Setze hostId auf userId wenn vorhanden, sonst 'public'
+        hostImageUrl: hostImageUrl || undefined,
+      };
+
+      const createdEvent = await this.eventRepository.create(eventData);
+      await this.profileService.addCreatedEvent(userId, createdEvent.id);
+      await this.userService.addUserPoints(userId, 20);
+
+      // Add feed item to feed
+      await this.feedService.pushFeedItemFromEvent(createdEvent, 'event');
+      return createdEvent;
+    } catch (error) {
+      console.error('Failed to process event image upload:', error);
+      throw new BadRequestException(
+        `Failed to process event image: ${error.message}`,
+      );
+    }
+  }
 
   async processEventImage(
     imageUrl: string,

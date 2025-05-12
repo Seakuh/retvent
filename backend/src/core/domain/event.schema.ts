@@ -8,6 +8,7 @@ export interface IEvent extends Document {
   startDate: Date;
   startTime: string;
   hostId?: string;
+  hostImageUrl?: string;
   hostUsername?: string;
   locationId?: string;
   category?: string;
@@ -48,6 +49,7 @@ const EventSchema = new Schema<IEvent>(
     startTime: { type: String, required: true },
     hostId: { type: String },
     hostUsername: { type: String },
+    hostImageUrl: { type: String },
     locationId: { type: String },
     category: { type: String },
     price: { type: Schema.Types.Mixed }, // String oder Number

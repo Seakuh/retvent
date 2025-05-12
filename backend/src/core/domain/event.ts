@@ -17,6 +17,7 @@ export class Event implements IEvent {
   // Beziehungen
   hostId: string;
   hostUsername?: string;
+  hostImageUrl?: string;
   city?: string;
   locationId?: string;
   category?: string;
