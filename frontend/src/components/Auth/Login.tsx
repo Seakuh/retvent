@@ -14,7 +14,8 @@ const Login: React.FC = () => {
     isArtist: true, // Immer true für Artists
   });
   const [error, setError] = useState<string>("");
-  const { setLoggedIn, setUser } = useContext(UserContext);
+  const { setLoggedIn, setUser, setFavoriteEventIds, setFollowedProfiles } =
+    useContext(UserContext);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,13 +27,27 @@ const Login: React.FC = () => {
         password: formData.password,
         isArtist: true,
       });
+
+      // Erst den lokalen Speicher leeren
+      localStorage.clear();
+
+      // Neue Daten setzen
       localStorage.setItem("access_token", response.access_token);
       localStorage.setItem("user", JSON.stringify(response.user));
+
+      // Favoriten synchronisieren und warten bis es fertig ist
+      const { favoriteEventIds, followedProfiles } = await syncFavorites();
+
+      // Context aktualisieren
       setLoggedIn(true);
-      void syncFavorites();
       setUser(response.user as User);
+
+      // WICHTIG: Die synchronisierten Daten direkt in den State setzen
+      setFavoriteEventIds(favoriteEventIds);
+      setFollowedProfiles(followedProfiles);
+
+      // Navigation ohne Reload
       navigate(`/`);
-      window.location.reload();
     } catch (error) {
       setError(error instanceof Error ? error.message : "Login failed");
     }
