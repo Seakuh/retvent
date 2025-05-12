@@ -187,4 +187,13 @@ export class MongoUserRepository implements IUserRepository {
       return user?.followedProfiles ?? [];
     });
   }
+
+  getUserEventPage(userId: string) {
+    return this.userModel.findById(userId).then((user) => {
+      return {
+        favoriteEventIds: user?.favoriteEventIds ?? [],
+        followedProfiles: user?.followedProfiles ?? [],
+      };
+    });
+  }
 }

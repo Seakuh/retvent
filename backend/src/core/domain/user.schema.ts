@@ -12,6 +12,7 @@ export const UserSchema = new Schema(
     favoriteEventIds: [String],
     createdEventIds: [String],
     points: { type: Number, default: 0 },
+    followedProfiles: { type: [String], default: [] },
   },
   { timestamps: true },
 );

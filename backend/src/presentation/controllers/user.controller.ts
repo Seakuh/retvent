@@ -15,6 +15,7 @@ import { UserService } from '../../application/services/user.service';
 import { User } from '../../core/domain/user';
 import { BcryptService } from '../../core/services/bcrypt.service';
 import { User as UserDecorator } from '../decorators/user.decorator';
+import { EventPageDto } from '../dtos/event-page.dto';
 import { ProfileInfoDto } from '../dtos/profile.dto';
 import { UpdateUserProfileDto } from '../dtos/update-user.dto';
 import { UserProfileDto } from '../dtos/user-profile.dto';
@@ -138,6 +139,13 @@ export class UserController {
   async getFavorites(@UserDecorator() user: User) {
     console.log(user);
     return this.userService.getFavorites(user.sub);
+  }
+
+  @Get('me/eventPage')
+  @UseGuards(JwtAuthGuard)
+  async getUserEventPage(@UserDecorator() user: User): Promise<EventPageDto> {
+    console.log(user);
+    return this.userService.getUserEventPage(user.sub);
   }
 
   @Get('me/followedProfiles')

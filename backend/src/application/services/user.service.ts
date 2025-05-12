@@ -129,4 +129,8 @@ export class UserService {
   async getFollowedProfiles(userId: string) {
     return this.userRepository.getFollowedProfiles(userId);
   }
+
+  getUserEventPage(userId: string) {
+    return this.userRepository.getUserEventPage(userId);
+  }
 }
