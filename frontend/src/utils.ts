@@ -22,6 +22,11 @@ export class Feed {
   updatedAt?: Date;
 }
 
+export class EventPageDto {
+  favoriteEventIds: string[] = [];
+  followedProfiles: string[] = [];
+}
+
 export class FeedResponse {
   profileId?: string;
   profileName?: string;
