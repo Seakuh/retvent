@@ -29,7 +29,7 @@ const Login: React.FC = () => {
       localStorage.setItem("access_token", response.access_token);
       localStorage.setItem("user", JSON.stringify(response.user));
       setLoggedIn(true);
-      syncFavorites();
+      void syncFavorites();
       setUser(response.user as User);
       navigate(`/`);
       window.location.reload();
