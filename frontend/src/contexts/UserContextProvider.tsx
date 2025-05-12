@@ -34,16 +34,20 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("loggedIn", JSON.stringify(loggedIn));
-  }, [favoriteEventIds, user, loggedIn]);
+  }, [user, loggedIn]);
 
   const addFavorite = async (eventId: string) => {
-    void eventService.addFavorite(eventId);
+    if (loggedIn) {
+      void eventService.addFavorite(eventId);
+    }
     setFavoriteEventIds((prev) => [...new Set([...prev, eventId])]);
     localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
   };
 
   const removeFavorite = async (eventId: string) => {
-    void eventService.removeFavorite(eventId);
+    if (loggedIn) {
+      void eventService.removeFavorite(eventId);
+    }
     setFavoriteEventIds((prev) => prev.filter((id) => id !== eventId));
     localStorage.setItem("favoriteEventIds", JSON.stringify(favoriteEventIds));
   };

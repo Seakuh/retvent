@@ -50,13 +50,11 @@ function LandingPage() {
 
   // Event State
   const [events, setEvents] = useState<Event[]>([]);
-  const [userEvents, setUserEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
 
   // User Page
   const [favoriteEvents, setFavoriteEvents] = useState<Event[]>([]);
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showUploads, setShowUploads] = useState(false);
   const [followedProfiles, setFollowedProfiles] = useState<FeedResponse[]>([]);
 
@@ -72,6 +70,11 @@ function LandingPage() {
   const [feedItemsResponse, setFeedItemsResponse] = useState<FeedResponse[]>(
     []
   );
+
+  const handleLogout = () => {
+    setLoggedIn(false);
+    setViewMode("All");
+  };
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -175,7 +178,6 @@ function LandingPage() {
             getLatestFeedByFollowing(),
           ]);
           setFavoriteEvents(favoriteEvents);
-          setUserEvents(favoriteEvents);
           setFollowedProfiles(followedProfiles);
         }
       } catch (error) {
@@ -184,7 +186,6 @@ function LandingPage() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [
     startDate,
@@ -388,9 +389,7 @@ function LandingPage() {
                         </button>
                       ) : (
                         <button
-                          onClick={() => {
-                            setLoggedIn(false);
-                          }}
+                          onClick={handleLogout}
                           className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
                         >
                           <LogOut size={20} />
