@@ -72,8 +72,11 @@ function LandingPage() {
   );
 
   const handleLogout = () => {
+    setFavoriteEvents([]);
+    setFollowedProfiles([]);
     setLoggedIn(false);
     setViewMode("All");
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -438,11 +441,7 @@ function LandingPage() {
           ) : viewMode === "Home" ? (
             <EventPage
               favoriteEvents={favoriteEvents}
-              feedItemsResponse={
-                followedProfiles.length > 0
-                  ? followedProfiles
-                  : feedItemsResponse
-              }
+              feedItemsResponse={followedProfiles}
             />
           ) : (
             <div>
