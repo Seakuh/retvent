@@ -3,6 +3,7 @@ import { Event, FeedResponse } from "../../utils";
 import { EventGalleryII } from "../EventGallery/EventGalleryII";
 import { ExploreFeed } from "../Feed/ExploreFeed";
 import "./EventPage.css";
+import { EventSection } from "./EventSection";
 
 export const EventPage = ({
   favoriteEvents,
@@ -21,9 +22,12 @@ export const EventPage = ({
           :)
         </div>
       )}
-
+      <EventSection
+        title="Liked Events"
+        events={favoriteEvents.sort((a, b) => (b.views || 0) - (a.views || 0))}
+      />
       <div className="event-favorites-container">
-        <EventGalleryII events={favoriteEvents} title="Liked Events" />
+        <EventGalleryII events={favoriteEvents} />
       </div>
     </div>
   );
