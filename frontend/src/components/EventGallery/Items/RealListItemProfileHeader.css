@@ -13,12 +13,14 @@
   height: 2.5rem;
   object-fit: cover;
   border-radius: 50%;
+  cursor: pointer;
 }
 
 .real-list-item-profile-header-name {
   font-size: 1rem;
   font-weight: 400;
   color: white;
+  cursor: pointer;
 }
 
 .real-list-item-profile-header-left {
@@ -27,6 +29,10 @@
   align-items: center;
   justify-content: left;
   gap: 1rem;
+}
+
+.real-list-item-profile-header-ellipsis {
+  cursor: pointer;
 }
 
 .real-list-item-profile-header-location {

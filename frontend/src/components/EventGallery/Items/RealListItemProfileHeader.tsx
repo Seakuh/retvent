@@ -47,6 +47,7 @@ export const RealListItemProfileHeader = ({
       </div>
       <div className="real-list-item-profile-header-right">
         <Ellipsis
+          className="real-list-item-profile-header-ellipsis"
           size={25}
           color="white"
           onClick={(e) => handleEllipsisClick(e)}
