@@ -1,21 +1,39 @@
+
+
+.event-gallery-container {
+    max-width: 935px;
+    margin: 0 auto; /* Zentriert den Container */
+}
 .section-title {
     font-size: 3rem;
+    margin-left: 1rem;
     font-weight: 600;
     color: white;
     text-align: left;
-    padding-left: 1rem;
     margin-bottom: 1rem;
     text-transform: uppercase;
+    position: sticky;
+    top: 75px; /* Unter dem Header */
+    background-color: black;
+    z-index: 10;
+    padding: 1rem 0;
 }
 
+/* Fügt einen Container für die sticky Überschriften hinzu */
 .event-date-section {
+    position: relative;
+}
+
+/* Sorgt dafür, dass die sticky Überschrift nur bis zur nächsten Überschrift klebt */
+.event-date-section .section-title {
+    position: sticky;
+    top: 75px; /* Unter dem Header */
 }
 
 .event-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    width: 100%;
 }
 .event-date-heading-container {
     margin-top: 1rem;

@@ -1,9 +1,9 @@
-.section-title-event-section {
+.popular-title {
   font-size: 3rem;
   font-weight: 600;
   color: white;
+  text-align: left;
   margin-left: 1rem;
-  margin-top: -1rem;
 }
 
 /* Haupt-Container für die Event-Karten */
@@ -31,7 +31,7 @@
 }
 
 @media (max-width: 768px) {
-  .section-title-event-section {
+  .popular-title {
     font-size: 1.5rem;
   }
   .event-list-container {

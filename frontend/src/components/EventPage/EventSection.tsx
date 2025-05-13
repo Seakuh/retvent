@@ -57,7 +57,7 @@ export const EventSection = ({ title, events }: EventSectionProps) => {
 
   return (
     <>
-      <h1 className="section-title-event-section">{title}</h1>
+      <h2 className="popular-title">Popular</h2>
       <div className="event-list-wrapper">
         {!isAtStart && events.length > 0 && (
           <button

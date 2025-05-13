@@ -1,12 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Event,
-  formatDate,
-  getDaysPast,
-  getDaysUntilDate,
-  getHoursUntilStart,
-} from "../../utils";
+import { Event, formatDate, getDaysPast, getDaysUntilDate } from "../../utils";
 import "./EventGalleryII.css";
 import { RealListItem } from "./Items/RealListItem";
 
@@ -76,13 +70,13 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
   const groupedPastEvents = groupEventsByDate(pastEvents);
 
   return (
-    <>
+    <div className="event-gallery-container">
       {/* Today Section */}
+      <h2 className="section-title">Today</h2>
       {todayEvents.length > 0 && (
         <div className="event-date-section">
           <div className="event-date-heading-container">
-            <h2 className="section-title">Today</h2>
-            <h3 className="event-date-heading-sub">
+            {/* <h3 className="event-date-heading-sub">
               {(() => {
                 const hoursUntilStart = getHoursUntilStart(
                   todayEvents[0].startDate as string
@@ -91,7 +85,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
                   ? `started ${Math.abs(hoursUntilStart)} hours ago`
                   : `in ${hoursUntilStart} hours`;
               })()}
-            </h3>
+            </h3> */}
           </div>
           <div className="real-event-list-item-container">
             {todayEvents.map((event) => (
@@ -105,21 +99,21 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
       <div className="event-list">
         {Object.keys(groupedUpcomingEvents).length > 0 &&
           Object.entries(groupedUpcomingEvents).map(([date, eventsForDate]) => (
-            <div key={date} className="event-date-section">
-              <div className="event-date-heading-container">
-                <h2 className="section-title">{date}</h2>
-                <h3 className="event-date-heading-sub">
-                  {getDaysUntilDate(date) === 1
-                    ? "tomorrow"
-                    : `in ${getDaysUntilDate(date)} days`}
-                </h3>
+            <>
+              <h2 className="section-title">{date}</h2>
+              <h3 className="event-date-heading-sub">
+                {getDaysUntilDate(date) === 1
+                  ? "tomorrow"
+                  : `in ${getDaysUntilDate(date)} days`}
+              </h3>
+              <div key={date} className="event-date-section">
+                <div className="real-event-list-item-container">
+                  {eventsForDate.map((event) => (
+                    <RealListItem key={getEventId(event)} event={event} />
+                  ))}
+                </div>
               </div>
-              <div className="real-event-list-item-container">
-                {eventsForDate.map((event) => (
-                  <RealListItem key={getEventId(event)} event={event} />
-                ))}
-              </div>
-            </div>
+            </>
           ))}
       </div>
 
@@ -152,6 +146,6 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
