@@ -66,12 +66,11 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
     <div className="event-gallery-container">
       {/* Today Section */}
       <div className="event-date-heading-container">
-        <h2 className="section-title">Today</h2>
+        {todayEvents.length > 0 && <h2 className="section-title">Today</h2>}
       </div>
-      {todayEvents.length > 0 && (
-        <div className="event-date-section">
-          <div className="event-date-heading-container">
-            {/* <h3 className="event-date-heading-sub">
+      <div className="event-date-section">
+        <div className="event-date-heading-container">
+          {/* <h3 className="event-date-heading-sub">
               {(() => {
                 const hoursUntilStart = getHoursUntilStart(
                   todayEvents[0].startDate as string
@@ -81,14 +80,13 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
                   : `in ${hoursUntilStart} hours`;
               })()}
             </h3> */}
-          </div>
-          <div className="real-event-list-item-container">
-            {todayEvents.map((event) => (
-              <RealListItem key={getEventId(event)} event={event} />
-            ))}
-          </div>
         </div>
-      )}
+        <div className="real-event-list-item-container">
+          {todayEvents.map((event) => (
+            <RealListItem key={getEventId(event)} event={event} />
+          ))}
+        </div>
+      </div>
 
       {/* Upcoming Section */}
       <div className="event-list">
