@@ -680,10 +680,21 @@ export const getDaysUntilDate = (date: string | Date): number => {
 };
 
 export const getDaysPast = (date: string | Date): number => {
-  const eventDate = new Date(date);
+  // Extrahiere Monat und Tag aus dem Format "SAT, JUL 12"
+  const [, month, day] = date.toString().split(/[,\s]+/);
+  const currentYear = new Date().getFullYear();
+
+  // Erstelle Datum im aktuellen Jahr
+  const eventDate = new Date(`${month} ${day} ${currentYear}`);
   const now = new Date();
+
+  // Setze beide auf Mitternacht, um Zeitunterschiede zu vermeiden
+  eventDate.setHours(0, 0, 0, 0);
+  now.setHours(0, 0, 0, 0);
+
   const timeDiff = now.getTime() - eventDate.getTime();
-  const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
   return daysDiff;
 };
 

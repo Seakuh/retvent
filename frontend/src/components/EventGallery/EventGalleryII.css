@@ -60,6 +60,9 @@
     text-align: left;
     color: var(--color-neon-blue);
 }
+.event-date-heading-sub-past {
+    color: var(--color-neon-pink);
+}
 
 .event-list-item {
     display: flex;

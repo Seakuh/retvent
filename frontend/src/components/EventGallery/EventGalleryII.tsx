@@ -117,18 +117,17 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
       {/* Past Events Section */}
       {pastEvents.length > 0 && (
         <>
-          <div className="event-date-section">
-            <div className="event-date-heading-container">
-              <h2 className="section-title past-events-title">Past</h2>
-              <h3 className="event-date-heading-sub">
-                {getDaysPast(new Date()) <= 1 ? "yesterday" : "days ago"}
-              </h3>
-            </div>
-          </div>
           <div className="event-list">
             {Object.entries(groupedPastEvents).map(([date, eventsForDate]) => (
               <div key={date} className="event-date-section">
-                <h2 className="section-title">{date}</h2>
+                <div className="event-date-heading-container">
+                  <h2 className="section-title">{date}</h2>
+                  <h3 className="event-date-heading-sub event-date-heading-sub-past">
+                    {getDaysPast(date) <= 1
+                      ? "yesterday"
+                      : `${getDaysPast(date)} days ago`}
+                  </h3>
+                </div>
                 <div className="real-event-list-item-container">
                   {eventsForDate.map((event) => (
                     <RealListItem
