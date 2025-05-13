@@ -1,4 +1,4 @@
-import { Eye, Heart, MapPin, MessageCircle, Send } from "lucide-react";
+import { Eye, Heart, MessageCircle, Send } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -78,7 +78,7 @@ export const EventCard = ({ event }: { event: Event }) => {
           className="event-card-image"
           loading="lazy"
           decoding="async"
-          src={`https://img.event-scanner.com/insecure/rs:fill:320:560/q:70/plain/${event.imageUrl}@webp`}
+          src={`https://img.event-scanner.com/insecure/rs:fill:320:350/q:70/plain/${event.imageUrl}@webp`}
           alt={event.title}
         />
       </div>
@@ -88,16 +88,16 @@ export const EventCard = ({ event }: { event: Event }) => {
         </span>
         <h3 className="event-card-title">{event.title}</h3>
         <div className="event-card-description">{event.description}</div>
-        <div className="event-tags-real-list-item event-card-tags">
+        {/* <div className="event-tags-real-list-item event-card-tags">
           {event.tags?.map((tag) => (
             <span key={tag} className="event-tag">
               {tag.toLowerCase()}
             </span>
           ))}
-        </div>
+        </div> */}
         <div className="event-card-location-container">
-          <MapPin size={25} />
-          <p>{event.city || "TBA"}</p>
+          {/* <MapPin size={25} />
+          <p>{event.city || "TBA"}</p> */}
         </div>
         <div className="event-card-details">
           <div className="event-card-community-container">

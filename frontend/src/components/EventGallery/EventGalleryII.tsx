@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Event, formatDate, getDaysPast, getDaysUntilDate } from "../../utils";
 import "./EventGalleryII.css";
 import { RealListItem } from "./Items/RealListItem";
@@ -9,15 +8,9 @@ const DEFAULT_IMAGE =
 
 interface EventGalleryProps {
   events: Event[];
-  title: string;
 }
 
-export const EventGalleryII: React.FC<EventGalleryProps> = ({
-  events,
-  title,
-}) => {
-  const navigate = useNavigate();
-
+export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
   const getEventId = (event: Event) => event.id || event._id;
 
   // Setze einmal aktuelle Mitternachts-Zeit

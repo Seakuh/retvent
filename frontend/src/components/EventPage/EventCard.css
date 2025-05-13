@@ -10,14 +10,10 @@
 }
 
 .event-card-image-container {
-  width: 100%;
-  height: 70%;
   overflow: hidden;
 }
 
 .event-card-image {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 
@@ -128,7 +124,7 @@
   overflow: hidden;
   gap: 0.5rem;
   width: 100%;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  /* border-top: 1px solid rgba(255, 255, 255, 0.1); */
   padding-top: 0.5rem;
   margin-top: 1rem;
 }
