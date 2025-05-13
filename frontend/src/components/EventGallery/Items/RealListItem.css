@@ -1,7 +1,9 @@
 .real-list-item-container {
-  width: 468px;
+  width: 935px;
   max-width: 100%;
   margin: 0 auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
 }
 
 .real-event-list-item {
@@ -12,7 +14,7 @@
   gap: 0;
   margin-bottom: 0.5rem;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  width: 468px;
+  width: 935px;
   max-width: 100%;
   margin: 0 auto;
 }
@@ -53,7 +55,6 @@
   justify-content: space-between;
   font-size: 1.2rem;
   color: #aaa;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 0.5rem;
   margin-top: 0.5rem;
 }
