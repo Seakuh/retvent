@@ -34,8 +34,9 @@
 .real-event-thumbnail img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center; /* zentriert das Bild */
+  object-fit: contain; /* Ändert sich zu contain um das ganze Bild anzuzeigen */
+  object-position: center;
+  background-color: black; /* Fügt schwarzen Hintergrund für letterboxing hinzu */
 }
 
 .event-description-real-list-item {

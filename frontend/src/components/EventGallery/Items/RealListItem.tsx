@@ -54,7 +54,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
       >
         <div className="real-event-thumbnail">
           <img
-            src={`https://img.event-scanner.com/insecure/rs:fill:500:281/q:70/plain/${event.imageUrl}@webp`}
+            src={`https://img.event-scanner.com/insecure/rs:fit:935/q:70/plain/${event.imageUrl}@webp`}
             alt={event.title}
             loading="lazy"
             decoding="async"
