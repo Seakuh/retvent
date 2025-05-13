@@ -1,10 +1,8 @@
 
 .event-section-container {
-  background-color: black;
   border-radius: 1rem 1rem 0 0;
-  max-width: 935px;
+  max-width: 80rem;
   margin: 0 auto;
-  padding: 1rem;
 }
 
 .popular-title {
@@ -13,9 +11,8 @@
   color: white;
   text-align: left;
   margin-left: 1rem;
-  max-width: 935px;
+  max-width: 80rem;
   margin: 0 auto;
-  background-color: black;
 }
 
 /* Haupt-Container für die Event-Karten */
@@ -28,9 +25,8 @@
   gap: 0.5rem;
   scroll-behavior: smooth;
   white-space: nowrap;
-  padding: 1rem;
   height: 100%;
-  max-width: 935px;
+  max-width: 80rem;
   margin: 0 auto;
 }
 
@@ -66,7 +62,7 @@
   scroll-behavior: smooth;
   padding: 1rem 0;
   scrollbar-width: none; /* optional: versteckt Scrollbar */
-  max-width: 935px;
+  max-width: 80rem;
   margin: 0 auto;
 }
 
@@ -76,7 +72,7 @@
 .event-card-list-item {
   min-width: 250px;
   flex-shrink: 0;
-  max-width: 935px;
+  max-width: 80rem;
   margin: 0 auto;
 }
 
@@ -92,9 +88,9 @@
 }
 
 .scroll-button-left {
-  left: calc((100% - 935px) / 2);
+  left: calc((100% - 80rem) / 2);
 }
 
 .scroll-button-right {
-  right: calc((100% - 935px) / 2);
+  right: calc((100% - 80rem) / 2);
 }
