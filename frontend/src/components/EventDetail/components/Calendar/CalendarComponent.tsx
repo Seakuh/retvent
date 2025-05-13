@@ -185,6 +185,20 @@ export const CalendarComponent = ({
     setIsEditingDate(false);
   };
 
+  // Event-Handler für Tastatureingaben hinzufügen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        handlePrevMonth();
+      } else if (e.key === "ArrowRight") {
+        handleNextMonth();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <div
       onClick={(e) => e.target === e.currentTarget && onClose()}
