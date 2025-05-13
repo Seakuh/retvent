@@ -20,6 +20,12 @@ export const RealListItemProfileHeader = ({
     e.stopPropagation();
     navigate(`/profile/${id}`);
   };
+
+  const handleEllipsisClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    console.log("ellipsis clicked");
+    navigate("/imprint");
+  };
   return (
     <div className="real-list-item-profile-header">
       <div className="real-list-item-profile-header-left">
@@ -40,7 +46,11 @@ export const RealListItemProfileHeader = ({
         </div>
       </div>
       <div className="real-list-item-profile-header-right">
-        <Ellipsis size={25} color="white" />
+        <Ellipsis
+          size={25}
+          color="white"
+          onClick={(e) => handleEllipsisClick(e)}
+        />
       </div>
     </div>
   );
