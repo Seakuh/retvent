@@ -72,7 +72,9 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
   return (
     <div className="event-gallery-container">
       {/* Today Section */}
-      <h2 className="section-title">Today</h2>
+      <div className="event-date-heading-container">
+        <h2 className="section-title">Today</h2>
+      </div>
       {todayEvents.length > 0 && (
         <div className="event-date-section">
           <div className="event-date-heading-container">
@@ -100,12 +102,14 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({
         {Object.keys(groupedUpcomingEvents).length > 0 &&
           Object.entries(groupedUpcomingEvents).map(([date, eventsForDate]) => (
             <>
-              <h2 className="section-title">{date}</h2>
-              <h3 className="event-date-heading-sub">
-                {getDaysUntilDate(date) === 1
-                  ? "tomorrow"
-                  : `in ${getDaysUntilDate(date)} days`}
-              </h3>
+              <div className="event-date-heading-container">
+                <h2 className="section-title">{date}</h2>
+                <h3 className="event-date-heading-sub">
+                  {getDaysUntilDate(date) === 1
+                    ? "tomorrow"
+                    : `in ${getDaysUntilDate(date)} days`}
+                </h3>
+              </div>
               <div key={date} className="event-date-section">
                 <div className="real-event-list-item-container">
                   {eventsForDate.map((event) => (
