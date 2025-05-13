@@ -3,7 +3,6 @@
   width: 100%;
   max-width: 80rem; /* Maximale Breite auf großen Bildschirmen */
   margin: 0 auto; /* Zentriert den Container */
-  background-color: black;
 }
 
 .event-section-next-title-text{

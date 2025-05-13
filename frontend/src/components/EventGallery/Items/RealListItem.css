@@ -2,9 +2,9 @@
   width: 935px;
   max-width: 100%;
   margin: 0 auto;
-  margin-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
+  padding-bottom: 1rem;
+  background-color: black;
 }
 
 .real-event-list-item {

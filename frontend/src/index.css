@@ -17,8 +17,8 @@
 }
 
 body {
-  /* background: linear-gradient(135deg, #000046 0%, #000000 100%); */
-  background-color: black;
+  background: linear-gradient(135deg, #000046 0%, #000000 100%);
+  /* background-color: black; */
   font-family: system-ui, -apple-system, sans-serif;
 }
 

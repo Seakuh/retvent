@@ -56,7 +56,7 @@ export const EventSection = ({ title, events }: EventSectionProps) => {
   }, []);
 
   return (
-    <>
+    <div className="event-section-container">
       <h2 className="popular-title">Popular</h2>
       <div className="event-list-wrapper">
         {!isAtStart && events.length > 0 && (
@@ -91,6 +91,6 @@ export const EventSection = ({ title, events }: EventSectionProps) => {
           </button>
         )}
       </div>
-    </>
+    </div>
   );
 };
