@@ -88,9 +88,9 @@
 }
 
 .scroll-button-left {
-  left: calc((100% - 80rem) / 2);
+  left: 0;
 }
 
 .scroll-button-right {
-  right: calc((100% - 80rem) / 2);
+  right: 0;
 }

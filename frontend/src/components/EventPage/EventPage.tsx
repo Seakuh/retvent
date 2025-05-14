@@ -13,7 +13,7 @@ export const EventPage = ({
   feedItemsResponse: FeedResponse[];
 }) => {
   return (
-    <div>
+    <div className="event-page-container">
       <ExploreFeed feedItemsResponse={feedItemsResponse} />
       {favoriteEvents.length === 0 && (
         <div className="no-liked-events">

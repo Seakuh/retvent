@@ -2,6 +2,7 @@
   position: relative;
   max-width: 80rem;
   margin: 0 auto;
+  width: 100%;
 }
 
 .explore-feed-container {
@@ -13,6 +14,7 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   scroll-behavior: smooth; /* Für sanftes Scrollen */
+  width: 100%;
 }
 
 .scroll-button {
@@ -43,6 +45,27 @@
 @media (max-width: 768px) {
   .scroll-button {
     display: none;
+  }
+  
+  .explore-feed-wrapper {
+    padding: 0 0.5rem;
+  }
+  
+  .explore-feed-container {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+}
+
+/* Neue Media Query für sehr kleine Bildschirme */
+@media (max-width: 480px) {
+  .explore-feed-wrapper {
+    padding: 0 0.25rem;
+  }
+  
+  .explore-feed-container {
+    padding: 0.25rem;
+    gap: 0.25rem;
   }
 }
 

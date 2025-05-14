@@ -24,7 +24,7 @@ export const EventList = ({ events }) => {
       <button
         className="scroll-arrow scroll-left"
         onClick={() => scroll("left")}
-        aria-label="Nach links scrollen"
+        aria-label="scroll left"
       >
         ←
       </button>
@@ -38,7 +38,7 @@ export const EventList = ({ events }) => {
       <button
         className="scroll-arrow scroll-right"
         onClick={() => scroll("right")}
-        aria-label="Nach rechts scrollen"
+        aria-label="scroll right"
       >
         →
       </button>
