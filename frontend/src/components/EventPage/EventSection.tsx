@@ -56,41 +56,44 @@ export const EventSection = ({ title, events }: EventSectionProps) => {
   }, []);
 
   return (
-    <div className="event-section-container">
-      <h2 className="popular-title">Popular</h2>
-      <div className="event-list-wrapper">
-        {!isAtStart && events.length > 0 && (
-          <button
-            className="scroll-button scroll-button-left"
-            onClick={() => scroll("left")}
-          >
-            <ChevronLeft />
-          </button>
-        )}
+    <>
+      {events.length === 0 ? (
+        <></>
+      ) : (
+        <>
+          <h2 className="popular-title">Popular</h2>
+          <div className="event-list-wrapper">
+            {!isAtStart && events.length > 0 && (
+              <button
+                className="scroll-button scroll-button-left"
+                onClick={() => scroll("left")}
+              >
+                <ChevronLeft />
+              </button>
+            )}
 
-        <div className="event-list-container" ref={scrollContainer}>
-          {events.length === 0 ? (
-            <div className="event-card-list-item">
-              <EventCard event={emptyEvent} />
+            <div className="event-list-container" ref={scrollContainer}>
+              {events.map((event) => (
+                <div
+                  className="event-card-list-item"
+                  key={event.id || event._id}
+                >
+                  <EventCard event={event} />
+                </div>
+              ))}
             </div>
-          ) : (
-            events.map((event) => (
-              <div className="event-card-list-item" key={event.id || event._id}>
-                <EventCard event={event} />
-              </div>
-            ))
-          )}
-        </div>
 
-        {!isAtEnd && events.length > 0 && (
-          <button
-            className="scroll-button scroll-button-right"
-            onClick={() => scroll("right")}
-          >
-            <ChevronRight />
-          </button>
-        )}
-      </div>
-    </div>
+            {!isAtEnd && events.length > 0 && (
+              <button
+                className="scroll-button scroll-button-right"
+                onClick={() => scroll("right")}
+              >
+                <ChevronRight />
+              </button>
+            )}
+          </div>
+        </>
+      )}
+    </>
   );
 };

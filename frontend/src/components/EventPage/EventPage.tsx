@@ -23,7 +23,6 @@ export const EventPage = ({
         </div>
       )}
       <EventSection
-        title="Liked Events"
         events={favoriteEvents.sort((a, b) => (b.views || 0) - (a.views || 0))}
       />
       <div className="event-favorites-container">

@@ -7,25 +7,33 @@
 
 
 .event-date-heading-container {
+    position: -webkit-sticky; /* Für Safari Support */
     position: sticky;
     top: 75px;
     z-index: 10;
     width: 470px;
     background-color: var(--color-neon-blue-dark-2);
     margin: 0 auto;
+    /* Stelle sicher, dass der Container einen definierten Kontext hat */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
+
 .section-title {
-    font-size: 2rem;
+    font-size: 2rem; 
     margin-left: 1rem;
     font-weight: 600;
     color: white;
     text-align: left;
     text-transform: uppercase;
+    position: -webkit-sticky;
     position: sticky;
-    top: 75px; /* Unter dem Header */
+    top: 75px;
     z-index: 10;
     padding: 1rem 0;
-    z-index: 1;
+    /* Stelle sicher, dass der Container einen definierten Kontext hat */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 /* Fügt einen Container für die sticky Überschriften hinzu */
@@ -157,6 +165,7 @@
 
 /* Mobile Anpassungen */
 @media (max-width: 600px) {
+
 
     .section-title {
         font-size: 1.5rem;
