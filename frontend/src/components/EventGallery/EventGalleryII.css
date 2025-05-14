@@ -11,7 +11,8 @@
     position: sticky;
     top: 75px;
     z-index: 10;
-    width: 470px;
+    width: 100%;
+    max-width: 470px;
     background-color: var(--color-neon-blue-dark-2);
     margin: 0 auto;
     /* Stelle sicher, dass der Container einen definierten Kontext hat */
