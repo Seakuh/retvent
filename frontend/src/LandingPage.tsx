@@ -15,11 +15,8 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { CityBar } from "./components/CityBar/CityBar";
-import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
-import { EventSection } from "./components/EventPage/EventSection";
 import { fetchFavoriteEvents } from "./components/EventPage/service";
-import { ExploreFeed } from "./components/Feed/ExploreFeed";
 import {
   getLatestFeedAll,
   getLatestFeedByFollowing,
@@ -444,14 +441,10 @@ function LandingPage() {
               feedItemsResponse={followedProfiles}
             />
           ) : (
-            <div>
-              <ExploreFeed feedItemsResponse={feedItemsResponse} />
-
-              <EventSection
-                events={events.sort((a, b) => (b.views || 0) - (a.views || 0))}
-              />
-              <EventGalleryII title={category} events={events} />
-            </div>
+            <EventPage
+              favoriteEvents={events}
+              feedItemsResponse={feedItemsResponse}
+            />
           )}
         </main>
         <SearchModal
