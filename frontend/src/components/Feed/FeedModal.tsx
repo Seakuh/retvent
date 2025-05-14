@@ -23,6 +23,7 @@ export const FeedModal = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [animationKey, setAnimationKey] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
 
@@ -32,7 +33,7 @@ export const FeedModal = ({
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
-    if (!isPaused) {
+    if (!isPaused && !isImageLoading) {
       timerRef.current = setTimeout(() => {
         handleNext();
       }, 5000);
@@ -41,7 +42,52 @@ export const FeedModal = ({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [currentImageIndex, feedItem, isPaused]);
+  }, [currentImageIndex, feedItem, isPaused, isImageLoading]);
+
+  // Verbesserte Vorladefunktion mit Promise
+  const preloadImage = (url: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve();
+      img.onerror = reject;
+      img.src = `https://img.event-scanner.com/insecure/rs:auto/plain/${url}@webp`;
+    });
+  };
+
+  // Vorladen aller relevanten Bilder
+  useEffect(() => {
+    const loadImages = async () => {
+      if (feedItem.feedItems) {
+        setIsImageLoading(true);
+        try {
+          // Aktuelles Bild
+          await preloadImage(
+            feedItem.feedItems[currentImageIndex].feedImageUrl
+          );
+
+          // Nächstes Bild im aktuellen Feed
+          if (currentImageIndex < feedItem.feedItems.length - 1) {
+            preloadImage(
+              feedItem.feedItems[currentImageIndex + 1].feedImageUrl
+            );
+          }
+
+          // Vorheriges Bild im aktuellen Feed
+          if (currentImageIndex > 0) {
+            preloadImage(
+              feedItem.feedItems[currentImageIndex - 1].feedImageUrl
+            );
+          }
+        } catch (error) {
+          console.error("Fehler beim Laden der Bilder:", error);
+        } finally {
+          setIsImageLoading(false);
+        }
+      }
+    };
+
+    loadImages();
+  }, [currentImageIndex, feedItem.feedItems]);
 
   const handlePause = () => {
     setIsPaused(true);
@@ -58,32 +104,44 @@ export const FeedModal = ({
     }, 5000);
   };
 
-  const handlePrev = () => {
+  // Verbesserte handleNext Funktion
+  const handleNext = async () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    if (currentImageIndex < feedItem.feedItems!.length - 1) {
+      setIsImageLoading(true);
+      setCurrentImageIndex(currentImageIndex + 1);
+    } else {
+      setIsImageLoading(true);
+      setCurrentImageIndex(0);
+      showNextFeed();
+    }
+  };
+
+  // Verbesserte handlePrev Funktion
+  const handlePrev = async () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+
     if (currentImageIndex > 0) {
+      setIsImageLoading(true);
       setCurrentImageIndex(currentImageIndex - 1);
     } else {
+      setIsImageLoading(true);
       setCurrentImageIndex(0);
       showPreviousFeed();
     }
   };
 
-  const handleNext = () => {
-    if (currentImageIndex < feedItem.feedItems!.length - 1) {
-      setCurrentImageIndex(currentImageIndex + 1);
-    } else {
-      setCurrentImageIndex(0);
-      showNextFeed();
-    }
-  };
-
   const handlers = useSwipeable({
-    onSwipedLeft: () => {
+    onSwipedLeft: async () => {
       if (timerRef.current) clearTimeout(timerRef.current);
+      setIsImageLoading(true);
       setCurrentImageIndex(0);
       showNextFeed();
     },
-    onSwipedRight: () => {
+    onSwipedRight: async () => {
       if (timerRef.current) clearTimeout(timerRef.current);
+      setIsImageLoading(true);
       setCurrentImageIndex(0);
       showPreviousFeed();
     },
@@ -182,13 +240,15 @@ export const FeedModal = ({
             }
           }}
         >
+          {isImageLoading && (
+            <div className="image-loading-spinner">
+              {/* Hier können Sie einen Ladeindikator hinzufügen */}
+              <div className="spinner"></div>
+            </div>
+          )}
           <img
-            className="feed-modal-image"
-            // onClick={() => {
-            //   navigate(
-            //     `/event/${feedItem.feedItems![currentImageIndex].eventId}`
-            //   );
-            // }}
+            className={`feed-modal-image ${isImageLoading ? "loading" : ""}`}
+            loading="eager"
             src={`https://img.event-scanner.com/insecure/rs:auto/plain/${
               feedItem.feedItems![currentImageIndex].feedImageUrl
             }@webp`}
@@ -197,6 +257,10 @@ export const FeedModal = ({
               navigate(
                 `/event/${feedItem.feedItems![currentImageIndex].eventId}`
               );
+            }}
+            onError={() => {
+              setIsImageLoading(false);
+              console.error("Fehler beim Laden des Bildes");
             }}
           />
         </div>
