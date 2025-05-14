@@ -109,6 +109,10 @@
   cursor: pointer;
   margin: 0 auto;
   border-radius: 1rem;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  transition: opacity 0.3s ease-in-out;
 }
 
 /* Navigation Buttons */
@@ -269,6 +273,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
+  pointer-events: none;
 }
 
 .spinner {
@@ -287,4 +292,5 @@
 
 .feed-modal-image.loading {
   opacity: 0.5;
+  pointer-events: none;
 }
