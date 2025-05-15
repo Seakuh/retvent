@@ -38,7 +38,6 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
     navigator.share(shareData);
   };
 
-  console.log(event);
   return (
     <div className="real-list-item-container">
       <RealListItemProfileHeader
