@@ -1,7 +1,10 @@
 .real-list-item-container {
+  width: 470px;
+  height: auto;
   max-width: 100%;
-  margin: 0;
+  margin: 0 auto;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
   background-color: black;
 }
 
@@ -11,25 +14,30 @@
   background-color: black;
   cursor: pointer;
   gap: 0;
+  margin-bottom: 0.5rem;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  margin: 0;
+  width: 470px;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
+
 .real-event-thumbnail {
-  width: 80rem/3;
-  height: 30rem;
+  max-width: 100%;
+  min-width: 100%;
+  width: 100%;
   overflow: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin: 0 auto; /* Add margin auto to center horizontally */
+  justify-content: center;
 }
+
 .real-event-thumbnail img {
   width: 100%;
-  height: 100%; /* Add height 100% */
-  object-fit: contain;
+  height: 100%;
+  object-fit: contain; /* Ändert sich zu contain um das ganze Bild anzuzeigen */
   object-position: center;
-  background-color: black;
+  background-color: black; /* Fügt schwarzen Hintergrund für letterboxing hinzu */
 }
 
 .event-description-real-list-item {
@@ -40,7 +48,7 @@
   text-align: left;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -83,6 +91,7 @@
 .event-tags-real-list-item {
   margin: 0.75rem 0;
   overflow-x: auto;
+  padding-bottom: 4px;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -111,15 +120,3 @@
 .past-event {
   opacity: 0.5;
 }
-
-@media (max-width: 768px) {
-  .real-event-thumbnail {
-    width: 100%;
-    height: 25rem;
-    object-fit: cover;
-    object-position: center;
-    background-color: black;
-    margin: 0;
-  }
-}
-
