@@ -4,7 +4,6 @@ import {
   LogOut,
   Menu,
   Plus,
-  Search,
   Send,
   Settings,
   Smartphone,
@@ -14,13 +13,13 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
-import { CityBar } from "./components/CityBar/CityBar";
 import { EventPage } from "./components/EventPage/EventPage";
 import { fetchFavoriteEvents } from "./components/EventPage/service";
 import {
   getLatestFeedAll,
   getLatestFeedByFollowing,
 } from "./components/Feed/service";
+import { SearchBar } from "./components/SearchBarComponent/SearchBar";
 import SearchModal from "./components/SearchModal/SearchModal";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
@@ -286,12 +285,12 @@ function LandingPage() {
               </div>
 
               <div className="flex items-center gap-4">
-                <button
+                {/* <button
                   className="search-icon"
                   onClick={() => setIsSearchOpen(true)}
                 >
                   <Search size={24} color="white" />
-                </button>
+                </button> */}
                 <button
                   className="upload-icon"
                   onClick={() => {
@@ -406,9 +405,13 @@ function LandingPage() {
 
         <main className="max-w-7xl mx-auto">
           <div className="px-4 py-6">
-            <CityBar
+            <SearchBar
               onLocationSelect={handleLocationChange}
               selectedLocation={location}
+              handleSearch={handleSearch}
+              prompt={prompt}
+              setDateRange={handleDateChange}
+              events={favoriteEvents}
             />
 
             <CategoryFilter
