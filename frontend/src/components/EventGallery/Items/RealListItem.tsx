@@ -2,7 +2,7 @@ import { Eye, Heart, MessageCircle, Send } from "lucide-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
-import { Event } from "../../../utils";
+import { DEFAULT_IMAGE, Event } from "../../../utils";
 import "./RealListItem.css";
 import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
 
@@ -58,6 +58,10 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             alt={event.title}
             loading="lazy"
             decoding="async"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = DEFAULT_IMAGE;
+            }}
           />
         </div>
         <div className="miniature-event-info">

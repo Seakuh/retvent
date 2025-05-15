@@ -81,6 +81,10 @@ export const EventCard = ({ event }: { event: Event }) => {
           decoding="async"
           src={`https://img.event-scanner.com/insecure/rs:fill:320:350/q:70/plain/${event.imageUrl}@webp`}
           alt={event.title}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = DEFAULT_IMAGE;
+          }}
         />
       </div>
       <div className="event-card-info-container">

@@ -1,5 +1,6 @@
 import { Ellipsis, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { DEFAULT_IMAGE } from "../../../utils";
 import "./RealListItemProfileHeader.css";
 
 interface RealListItemProfileHeaderProps {
@@ -34,6 +35,10 @@ export const RealListItemProfileHeader = ({
           src={`https://img.event-scanner.com/insecure/rs:fill:40:40/q:70/plain/${profileUrl}@webp`}
           alt={name}
           onClick={handleOnClick}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = DEFAULT_IMAGE;
+          }}
         />
         <div className="real-list-item-profile-header-name-container">
           <h3 className="real-list-item-profile-header-name">
