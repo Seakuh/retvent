@@ -484,7 +484,7 @@ export class EventService {
     lon?: number,
     userId?: string,
   ): Promise<Event> {
-    console.info('[EventService] Processing new event (v4)');
+    console.info('[EventService] Processing new event (v5)');
     try {
       // 1. Upload image and get URL
       const uploadedImageUrl = await this.imageService.uploadImage(image);
@@ -520,7 +520,10 @@ export class EventService {
         },
         status: 'pending',
         hostId: userId || 'public', // Setze hostId auf userId wenn vorhanden, sonst 'public'
-        hostImageUrl: hostImageUrl || undefined,
+        host: {
+          profileImageUrl: hostImageUrl || undefined,
+          username: profile.username || undefined,
+        },
       };
 
       const createdEvent = await this.eventRepository.create(eventData);
