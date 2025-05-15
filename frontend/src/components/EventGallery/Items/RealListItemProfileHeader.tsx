@@ -33,10 +33,13 @@ export const RealListItemProfileHeader = ({
           className="real-list-item-profile-header-image"
           src={`https://img.event-scanner.com/insecure/rs:fill:40:40/q:70/plain/${profileUrl}@webp`}
           alt={name}
-          onClick={handleOnClick}
+          onClick={name ? handleOnClick : undefined}
         />
         <div className="real-list-item-profile-header-name-container">
-          <h3 className="real-list-item-profile-header-name">
+          <h3
+            className="real-list-item-profile-header-name"
+            onClick={name ? handleOnClick : undefined}
+          >
             {name || "Public"}
           </h3>
           <p className="real-list-item-profile-header-location">
