@@ -3,81 +3,63 @@
   flex-direction: row;
   background-color: black;
   cursor: pointer;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
+
 
 .real-event-thumbnail {
   max-width: 38.2%;
   min-width: 38.2%;
-  aspect-ratio: 16/9;
+  height: 100%;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
 }
 
 .real-event-thumbnail img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center; /* zentriert das Bild */
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+
+.miniature-event-info {
+  width: 61.8%; /* Goldener Schnitt: ~61.8% */
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: black;
+}
+
+.event-info-title-headline {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
+  color: white;
 }
 
 .event-description-real-list-item {
   font-size: 1rem;
-  color: gray;
-  margin-bottom: 0.5rem;
+  color: #b0b0b0;
+  margin-top: 0.5rem;
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-}
-
-.real-list-item-meta-container {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  color: #aaa;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 0.5rem;
-  margin-top: 1rem;
-}
-
-.event-meta-container-left {
-  display: flex;
-  gap: 0.5rem;
-  margin-left: 0.5rem !important;
-}
-
-.real-list-item-meta-container span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.event-meta-container {
-  display: flex;
-  justify-content: space-between !important;
-}
-
-.real-list-item-location {
-  display: flex;
-  align-items: center;
-  margin-top: 0.5rem;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  color: var(--color-neon-blue);
+  line-height: 1.4;
 }
 
 .event-tags-real-list-item {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin: 0.75rem 0 1rem;
+  flex-wrap: wrap;
 }
 
 .event-tag {
@@ -91,40 +73,91 @@
   padding: 0.2rem 0.5rem;
   border: 1px solid var(--color-neon-blue-light);
   border-radius: 1rem;
+  transition: background 0.2s ease;
 }
 
-.miniature-event-info {
-  width: 61.8%; /* Goldener Schnitt: ~61.8% */
+.event-tag:hover {
+  background: linear-gradient(
+      135deg,
+      rgba(var(--color-neon-blue-rgb), 0.3),
+      rgba(var(--color-neon-purple-rgb), 0.3)
+    );
+}
+
+.real-list-item-location {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-neon-blue);
+}
+
+.real-list-item-meta-container {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #aaa;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.75rem;
+  margin-top: auto;
+}
+
+.event-meta-container-left {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.real-list-item-meta-container span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.event-meta-container {
+  display: flex;
+  justify-content: space-between !important;
+  width: 100%;
+}
+
+.real-list-item-divider {
+  border: 0;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 0.75rem 0;
 }
 
 .past-event {
-  opacity: 0.5;
+  opacity: 0.6;
+}
+
+.event-lineup-real-list-item {
+  color: white;
+  overflow: hidden;
+  text-align: left;
 }
 
 /* Mobiles Design (Instagram-Style) */
 @media (max-width: 600px) {
   .real-event-list-item {
     flex-direction: column;
-    width: 100% !important;
-    gap: 0;
   }
   
   .real-event-thumbnail {
     max-width: 100%;
     min-width: 100%;
     width: 100%;
-    aspect-ratio: 4/3; /* Etwas höher für Instagram-Stil */
+    aspect-ratio: 4/3; /* Instagram-Stil */
   }
   
   .miniature-event-info {
     width: 100%;
-    padding: 0.75rem;
+    padding: 1rem;
   }
   
   .event-info-title-headline {
     margin-top: 0;
     font-size: 1.1rem;
-    font-weight: 600;
   }
   
   .event-description-real-list-item {
@@ -140,6 +173,7 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE/Edge */
+    flex-wrap: nowrap;
   }
   
   .event-tags-real-list-item::-webkit-scrollbar {
@@ -148,6 +182,7 @@
   
   .event-tag {
     display: inline-block;
+    flex-shrink: 0;
   }
   
   .real-list-item-meta-container {

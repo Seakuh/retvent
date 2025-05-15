@@ -3,9 +3,6 @@ import { Event, formatDate, getDaysPast, getDaysUntilDate } from "../../utils";
 import "./EventGalleryII.css";
 import { RealListItem } from "./Items/RealListItem";
 
-const DEFAULT_IMAGE =
-  "https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png";
-
 interface EventGalleryProps {
   events: Event[];
 }

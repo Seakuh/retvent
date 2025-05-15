@@ -65,11 +65,15 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           {/* {formatDate(event.startDate as string)} */}
           {/* </h2> */}
           <h1 className="event-info-title-headline">{event.title}</h1>
-          <h2 className="event-description-real-list-item">
+          <h2 className="event-lineup-real-list-item">
             {event.lineup && event.lineup.length > 0
               ? event.lineup.map((artist) => artist.name).join(" ")
-              : event.description}
+              : ""}
           </h2>
+          <h2 className="event-description-real-list-item">
+            {event.description}
+          </h2>
+
           {/* <div className="event-tags-real-list-item">
           {event.tags?.map((tag) => (
             <span key={tag} className="event-tag">
@@ -110,6 +114,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             </div>
           </div>
         </div>
+        <hr className="real-list-item-divider" />
       </div>
     </div>
   );

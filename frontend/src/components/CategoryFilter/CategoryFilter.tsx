@@ -1,4 +1,4 @@
-import { Calendar, Home, SlidersHorizontal, Telescope } from "lucide-react";
+import { Home, SlidersHorizontal, Telescope } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { ViewMode } from "../../types/event";
 import { categoriesToFilter, Event } from "../../utils";
@@ -96,10 +96,10 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         onClick={() => onViewModeChange("All")}
       >
         <Telescope size={20} />
-        All
+        Explore
       </button>
       {/* Calendar/date filter button */}
-      <button
+      {/* <button
         className={`category-button ${
           prevDateRange?.startDate ? "active" : ""
         }`}
@@ -107,7 +107,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       >
         <Calendar size={20} />
         Date
-      </button>
+      </button> */}
 
       {/* Filter by genre button */}
       <button
