@@ -153,6 +153,22 @@ export const FeedModal = ({
     trackMouse: true,
   });
 
+  // Füge Event Listener für Pfeiltasten hinzu
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        handlePrev();
+      } else if (e.key === "ArrowRight") {
+        handleNext();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [currentImageIndex, feedItem.feedItems]);
+
   return (
     <div
       className="feed-modal-overlay"
