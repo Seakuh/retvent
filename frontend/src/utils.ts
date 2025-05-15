@@ -1,8 +1,10 @@
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 export const FRONTEND_URL =
   import.meta.env.VITE_FRONTEND_URL || "https://event-scanner.com/";
-export const DEFAULT_IMAGE =
-  "https://hel1.your-objectstorage.com/imagebucket/events/8d703697-caf7-4438-abda-4ccd8e5939e9.png";
+
+import defaultImage from "/default-image.png";
+
+export const DEFAULT_IMAGE = defaultImage;
 export class Feed {
   id?: string;
   _id?: string;
