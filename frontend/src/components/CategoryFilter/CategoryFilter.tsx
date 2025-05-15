@@ -1,10 +1,9 @@
 import { Home, SlidersHorizontal, Telescope } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { ViewMode } from "../../types/event";
-import { categoriesToFilter, Event } from "../../utils";
-import { CalendarComponent } from "../EventDetail/components/Calendar/CalendarComponent";
+import { Event } from "../../utils";
+import { FilterBar } from "../SearchBarComponent/SearchBar";
 import "./CategoryFilter.css";
-import { GenreModal } from "./GenreModal";
 
 /**
  * Props for the CategoryFilter component
@@ -20,6 +19,17 @@ interface CategoryFilterProps {
   onViewModeChange: (view: ViewMode) => void;
   viewMode: ViewMode;
   events: Event[];
+  location: string;
+  prompt: string;
+  handleLocationChange: (location: string) => void;
+  handleSearch: (searchTerm: string) => void;
+  handleDateChange: (dateRange: {
+    startDate: Date | null;
+    endDate: Date | null;
+  }) => void;
+  favoriteEvents: Event[];
+  startDate: string;
+  endDate: string;
 }
 
 /**
@@ -34,18 +44,27 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onViewModeChange,
   viewMode,
   events,
+  favoriteEvents,
   setDateRange,
   prevDateRange,
+  location,
+  prompt,
+  handleLocationChange,
+  handleSearch,
+  handleDateChange,
+  startDate,
+  endDate,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showGenreModal, setShowGenreModal] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
-
+  // Fillter expand collapse state
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   /**
    * Toggle the genre filter modal visibility
    */
-  const toggleGenreModal = () => {
-    setShowGenreModal(!showGenreModal);
+  const toggleFilterModal = () => {
+    setIsFilterExpanded(!isFilterExpanded);
   };
 
   /**
@@ -81,64 +100,52 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
   return (
     <div className="category-filter" ref={containerRef}>
-      {/* Home button */}
-      <button
-        className={`category-button ${viewMode === "Home" ? "active" : ""}`}
-        onClick={() => onViewModeChange("Home")}
-      >
-        <Home size={20} />
-        Home
-      </button>
+      <div className="selection-bar-container">
+        {/* Home button */}
+        <button
+          className={`category-button ${viewMode === "Home" ? "active" : ""}`}
+          onClick={() => onViewModeChange("Home")}
+        >
+          <Home size={20} />
+          Home
+        </button>
 
-      {/* All events button */}
-      <button
-        className={`category-button ${viewMode === "All" ? "active" : ""}`}
-        onClick={() => onViewModeChange("All")}
-      >
-        <Telescope size={20} />
-        Explore
-      </button>
-      {/* Calendar/date filter button */}
-      {/* <button
-        className={`category-button ${
-          prevDateRange?.startDate ? "active" : ""
-        }`}
-        onClick={() => setShowDateModal(true)}
-      >
-        <Calendar size={20} />
-        Date
-      </button> */}
-
-      {/* Filter by genre button */}
-      <button
-        className={`category-button ${category ? "active" : ""}`}
-        onClick={() => {
-          toggleGenreModal();
-        }}
-      >
-        <SlidersHorizontal size={20} />
-        Filter
-      </button>
-
-      {/* Genre selection modal */}
-      {showGenreModal && (
-        <GenreModal
-          genres={categoriesToFilter}
-          onGenreSelect={handleGenreSelect}
-          selectedGenre={category}
-        />
-      )}
-
-      {/* Calendar date selection modal */}
-      {showDateModal && (
-        <CalendarComponent
-          events={events}
-          onClose={() => setShowDateModal(false)}
-          setDateRange={handleDateSelect}
-          prevDateRange={prevDateRange}
-          onReset={handleDateReset}
-        />
-      )}
+        {/* All events button */}
+        <button
+          className={`category-button ${viewMode === "All" ? "active" : ""}`}
+          onClick={() => onViewModeChange("All")}
+        >
+          <Telescope size={20} />
+          Explore
+        </button>
+        <button
+          className={`category-button ${isFilterExpanded ? "active" : ""}`}
+          onClick={() => {
+            toggleFilterModal();
+          }}
+        >
+          <SlidersHorizontal size={20} />
+          Filter
+        </button>
+      </div>
+      <div>
+        {isFilterExpanded && (
+          <div className="filter-bar-container">
+            <FilterBar
+              onLocationSelect={handleLocationChange}
+              selectedLocation={location}
+              handleSearch={handleSearch}
+              prompt={prompt}
+              setDateRange={handleDateChange}
+              events={favoriteEvents}
+              prevDateRange={{
+                startDate: startDate ? new Date(startDate) : null,
+                endDate: endDate ? new Date(endDate) : null,
+              }}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

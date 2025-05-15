@@ -19,8 +19,6 @@ import {
   getLatestFeedAll,
   getLatestFeedByFollowing,
 } from "./components/Feed/service";
-import { SearchBar } from "./components/SearchBarComponent/SearchBar";
-import SearchModal from "./components/SearchModal/SearchModal";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
 import { HelmetMeta } from "./LandingPageHelmet";
@@ -405,15 +403,6 @@ function LandingPage() {
 
         <main className="max-w-7xl mx-auto">
           <div className="px-4 py-6">
-            <SearchBar
-              onLocationSelect={handleLocationChange}
-              selectedLocation={location}
-              handleSearch={handleSearch}
-              prompt={prompt}
-              setDateRange={handleDateChange}
-              events={favoriteEvents}
-            />
-
             <CategoryFilter
               prevDateRange={{
                 startDate: startDate ? new Date(startDate) : null,
@@ -450,12 +439,7 @@ function LandingPage() {
             />
           )}
         </main>
-        <SearchModal
-          prompt={prompt}
-          isOpen={isSearchOpen}
-          onClose={() => setIsSearchOpen(false)}
-          onSearch={handleSearch}
-        />
+
         <UploadModal
           isOpen={isUploadOpen}
           onClose={() => setIsUploadOpen(false)}

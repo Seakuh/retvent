@@ -2,7 +2,6 @@ import { Calendar, MapPin, Search, X } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { Event } from "../../utils";
 import { CalendarComponent } from "../EventDetail/components/Calendar/CalendarComponent";
-import SearchModal from "../SearchModal/SearchModal";
 import CityBarModal from "./CityBarModal";
 import "./SearchBar.css";
 // Types
@@ -11,7 +10,7 @@ interface DateRange {
   endDate: Date | null;
 }
 
-interface SearchBarProps {
+interface FilterBarProps {
   onLocationSelect: (location: string) => void;
   selectedLocation: string;
   handleSearch: (searchTerm: string) => void;
@@ -21,7 +20,7 @@ interface SearchBarProps {
   events: Event[];
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({
+export const FilterBar: React.FC<FilterBarProps> = ({
   onLocationSelect,
   selectedLocation,
   handleSearch,
@@ -36,6 +35,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
   const [isCalendarModalOpen, setIsCalendarModalOpen] =
     useState<boolean>(false);
+  const [categoryModalOpen, setCategoryModalOpen] = useState<boolean>(false);
   const [recentLocations, setRecentLocations] = useState<string[]>(() => {
     const saved = localStorage.getItem("recentLocations");
     return saved ? JSON.parse(saved) : [];
@@ -95,68 +95,56 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   );
 
   return (
-    <div className="city-bar-wrapper">
-      <div className="city-bar-container">
-        <div className="city-bar-split">
-          {/* Search Section */}
-          <div
-            className="city-bar-input-container"
-            onClick={() => setIsSearchModalOpen(true)}
-          >
-            <Search
+    <div className="search-bar-wrapper">
+      {/* Top Search Bar */}
+      <div className="search-bar-container">
+        <div
+          className="city-bar-input-container"
+          onClick={() => setIsSearchModalOpen(true)}
+        >
+          <Search size={20} className="city-bar-icon" />
+          <button type="button" className="city-bar-input-button">
+            {prompt}
+          </button>
+        </div>
+      </div>
+
+      {/* Bottom Bar with Location and Date */}
+      <div className="filter-bar-container">
+        <div
+          className="filter-item"
+          onClick={() => setIsLocationModalOpen(true)}
+        >
+          <MapPin
+            size={20}
+            className="city-bar-icon"
+            absoluteStrokeWidth={false}
+          />
+          <button type="button" className="city-bar-input-button">
+            {selectedLocation}
+          </button>
+          {selectedLocation !== "Worldwide" && (
+            <X
               size={20}
-              className="city-bar-icon"
-              absoluteStrokeWidth={false}
+              className="city-bar-input-button-close"
+              onClick={handleLocationReset}
             />
-            <button type="button" className="city-bar-input-button">
-              {prompt}
-            </button>
-          </div>
-
-          <div className="city-bar-divider">|</div>
-
-          {/* Location Section */}
-          <div
-            className="city-bar-input-container"
-            onClick={() => setIsLocationModalOpen(true)}
-          >
-            <MapPin
-              size={20}
-              className="city-bar-icon"
-              absoluteStrokeWidth={false}
-            />
-            <button type="button" className="city-bar-input-button">
-              {selectedLocation}
-            </button>
-          </div>
-
-          <div className="city-bar-divider">|</div>
-
-          {/* Calendar Section */}
-          <div className="city-bar-input-container">
-            <Calendar
-              size={20}
-              className="city-bar-icon"
-              absoluteStrokeWidth={false}
-            />
-            <button
-              type="button"
-              className="calendar-bar-input-button"
-              onClick={() => setIsCalendarModalOpen(true)}
-            >
-              {prevDateRange?.startDate?.toLocaleDateString() || "Today"}
-            </button>
-          </div>
+          )}
         </div>
 
-        {/* Location Reset Button */}
-        {selectedLocation !== "Worldwide" && (
-          <X
+        <div
+          className="filter-item"
+          onClick={() => setIsCalendarModalOpen(true)}
+        >
+          <Calendar
             size={20}
-            className="city-bar-input-button-close"
-            onClick={handleLocationReset}
+            className="city-bar-icon"
+            absoluteStrokeWidth={false}
           />
-        )}
+          <button type="button" className="calendar-bar-input-button">
+            {prevDateRange?.startDate?.toLocaleDateString() || "Today"}
+          </button>
+        </div>
       </div>
 
       {/* Modals */}
@@ -170,20 +158,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         />
       )}
 
-      {isSearchModalOpen && (
-        <SearchModal
-          prompt={prompt}
-          isOpen={isSearchModalOpen}
-          onClose={() => setIsSearchModalOpen(false)}
-          onSearch={handleSearch}
-        />
-      )}
-
       {isLocationModalOpen && (
         <CityBarModal
           isOpen={isLocationModalOpen}
           onClose={() => setIsLocationModalOpen(false)}
           onSearch={handleLocationSelect}
+        />
+      )}
+
+      {categoryModalOpen && (
+        <CategoryModal
+          isOpen={categoryModalOpen}
+          onClose={() => setCategoryModalOpen(false)}
         />
       )}
     </div>
