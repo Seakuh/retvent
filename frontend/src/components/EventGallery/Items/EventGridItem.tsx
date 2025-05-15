@@ -20,9 +20,11 @@ export const EventGridItem: React.FC<EventGridItemProps> = ({
     >
       <div className="event-grid-item-image">
         <img
-          src={`https://img.event-scanner.com/insecure/q:70/plain/${event.imageUrl}@webp`}
+          src={`https://img.event-scanner.com/insecure/rs:fill:400:400/q:70/plain/${event.imageUrl}@webp`}
           alt={event.title}
-          loading="lazy"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
       </div>
       {/* <div className="event-grid-item-info">
