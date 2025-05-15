@@ -17,17 +17,17 @@
 
 /* Haupt-Container für die Event-Karten */
 .event-list-container {
-  white-space: nowrap;
   display: flex;
-  flex-direction: row;
   overflow-x: auto;
-  overflow-y: hidden;
-  gap: 0.5rem;
   scroll-behavior: smooth;
-  white-space: nowrap;
-  height: 100%;
+  scrollbar-width: none;
   max-width: 80rem;
   margin: 0 auto;
+  flex-direction: row;
+  overflow-y: hidden;
+  gap: 0.5rem;
+  white-space: nowrap;
+  height: 100%;
 }
 
 .event-list-container::-webkit-scrollbar {
@@ -56,15 +56,6 @@
   justify-content: start;
 }
 
-.event-list-container {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 1rem 0;
-  scrollbar-width: none; /* optional: versteckt Scrollbar */
-  max-width: 80rem;
-  margin: 0 auto;
-}
 
 .event-list-container::-webkit-scrollbar {
   display: none;
