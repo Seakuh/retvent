@@ -68,10 +68,10 @@ export const EventCard = ({ event }: { event: Event }) => {
       className={`event-card-container card-${event.id}`}
     >
       <RealListItemProfileHeader
-        profileUrl={event.hostImageUrl || event.imageUrl || ""}
-        name={event.hostUsername || ""}
-        id={event.hostId || ""}
-        location={event.city || ""}
+        profileUrl={event.host?.profileImageUrl ?? event.imageUrl ?? ""}
+        name={event.host?.username ?? ""}
+        id={event.hostId ?? ""}
+        location={event.city ?? "TBA"}
       />
       <div className="event-card-image-container">
         <img

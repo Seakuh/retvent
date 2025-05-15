@@ -53,7 +53,7 @@
 .event-list-wrapper {
   position: relative;
   display: flex;
-  align-items: center;
+  justify-content: start;
 }
 
 .event-list-container {
