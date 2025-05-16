@@ -1,5 +1,6 @@
 
 .profile-feed-container {
+  margin-top: 12rem;
     padding: 1rem;
     display: flex;
     flex-direction: row;

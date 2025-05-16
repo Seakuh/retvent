@@ -97,6 +97,7 @@ const AdminEvents: React.FC = () => {
                       event.imageUrl
                     }
                     loading="lazy"
+                    decoding="async"
                     alt={event.title}
                     onClick={() => handleEdit(event.id)}
                   />
