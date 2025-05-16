@@ -92,7 +92,7 @@ export const OwnerComponent = () => {
       <button
         className="event-owner-info-button"
         title="Add Images"
-        onClick={() => handleOpen("images")}
+        onClick={() => handleOpen("lineup")}
       >
         <ImageIcon className="h-10 w-10" />
       </button>
