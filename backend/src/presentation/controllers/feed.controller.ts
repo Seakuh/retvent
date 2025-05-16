@@ -1,6 +1,15 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { FeedService } from 'src/application/services/feed.service';
 import { FeedResponse } from '../dtos/feed-response.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 @Controller('feed')
 export class FeedController {
   constructor(private readonly feedService: FeedService) {}
@@ -22,5 +31,11 @@ export class FeedController {
   @Get('byIds')
   async getProfileFeeds(@Query('ids') ids: string): Promise<FeedResponse[]> {
     return this.feedService.getProfilesFeeds(ids.split(','));
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deleteFeed(@Param('id') id: string, @Request() req) {
+    return this.feedService.deleteFeed(id, req.user.id);
   }
 }

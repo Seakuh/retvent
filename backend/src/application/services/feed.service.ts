@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Event, Feed } from 'src/core/domain';
 import {
   FeedItemResponse,
@@ -95,6 +99,19 @@ export class FeedService {
     });
 
     return grouped;
+  }
+
+  async deleteFeed(id: string, userId: string) {
+    const feed = await this.feedRepository.findById(id);
+    if (!feed) {
+      throw new NotFoundException('Feed not found');
+    }
+
+    const profile = await this.profileService.getProfileById(feed.profileId);
+    if (profile.userId !== userId) {
+      throw new ForbiddenException('You are not allowed to delete this feed');
+    }
+    return this.feedRepository.delete(id);
   }
 
   private async groupFeedsByProfile(feeds: Feed[]): Promise<FeedResponse[]> {
