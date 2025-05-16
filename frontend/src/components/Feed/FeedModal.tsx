@@ -316,6 +316,7 @@ export const FeedModal = ({
         {feedItem.feedItems![currentImageIndex].eventId && (
           <FeedModalActionBar
             eventId={feedItem.feedItems![currentImageIndex].eventId}
+            feed={feedItem.feedItems![currentImageIndex]}
           />
         )}
       </div>

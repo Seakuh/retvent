@@ -1,12 +1,21 @@
-import { Heart, Send } from "lucide-react";
+import { Heart, Send, Trash } from "lucide-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
+import { Feed } from "../../utils";
 import "./FeedModalActionBar.css";
+import { deleteFeed } from "./service";
 
-export const FeedModalActionBar = ({ eventId }: { eventId: string }) => {
+export const FeedModalActionBar = ({
+  eventId,
+  feed,
+}: {
+  eventId: string;
+  feed: Feed;
+}) => {
   const navigate = useNavigate();
-  const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
+  const { addFavorite, removeFavorite, isFavorite, user } =
+    useContext(UserContext);
 
   const handleLike = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -21,6 +30,20 @@ export const FeedModalActionBar = ({ eventId }: { eventId: string }) => {
       addFavorite(eventId);
     }
     // setIsLiked nicht nötig, da wir isFavorite vom Context nutzen
+  };
+
+  const handleDelete = async (e: React.MouseEvent<HTMLDivElement>) => {
+    try {
+      e.preventDefault();
+      e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
+
+      if (!eventId) return;
+
+      await deleteFeed(feed.id || "");
+      alert("Feed deleted");
+    } catch (error) {
+      console.error("Error deleting feed:", error);
+    }
   };
 
   return (
@@ -51,6 +74,16 @@ export const FeedModalActionBar = ({ eventId }: { eventId: string }) => {
             fill={isFavorite(eventId) ? "red" : "none"}
           />
         </button>
+        {user?.id === feed.profileId && (
+          <button
+            className="feed-modal-delete-button"
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              handleDelete(e as unknown as React.MouseEvent<HTMLDivElement>);
+            }}
+          >
+            <Trash size={25} color="red" />
+          </button>
+        )}
       </div>
       <div className="feed-modal-action-bar-center"></div>
       <div className="feed-modal-action-bar-right">

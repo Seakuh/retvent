@@ -40,3 +40,20 @@ export async function getLatestFeedByProfileId(profileId: string) {
   const data = await response.json();
   return data;
 }
+
+export async function deleteFeed(feedId: string) {
+  try {
+    const token = localStorage.getItem("access_token");
+    const response = await fetch(`${API_URL}feed/${feedId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error deleting feed:", error);
+    return null;
+  }
+}
