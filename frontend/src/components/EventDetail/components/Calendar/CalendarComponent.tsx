@@ -137,7 +137,7 @@ export const CalendarComponent = ({
       let updated = false;
 
       days.forEach((day) => {
-        const dayString = day.toISOString().split("T")[0];
+        const dayString = day.toLocaleDateString("en-CA"); // Format: YYYY-MM-DD
         if (!newCache[dayString]) {
           const event = eventMap[dayString];
           if (event?.imageUrl) {
@@ -156,7 +156,7 @@ export const CalendarComponent = ({
   }, [currentDate, eventMap]);
 
   const getEventBackground = (day: Date) => {
-    const dayString = day.toISOString().split("T")[0];
+    const dayString = day.toLocaleDateString("en-CA"); // Format: YYYY-MM-DD
     return monthImageCache[dayString] || "none";
   };
 
