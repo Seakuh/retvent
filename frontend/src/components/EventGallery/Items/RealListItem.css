@@ -32,6 +32,8 @@
   justify-content: center;
 }
 
+
+
 .real-event-thumbnail img {
   width: 100%;
   height: 100%;
@@ -120,3 +122,43 @@
 .past-event {
   opacity: 0.5;
 }
+
+.event-slider {
+  width: 100%;
+}
+
+.event-slider .slick-dots {
+  bottom: 10px;
+}
+
+.event-slider .slick-dots li button:before {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.event-slider .slick-dots li.slick-active button:before {
+  color: white;
+}
+
+.event-slider .slick-prev,
+.event-slider .slick-next {
+  z-index: 1;
+}
+
+.event-slider .slick-prev {
+  left: 10px;
+}
+
+.event-slider .slick-next {
+  right: 10px;
+}
+
+/* Verhindert, dass der Slider-Click die Event-Navigation auslöst */
+.event-slider * {
+  pointer-events: none;
+}
+
+.event-slider .slick-prev,
+.event-slider .slick-next {
+  pointer-events: auto;
+}
+
