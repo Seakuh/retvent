@@ -36,6 +36,6 @@ export class FeedController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   async deleteFeed(@Param('id') id: string, @Request() req) {
-    return this.feedService.deleteFeed(id, req.user.id);
+    return this.feedService.deleteFeed(id, req.user.sub);
   }
 }
