@@ -26,6 +26,20 @@ export const getUserEvents = async (userId: string) => {
   }
 };
 
+export const getUserFeed = async (userId: string) => {
+  console.log("userId", userId);
+  try {
+    const response = await fetch(`${API_URL}feed/byId/${userId}`);
+    console.log("response", response);
+    const data = await response.json();
+    console.log("data", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching user feed:", error);
+    return [];
+  }
+};
+
 export const shareProfile = async (userId: string) => {
   if (!userId) return;
   try {

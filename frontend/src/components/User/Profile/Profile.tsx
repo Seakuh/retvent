@@ -12,6 +12,8 @@ import {
 } from "../../../utils";
 import ArtistModal from "../../ArtistModal/ArtistModal";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
+import { FeedModal } from "../../Feed/FeedModal";
+import { useFeed } from "../../Feed/useFeed";
 import { ActionComponent } from "./ActionComponent";
 import "./Profile.css";
 import { ProfileCommentList } from "./ProfileCommentList";
@@ -24,9 +26,11 @@ import {
   followUser,
   getProfile,
   getUserEvents,
+  getUserFeed,
   shareProfile,
   unfollowUser,
 } from "./service";
+
 export const Profile: React.FC = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -34,11 +38,17 @@ export const Profile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<ProfileType | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [feed, setFeed] = useState<FeedItem[]>([]);
+  const [isFeedModalOpen, setIsFeedModalOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(
     JSON.parse(localStorage.getItem("following") || "[]").includes(userId || "")
   );
   const [comments, setComments] = useState<CommentType[]>([]);
   const [commentsCount, setCommentsCount] = useState(0);
+
+  const { setCurrentFeedItem, setFeedItems, feedItems, currentFeedItem } =
+    useFeed();
+
   useEffect(() => {
     let isMounted = true;
 
@@ -65,9 +75,12 @@ export const Profile: React.FC = () => {
           }
         );
 
+        const feed = await getUserFeed(userId || "");
+
         if (isMounted) {
           setUser(profileData);
           setEvents(eventsData || []);
+          setFeed(feed);
         }
       } catch (err) {
         if (isMounted) {
@@ -132,6 +145,26 @@ export const Profile: React.FC = () => {
     return events.reduce((acc, event) => acc + (event.views || 0), 0);
   };
 
+  const showNextFeed = () => {
+    const currentIndex = feedItems.findIndex(
+      (item) => item.profileId === currentFeedItem?.profileId
+    );
+    if (currentIndex === feedItems.length - 1) {
+      setIsFeedModalOpen(false);
+    }
+    setCurrentFeedItem(feedItems[currentIndex + 1]);
+  };
+
+  const showPreviousFeed = () => {
+    const currentIndex = feedItems.findIndex(
+      (item) => item.profileId === currentFeedItem?.profileId
+    );
+    if (currentIndex === 0) {
+      setIsFeedModalOpen(false);
+    }
+    setCurrentFeedItem(feedItems[currentIndex - 1]);
+  };
+
   const handleFollow = () => {
     const following = JSON.parse(localStorage.getItem("following") || "[]");
     if (isFollowing) {
@@ -194,7 +227,7 @@ export const Profile: React.FC = () => {
 
   return (
     <div className="profile-page-container">
-      <div className="profile-wrapper">
+      <div className="profile-wrapper" onClick={() => setIsFeedModalOpen(true)}>
         <ProfileMeta />
 
         <button className="back-button" onClick={handleBack}>
@@ -249,6 +282,15 @@ export const Profile: React.FC = () => {
         </div>
         <Footer />
       </div>
+      {isFeedModalOpen && (
+        <FeedModal
+          showFeedModal={isFeedModalOpen}
+          feedItem={feed[0]}
+          setShowFeedModal={setIsFeedModalOpen}
+          showNextFeed={showNextFeed}
+          showPreviousFeed={showPreviousFeed}
+        />
+      )}
     </div>
   );
 };
