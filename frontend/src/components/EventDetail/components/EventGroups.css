@@ -5,13 +5,12 @@
   justify-content: center;
   background-color: black;
   padding: 1rem;
-  border-radius: 1rem;
+  border-radius: 1rem 1rem 0 0;
   margin: 0 auto;
-  margin-bottom: 2rem;
-  max-width: 935px;  
 }
 
 .event-groups-container h2 {
+  margin-top: 1rem;
   font-size: 2rem;
   font-weight: 600;
   margin-bottom: 1rem;

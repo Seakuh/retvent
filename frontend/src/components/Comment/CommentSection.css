@@ -2,10 +2,6 @@
     padding: 2rem;
     background: black;
     color: white !important;
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
-
-
     -webkit-backdrop-filter: blur(10px);
     overflow-x: auto;
 }

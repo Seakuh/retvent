@@ -38,7 +38,7 @@ export const EventGroups = ({ event }: { event: Event }) => {
           userId={user?.id || ""}
         />
       )}
-      <h2>Chats</h2>
+      <h2>Community</h2>
       <ul className="event-groups-community-list">
         <button
           className="event-groups-community-item"

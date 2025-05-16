@@ -57,11 +57,17 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
             <MapPin className="h-5 w-5" />
           </span>
           <div>
-            {city && <div className="text-lg font-semibold">{city}</div>}
-            {address && (
+            {city ? (
+              <div className="text-lg font-semibold">{city}</div>
+            ) : (
+              <div className="text-lg font-semibold">TBA</div>
+            )}
+            {address ? (
               <div>
                 {address.street} {address.houseNumber}
               </div>
+            ) : (
+              <div>TBA</div>
             )}
           </div>
         </div>

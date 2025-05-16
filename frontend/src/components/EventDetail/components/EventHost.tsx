@@ -11,7 +11,7 @@ export const EventHost = ({
   const navigate = useNavigate();
   return (
     <div className="event-host">
-      <h2 className="section-headline">Uploader</h2>
+      {/* <h2 className="section-headline">Uploader</h2> */}
       <a
         className="event-host-info"
         onClick={() => {

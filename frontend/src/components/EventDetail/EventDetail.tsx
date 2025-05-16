@@ -236,11 +236,10 @@ export const EventDetail: React.FC = () => {
             // youtube={event.socialMediaLinks?.youtube}
             // soundCloud={event.socialMediaLinks?.soundCloud}
           /> */}
-          {host && <EventHost host={host} userId={event.hostId || ""} />}
-
           {event.tags && event.tags.length > 0 && (
             <EventTags tags={event.tags} />
           )}
+          {host && <EventHost host={host} userId={event.hostId || ""} />}
         </div>
 
         {showImageModal && (

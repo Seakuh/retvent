@@ -60,7 +60,7 @@ export const CommentSection = ({ eventId }: { eventId: string }) => {
 
   return (
     <div className="comment-section">
-      <h2 className="section-headline">Comments</h2>
+      {/* <h2 className="section-headline">Comments</h2> */}
 
       <CommentTextField
         commentText={commentText}

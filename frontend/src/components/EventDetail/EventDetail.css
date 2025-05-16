@@ -48,10 +48,11 @@
   
   
   .event-content {
+    border-radius: 0 0 1rem 1rem;
     margin: 0 auto;
     margin-top: 1rem;
     width: 100%;
-    max-width: 935px;
+    max-width: 80rem;
   }
   
   /* =============================================================
@@ -110,8 +111,8 @@
   }
   
   .event-hero-image {
-    width: 935px;
     height: auto;
+    width: 80rem;
     max-height: 50rem;
     margin: 0 auto;
     border-radius: 1rem 1rem 0 0;
@@ -168,7 +169,7 @@
       cursor: pointer;
       position: fixed;
       top: 2rem;
-      left: 1rem;
+      left: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
       z-index: 10;
     }
     
@@ -182,7 +183,7 @@
   .share-buttons {
     position: fixed;
     top: 2rem;
-    right: 1rem;
+    right: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
     z-index: 10;
     display: flex;
     gap: 0.75rem;
@@ -286,7 +287,6 @@
   .lineup-grid {
     padding: 2rem;
     background: black;
-    border-radius: 1rem;
     display: flex;
     flex-direction: column;
   }
@@ -407,11 +407,13 @@
      TAGS
      ============================================================= */
   .event-tags {
-    margin-top: 2rem;
     padding: 2rem;
     background: black;
-    border-radius: 1rem;
     backdrop-filter: blur(10px);
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
   
   .tags-container {
@@ -688,8 +690,7 @@
     background-color: black;
     text-align: center;
     padding: 1rem;
-    border-radius: 1rem;
-    margin-bottom: 2rem;
+    border-radius: 1rem 1rem 0 0;
   }
 
   .map-plus-calendar-container{
@@ -720,6 +721,10 @@
       margin: 2rem;
     }
 
+    .event-important-info-contain {
+      border-radius: 0 !important;
+    }
+
     .event-basic-info {
       padding: 0;
       flex-direction: column;
@@ -731,26 +736,18 @@
       width: 100%;
     }
 
-    .info-item.calendar-text-container{
-    }
-
-    .info-item.location-text{
-    }
-
     .event-detail{
       padding: 0;
     }
 
     .event-content{
       padding: 0 !important ;
-      margin-top: 0 !important;
+      margin-top: 0rem !important;
       gap: 0 !important;
+      border-radius: 0 !important;
       width: 100% !important;
     }
 
-    .event-important-info-contain{
-      border-radius: 0 0 1rem 1rem;
-    }
 
     .event-basic-info .info-item {
       padding: 1rem;

@@ -28,7 +28,7 @@ export const EventLineup: React.FC<{
   return (
     <div className="event-lineup">
       <div className="lineup-grid">
-        <h2 className="section-headline">Artists</h2>
+        {/* <h2 className="section-headline">Artists</h2> */}
         {lineupPictureUrls.length > 0 &&
           lineupPictureUrls.map((url) => (
             <img
