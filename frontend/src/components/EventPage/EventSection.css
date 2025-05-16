@@ -6,13 +6,18 @@
 }
 
 .popular-title {
-  font-size: 2rem;
+  font-size: 2rem; 
+  margin-left: 1rem;
   font-weight: 600;
   color: white;
   text-align: left;
-  margin-left: 1rem;
-  max-width: 80rem;
-  margin: 0 auto;
+  text-transform: uppercase;
+  top: 75px;
+  z-index: 10;
+  padding: 1rem 0;
+  /* Stelle sicher, dass der Container einen definierten Kontext hat */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 /* Haupt-Container für die Event-Karten */
@@ -40,15 +45,6 @@
   scroll-snap-align: start;
 }
 
-@media (max-width: 768px) {
-  .popular-title {
-    font-size: 1.5rem;
-  }
-  .event-list-container {
-    gap: 0.3rem;
-    padding: 0.5rem;
-  }
-}
 
 .event-list-wrapper {
   position: relative;
@@ -85,3 +81,13 @@
 .scroll-button-right {
   right: 0;
 }
+
+  @media (max-width: 768px) {
+    .popular-title {
+      font-size: 1.5rem;
+    }
+    .event-list-container {
+      gap: 0.3rem;
+      padding: 0.5rem;
+    }
+  }
