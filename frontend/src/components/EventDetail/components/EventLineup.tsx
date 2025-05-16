@@ -18,10 +18,13 @@ export const EventLineup: React.FC<{
 }> = ({ lineup, lineupPictureUrls }) => {
   const navigate = useNavigate();
   const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState("");
+
   const handleOnArtistClick = (artist: LineupArtist) => {
     navigate(`/profile/${artist.name}`);
   };
   const handleOnLineupClick = (lineupPictureUrl: string) => {
+    setSelectedImageUrl(lineupPictureUrl);
     setShowImageModal(true);
   };
 
@@ -81,7 +84,7 @@ export const EventLineup: React.FC<{
       </div>
       {showImageModal && (
         <ImageModal
-          imageUrl={lineupPictureUrls[0]}
+          imageUrl={selectedImageUrl}
           onClose={() => setShowImageModal(false)}
         />
       )}
