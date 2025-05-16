@@ -163,9 +163,17 @@ export const FeedModal = ({
       }
     };
 
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowFeedModal(false);
+      }
+    };
+
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleEscape);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", handleEscape);
     };
   }, [currentImageIndex, feedItem.feedItems]);
 
