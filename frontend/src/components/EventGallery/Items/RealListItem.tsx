@@ -2,7 +2,7 @@ import { Eye, Heart, MessageCircle, Send } from "lucide-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
-import { Event } from "../../../utils";
+import { Event, formatDate, getDaysUntilDate } from "../../../utils";
 import "./RealListItem.css";
 import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
 
@@ -63,6 +63,23 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           {/* <h2 className="event-info-date"> */}
           {/* {formatDate(event.startDate as string)} */}
           {/* </h2> */}
+          <span className="event-card-date">
+            {formatDate(event.startDate as string)}{" "}
+            {(() => {
+              const days = getDaysUntilDate(
+                formatDate(event.startDate as string)
+              );
+              return days === 0
+                ? "| today"
+                : days === 1
+                ? "| tomorrow"
+                : days === -1
+                ? "| yesterday"
+                : days < 0
+                ? `| ${Math.abs(days)} days ago`
+                : `| in ${days} days`;
+            })()}
+          </span>
           <h1 className="event-info-title-headline">{event.title}</h1>
           <h2 className="event-description-real-list-item">
             {event.lineup && event.lineup.length > 0

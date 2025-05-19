@@ -1,4 +1,13 @@
 
+.event-page-section-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.event-favorites-container {
+  margin-top: 1rem;
+}
+
 .no-liked-events {
   margin-top: clamp(5rem, 10vh, 10rem);
   color: white;

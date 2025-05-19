@@ -1,14 +1,8 @@
 
 
 .event-gallery-container {
-    margin: 0 auto; /* Zentriert den Container */
-    max-width: 80rem;
+    margin-top: 1rem;
 }
-
-.real-event-list-item-container {
-    display: grid;
-}
-
 
 .event-date-heading-container {
     position: -webkit-sticky; /* Für Safari Support */

@@ -22,11 +22,15 @@ export const EventPage = ({
           :)
         </div>
       )}
-      <EventSection
-        events={favoriteEvents.sort((a, b) => (b.views || 0) - (a.views || 0))}
-      />
-      <div className="event-favorites-container">
-        <EventGalleryII events={favoriteEvents} />
+      <div className="event-page-section-container">
+        <EventSection
+          events={favoriteEvents.sort(
+            (a, b) => (b.views || 0) - (a.views || 0)
+          )}
+        />
+        <div className="event-favorites-container">
+          <EventGalleryII events={favoriteEvents} />
+        </div>
       </div>
     </div>
   );
