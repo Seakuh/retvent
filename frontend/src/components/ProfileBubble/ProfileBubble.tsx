@@ -1,26 +1,30 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { FeedResponse } from "../../utils";
 import { FeedModal } from "../Feed/FeedModal";
-import { useFeed } from "../Feed/useFeed";
+import { getProfileFeed } from "../Feed/service";
 import "./ProfileBubble.css";
 import { ProfileFeedCard } from "./ProfileFeedCard";
+
 interface ProfileBubbleProps {
-  feedItemsResponse: FeedResponse[];
+  profileId: string;
+  profileImageUrl: string;
   size?: "small" | "large";
 }
 
 export const ProfileBubble = ({
-  feedItemsResponse,
   size = "small",
+  profileId,
+  profileImageUrl,
 }: ProfileBubbleProps) => {
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
   const [isFeedModalOpen, setIsFeedModalOpen] = useState(false);
-  const { setCurrentFeedItem, setFeedItems, feedItems, currentFeedItem } =
-    useFeed();
-
-  setFeedItems(feedItemsResponse || []);
+  const [currentFeedItem, setCurrentFeedItem] = useState<FeedResponse | null>(
+    null
+  );
+  const [feedItems, setFeedItems] = useState<FeedResponse[]>([]);
 
   const scrollContainer = useRef<HTMLDivElement>(null);
 
@@ -76,8 +80,22 @@ export const ProfileBubble = ({
     setCurrentFeedItem(feedItems[currentIndex - 1]);
   };
 
+  const handleFeedCardClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    try {
+      const data = await getProfileFeed(profileId);
+      setFeedItems(data);
+      setCurrentFeedItem(data[0]);
+      setIsFeedModalOpen(true);
+    } catch (error) {
+      console.error("Fehler beim Laden des Profile Feeds:", error);
+    }
+  };
+
   return (
-    <div className={`profile-feed-wrapper ${size === "large" ? "large" : ""}`}>
+    <div
+      className={`profile-feed-wrapper ${size === "large" ? "large" : "small"}`}
+    >
       {!isAtStart && (
         <button
           className="scroll-button scroll-button-left"
@@ -89,11 +107,13 @@ export const ProfileBubble = ({
 
       <div ref={scrollContainer} className={`profile-feed-container`}>
         <ProfileFeedCard
-          key={feedItemsResponse[0].profileId}
-          feed={feedItemsResponse[0]}
+          key={profileId + "-profile-feed-card"}
+          feed={feedItems[0]}
+          profileImageUrl={profileImageUrl}
           setShowFeedModal={setIsFeedModalOpen}
           setCurrentFeedItem={setCurrentFeedItem}
           size={size}
+          onFeedCardClick={handleFeedCardClick}
         />
       </div>
 
@@ -106,15 +126,17 @@ export const ProfileBubble = ({
         </button>
       )}
 
-      {isFeedModalOpen && (
-        <FeedModal
-          showFeedModal={isFeedModalOpen}
-          feedItem={currentFeedItem!}
-          setShowFeedModal={setIsFeedModalOpen}
-          showNextFeed={showNextFeed}
-          showPreviousFeed={showPreviousFeed}
-        />
-      )}
+      {isFeedModalOpen &&
+        createPortal(
+          <FeedModal
+            showFeedModal={isFeedModalOpen}
+            feedItem={currentFeedItem!}
+            setShowFeedModal={setIsFeedModalOpen}
+            showNextFeed={showNextFeed}
+            showPreviousFeed={showPreviousFeed}
+          />,
+          document.body
+        )}
     </div>
   );
 };

@@ -1,18 +1,9 @@
-.profile-feed-container {
-  gap: 1rem;
-}
-
 .large {
   width: 10rem;
   height: 10rem;
 }
 
 .small {
-  width: 5rem;
-  height: 5rem;
-}
-
-.profile-feed-wrapper {
-  width: 10rem;
-  height: 10rem;
+  width: 3rem;
+  height: 3rem;
 }

@@ -221,7 +221,11 @@ export const Profile: React.FC = () => {
           username={user.username}
         />
         <div className="profile-bubble-container">
-          <ProfileBubble feedItemsResponse={feed} size="large" />
+          <ProfileBubble
+            profileId={userId || ""}
+            profileImageUrl={user.profileImageUrl || ""}
+            size="large"
+          />
         </div>
         <div>
           <div className="profile-info-background">

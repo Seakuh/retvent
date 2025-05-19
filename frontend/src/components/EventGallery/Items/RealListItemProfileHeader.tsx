@@ -1,7 +1,7 @@
 import { Ellipsis, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ProfileBubble } from "../../ProfileBubble/ProfileBubble";
 import "./RealListItemProfileHeader.css";
-
 interface RealListItemProfileHeaderProps {
   profileUrl?: string;
   name?: string;
@@ -29,12 +29,17 @@ export const RealListItemProfileHeader = ({
   return (
     <div className="real-list-item-profile-header">
       <div className="real-list-item-profile-header-left">
-        <img
+        <ProfileBubble
+          profileId={id || ""}
+          profileImageUrl={profileUrl || ""}
+          size="small"
+        />
+        {/* <img
           className="real-list-item-profile-header-image"
           src={`https://img.event-scanner.com/insecure/rs:fill:40:40/q:70/plain/${profileUrl}@webp`}
           alt={name}
           onClick={name ? handleOnClick : undefined}
-        />
+        /> */}
         <div className="real-list-item-profile-header-name-container">
           <h3
             className="real-list-item-profile-header-name"
