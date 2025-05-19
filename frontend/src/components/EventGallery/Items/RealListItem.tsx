@@ -65,22 +65,32 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           {/* </h2> */}
           <span className="event-card-date">
             {(() => {
-              const formattedDate = formatDate(event.startDate as string);
-              const days = getDaysUntilDate(formattedDate);
-              return (
-                <>
-                  {formattedDate}{" "}
-                  {days === 0
-                    ? "| today"
-                    : days === 1
-                    ? "| tomorrow"
-                    : days === -1
-                    ? "| yesterday"
-                    : days < 0
-                    ? `| ${Math.abs(days)} days ago`
-                    : `| in ${days} days`}
-                </>
-              );
+              try {
+                if (!event.startDate) {
+                  throw new Error("No start date available");
+                }
+
+                const formattedDate = formatDate(event.startDate as string);
+                const days = getDaysUntilDate(formattedDate);
+
+                return (
+                  <>
+                    {formattedDate}{" "}
+                    {days === 0
+                      ? "| today"
+                      : days === 1
+                      ? "| tomorrow"
+                      : days === -1
+                      ? "| yesterday"
+                      : days < 0
+                      ? `| ${Math.abs(days)} days ago`
+                      : `| in ${days} days`}
+                  </>
+                );
+              } catch (error) {
+                console.error("Error while formatting date:", error);
+                return <span>No date available</span>;
+              }
             })()}
           </span>
           <h1 className="event-info-title-headline">{event.title}</h1>
