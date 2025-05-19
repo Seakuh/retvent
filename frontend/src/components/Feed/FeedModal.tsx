@@ -24,16 +24,19 @@ export const FeedModal = ({
   const [animationKey, setAnimationKey] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
 
   // Reset animation and timer when image changes
   useEffect(() => {
     setAnimationKey((prevKey) => prevKey + 1);
+    setShouldAnimate(false);
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
     if (!isPaused && !isImageLoading) {
+      setShouldAnimate(true);
       timerRef.current = setTimeout(() => {
         handleNext();
       }, 5000);
@@ -207,7 +210,7 @@ export const FeedModal = ({
                 <div
                   key={animationKey}
                   className={`feed-progress-bar ${
-                    isPaused ? "paused" : "active"
+                    isPaused ? "paused" : shouldAnimate ? "active" : ""
                   }`}
                 />
               ) : (
@@ -276,6 +279,9 @@ export const FeedModal = ({
               feedItem.feedItems![currentImageIndex].feedImageUrl
             }@webp`}
             alt={`${feedItem.profileName} - Picture ${currentImageIndex + 1}`}
+            onLoad={() => {
+              setIsImageLoading(false);
+            }}
             onError={() => {
               setIsImageLoading(false);
               console.error("Error while loading image");

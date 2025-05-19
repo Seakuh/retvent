@@ -94,7 +94,32 @@
 
 .feed-progress-bar {
   height: 100%;
-  background: white;
+  width: 0;
+  background-color: white;
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+.feed-progress-bar.completed {
+  width: 100%;
+}
+
+.feed-progress-bar.active {
+  width: 0;
+  animation: progress-animation 5s linear forwards;
+}
+
+.feed-progress-bar.paused {
+  animation-play-state: paused;
+}
+
+@keyframes progress-animation {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 .feed-modal-image-container {
@@ -200,7 +225,6 @@
   }
 }
 
-
 .feed-progress-bar-container {
   flex: 1;
   height: 2px;
@@ -240,7 +264,6 @@
     width: 100%;
   }
 }
-
 
 .feed-modal-profile-created-at {
   font-size: 0.8rem;
