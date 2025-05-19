@@ -64,20 +64,23 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           {/* {formatDate(event.startDate as string)} */}
           {/* </h2> */}
           <span className="event-card-date">
-            {formatDate(event.startDate as string)}{" "}
             {(() => {
-              const days = getDaysUntilDate(
-                formatDate(event.startDate as string)
+              const formattedDate = formatDate(event.startDate as string);
+              const days = getDaysUntilDate(formattedDate);
+              return (
+                <>
+                  {formattedDate}{" "}
+                  {days === 0
+                    ? "| today"
+                    : days === 1
+                    ? "| tomorrow"
+                    : days === -1
+                    ? "| yesterday"
+                    : days < 0
+                    ? `| ${Math.abs(days)} days ago`
+                    : `| in ${days} days`}
+                </>
               );
-              return days === 0
-                ? "| today"
-                : days === 1
-                ? "| tomorrow"
-                : days === -1
-                ? "| yesterday"
-                : days < 0
-                ? `| ${Math.abs(days)} days ago`
-                : `| in ${days} days`;
             })()}
           </span>
           <h1 className="event-info-title-headline">{event.title}</h1>
