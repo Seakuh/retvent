@@ -2,7 +2,7 @@ import { Eye, Heart, MessageCircle, Send } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
-import { Event } from "../../utils";
+import { Event, getDaysUntilDate } from "../../utils";
 import { RealListItemProfileHeader } from "../EventGallery/Items/RealListItemProfileHeader";
 import "./EventCard.css";
 export const EventCard = ({ event }: { event: Event }) => {
@@ -84,7 +84,34 @@ export const EventCard = ({ event }: { event: Event }) => {
       </div>
       <div className="event-card-info-container">
         <span className="event-card-date">
-          {formatDate(event.startDate as string)}
+          {(() => {
+            try {
+              if (!event.startDate) {
+                throw new Error("No start date available");
+              }
+
+              const formattedDate = formatDate(event.startDate as string);
+              const days = getDaysUntilDate(formattedDate);
+
+              return (
+                <>
+                  {formattedDate}{" "}
+                  {days === 0
+                    ? "| today"
+                    : days === 1
+                    ? "| tomorrow"
+                    : days === -1
+                    ? "| yesterday"
+                    : days < 0
+                    ? `| ${Math.abs(days)} days ago`
+                    : `| in ${days} days`}
+                </>
+              );
+            } catch (error) {
+              console.error("Error while formatting date:", error);
+              return <span>No date available</span>;
+            }
+          })()}
         </span>
         <h3 className="event-card-title">{event.title}</h3>
         <div className="event-card-description">{event.description}</div>
