@@ -266,7 +266,6 @@ export const FeedModal = ({
         >
           {isImageLoading && (
             <div className="image-loading-spinner">
-              {/* Hier können Sie einen Ladeindikator hinzufügen */}
               <div className="spinner"></div>
             </div>
           )}
@@ -277,14 +276,18 @@ export const FeedModal = ({
               feedItem.feedItems![currentImageIndex].feedImageUrl
             }@webp`}
             alt={`${feedItem.profileName} - Picture ${currentImageIndex + 1}`}
-            onClick={() => {
+            onError={() => {
+              setIsImageLoading(false);
+              console.error("Error while loading image");
+            }}
+          />
+          <div
+            className="feed-modal-event-click-area"
+            onClick={(e) => {
+              e.stopPropagation();
               navigate(
                 `/event/${feedItem.feedItems![currentImageIndex].eventId}`
               );
-            }}
-            onError={() => {
-              setIsImageLoading(false);
-              console.error("Fehler beim Laden des Bildes");
             }}
           />
         </div>

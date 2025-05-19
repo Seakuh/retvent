@@ -297,3 +297,14 @@
   opacity: 0.5;
   pointer-events: none;
 }
+
+.feed-modal-event-click-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20vh;
+  height: 40vh;
+  z-index: 1000;
+  cursor: pointer;
+}
