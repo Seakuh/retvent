@@ -6,10 +6,15 @@ export async function getProfiles() {
   return data;
 }
 
-export async function getProfileFeed() {
-  const response = await fetch(`${API_URL}/profile`);
-  const data = await response.json();
-  return data;
+export async function getProfileFeed(profileId: string) {
+  try {
+    const response = await fetch(`${API_URL}feed/profile-feed/${profileId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching profile feed:", error);
+    return [];
+  }
 }
 
 export async function getLatestFeedAll(): Promise<FeedResponse[]> {

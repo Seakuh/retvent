@@ -1,0 +1,83 @@
+.profile-feed-card-container {
+    display: flex;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .profile-feed-card-border {
+      position: relative;  /* Neu */
+      border-radius: 50%;
+  }
+
+  .large {
+    width: 10rem;
+    height: 10rem;
+  }
+
+  .profile-feed-card-border::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(315deg,
+                  rgba(var(--color-neon-blue-rgb), 0.8),
+                  rgba(var(--color-neon-purple-rgb), 0.8));
+      animation: spin 4s linear infinite;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                   linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+  }
+  
+  .profile-feed-card-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden; /* Neu: Verhindert, dass das Bild über den Kreis hinausragt */
+  }
+    
+  .profile-feed-card-image {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block; /* Neu: Verhindert unerwünschte Abstände */
+  }
+
+  .profile-feed-card-image-large {
+    width: 100%; /* Geändert: Statt fester Pixelwerte */
+    height: 100%; /* Geändert: Statt fester Pixelwerte */
+    object-fit: cover;
+  }
+    
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .profile-feed-card-username {
+    font-size: 0.8rem;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 4rem;
+    max-width: 4rem;
+  }
+  

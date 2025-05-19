@@ -12,6 +12,8 @@ import {
 } from "../../../utils";
 import ArtistModal from "../../ArtistModal/ArtistModal";
 import { EventGalleryIII } from "../../EventGallery/EventGalleryIII";
+import { getProfileFeed } from "../../Feed/service";
+import { ProfileBubble } from "../../ProfileBubble/ProfileBubble";
 import { ActionComponent } from "./ActionComponent";
 import "./Profile.css";
 import { ProfileCommentList } from "./ProfileCommentList";
@@ -32,6 +34,7 @@ export const Profile: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [feed, setFeed] = useState<FeedResponse[]>([]);
   const [user, setUser] = useState<ProfileType | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [isFollowing, setIsFollowing] = useState(
@@ -54,9 +57,10 @@ export const Profile: React.FC = () => {
         setError(null);
 
         // Parallel fetching of profile and events
-        const [profileData, eventsData] = await Promise.all([
+        const [profileData, eventsData, feedData] = await Promise.all([
           getProfile(userId),
           getUserEvents(userId),
+          getProfileFeed(userId),
         ]);
         fetchProfileComments(profileData?.userId || "").then(
           ({ comments, count }) => {
@@ -68,6 +72,7 @@ export const Profile: React.FC = () => {
         if (isMounted) {
           setUser(profileData);
           setEvents(eventsData || []);
+          setFeed(feedData || []);
         }
       } catch (err) {
         if (isMounted) {
@@ -84,6 +89,7 @@ export const Profile: React.FC = () => {
     };
 
     fetchProfileData();
+    console.log(feed);
 
     return () => {
       isMounted = false;
@@ -211,10 +217,14 @@ export const Profile: React.FC = () => {
         </div>
 
         <ProfileHeader
+          feed={feed}
           headerImageUrl={user.headerImageUrl || defaultProfileImage}
           profileImageUrl={user.profileImageUrl || defaultProfileImage}
           username={user.username}
         />
+        <div className="profile-bubble-container">
+          <ProfileBubble feedItemsResponse={feed} size="large" />
+        </div>
         <div>
           <div className="profile-info-background">
             <div className="profile-container">
