@@ -78,6 +78,18 @@ export class MongoEventRepository implements IEventRepository {
     }));
   }
 
+  getRankedPopularEvents() {
+    return this.eventModel.aggregate([
+      {
+        $group: {
+          _id: '$category',
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { count: -1 } },
+      { $limit: 10 },
+    ]);
+  }
   uploadEventLinupPicture(eventId: string, imageUrl: string) {
     return this.eventModel.findByIdAndUpdate(eventId, {
       $push: {
@@ -556,7 +568,7 @@ export class MongoEventRepository implements IEventRepository {
     const events = await this.eventModel
       .find(query)
       .select(
-        'id description title imageUrl lineup startDate endDate city views commentCount tags hostId host.profileImageUrl host.username',
+        'id description title imageUrl lineup startDate endDate city views commentCount tags hostId host.profileImageUrl host.username lineupPictureUrl',
       )
       .exec();
 
@@ -679,7 +691,9 @@ export class MongoEventRepository implements IEventRepository {
 
     const events = await this.eventModel
       .find(filter)
-      .select('id description title imageUrl startDate city views commentCount')
+      .select(
+        'id description title imageUrl startDate city views commentCount lineupPictureUrl',
+      )
       .exec();
 
     return this.addCommentCountToEvents(events);

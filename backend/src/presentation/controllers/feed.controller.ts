@@ -23,4 +23,9 @@ export class FeedController {
   async getProfileFeeds(@Query('ids') ids: string): Promise<FeedResponse[]> {
     return this.feedService.getProfilesFeeds(ids.split(','));
   }
+
+  @Get('byId/:id')
+  async getFeedById(@Param('id') id: string): Promise<FeedResponse[]> {
+    return this.feedService.getFeedById(id);
+  }
 }

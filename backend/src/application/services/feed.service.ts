@@ -97,6 +97,11 @@ export class FeedService {
     return grouped;
   }
 
+  async getFeedById(id: string): Promise<Feed[]> {
+    console.log('🔍 Feeds:', id);
+    return await this.feedRepository.findById(id);
+  }
+
   private async groupFeedsByProfile(feeds: Feed[]): Promise<FeedResponse[]> {
     const grouped: Record<string, FeedItemResponse[]> = {};
 

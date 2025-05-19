@@ -470,10 +470,10 @@ export class EventController {
     } as EventSearchResponseDto;
   }
 
-  @Get()
-  async getAllEvents() {
-    return this.eventService.findAll();
-  }
+  // @Get()
+  // async getAllEvents() {
+  //   return this.eventService.findAll();
+  // }
 
   @Get('location/:city')
   async getEventsByCity(

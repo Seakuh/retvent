@@ -40,4 +40,8 @@ export class MongoFeedRepository implements IFeedRepository {
   async findAll(): Promise<Feed[]> {
     return this.feedModel.find().sort({ createdAt: -1 });
   }
+
+  async findById(id: string): Promise<Feed[]> {
+    return this.feedModel.find({ profileId: id });
+  }
 }

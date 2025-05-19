@@ -46,6 +46,10 @@ export class EventService {
     );
   }
 
+  getRankedPopularEvents() {
+    return this.eventRepository.getRankedPopularEvents();
+  }
+
   getEventsByArtistName(name: string) {
     return this.eventRepository.getEventsByArtistName(name);
   }

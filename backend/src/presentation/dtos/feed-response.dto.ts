@@ -26,7 +26,8 @@ export class FeedItemResponse {
     | 'release'
     | 'playlist'
     | 'news'
-    | 'update';
+    | 'update'
+    | 'sponsored';
   content?: string;
   profileId?: string;
   userName?: string;
