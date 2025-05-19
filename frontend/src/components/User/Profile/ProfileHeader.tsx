@@ -1,15 +1,11 @@
-import { defaultProfileImage, FeedResponse } from "../../../utils";
+import { defaultProfileImage } from "../../../utils";
 import "./ProfileHeader.css";
 export const ProfileHeader = ({
   headerImageUrl,
-  profileImageUrl,
   username,
-  feed,
 }: {
   headerImageUrl: string;
-  profileImageUrl: string;
   username: string;
-  feed: FeedResponse[];
 }) => {
   return (
     <div>

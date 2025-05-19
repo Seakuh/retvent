@@ -217,9 +217,7 @@ export const Profile: React.FC = () => {
         </div>
 
         <ProfileHeader
-          feed={feed}
           headerImageUrl={user.headerImageUrl || defaultProfileImage}
-          profileImageUrl={user.profileImageUrl || defaultProfileImage}
           username={user.username}
         />
         <div className="profile-bubble-container">

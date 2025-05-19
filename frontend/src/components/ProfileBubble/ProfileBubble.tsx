@@ -16,15 +16,9 @@ export const ProfileBubble = ({
 }: ProfileBubbleProps) => {
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
-
-  const {
-    setCurrentFeedItem,
-    setFeedItems,
-    feedItems,
-    currentFeedItem,
-    isFeedModalOpen,
-    setIsFeedModalOpen,
-  } = useFeed();
+  const [isFeedModalOpen, setIsFeedModalOpen] = useState(false);
+  const { setCurrentFeedItem, setFeedItems, feedItems, currentFeedItem } =
+    useFeed();
 
   setFeedItems(feedItemsResponse || []);
 
