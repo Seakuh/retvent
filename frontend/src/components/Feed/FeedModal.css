@@ -109,13 +109,13 @@
   max-height: 85vh;
   max-width: 50vh;
   width: auto;
-  cursor: pointer;
   margin: 0 auto;
   border-radius: 1rem;
-  will-change: transform;
+  will-change: transform, opacity;
   backface-visibility: hidden;
   transform: translateZ(0);
-  transition: opacity 0.3s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+  opacity: 1;
 }
 
 /* Navigation Buttons */
@@ -294,8 +294,8 @@
 }
 
 .feed-modal-image.loading {
-  opacity: 0.5;
-  pointer-events: none;
+  opacity: 0.8;
+  transform: scale(0.98) translateZ(0);
 }
 
 .feed-modal-event-click-area {
@@ -307,4 +307,9 @@
   height: 40vh;
   z-index: 1000;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.feed-modal-event-click-area:active {
+  transform: translate(-50%, -50%) scale(0.98);
 }
