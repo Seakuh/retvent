@@ -1,4 +1,4 @@
-import { Plus, Ticket, Trash } from "lucide-react";
+import { Plus, Save, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { TicketDefinition } from "../../../../utils";
 import {
@@ -11,12 +11,13 @@ import "./TicketDefinitionSection.css";
 export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
   eventId,
 }) => {
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [tickets, setTickets] = useState<TicketDefinition[]>([
     {
       eventId: eventId,
       name: "",
-      price: 0,
-      availableTickets: 0,
+      price: undefined,
+      availableTickets: undefined,
       availableFrom: new Date(),
       availableUntil: new Date(),
     },
@@ -27,9 +28,9 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
       ...tickets,
       {
         eventId: eventId,
-        availableTickets: 0,
+        availableTickets: undefined,
         name: "",
-        price: 0,
+        price: undefined,
         availableFrom: new Date(),
         availableUntil: new Date(),
       },
@@ -55,8 +56,13 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
   };
 
   const handleCreateTickets = async () => {
-    console.log(tickets);
-    await createTicketDefinition(tickets);
+    try {
+      const response = await createTicketDefinition(tickets);
+      console.log(response);
+      alert("Tickets created successfully");
+    } catch (error) {
+      setErrorMessage("Error creating tickets: " + error);
+    }
   };
 
   const deleteTicket = async (index: number) => {
@@ -133,12 +139,17 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
           </button>
         </div>
       ))}
+      {errorMessage && (
+        <div className="error-message">
+          <p>{errorMessage}</p>
+        </div>
+      )}
       <div className="button-container">
         <button className="add-ticket-button" onClick={addTicket}>
           <Plus className="h-10 w-10" />
         </button>
         <button className="create-tickets-button" onClick={handleCreateTickets}>
-          <Ticket className="h-10 w-10" />
+          <Save className="h-10 w-10" />
         </button>
       </div>
     </div>
