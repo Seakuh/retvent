@@ -1,6 +1,7 @@
 .ticket-definition {
   display: flex;
   flex-direction: column;
+  margin-top: 2rem;
   gap: 10px;
   margin: 0 auto;
   width: 100%;
@@ -9,6 +10,28 @@
   border-radius: 10px;
   background-color: black;
   color: white;
+}
+
+.ticket-input-date {
+  color: white;
+}
+
+/* Styling für das Kalender-Symbol */
+.ticket-input-date::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Macht das Symbol weiß */
+  cursor: pointer;
+}
+
+/* Für Firefox */
+.ticket-input-date::-moz-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* Für Edge */
+.ticket-input-date::-ms-clear {
+  filter: invert(1);
+  cursor: pointer;
 }
 
 .ticket-row {
@@ -33,7 +56,6 @@
 }
 
 .add-ticket-button {
-  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
@@ -118,7 +140,7 @@
 
   .ticket-definition {
     width: 100%;
-    border-radius: 0px !important;
+    margin-top: 2rem;
   }
 
   button {

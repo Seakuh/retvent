@@ -34,11 +34,12 @@ export class Ticket {
 }
 
 export class TicketDefinition {
+  _id?: string;
   eventId?: string;
   name?: string;
   price?: number;
   creatorId?: string;
-  amount?: number; // optional = unlimitiert
+  availableTickets?: number;
   availableFrom?: Date;
   availableUntil?: Date;
   createdAt?: Date;

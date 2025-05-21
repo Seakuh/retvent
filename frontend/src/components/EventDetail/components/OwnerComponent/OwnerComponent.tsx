@@ -107,7 +107,7 @@ export const OwnerComponent = () => {
           <FilmIcon className="h-10 w-10" />
         </button>
       </div>
-      <TicketDefinitionSection eventId={eventId} />
+      <TicketDefinitionSection eventId={eventId!} />
     </div>
   );
 };

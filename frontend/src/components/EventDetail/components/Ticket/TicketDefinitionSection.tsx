@@ -1,14 +1,22 @@
 import { Plus, Ticket, Trash } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TicketDefinition } from "../../../../utils";
-import { createTicketDefinition } from "./service";
+import {
+  createTicketDefinition,
+  deleteTicketDefinition,
+  getTicketDefinitions,
+} from "./service";
 import "./TicketDefinitionSection.css";
 
-export const TicketDefinitionSection: React.FC = () => {
+export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
+  eventId,
+}) => {
   const [tickets, setTickets] = useState<TicketDefinition[]>([
     {
+      eventId: eventId,
       name: "",
       price: 0,
+      availableTickets: 0,
       availableFrom: new Date(),
       availableUntil: new Date(),
     },
@@ -18,14 +26,23 @@ export const TicketDefinitionSection: React.FC = () => {
     setTickets([
       ...tickets,
       {
+        eventId: eventId,
+        availableTickets: 0,
         name: "",
         price: 0,
-        amount: 0,
         availableFrom: new Date(),
         availableUntil: new Date(),
       },
     ]);
   };
+
+  useEffect(() => {
+    const fetchTicketDefinitions = async () => {
+      const ticketDefinitions = await getTicketDefinitions(eventId);
+      setTickets(ticketDefinitions);
+    };
+    fetchTicketDefinitions();
+  }, [eventId]);
 
   const handleTicketChange = (
     index: number,
@@ -42,9 +59,15 @@ export const TicketDefinitionSection: React.FC = () => {
     await createTicketDefinition(tickets);
   };
 
-  const deleteTicket = (index: number) => {
-    const newTickets = tickets.filter((_, i) => i !== index);
-    setTickets(newTickets);
+  const deleteTicket = async (index: number) => {
+    if (window.confirm("Do you want to delete this ticket?")) {
+      console.log(tickets[index]);
+      const newTickets = tickets.filter((_, i) => i !== index);
+      if (tickets[index]._id) {
+        await deleteTicketDefinition(tickets[index]._id);
+      }
+      setTickets(newTickets);
+    }
   };
 
   return (
@@ -73,19 +96,26 @@ export const TicketDefinitionSection: React.FC = () => {
               <input
                 type="number"
                 placeholder="Amount"
-                value={ticket.amount}
+                value={ticket.availableTickets}
                 onChange={(e) =>
-                  handleTicketChange(index, "amount", parseInt(e.target.value))
+                  handleTicketChange(
+                    index,
+                    "availableTickets",
+                    parseInt(e.target.value)
+                  )
                 }
               />
               <input
+                className="ticket-input-date"
                 type="datetime-local"
                 value={ticket.availableFrom}
                 onChange={(e) =>
                   handleTicketChange(index, "availableFrom", e.target.value)
                 }
+                style={{ color: "white" }}
               />
               <input
+                className="ticket-input-date"
                 type="datetime-local"
                 value={ticket.availableUntil}
                 onChange={(e) =>
