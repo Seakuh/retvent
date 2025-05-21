@@ -10,7 +10,7 @@ interface TicketDefinition {
   endDate: string;
 }
 
-const TicketDefinitionSection: React.FC = () => {
+export const TicketDefinitionSection: React.FC = () => {
   const [tickets, setTickets] = useState<TicketDefinition[]>([
     {
       name: "",
@@ -52,6 +52,7 @@ const TicketDefinitionSection: React.FC = () => {
 
   return (
     <div className="ticket-definition">
+      <h1 className="section-title">Create Tickets</h1>
       {tickets.map((ticket, index) => (
         <div key={index} className="ticket-row">
           <input
@@ -88,10 +89,12 @@ const TicketDefinitionSection: React.FC = () => {
           />
         </div>
       ))}
-      <button onClick={addTicket}>+ Add Ticket</button>
-      <button onClick={handleCreateTickets}>Create Tickets</button>
+      <button className="add-ticket-button" onClick={addTicket}>
+        + Add Ticket
+      </button>
+      <button className="create-tickets-button" onClick={handleCreateTickets}>
+        Create Tickets
+      </button>
     </div>
   );
 };
-
-export default TicketDefinitionSection;
