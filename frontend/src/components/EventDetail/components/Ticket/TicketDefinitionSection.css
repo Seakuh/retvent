@@ -19,6 +19,7 @@
   padding: 10px;
   border: 1px solid #333;
   border-radius: 5px;
+  position: relative;
 }
 
 .ticket-row input {
@@ -31,6 +32,13 @@
   font-size: 16px; /* Verhindert Zoom auf iOS */
 }
 
+.ticket-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
 .button-container {
   display: flex;
   flex-direction: column;
@@ -38,7 +46,23 @@
   margin-top: 10px;
 }
 
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+}
 
+.delete-button:hover {
+  background-color: #c82333;
+}
 
 /* Media Query für Desktop */
 @media screen and (min-width: 768px) {
@@ -47,14 +71,14 @@
     align-items: center;
   }
 
-  .ticket-row input {
-    width: auto;
+  .ticket-inputs {
+    flex-direction: row;
     flex: 1;
   }
 
-  .button-container {
-    flex-direction: row;
-    justify-content: flex-end;
+  .delete-button {
+    margin-top: 0;
+    margin-left: 10px;
   }
 
   .ticket-definition {

@@ -1,3 +1,4 @@
+import { Trash } from "lucide-react";
 import React, { useState } from "react";
 import "./TicketDefinitionSection.css";
 
@@ -50,43 +51,59 @@ export const TicketDefinitionSection: React.FC = () => {
     console.log(tickets);
   };
 
+  const deleteTicket = (index: number) => {
+    const newTickets = tickets.filter((_, i) => i !== index);
+    setTickets(newTickets);
+  };
+
   return (
     <div className="ticket-definition">
-      <h1 className="section-title">Create Tickets</h1>
+      <h1 className="section-title">Tickets</h1>
       {tickets.map((ticket, index) => (
         <div key={index} className="ticket-row">
-          <input
-            type="text"
-            placeholder="Ticket Name"
-            value={ticket.name}
-            onChange={(e) => handleTicketChange(index, "name", e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="Amount"
-            value={ticket.availableTickets}
-            onChange={(e) =>
-              handleTicketChange(
-                index,
-                "availableTickets",
-                parseInt(e.target.value)
-              )
-            }
-          />
-          <input
-            type="datetime-local"
-            value={ticket.startDate}
-            onChange={(e) =>
-              handleTicketChange(index, "startDate", e.target.value)
-            }
-          />
-          <input
-            type="datetime-local"
-            value={ticket.endDate}
-            onChange={(e) =>
-              handleTicketChange(index, "endDate", e.target.value)
-            }
-          />
+          <div className="ticket-inputs">
+            <input
+              type="text"
+              placeholder="Ticket Name"
+              value={ticket.name}
+              onChange={(e) =>
+                handleTicketChange(index, "name", e.target.value)
+              }
+            />
+            <input
+              type="number"
+              placeholder="Amount"
+              value={ticket.availableTickets}
+              onChange={(e) =>
+                handleTicketChange(
+                  index,
+                  "availableTickets",
+                  parseInt(e.target.value)
+                )
+              }
+            />
+            <input
+              type="datetime-local"
+              value={ticket.startDate}
+              onChange={(e) =>
+                handleTicketChange(index, "startDate", e.target.value)
+              }
+            />
+            <input
+              type="datetime-local"
+              value={ticket.endDate}
+              onChange={(e) =>
+                handleTicketChange(index, "endDate", e.target.value)
+              }
+            />
+          </div>
+          <button
+            className="delete-button"
+            onClick={() => deleteTicket(index)}
+            aria-label="Delete ticket"
+          >
+            <Trash className="h-10 w-10" />
+          </button>
         </div>
       ))}
       <div className="button-container">
