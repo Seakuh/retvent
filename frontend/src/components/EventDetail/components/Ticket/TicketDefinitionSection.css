@@ -1,0 +1,40 @@
+.ticket-definition {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 auto;
+  width: 80rem;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+}
+
+
+.ticket-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ticket-row input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #333;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  margin: 5px;
+}
+
+button:hover {
+  background-color: #45a049;
+}

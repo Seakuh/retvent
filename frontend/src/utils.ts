@@ -1,4 +1,7 @@
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+export const TICKET_API_URL =
+  import.meta.env.VITE_TICKET_API_URL || "http://localhost:4001";
+
 export const FRONTEND_URL =
   import.meta.env.VITE_FRONTEND_URL || "https://event-scanner.com/";
 export const DEFAULT_IMAGE =
@@ -20,6 +23,25 @@ export class Feed {
   feedGifUrl?: string;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export class Ticket {
+  id?: string;
+  eventId?: string;
+  name?: string;
+  description?: string;
+  price?: number;
+}
+
+export class TicketDefinition {
+  eventId?: string;
+  name?: string;
+  price?: number;
+  creatorId?: string;
+  amount?: number; // optional = unlimitiert
+  availableFrom?: Date;
+  availableUntil?: Date;
+  createdAt?: Date;
 }
 
 export class EventPageDto {

@@ -1,9 +1,9 @@
 import { ClockIcon, FilmIcon, ImageIcon, PencilIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { TicketDefinitionSection } from "../Ticket/TicketDefinitionSection";
 import "./OwnerComponent.css";
 import { addGifs, addLineup, addTeaser } from "./service";
-
 export const OwnerComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { eventId } = useParams();
@@ -70,41 +70,44 @@ export const OwnerComponent = () => {
     );
 
   return (
-    <div className="event-owner-info">
-      {/* Update hinzufügen */}
-      <button
-        className="event-owner-info-button"
-        title="Add Update"
-        onClick={handleEdit}
-      >
-        <PencilIcon className="h-10 w-10" />
-      </button>
-      {/* Lineup hinzufügen */}
-      <button
-        className="event-owner-info-button"
-        title="Add Lineup"
-        onClick={() => handleOpen("lineup")}
-      >
-        <ClockIcon className="h-10 w-10" />
-      </button>
+    <div className="event-owner-info-container">
+      <div className="event-owner-info">
+        {/* Update hinzufügen */}
+        <button
+          className="event-owner-info-button"
+          title="Add Update"
+          onClick={handleEdit}
+        >
+          <PencilIcon className="h-10 w-10" />
+        </button>
+        {/* Lineup hinzufügen */}
+        <button
+          className="event-owner-info-button"
+          title="Add Lineup"
+          onClick={() => handleOpen("lineup")}
+        >
+          <ClockIcon className="h-10 w-10" />
+        </button>
 
-      {/* GIFs hinzufügen */}
-      <button
-        className="event-owner-info-button"
-        title="Add Images"
-        onClick={() => handleOpen("images")}
-      >
-        <ImageIcon className="h-10 w-10" />
-      </button>
+        {/* GIFs hinzufügen */}
+        <button
+          className="event-owner-info-button"
+          title="Add Images"
+          onClick={() => handleOpen("images")}
+        >
+          <ImageIcon className="h-10 w-10" />
+        </button>
 
-      {/* Teaser Video hinzufügen */}
-      <button
-        className="event-owner-info-button"
-        title="Add Video"
-        onClick={() => handleOpen("video")}
-      >
-        <FilmIcon className="h-10 w-10" />
-      </button>
+        {/* Teaser Video hinzufügen */}
+        <button
+          className="event-owner-info-button"
+          title="Add Video"
+          onClick={() => handleOpen("video")}
+        >
+          <FilmIcon className="h-10 w-10" />
+        </button>
+      </div>
+      <TicketDefinitionSection eventId={eventId} />
     </div>
   );
 };
