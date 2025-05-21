@@ -89,12 +89,10 @@ export const TicketDefinitionSection: React.FC = () => {
           />
         </div>
       ))}
-      <button className="add-ticket-button" onClick={addTicket}>
-        + Add Ticket
-      </button>
-      <button className="create-tickets-button" onClick={handleCreateTickets}>
-        Create Tickets
-      </button>
+      <div className="button-container">
+        <button onClick={addTicket}>+ Add Ticket</button>
+        <button onClick={handleCreateTickets}>Create Tickets</button>
+      </div>
     </div>
   );
 };
