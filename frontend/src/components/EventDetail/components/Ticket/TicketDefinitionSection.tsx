@@ -57,6 +57,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
   };
 
   const handleCreateTickets = async () => {
+    setErrorMessage("");
     try {
       const validTickets = tickets.filter(
         (ticket) =>
@@ -68,7 +69,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
       );
 
       if (validTickets.length === 0) {
-        setErrorMessage("Bitte fülle mindestens ein Ticket vollständig aus.");
+        setErrorMessage("please fill at least one ticket.");
         return;
       }
 
@@ -89,15 +90,24 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
 
   const deleteTicket = async (index: number) => {
     if (window.confirm("Do you want to delete this ticket?")) {
-      console.log(tickets[index]);
+      console.log("Deleting ticket at index:", index);
+      const ticketToDelete = tickets[index];
+
       const newTickets = tickets.filter((_, i) => i !== index);
-      if (tickets[index]._id) {
-        try {
-          await deleteTicketDefinition(tickets[index]._id);
-          setTickets(newTickets);
-        } catch (error) {
-          setErrorMessage("Error deleting ticket: " + error);
+      console.log("New tickets array:", newTickets);
+
+      try {
+        // Extrahiere die ID aus der _doc Struktur
+        const ticketId = ticketToDelete._doc?._id || ticketToDelete._id;
+
+        if (ticketId) {
+          const response = await deleteTicketDefinition(ticketId);
+        } else {
+          setErrorMessage("Ticket ID not found");
         }
+        setTickets(newTickets);
+      } catch (error) {
+        setErrorMessage("Error deleting ticket: " + error);
       }
     }
   };
