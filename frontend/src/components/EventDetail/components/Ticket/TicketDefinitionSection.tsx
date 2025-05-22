@@ -69,7 +69,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
       );
 
       if (validTickets.length === 0) {
-        setErrorMessage("please fill at least one ticket.");
+        setErrorMessage("Please fill at least one ticket.");
         return;
       }
 
@@ -82,7 +82,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
       }
       console.log(response);
       alert("Tickets created successfully");
-      setTickets(response);
+      setTickets([...response]);
     } catch (error) {
       setErrorMessage("Error creating tickets: " + error);
     }
@@ -110,6 +110,11 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
         setErrorMessage("Error deleting ticket: " + error);
       }
     }
+  };
+
+  const formatDateForInput = (dateString: string | Date) => {
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 16); // Format: "YYYY-MM-DDTHH:mm"
   };
 
   return (
@@ -156,7 +161,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
                   <input
                     className="ticket-input-date"
                     type="datetime-local"
-                    value={ticket.availableFrom}
+                    value={formatDateForInput(ticket.availableFrom)}
                     onChange={(e) =>
                       handleTicketChange(index, "availableFrom", e.target.value)
                     }
@@ -165,7 +170,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
                   <input
                     className="ticket-input-date"
                     type="datetime-local"
-                    value={ticket.availableUntil}
+                    value={formatDateForInput(ticket.availableUntil)}
                     onChange={(e) =>
                       handleTicketChange(
                         index,
