@@ -36,8 +36,6 @@ export const EventDetail: React.FC = () => {
     if (event) {
       document.title = `${event.title} | EventScanner`;
       if (event?.hostId === user?.id) {
-        console.log("event", event?.hostId, user?.id);
-
         setIsOwner(true);
       }
     }
@@ -166,7 +164,6 @@ export const EventDetail: React.FC = () => {
             />
           </button>
         </div> */}
-
         <EventHero
           imageUrl={event.imageUrl}
           title={event.title}
@@ -182,7 +179,7 @@ export const EventDetail: React.FC = () => {
         <button className="back-button" onClick={handleBack}>
           <ChevronLeft className="h-5 w-5" />
         </button>
-
+        ^
         <div className="event-content">
           <div className="event-important-info-contain">
             <div className="event-title-container">
@@ -241,7 +238,6 @@ export const EventDetail: React.FC = () => {
           )}
           {host && <EventHost host={host} userId={event.hostId || ""} />}
         </div>
-
         {showImageModal && (
           <ImageModal
             imageUrl={event.imageUrl || ""}
