@@ -16,6 +16,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
       ...ticketDefinitions,
       {
         eventId: eventId,
+        id: undefined,
         availableTickets: undefined,
         name: "",
         price: undefined,
@@ -40,7 +41,6 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
 
   const handleCreateTickets = async () => {
     setErrorMessage("");
-    console.log(ticketDefinitions);
     try {
       const validTickets = ticketDefinitions.filter(
         (ticket) =>

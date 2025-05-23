@@ -3,7 +3,6 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
-import { useTicket } from "../../hooks/useTicket";
 import CommentSection from "../Comment/CommentSection";
 import { CommunityBar } from "../CommunityDetailBar/CommunityBar";
 import { ImageModal } from "../ImageModal/ImageModal";
@@ -25,7 +24,6 @@ export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
   const { user } = useContext(UserContext);
   const { event, loading, error, host } = useEvent(eventId);
-  const { tickets } = useTicket(eventId);
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
@@ -182,13 +180,9 @@ export const EventDetail: React.FC = () => {
         <button className="back-button" onClick={handleBack}>
           <ChevronLeft className="h-5 w-5" />
         </button>
-        {tickets && tickets.length > 0 && (
-          <div className="ticket-definitions-container">
-            {tickets.map((ticket) => (
-              <Tickets ticket={ticket} />
-            ))}
-          </div>
-        )}
+        <div className="ticket-definitions-container">
+          <Tickets eventId={eventId || undefined} />
+        </div>
         <div className="event-content">
           <div className="event-important-info-contain">
             <div className="event-title-container">
