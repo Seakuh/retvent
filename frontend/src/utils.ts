@@ -43,6 +43,7 @@ export class TicketDefinition {
   availableFrom?: Date;
   availableUntil?: Date;
   createdAt?: Date;
+  _doc?: any;
 }
 
 export class EventPageDto {

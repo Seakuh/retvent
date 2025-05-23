@@ -4,6 +4,9 @@ export const createTicketDefinition = async (
   ticketDefinitions: TicketDefinition[]
 ) => {
   const access_token = localStorage.getItem("access_token");
+  console.log(ticketDefinitions);
+  console.log(TICKET_API_URL);
+  console.log(access_token);
   try {
     const response = await fetch(`${TICKET_API_URL}ticket/definitions`, {
       method: "POST",

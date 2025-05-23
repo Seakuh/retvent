@@ -1,27 +1,14 @@
 import { Plus, Save, Trash } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useTicket } from "../../../../hooks/useTicket";
 import { TicketDefinition } from "../../../../utils";
-import {
-  createTicketDefinition,
-  deleteTicketDefinition,
-  getTicketDefinitions,
-} from "./service";
+import { createTicketDefinition, deleteTicketDefinition } from "./service";
 import "./TicketDefinitionSection.css";
-
 export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
   eventId,
 }) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [tickets, setTickets] = useState<TicketDefinition[]>([
-    {
-      eventId: eventId,
-      name: "",
-      price: undefined,
-      availableTickets: undefined,
-      availableFrom: new Date(),
-      availableUntil: new Date(),
-    },
-  ]);
+  const { tickets, setTickets } = useTicket(eventId);
 
   const addTicket = () => {
     setErrorMessage("");
@@ -38,14 +25,6 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
     ]);
   };
 
-  useEffect(() => {
-    const fetchTicketDefinitions = async () => {
-      const ticketDefinitions = await getTicketDefinitions(eventId);
-      setTickets(ticketDefinitions);
-    };
-    fetchTicketDefinitions();
-  }, [eventId]);
-
   const handleTicketChange = (
     index: number,
     field: keyof TicketDefinition,
@@ -58,6 +37,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
 
   const handleCreateTickets = async () => {
     setErrorMessage("");
+    console.log(tickets);
     try {
       const validTickets = tickets.filter(
         (ticket) =>
@@ -90,11 +70,9 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
 
   const deleteTicket = async (index: number) => {
     if (window.confirm("Do you want to delete this ticket?")) {
-      console.log("Deleting ticket at index:", index);
       const ticketToDelete = tickets[index];
 
       const newTickets = tickets.filter((_, i) => i !== index);
-      console.log("New tickets array:", newTickets);
 
       try {
         // Extrahiere die ID aus der _doc Struktur
@@ -161,7 +139,9 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
                   <input
                     className="ticket-input-date"
                     type="datetime-local"
-                    value={formatDateForInput(ticket.availableFrom)}
+                    value={formatDateForInput(
+                      ticket.availableFrom || new Date()
+                    )}
                     onChange={(e) =>
                       handleTicketChange(index, "availableFrom", e.target.value)
                     }
@@ -170,7 +150,9 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
                   <input
                     className="ticket-input-date"
                     type="datetime-local"
-                    value={formatDateForInput(ticket.availableUntil)}
+                    value={formatDateForInput(
+                      ticket.availableUntil || new Date()
+                    )}
                     onChange={(e) =>
                       handleTicketChange(
                         index,
