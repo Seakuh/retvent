@@ -75,8 +75,9 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
       const newTickets = tickets.filter((_, i) => i !== index);
 
       try {
+        console.log(ticketToDelete);
         // Extrahiere die ID aus der _doc Struktur
-        const ticketId = ticketToDelete._doc?._id || ticketToDelete._id;
+        const ticketId = ticketToDelete.id;
 
         if (ticketId) {
           const response = await deleteTicketDefinition(ticketId);

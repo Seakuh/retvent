@@ -35,6 +35,7 @@ export class Ticket {
 
 export class TicketDefinition {
   _id?: string;
+  id?: string;
   eventId?: string;
   name?: string;
   price?: number;
