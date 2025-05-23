@@ -8,12 +8,12 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
   eventId,
 }) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const { tickets, setTickets } = useTicket(eventId);
+  const { ticketDefinitions, setTicketDefinitions } = useTicket(eventId);
 
   const addTicket = () => {
     setErrorMessage("");
-    setTickets([
-      ...tickets,
+    setTicketDefinitions([
+      ...ticketDefinitions,
       {
         eventId: eventId,
         availableTickets: undefined,
@@ -30,16 +30,19 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
     field: keyof TicketDefinition,
     value: string | number
   ) => {
-    const newTickets = [...tickets];
-    newTickets[index] = { ...newTickets[index], [field]: value };
-    setTickets(newTickets);
+    const newTicketDefinitions = [...ticketDefinitions];
+    newTicketDefinitions[index] = {
+      ...newTicketDefinitions[index],
+      [field]: value,
+    };
+    setTicketDefinitions(newTicketDefinitions);
   };
 
   const handleCreateTickets = async () => {
     setErrorMessage("");
-    console.log(tickets);
+    console.log(ticketDefinitions);
     try {
-      const validTickets = tickets.filter(
+      const validTickets = ticketDefinitions.filter(
         (ticket) =>
           ticket.name &&
           ticket.price !== undefined &&
@@ -62,7 +65,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
       }
       console.log(response);
       alert("Tickets created successfully");
-      setTickets([...response]);
+      setTicketDefinitions([...response]);
     } catch (error) {
       setErrorMessage("Error creating tickets: " + error);
     }
@@ -70,12 +73,14 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
 
   const deleteTicket = async (index: number) => {
     if (window.confirm("Do you want to delete this ticket?")) {
-      const ticketToDelete = tickets[index];
+      const ticketToDelete = ticketDefinitions[index];
 
-      const newTickets = tickets.filter((_, i) => i !== index);
+      const newTicketDefinitions = ticketDefinitions.filter(
+        (_, i) => i !== index
+      );
+      console.log(ticketToDelete);
 
       try {
-        console.log(ticketToDelete);
         // Extrahiere die ID aus der _doc Struktur
         const ticketId = ticketToDelete.id;
 
@@ -84,7 +89,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
         } else {
           setErrorMessage("Ticket ID not found");
         }
-        setTickets(newTickets);
+        setTicketDefinitions(newTicketDefinitions);
       } catch (error) {
         setErrorMessage("Error deleting ticket: " + error);
       }
@@ -99,7 +104,7 @@ export const TicketDefinitionSection: React.FC<{ eventId: string }> = ({
   return (
     <div className="ticket-definition">
       <h1 className="section-title">Tickets</h1>
-      {tickets.map((ticket, index) => {
+      {ticketDefinitions.map((ticket, index) => {
         try {
           return (
             <div>

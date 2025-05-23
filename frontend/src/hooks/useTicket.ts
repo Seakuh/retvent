@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { TicketDefinition } from "../utils";
 
 export const useTicket = (eventId?: string) => {
-  const [tickets, setTickets] = useState<TicketDefinition[]>([]);
+  const [ticketDefinitions, setTicketDefinitions] = useState<
+    TicketDefinition[]
+  >([]);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
@@ -18,7 +20,7 @@ export const useTicket = (eventId?: string) => {
             import.meta.env.VITE_TICKET_API_URL
           }ticket/definitions/by-event/${eventId}`
         );
-        setTickets(response.data);
+        setTicketDefinitions(response.data);
         console.log(response.data);
       } catch (error) {
         setError(error as Error);
@@ -29,5 +31,5 @@ export const useTicket = (eventId?: string) => {
     }
   }, [eventId]);
 
-  return { setTickets, tickets, error };
+  return { setTicketDefinitions, ticketDefinitions, error };
 };
