@@ -263,6 +263,101 @@ export interface Event {
   commentCount?: number;
 }
 
+export type UserProfile = {
+  id: string;
+  name: string;
+  location: string;
+  region: string;
+  trends: string[];
+  releases: Release[];
+  socials: {
+    instagram?: string;
+    facebook?: string;
+    linktree?: string;
+    tiktok?: string;
+  };
+  textPreferences?: {
+    platform: string;
+    tone: string;
+    structure: string;
+    emojiLevel: "none" | "light" | "heavy";
+    language: string;
+  }[];
+};
+
+export type Release = {
+  id: string;
+  title: string;
+  artist: string;
+  description: string;
+  coverImage: string;
+  genre: string;
+  releaseDate: string;
+  platforms: {
+    spotify?: string;
+    soundCloud?: string;
+    applePodcasts?: string;
+    beatport?: string;
+    bandcamp?: string;
+  };
+};
+
+export type Event = {
+  id: string;
+  title: string;
+  date: string;
+  location: string;
+  description: string;
+  ticketsSold: number;
+  ticketsAvailable: number;
+};
+
+export type TicketSale = {
+  date: string;
+  sales: number;
+};
+
+export type UserInsight = {
+  name: string;
+  value: number;
+};
+
+export type Trend = {
+  id: string;
+  name: string;
+  category: string;
+  relevance: number;
+};
+
+export type TextTemplate = {
+  id: string;
+  name: string;
+  template: string;
+  platform: string;
+  tone: string;
+};
+
+export type Platform =
+  | "Instagram"
+  | "WhatsApp"
+  | "Telegram"
+  | "Twitter"
+  | "Facebook"
+  | "Email";
+export type Tone =
+  | "casual"
+  | "emotional"
+  | "serious"
+  | "professional"
+  | "energetic";
+export type Language =
+  | "English"
+  | "Spanish"
+  | "French"
+  | "German"
+  | "Portuguese";
+export type EmojiLevel = "none" | "light" | "heavy";
+
 export const defaultProfileImage =
   "https://img.event-scanner.com/insecure/rs:auto/plain/https://hel1.your-objectstorage.com/imagebucket/events/8d703697-caf7-4438-abda-4ccd8e5939e9.png@webp";
 

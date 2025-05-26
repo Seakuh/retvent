@@ -1,5 +1,6 @@
 import {
   Info,
+  LayoutDashboard,
   LogIn,
   LogOut,
   Menu,
@@ -317,6 +318,19 @@ function LandingPage() {
                   </button>
                   {showMenu && (
                     <div className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 menu-container">
+                      <button
+                        onClick={() => {
+                          if (loggedIn) {
+                            navigate(`/dashboard`);
+                          } else {
+                            navigate("/login");
+                          }
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
+                      >
+                        <LayoutDashboard size={20} />
+                        <h3>Dashboard</h3>
+                      </button>
                       <button
                         onClick={() => {
                           if (loggedIn) {

@@ -1,0 +1,99 @@
+.container {
+  margin-bottom: var(--space-6);
+}
+
+.calendarWrapper {
+  margin-bottom: var(--space-4);
+}
+
+.calendar {
+  width: 100%;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+  background-color: white;
+}
+
+.eventsList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .eventsList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .eventsList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.eventCard {
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  background-color: white;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.eventCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.eventTitle {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: var(--space-2);
+  color: var(--color-neutral-900);
+}
+
+.eventDate {
+  font-size: 0.875rem;
+  color: var(--color-primary-600);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.eventLocation {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.eventDescription {
+  font-size: 0.875rem;
+  color: var(--color-neutral-700);
+  margin-bottom: var(--space-4);
+}
+
+.eventFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--color-neutral-600);
+}
+
+.eventProgress {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-neutral-200);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-1);
+  overflow: hidden;
+}
+
+.eventProgressBar {
+  height: 100%;
+  background-color: var(--color-primary-500);
+  border-radius: var(--radius-md);
+}

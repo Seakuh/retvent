@@ -1,0 +1,95 @@
+.container {
+  background-color: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  color: var(--color-neutral-900);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.toolCard {
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.toolCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.toolHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.toolIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-600);
+  border-radius: var(--radius-md);
+  margin-right: var(--space-3);
+}
+
+.toolTitle {
+  font-weight: 600;
+  color: var(--color-neutral-800);
+  font-size: 1rem;
+}
+
+.toolDescription {
+  color: var(--color-neutral-600);
+  font-size: 0.875rem;
+  margin-bottom: var(--space-3);
+  flex-grow: 1;
+}
+
+.qrPreview {
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-3);
+  background-color: var(--color-neutral-100);
+  border-radius: var(--radius-md);
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--color-neutral-300);
+}
+
+.qrPlaceholder {
+  font-size: 0.875rem;
+  color: var(--color-neutral-500);
+  text-align: center;
+}

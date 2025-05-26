@@ -22,6 +22,7 @@ import { ChatProvider } from "./components/GroupChat/chatProvider";
 import { PwaInstall } from "./components/PwaInstall/PwaInstall";
 import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
+import MonitoringDashboard from "./components/dashboard/MonitoringDashboard";
 import { UserContextProvider } from "./contexts/UserContextProvider";
 import { syncFavorites } from "./service";
 // const queryClient = new QueryClient({
@@ -101,6 +102,7 @@ const App: React.FC = () => {
                     path="/group/invite/:userId/:tokenId"
                     element={<GroupInvite />}
                   />
+                  <Route path="/dashboard" element={<MonitoringDashboard />} />
                   <Route
                     path="/my-groups"
                     element={

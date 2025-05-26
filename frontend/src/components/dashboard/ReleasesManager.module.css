@@ -1,0 +1,146 @@
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.releasesList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .releasesList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .releasesList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.releaseCard {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: white;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.releaseCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.coverImage {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.releaseContent {
+  padding: var(--space-4);
+}
+
+.releaseTitle {
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: var(--space-1);
+  color: var(--color-neutral-900);
+}
+
+.releaseArtist {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  margin-bottom: var(--space-2);
+}
+
+.releaseGenre {
+  display: inline-block;
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-700);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: var(--space-3);
+}
+
+.releaseDate {
+  font-size: 0.875rem;
+  color: var(--color-neutral-600);
+  margin-bottom: var(--space-3);
+}
+
+.platformLinks {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.platformLink {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-neutral-500);
+  border-radius: var(--radius-md);
+  background-color: var(--color-neutral-100);
+  transition: all var(--transition-fast);
+}
+
+.platformLink:hover {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+}
+
+.formContainer {
+  background-color: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-8);
+}
+
+.formTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  color: var(--color-neutral-900);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .formGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.formActions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}

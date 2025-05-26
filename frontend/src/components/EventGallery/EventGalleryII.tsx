@@ -2,7 +2,7 @@ import React from "react";
 import { Event, formatDate } from "../../utils";
 import "./EventGalleryII.css";
 import { RealListItem } from "./Items/RealListItem";
-
+import { SideModule } from "./SideModule";
 interface EventGalleryProps {
   events: Event[];
 }
@@ -61,6 +61,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
 
   return (
     <div className="event-gallery-container">
+      <SideModule events={events} />
       {/* Today Section */}
       {/* <div className="event-date-heading-container">
         {todayEvents.length > 0 && <h2 className="section-title">Today</h2>}
