@@ -8,7 +8,10 @@ import { Camera, Link, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import ErrorDialog from "../components/ErrorDialog/ErrorDialog";
-import { uploadEventImage } from "../components/EventScanner/service";
+import {
+  uploadEventImage,
+  uploadEventImageUrls,
+} from "../components/EventScanner/service";
 import { ProcessingAnimation } from "../components/ProcessingAnimation/ProcessingAnimation";
 import { UploadAnimation } from "../components/UploadAnimation/UploadAnimation";
 import { UploadImagesModal } from "./UploadImagesModal";
@@ -111,6 +114,29 @@ export const UploadModal = ({
     return interval;
   };
 
+  const proxyServices = [
+    // SoundCloud-spezifischer Service
+    (url: string) => {
+      if (url.includes("soundcloud.com")) {
+        // Extrahiere die Track-ID aus der URL
+        const trackId = url.split("/").pop();
+        return `https://i1.sndcdn.com/artworks-${trackId}-large.jpg`;
+      }
+      return url;
+    },
+    // Allgemeine Proxy-Services
+    (url: string) => `https://images.weserv.nl/?url=${encodeURIComponent(url)}`,
+    (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    (url: string) =>
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    (url: string) => `https://cors-anywhere.herokuapp.com/${url}`,
+  ];
+
+  // Hilfsfunktion zum Erkennen von SoundCloud-URLs
+  const isSoundCloudUrl = (url: string) => {
+    return url.includes("soundcloud.com");
+  };
+
   const handleImageUrlsSubmit = async () => {
     if (!imageUrls.trim()) {
       setError("Please enter at least one image URL.");
@@ -119,19 +145,108 @@ export const UploadModal = ({
 
     const urls = imageUrls.split(",").map((url) => url.trim());
     setUploadedImages(urls);
+
+    try {
+      const imageFiles = await Promise.all(
+        urls.map(async (url, index) => {
+          try {
+            let response;
+
+            // Spezielle Behandlung für SoundCloud-URLs
+            if (isSoundCloudUrl(url)) {
+              // Versuche zuerst den SoundCloud-spezifischen Proxy
+              try {
+                const soundCloudUrl = proxyServices[0](url);
+                response = await fetch(soundCloudUrl);
+                if (!response.ok) {
+                  // Fallback auf andere Proxies
+                  for (const proxyService of proxyServices.slice(1)) {
+                    try {
+                      const proxyUrl = proxyService(url);
+                      response = await fetch(proxyUrl);
+                      if (response.ok) break;
+                    } catch (error) {
+                      continue;
+                    }
+                  }
+                }
+              } catch (error) {
+                console.error("SoundCloud proxy failed:", error);
+                // Fallback auf andere Proxies
+                for (const proxyService of proxyServices.slice(1)) {
+                  try {
+                    const proxyUrl = proxyService(url);
+                    response = await fetch(proxyUrl);
+                    if (response.ok) break;
+                  } catch (error) {
+                    continue;
+                  }
+                }
+              }
+            } else {
+              // Normale Proxy-Behandlung für andere URLs
+              for (const proxyService of proxyServices) {
+                try {
+                  const proxyUrl = proxyService(url);
+                  response = await fetch(proxyUrl);
+                  if (response.ok) break;
+                } catch (error) {
+                  continue;
+                }
+              }
+            }
+
+            if (!response || !response.ok) {
+              throw new Error("Failed to fetch image");
+            }
+
+            const blob = await response.blob();
+            const fileName = url.split("/").pop() || `image-${Date.now()}.jpg`;
+
+            setProgress(((index + 1) / urls.length) * 50);
+
+            return new File([blob], fileName, { type: blob.type });
+          } catch (error) {
+            console.error(`Fehler beim Herunterladen von ${url}:`, error);
+            return null;
+          }
+        })
+      );
+
+      const validFiles = imageFiles.filter(
+        (file): file is File => file !== null
+      );
+
+      if (validFiles.length === 0) {
+        return;
+      }
+
+      setIsUploading(false);
+    } catch (error) {
+      setError("Fehler beim Verarbeiten der Bilder.");
+      console.error(error);
+      setIsUploading(false);
+    }
   };
 
   const handleConfirmImages = (selectedImages: string[]) => {
     // Hier können Sie die ausgewählten Bilder verarbeiten
     // Zum Beispiel:
+    try {
+      uploadEventImageUrls(selectedImages);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    }
     selectedImages.forEach((imageUrl) => {
       // Hier können Sie die Bilder an Ihren Backend-Service senden
       // oder andere Verarbeitung durchführen
       console.log("Processing image:", imageUrl);
+      const image = new File([], imageUrl, { type: "image/jpeg" });
+      // startUpload(image);
+      console.log("image", image);
     });
 
-    setUploadedImages([]);
-    onClose();
+    // setUploadedImages([]);
   };
 
   return (

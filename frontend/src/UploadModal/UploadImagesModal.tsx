@@ -81,7 +81,6 @@ export const UploadImagesModal = ({
 
   const handleConfirm = () => {
     onConfirm(selectedImages);
-    onClose();
   };
 
   return (

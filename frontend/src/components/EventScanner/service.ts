@@ -93,3 +93,35 @@ const saveEventToLocalStorage = (_id: string) => {
     localStorage.setItem("uploadedEvents", JSON.stringify(existingEvents));
   }
 };
+
+export const uploadEventImageUrls = async (imageUrls: string[]) => {
+  const accessToken = localStorage.getItem("access_token");
+  try {
+    console.log("Starte Upload von Bild-URLs:", imageUrls);
+
+    const response = await fetch(
+      `${API_URL}events/v1/upload/event-image-links`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ links: imageUrls }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Server Antwort fehlgeschlagen:", errorText);
+      throw new Error(`Upload fehlgeschlagen: ${response.status} ${errorText}`);
+    }
+
+    console.log("Upload erfolgreich abgeschlossen");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Fehler beim Upload der Bild-URLs:", error);
+    throw error;
+  }
+};
