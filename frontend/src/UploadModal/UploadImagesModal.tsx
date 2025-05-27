@@ -75,6 +75,13 @@ export const UploadImagesModal = ({
         ? prev.filter((url) => url !== imageUrl)
         : [...prev, imageUrl]
     );
+
+    console.log(selectedImages);
+  };
+
+  const handleConfirm = () => {
+    onConfirm(selectedImages);
+    onClose();
   };
 
   return (
@@ -114,7 +121,7 @@ export const UploadImagesModal = ({
         <div className="modal-footer">
           <button
             className="confirm-button"
-            onClick={() => onConfirm(selectedImages)}
+            onClick={handleConfirm}
             disabled={selectedImages.length === 0}
           >
             Confirm Selection ({selectedImages.length})

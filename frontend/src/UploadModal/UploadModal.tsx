@@ -123,7 +123,13 @@ export const UploadModal = ({
 
   const handleConfirmImages = (selectedImages: string[]) => {
     // Hier können Sie die ausgewählten Bilder verarbeiten
-    console.log("Selected images:", selectedImages);
+    // Zum Beispiel:
+    selectedImages.forEach((imageUrl) => {
+      // Hier können Sie die Bilder an Ihren Backend-Service senden
+      // oder andere Verarbeitung durchführen
+      console.log("Processing image:", imageUrl);
+    });
+
     setUploadedImages([]);
     onClose();
   };
