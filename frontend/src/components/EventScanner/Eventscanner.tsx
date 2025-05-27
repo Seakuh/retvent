@@ -14,6 +14,8 @@ export const EventScanner: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [imageUrls, setImageUrls] = useState<string>("");
+
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -75,15 +77,61 @@ export const EventScanner: React.FC = () => {
     }
   };
 
+  const handleImageUrlsSubmit = async () => {
+    if (!imageUrls.trim()) {
+      setError("Please enter at least one image URL.");
+      return;
+    }
+
+    const urls = imageUrls.split(",").map((url) => url.trim());
+    console.log(urls);
+    setIsUploading(true);
+    setProgress(25);
+    setError(null);
+
+    try {
+      // Hier müsste die entsprechende API-Funktion implementiert werden
+      // const eventResponse = await uploadEventImageUrls(urls);
+      // setUploadedEvent(eventResponse);
+    } catch (err) {
+      setError(
+        "There was a problem processing the image URLs. Please try again later."
+      );
+    } finally {
+      setIsUploading(false);
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <div className="event-scanner">
-      <button
-        className="retro-button flex items-center gap-2"
-        onClick={triggerFileInput}
-      >
-        <Upload size={35} />
-        Upload Event
-      </button>
+      <div className="flex flex-col gap-4">
+        <button
+          className="retro-button flex items-center gap-2"
+          onClick={triggerFileInput}
+        >
+          <Upload size={35} />
+          Upload Event
+        </button>
+
+        <div className="flex flex-col gap-2">
+          <input
+            type="text"
+            placeholder="Bild-URLs (durch Komma getrennt)"
+            value={imageUrls}
+            onChange={(e) => setImageUrls(e.target.value)}
+            className="p-2 border rounded"
+          />
+          <button
+            className="retro-button flex items-center gap-2"
+            onClick={handleImageUrlsSubmit}
+          >
+            <Upload size={35} />
+            Process URLs
+          </button>
+        </div>
+      </div>
+
       <input
         type="file"
         accept="image/*"

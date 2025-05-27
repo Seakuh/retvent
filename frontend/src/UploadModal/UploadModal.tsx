@@ -4,13 +4,14 @@
  * A modal interface for uploading event images either via camera or file selection.
  * Once a file is selected, it displays upload progress and handles success/error states.
  */
-import { Camera, Upload } from "lucide-react";
+import { Camera, Link, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import ErrorDialog from "../components/ErrorDialog/ErrorDialog";
 import { uploadEventImage } from "../components/EventScanner/service";
 import { ProcessingAnimation } from "../components/ProcessingAnimation/ProcessingAnimation";
 import { UploadAnimation } from "../components/UploadAnimation/UploadAnimation";
+import { UploadImagesModal } from "./UploadImagesModal";
 import "./UploadModal.css";
 
 /**
@@ -40,6 +41,8 @@ export const UploadModal = ({
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [imageUrls, setImageUrls] = useState<string>("");
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
@@ -108,6 +111,16 @@ export const UploadModal = ({
     return interval;
   };
 
+  const handleImageUrlsSubmit = async () => {
+    if (!imageUrls.trim()) {
+      setError("Please enter at least one image URL.");
+      return;
+    }
+
+    const urls = imageUrls.split(",").map((url) => url.trim());
+    setUploadedImages(urls);
+  };
+
   return (
     <div>
       {!isUploading && !isProcessing && (
@@ -132,7 +145,25 @@ export const UploadModal = ({
                   <Upload size={24} />
                   <span>Select File</span>
                 </button>
+
+                {/* URL input section */}
+                <div className="url-input-section">
+                  <input
+                    type="text"
+                    placeholder="Image URLs (comma separated)"
+                    value={imageUrls}
+                    onChange={(e) => setImageUrls(e.target.value)}
+                    className="url-input"
+                  />
+                </div>
               </div>
+              <button
+                className="upload-button url-button"
+                onClick={handleImageUrlsSubmit}
+              >
+                <Link size={24} />
+                <span>Process URLs</span>
+              </button>
             </div>
 
             {/* Hidden file input for file system selection */}
@@ -169,6 +200,13 @@ export const UploadModal = ({
 
       {/* Error dialog for upload failures */}
       {error && <ErrorDialog message={error} onClose={() => setError(null)} />}
+
+      {uploadedImages.length > 0 && (
+        <UploadImagesModal
+          uploadedImages={uploadedImages}
+          onClose={() => setUploadedImages([])}
+        />
+      )}
 
       {/* Close button */}
       {/* <button className="upload-modal-close-button" onClick={onClose}>
