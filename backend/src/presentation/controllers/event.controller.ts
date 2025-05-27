@@ -187,6 +187,7 @@ export class EventController {
     @Body() body: { location: string },
     @Request() req,
   ) {
+    console.log('uploadEventImageV5', image, body, req);
     try {
       // Location-String zu Objekt parsen
       const locationData = JSON.parse(body.location);
@@ -203,6 +204,60 @@ export class EventController {
       );
     } catch (error) {
       console.error('V5 Upload - Error:', error);
+      throw error;
+    }
+  }
+
+  @Post('v1/upload/event-images')
+  @UseGuards(UploadGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadEventImages(
+    @UploadedFile() images: Express.Multer.File[],
+    @Body() body: { location: string },
+    @Request() req,
+  ) {
+    console.log('uploadEventImages', images, body, req);
+    try {
+      // Location-String zu Objekt parsen
+      const locationData = JSON.parse(body.location);
+
+      // Koordinaten extrahieren
+      const lonFromBodyCoordinates = locationData.coordinates[0];
+      const latFromBodyCoordinates = locationData.coordinates[1];
+
+      return this.eventService.processEventImagesUploadV1(
+        images,
+        lonFromBodyCoordinates,
+        latFromBodyCoordinates,
+        req.user.id,
+      );
+    } catch (error) {
+      console.error('V1 Upload - Error:', error);
+      throw error;
+    }
+  }
+
+  @Post('v1/upload/event-image-links')
+  @UseGuards(UploadGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadEventImageLinks(
+    @Body() body: { links: string[] },
+    @Request() req,
+  ) {
+    console.log('uploadEventImageLinks', body, req);
+    try {
+      // Koordinaten extrahieren
+      const lonFromBodyCoordinates = 13.404954; // Berlin longitude
+      const latFromBodyCoordinates = 52.520008; // Berlin latitude
+
+      return this.eventService.processEventImageLinksUploadV1(
+        body.links,
+        lonFromBodyCoordinates,
+        latFromBodyCoordinates,
+        req.user.id,
+      );
+    } catch (error) {
+      console.error('V1 Link Upload - Error:', error);
       throw error;
     }
   }

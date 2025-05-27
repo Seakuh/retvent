@@ -4,6 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import axios from 'axios';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { GeolocationService } from 'src/infrastructure/services/geolocation.service';
 import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
@@ -88,6 +89,88 @@ export class EventService {
     return this.eventRepository.searchByCity(city, limit);
   }
 
+  async processEventImageLinksUploadV1(
+    links: string[],
+    lon: number,
+    lat: number,
+    userId: string,
+  ) {
+    console.info('[EventService] Processing event images from links');
+
+    const createdEvents = [];
+
+    for (const link of links) {
+      try {
+        // 1. Bild herunterladen
+        const imageBuffer = await this.downloadImage(link);
+
+        // 2. Bild direkt aus Buffer hochladen
+        const uploadedImageUrl =
+          await this.imageService.uploadImageFromBuffer(imageBuffer);
+        if (!uploadedImageUrl) {
+          throw new BadRequestException('Failed to upload image');
+        }
+
+        // 3. Eventdaten extrahieren (optional)
+        let extractedEventData = {};
+        try {
+          extractedEventData =
+            await this.chatGptService.extractEventFromFlyer(uploadedImageUrl);
+        } catch (error) {
+          console.warn(
+            '⚠️ Eventdaten konnten nicht extrahiert werden:',
+            error.message,
+          );
+        }
+
+        // 4. Hostdaten holen
+        const profile = await this.profileService.getProfileByUserId(userId);
+        const hostImageUrl = profile?.profileImageUrl;
+
+        // 5. Eventobjekt erstellen
+        const eventData = {
+          ...extractedEventData,
+          imageUrl: uploadedImageUrl,
+          uploadLat: lat,
+          uploadLon: lon,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          location: {
+            coordinates: {
+              lat,
+              lon,
+            },
+          },
+          status: 'pending',
+          hostId: userId || 'public',
+          host: {
+            profileImageUrl: hostImageUrl || undefined,
+            username: profile?.username || undefined,
+          },
+        };
+
+        const createdEvent = await this.eventRepository.create(eventData);
+        await this.profileService.addCreatedEvent(userId, createdEvent.id);
+        await this.userService.addUserPoints(userId, 20);
+        await this.feedService.pushFeedItemFromEvent(createdEvent, 'event');
+
+        createdEvents.push(createdEvent);
+      } catch (error) {
+        console.error(
+          `❌ Fehler beim Verarbeiten des Bildes (${link}):`,
+          error.message,
+        );
+      }
+    }
+
+    return createdEvents;
+  }
+
+  private async downloadImage(url: string): Promise<Buffer> {
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    return Buffer.from(response.data, 'binary');
+  }
+
   async findAll() {
     const events = await this.eventRepository.findAllWithCommentCount();
     return events.map((event) => this.toEntity(event));
@@ -109,6 +192,15 @@ export class EventService {
 
   async getEventById(id: string): Promise<Event | null> {
     return this.eventRepository.findById(id);
+  }
+
+  processEventImagesUploadV1(
+    images: Express.Multer.File[],
+    lonFromBodyCoordinates: any,
+    latFromBodyCoordinates: any,
+    id: any,
+  ) {
+    throw new Error('Method not implemented.');
   }
 
   async getEventByIdWithHostInformation(

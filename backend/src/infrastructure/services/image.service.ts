@@ -29,6 +29,33 @@ export class ImageService {
     });
   }
 
+  async uploadImageFromBuffer(imageBuffer: Buffer) {
+    try {
+      const fileExtension = 'jpg';
+      const fileName = `${uuidv4()}.${fileExtension}`;
+
+      console.log('Uploading image with credentials:', {
+        bucket: this.bucketName,
+        fileName,
+        contentType: 'image/jpeg',
+      });
+
+      const command = new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: `events/${fileName}`,
+        Body: imageBuffer,
+        ContentType: 'image/jpeg',
+        ACL: 'public-read',
+      });
+
+      await this.s3Client.send(command);
+
+      return `https://hel1.your-objectstorage.com/${this.bucketName}/events/${fileName}`;
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+      throw new Error(`Failed to upload image: ${error.message}`);
+    }
+  }
   async uploadImage(image: Express.Multer.File): Promise<string> {
     try {
       const fileExtension = image.originalname.split('.').pop() || 'jpg';
