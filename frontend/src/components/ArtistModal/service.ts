@@ -12,9 +12,10 @@ export const setUpNewArtist = async (
 
   console.log(formData);
 
-  const response = await fetch(`${API_URL}artists/new`, {
+  const response = await fetch(`${API_URL}artists/new-v2`, {
     method: "POST",
     body: formData,
   });
+  console.log(response);
   return response.json();
 };

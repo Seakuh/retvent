@@ -29,7 +29,7 @@ export const ArtistModal = ({
       console.log("No image selected");
     }
     setIsLoading(false);
-    navigate("/profile/" + artistName);
+    window.location.reload();
   };
 
   const handleBack = () => {
