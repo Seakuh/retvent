@@ -87,7 +87,7 @@ Today's date is **${today}**. If the flyer does not mention a date, use this as 
     - Instagram → "https://www.instagram.com"
     - Facebook → "https://www.facebook.com"
     - Twitter → "https://www.twitter.com"
-- **Tags (tags)**: Always include **five** relevant tags based on the event’s theme.
+- **Tags (tags)**: Always include **five** relevant tags based on the event's theme.
 - **Email (email)**: Extract the email address from the event flyer.
 
 ### Response Format (JSON):
@@ -219,10 +219,10 @@ Analyze the flyer carefully, ensuring accurate data extraction and logical fallb
   }
   
   Instructions:
-  - Extract the **bio** from the input text and improve the grammar while keeping the artist’s style. if there is a bio, add it to the bio plain field.
+  - Extract the **bio** from the input text and improve the grammar while keeping the artist's style. if there is a bio, add it to the bio plain field.
   - Extract all **links** (SoundCloud, Instagram, Bandcamp, Facebook, personal website, etc.).
   - If image URLs are included, add them to the gallery field.
-  - Assign a matching **category** based on the artist’s role. Possible values:  
+  - Assign a matching **category** based on the artist's role. Possible values:  
     - "organizer", "musician", "visual_artist", "technician", "doorman", "helper", "cook"
   - Return only the final JavaScript object as your response (no explanation).
   
@@ -408,7 +408,7 @@ Ensure proper JSON formatting, and validate all fields before returning the resu
               - Instagram: https://www.instagram.com
               - Facebook: https://www.facebook.com
               - Twitter: https://www.twitter.com
-            - **tags**: Generate exactly 5 relevant keywords based on the event’s content.
+            - **tags**: Generate exactly 5 relevant keywords based on the event's content.
             - **email**: Extract if present.
             - **address**: Include street, houseNumber, and city. Leave values empty if unknown.
             
@@ -547,6 +547,74 @@ ${JSON.stringify(event)}
       ],
     });
 
+    return response.choices[0]?.message?.content || '';
+  }
+
+  async generateRequestEmail(prompt: string) {
+    const emailPrompt = `Als Musiklabel-Experte von Avanti, schreibe eine professionelle E-Mail an einen Künstler. 
+    Verwende die folgende Sprache: ${prompt}
+    Write a friendly, respectful, and groove-inspired email on behalf of the music label "Avanti" to an artist whose sound we really love. The email should:
+
+Express genuine excitement about the artist’s music
+
+Briefly introduce Avanti as a groove-driven label/platform based in Germany
+
+Ask if we may promote and share their music in Germany through our label
+
+Make it clear that the artist retains all rights to their music
+
+Use a warm and open tone, include a few emojis, and keep it casual but professional
+
+End with greetings from Berlin and a signature (e.g., “Much love, [Your Name] – Avanti”)`;
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: emailPrompt }],
+    });
+    return response.choices[0]?.message?.content || '';
+  }
+
+  async generateArtistDescription(prompt: string) {
+    const descriptionPrompt = `Erstelle eine ausgewogene Künstlerbeschreibung basierend auf den folgenden Informationen: ${prompt}
+    Die Beschreibung sollte:
+    - Professionell und sachlich sein
+    - Nicht übertrieben euphorisch
+    - Einige passende Emojis enthalten (maximal 3-4)
+    - Die wichtigsten Fakten und Erfolge hervorheben
+    - Zwischen 100-150 Wörtern lang sein
+    - Mit einem kurzen, prägnanten Fazit enden`;
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: descriptionPrompt }],
+    });
+    return response.choices[0]?.message?.content || '';
+  }
+
+  async generateArtistsAnnouncement(prompt: string) {
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: prompt }],
+    });
+    return response.choices[0]?.message?.content || '';
+  }
+
+  async generateAnnouncement(prompt: string) {
+    const announcementPrompt = `Erstelle eine spannende Ankündigung mit Teaser basierend auf: ${prompt}
+    Die Ankündigung sollte:
+    - Einen fesselnden Teaser am Anfang haben
+    - Die wichtigsten Informationen enthalten
+    - Einige passende Emojis verwenden (2-3)
+    - Spannung aufbauen
+    - Mit einem Call-to-Action enden
+    - Zwischen 150-200 Wörtern lang sein
+    - Professionell und ansprechend formuliert sein
+    - Die Zielgruppe begeistern`;
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: announcementPrompt }],
+    });
     return response.choices[0]?.message?.content || '';
   }
 }

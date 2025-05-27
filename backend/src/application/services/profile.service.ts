@@ -57,6 +57,13 @@ export class ProfileService {
     return profile;
   }
 
+  // createArtistContact(createArtistDto: CreateArtistDto) {
+  //   const artistContact = await this.profileRepository.createArtistContact(
+  //     createArtistDto,
+  //   );
+  //   return artistContact;
+  // }
+
   async getArtistByName(name: string) {
     const profile = await this.profileRepository.getProfileByName(name);
     if (!profile) {
@@ -88,6 +95,48 @@ export class ProfileService {
       userId,
     );
     return profile;
+  }
+
+  async createNewArtistV2(
+    image: Express.Multer.File,
+    createArtistDto: CreateArtistDto,
+    userId: string,
+  ): Promise<[Profile, string, string, string]> {
+    console.log('createArtistDto', createArtistDto);
+    console.log('image', image);
+    const imageUrl = await this.imageService.uploadImage(image);
+    const artistProfile = await this.chatGptService.generateArtistProfile(
+      createArtistDto.prompt,
+    );
+
+    const description = await this.chatGptService.generateArtistDescription(
+      createArtistDto.prompt,
+    );
+
+    const createdEmail = await this.chatGptService.generateRequestEmail(
+      createArtistDto.prompt,
+    );
+
+    const announcement = await this.chatGptService.generateAnnouncement(
+      createArtistDto.prompt,
+    );
+
+    const profile = await this.profileRepository.createNewArtist(
+      {
+        ...artistProfile,
+        username: createArtistDto.name,
+        profileImageUrl: imageUrl,
+        isArtist: true,
+        userId,
+      },
+      userId,
+    );
+    console.log('---------------------__>profile', profile);
+    console.log('---------------------__>description', description);
+    console.log('---------------------__>createdEmail', createdEmail);
+    console.log('---------------------__>announcement', announcement);
+
+    return [profile, description, createdEmail, announcement];
   }
 
   async getEventProfile(id: string): Promise<ProfileEventDetail> {

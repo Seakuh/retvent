@@ -33,6 +33,14 @@ export class ArtistController {
     };
   }
 
+  // @Post('artist-contact')
+  // async createArtistContact(@Body() createArtistDto: CreateArtistDto) {
+  //   console.log('createArtistDto', createArtistDto);
+  //   const artistContact =
+  //     await this.profileService.createArtistContact(createArtistDto);
+  //   return artistContact;
+  // }
+
   // create new artist
   @Post('new')
   @UseInterceptors(FileInterceptor('image')) // <-- Wichtig!
@@ -56,5 +64,37 @@ export class ArtistController {
       user.user.id,
     );
     return profile;
+  }
+
+  @Post('new-v2')
+  @UseInterceptors(FileInterceptor('image')) // <-- Wichtig!
+  async createV2(
+    @Body() createArtistDto: CreateArtistDto,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    const password = randomBytes(10).toString('hex');
+    const user = await this.authService.register({
+      email: createArtistDto.name + '@gmail.com',
+      password: password,
+      username: createArtistDto.name,
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    const [profile, description, createdEmail, announcement] =
+      await this.profileService.createNewArtistV2(
+        image,
+        createArtistDto,
+        user.user.id,
+      );
+    console.log('#############################password', password);
+    return {
+      id: profile.id,
+      username: profile.username,
+      description,
+      createdEmail,
+      announcement,
+      password,
+    };
   }
 }
