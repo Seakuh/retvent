@@ -262,6 +262,31 @@ export class EventController {
     }
   }
 
+  @Post('v1/upload/event-image-link')
+  @UseGuards(UploadGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadEventImageLink(
+    @Body() body: { links: string[] },
+    @Request() req,
+  ) {
+    console.log('uploadEventImageLinks', body, req);
+    try {
+      // Koordinaten extrahieren
+      const lonFromBodyCoordinates = 13.404954; // Berlin longitude
+      const latFromBodyCoordinates = 52.520008; // Berlin latitude
+
+      return this.eventService.processEventImageLinksUploadV1(
+        body.links,
+        lonFromBodyCoordinates,
+        latFromBodyCoordinates,
+        req.user.id,
+      );
+    } catch (error) {
+      console.error('V1 Link Upload - Error:', error);
+      throw error;
+    }
+  }
+
   @Get('search')
   async searchEvents(
     @Query('query') query?: string,
