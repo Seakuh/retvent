@@ -121,6 +121,13 @@ export const UploadModal = ({
     setUploadedImages(urls);
   };
 
+  const handleConfirmImages = (selectedImages: string[]) => {
+    // Hier können Sie die ausgewählten Bilder verarbeiten
+    console.log("Selected images:", selectedImages);
+    setUploadedImages([]);
+    onClose();
+  };
+
   return (
     <div>
       {!isUploading && !isProcessing && (
@@ -205,6 +212,7 @@ export const UploadModal = ({
         <UploadImagesModal
           uploadedImages={uploadedImages}
           onClose={() => setUploadedImages([])}
+          onConfirm={handleConfirmImages}
         />
       )}
 
