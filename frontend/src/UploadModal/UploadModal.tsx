@@ -249,7 +249,6 @@ export const UploadModal = ({
   };
 
   const handleImageUploaded = (image: File) => {
-    console.log("image", image);
     startUpload(image);
   };
 

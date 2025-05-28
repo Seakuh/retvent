@@ -121,13 +121,20 @@ export const UploadImagesModal = ({
           throw new Error(`Ungültiges Blob für ${url}`);
         }
 
-        console.log("Uploading file:", {
+        console.log("Versuche Datei hochzuladen:", {
           name: file.name,
           type: file.type,
           size: file.size,
+          url: url,
         });
 
-        await onImageUploaded(file);
+        try {
+          await onImageUploaded(file);
+          console.log("Datei erfolgreich hochgeladen:", file.name);
+        } catch (uploadError) {
+          console.error("Fehler beim Hochladen der Datei:", uploadError);
+          throw uploadError;
+        }
       });
 
       await Promise.all(uploadPromises);
