@@ -4,14 +4,11 @@
  * A modal interface for uploading event images either via camera or file selection.
  * Once a file is selected, it displays upload progress and handles success/error states.
  */
-import { Camera, Link, Upload } from "lucide-react";
+import { Camera, Import, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import ErrorDialog from "../components/ErrorDialog/ErrorDialog";
-import {
-  uploadEventImage,
-  uploadEventImageUrls,
-} from "../components/EventScanner/service";
+import { uploadEventImage } from "../components/EventScanner/service";
 import { ProcessingAnimation } from "../components/ProcessingAnimation/ProcessingAnimation";
 import { UploadAnimation } from "../components/UploadAnimation/UploadAnimation";
 import { UploadImagesModal } from "./UploadImagesModal";
@@ -143,7 +140,10 @@ export const UploadModal = ({
       return;
     }
 
-    const urls = imageUrls.split(",").map((url) => url.trim());
+    const urls = imageUrls
+      .split(",")
+      .map((url) => url.trim())
+      .filter(Boolean);
     setUploadedImages(urls);
 
     try {
@@ -232,21 +232,25 @@ export const UploadModal = ({
   const handleConfirmImages = (selectedImages: string[]) => {
     // Hier können Sie die ausgewählten Bilder verarbeiten
     // Zum Beispiel:
-    try {
-      uploadEventImageUrls(selectedImages);
-    } catch (error) {
-      console.error("Error uploading images:", error);
-    }
-    selectedImages.forEach((imageUrl) => {
-      // Hier können Sie die Bilder an Ihren Backend-Service senden
-      // oder andere Verarbeitung durchführen
-      console.log("Processing image:", imageUrl);
-      const image = new File([], imageUrl, { type: "image/jpeg" });
-      // startUpload(image);
-      console.log("image", image);
-    });
-
+    // try {
+    //   uploadEventImageUrls(selectedImages);
+    // } catch (error) {
+    //   console.error("Error uploading images:", error);
+    // }
+    // selectedImages.forEach((imageUrl) => {
+    //   // Hier können Sie die Bilder an Ihren Backend-Service senden
+    //   // oder andere Verarbeitung durchführen
+    //   console.log("Processing image:", imageUrl);
+    //   const image = new File([], imageUrl, { type: "image/jpeg" });
+    //   // startUpload(image);
+    //   console.log("image", image);
+    // });
     // setUploadedImages([]);
+  };
+
+  const handleImageUploaded = (image: File) => {
+    console.log("image", image);
+    startUpload(image);
   };
 
   return (
@@ -289,7 +293,7 @@ export const UploadModal = ({
                 className="upload-button url-button"
                 onClick={handleImageUrlsSubmit}
               >
-                <Link size={24} />
+                <Import size={24} />
                 <span>Process URLs</span>
               </button>
             </div>
@@ -334,6 +338,7 @@ export const UploadModal = ({
           uploadedImages={uploadedImages}
           onClose={() => setUploadedImages([])}
           onConfirm={handleConfirmImages}
+          onImageUploaded={handleImageUploaded}
         />
       )}
 

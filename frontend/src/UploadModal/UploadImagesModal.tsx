@@ -6,46 +6,28 @@ interface UploadImagesModalProps {
   uploadedImages: string[];
   onClose: () => void;
   onConfirm: (selectedImages: string[]) => void;
+  onImageUploaded: (image: File) => void;
 }
 
-const ImageWithFallback = ({ url }: { url: string }) => {
-  const [imageUrl, setImageUrl] = useState<string>(url);
+const ImageWithFallback = ({
+  url,
+  proxyUrl,
+}: {
+  url: string;
+  proxyUrl: string;
+}) => {
   const [error, setError] = useState(false);
-
-  const proxyServices = [
-    (url: string) => `https://images.weserv.nl/?url=${encodeURIComponent(url)}`,
-    (url: string) =>
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    (url: string) => `https://cors-anywhere.herokuapp.com/${url}`,
-  ];
-
-  useEffect(() => {
-    let currentIndex = 0;
-
-    const tryNextProxy = () => {
-      if (currentIndex < proxyServices.length) {
-        setImageUrl(proxyServices[currentIndex](url));
-        currentIndex++;
-      }
-    };
-
-    const handleError = () => {
-      if (currentIndex < proxyServices.length) {
-        tryNextProxy();
-      } else {
-        setError(true);
-      }
-    };
-
-    tryNextProxy();
-  }, [url]);
 
   if (error) {
     return (
       <div className="image-error">
-        <p>Image could not be loaded</p>
-        <a href={url} target="_blank" rel="noopener noreferrer">
+        <p>Image not loaded</p>
+        <a
+          className="image-error-link"
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           View original
         </a>
       </div>
@@ -54,7 +36,7 @@ const ImageWithFallback = ({ url }: { url: string }) => {
 
   return (
     <img
-      src={imageUrl}
+      src={proxyUrl}
       alt="Uploaded"
       onError={() => setError(true)}
       className="uploaded-image"
@@ -66,8 +48,13 @@ export const UploadImagesModal = ({
   uploadedImages,
   onClose,
   onConfirm,
+  onImageUploaded,
 }: UploadImagesModalProps) => {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [imageCache, setImageCache] = useState<
+    Record<string, { blob: Blob; url: string }>
+  >({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const toggleImageSelection = (imageUrl: string) => {
     setSelectedImages((prev) =>
@@ -79,8 +66,75 @@ export const UploadImagesModal = ({
     console.log(selectedImages);
   };
 
-  const handleConfirm = () => {
-    onConfirm(selectedImages);
+  useEffect(() => {
+    const loadImage = async (url: string) => {
+      const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(
+        url
+      )}`;
+      try {
+        const response = await fetch(proxyUrl);
+        if (!response.ok) throw new Error("Bild konnte nicht geladen werden");
+        const blob = await response.blob();
+        return { blob, url: proxyUrl };
+      } catch (error) {
+        console.error("Fehler beim Laden des Bildes:", error);
+        return null;
+      }
+    };
+
+    const loadAllImages = async () => {
+      setIsLoading(true);
+      const newCache: Record<string, { blob: Blob; url: string }> = {};
+
+      for (const image of uploadedImages) {
+        const match = image.match(/https:\/\/[^,]*/);
+        if (match) {
+          const imageUrl = match[0];
+          const data = await loadImage(imageUrl);
+          if (data) {
+            newCache[imageUrl] = data;
+          }
+        }
+      }
+
+      setImageCache(newCache);
+      setIsLoading(false);
+    };
+
+    loadAllImages();
+  }, [uploadedImages]);
+
+  const handleConfirm = async () => {
+    try {
+      const uploadPromises = selectedImages.map(async (url) => {
+        const cachedData = imageCache[url];
+        if (!cachedData) {
+          throw new Error(`Keine Bilddaten gefunden für ${url}`);
+        }
+
+        const filename = url.split("/").pop() || "image.jpg";
+        const file = new File([cachedData.blob], filename, {
+          type: cachedData.blob.type || "image/jpeg",
+        });
+
+        if (cachedData.blob.size === 0) {
+          throw new Error(`Ungültiges Blob für ${url}`);
+        }
+
+        console.log("Uploading file:", {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        });
+
+        await onImageUploaded(file);
+      });
+
+      await Promise.all(uploadPromises);
+      onConfirm(selectedImages);
+    } catch (error) {
+      console.error("Fehler beim Verarbeiten der Bilder:", error);
+    }
   };
 
   return (
@@ -96,32 +150,43 @@ export const UploadImagesModal = ({
         </div>
 
         <div className="images-container">
-          {uploadedImages.map((image, index) => {
-            const match = image.match(/https:\/\/[^,]*/);
-            if (!match) return null;
-            const imageUrl = match[0];
-            const isSelected = selectedImages.includes(imageUrl);
+          {isLoading ? (
+            <div className="loading-indicator">Bilder werden geladen...</div>
+          ) : (
+            uploadedImages.map((image, index) => {
+              const match = image.match(/https:\/\/[^,]*/);
+              if (!match) return null;
+              const imageUrl = match[0];
+              const isSelected = selectedImages.includes(imageUrl);
+              const cachedData = imageCache[imageUrl];
 
-            return (
-              <div
-                key={index}
-                className={`image-wrapper ${isSelected ? "selected" : ""}`}
-                onClick={() => toggleImageSelection(imageUrl)}
-              >
-                <ImageWithFallback url={imageUrl} />
-                <div className="selection-indicator">
-                  {isSelected && <div className="checkmark">✓</div>}
+              if (!cachedData) return null;
+
+              return (
+                <div
+                  key={index}
+                  className={`image-wrapper ${isSelected ? "selected" : ""}`}
+                  onClick={() => toggleImageSelection(imageUrl)}
+                >
+                  <img
+                    src={cachedData.url}
+                    alt="Uploaded"
+                    className="uploaded-image"
+                  />
+                  <div className="selection-indicator">
+                    {isSelected && <div className="checkmark">✓</div>}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
 
         <div className="modal-footer">
           <button
             className="confirm-button"
             onClick={handleConfirm}
-            disabled={selectedImages.length === 0}
+            disabled={selectedImages.length === 0 || isLoading}
           >
             Confirm Selection ({selectedImages.length})
           </button>
