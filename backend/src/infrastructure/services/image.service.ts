@@ -34,11 +34,11 @@ export class ImageService {
       const fileExtension = 'jpg';
       const fileName = `${uuidv4()}.${fileExtension}`;
 
-      console.log('Uploading image with credentials:', {
-        bucket: this.bucketName,
-        fileName,
-        contentType: 'image/jpeg',
-      });
+      // console.log('Uploading image with credentials:', {
+      //   bucket: this.bucketName,
+      //   fileName,
+      //   contentType: 'image/jpeg',
+      // });
 
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
@@ -61,11 +61,11 @@ export class ImageService {
       const fileExtension = image.originalname.split('.').pop() || 'jpg';
       const fileName = `${uuidv4()}.${fileExtension}`;
 
-      console.log('Uploading image with credentials:', {
-        bucket: this.bucketName,
-        fileName,
-        contentType: image.mimetype,
-      });
+      // console.log('Uploading image with credentials:', {
+      //   bucket: this.bucketName,
+      //   fileName,
+      //   contentType: image.mimetype,
+      // });
 
       const command = new PutObjectCommand({
         Bucket: this.bucketName,

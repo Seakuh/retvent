@@ -167,61 +167,56 @@ export class EventService {
   }
 
   private async downloadImage(url: string): Promise<Buffer> {
-    try {
-      // Instagram URL Optimierung
-      if (url.includes('instagram.com')) {
-        url = url.split('?')[0].replace(/\d+_n\.jpg$/, '1080_n.jpg');
-      }
-
-      // Liste der Proxy-Services
-      const proxyServices = [
-        (url: string) =>
-          `https://images.weserv.nl/?url=${encodeURIComponent(url)}`,
-        (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-        (url: string) =>
-          `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        (url: string) => `https://cors-anywhere.herokuapp.com/${url}`,
-      ];
-
-      // Versuche jeden Proxy-Service nacheinander
-      for (const proxyService of proxyServices) {
-        try {
-          const proxyUrl = proxyService(url);
-          console.log('Versuche Proxy:', proxyUrl);
-
-          const response = await axios.get(proxyUrl, {
-            responseType: 'arraybuffer',
-            headers: {
-              'User-Agent':
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-              Accept:
-                'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-              'Accept-Language': 'de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7',
-            },
-            timeout: 10000,
-          });
-
-          // Überprüfe den Content-Type
-          const contentType = response.headers['content-type'];
-          if (contentType && contentType.includes('image/')) {
-            return Buffer.from(response.data, 'binary');
-          }
-        } catch (proxyError) {
-          console.warn(
-            `Proxy ${proxyService.name} fehlgeschlagen:`,
-            proxyError.message,
-          );
-          continue; // Versuche nächsten Proxy
-        }
-      }
-
-      throw new Error('Alle Proxy-Services sind fehlgeschlagen');
-    } catch (error) {
-      console.error('Fehler beim Herunterladen des Bildes:', error);
-      throw new Error(
-        `Bild konnte nicht heruntergeladen werden: ${error.message}`,
-      );
+    // Instagram URL ggf. anpassen
+    if (url.includes('instagram.com')) {
+      url = url.split('?')[0].replace(/\d+_n\.jpg$/, '1080_n.jpg');
     }
+
+    const proxyServices = [
+      (url: string) =>
+        `https://images.weserv.nl/?url=${encodeURIComponent(url)}`,
+      (url: string) =>
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+      (url: string) => `https://cors-anywhere.herokuapp.com/${url}`,
+    ];
+
+    let lastError: any;
+
+    for (const proxyFn of proxyServices) {
+      const proxyUrl = proxyFn(url);
+      console.log(`🔁 Versuche Proxy: ${proxyUrl}`);
+
+      try {
+        const response = await axios.get(proxyUrl, {
+          responseType: 'arraybuffer',
+          headers: {
+            'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            Accept:
+              'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+            'Accept-Language': 'de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7',
+          },
+          timeout: 10000,
+        });
+
+        const contentType = response.headers['content-type'];
+        if (contentType?.startsWith('image/')) {
+          console.log(`✅ Bild erfolgreich geladen von ${proxyUrl}`);
+          return Buffer.from(response.data, 'binary');
+        } else {
+          console.warn(`⚠️ Kein Bild-Content-Type: ${contentType}`);
+        }
+      } catch (err) {
+        console.warn(`❌ Fehler bei Proxy ${proxyUrl}:`, err.message);
+        lastError = err;
+      }
+    }
+
+    console.error('❗️Alle Proxy-Versuche fehlgeschlagen:', lastError);
+    throw new Error(
+      `Bild konnte nicht heruntergeladen werden: ${lastError?.message || 'Unbekannter Fehler'}`,
+    );
   }
 
   async findAll() {

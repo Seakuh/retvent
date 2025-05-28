@@ -187,7 +187,6 @@ export class EventController {
     @Body() body: { location: string },
     @Request() req,
   ) {
-    console.log('uploadEventImageV5', image, body, req);
     try {
       // Location-String zu Objekt parsen
       const locationData = JSON.parse(body.location);
