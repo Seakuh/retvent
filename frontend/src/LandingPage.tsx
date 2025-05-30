@@ -2,7 +2,6 @@ import {
   Info,
   LogIn,
   LogOut,
-  Menu,
   Plus,
   Search,
   Send,
@@ -263,202 +262,196 @@ function LandingPage() {
   return (
     <>
       <HelmetMeta />
-      <div className="min-h-screen">
-        <header className="sticky top-0 z-50 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-b-[1px] border-b-[color:var(--color-neon-blue-light)] fixed md:sticky w-full">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 cursor-pointer">
-                <img
-                  src="/logo.png"
-                  alt="Logo"
-                  className="w-8 h-8 rounded-md"
+      <div className="min-h-screen flex">
+        {/* Transparente Sidebar */}
+        <aside className="fixed left-0 top-0 h-screen w-64 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-r-[1px] border-r-[color:var(--color-neon-blue-light)]">
+          <div className="p-4">
+            <div className="flex items-center gap-3 cursor-pointer mb-8">
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="w-8 h-8 rounded-md"
+                onClick={() => {
+                  setSearchPerformed(false);
+                  setSearchState({ view: "All" });
+                  setSearchState({ prompt: "" });
+                  setSearchState({ location: "Worldwide" });
+                  setSearchState({ startDate: "" });
+                  setSearchState({ endDate: "" });
+                  setSearchState({ category: "" });
+                  navigate("/");
+                }}
+              />
+            </div>
+
+            <nav className="space-y-2">
+              <button
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+                onClick={() => setIsSearchOpen(true)}
+              >
+                <Search size={20} />
+                <span>Search</span>
+              </button>
+
+              <button
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+                onClick={() => setIsUploadOpen(!isUploadOpen)}
+              >
+                <Upload size={20} />
+                <span>Upload</span>
+              </button>
+
+              <button
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+                onClick={() => navigate("/my-groups")}
+              >
+                <Send size={20} />
+                <span>My Groups</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  if (loggedIn) {
+                    navigate(`/profile/${user?.id}`);
+                  } else {
+                    navigate("/login");
+                  }
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              >
+                <UserIcon size={20} />
+                <span>Profile</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate(`/me`);
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              >
+                <Settings size={20} />
+                <span>Settings</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/admin/events/create");
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              >
+                <Plus size={20} />
+                <span>Create Event</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowUploads(!showUploads);
+                  handleOnUpload();
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              >
+                <Upload size={20} />
+                <span>{showUploads ? "Hide My Events" : "My Events"}</span>
+              </button>
+
+              <button
+                onClick={handleInstallClick}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              >
+                <Smartphone size={20} />
+                <span>Install App</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/about");
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              >
+                <Info size={20} />
+                <span>About</span>
+              </button>
+
+              {!loggedIn ? (
+                <button
                   onClick={() => {
-                    setSearchPerformed(false);
-                    setSearchState({ view: "All" });
-                    setSearchState({ prompt: "" });
-                    setSearchState({ location: "Worldwide" });
-                    setSearchState({ startDate: "" });
-                    setSearchState({ endDate: "" });
-                    setSearchState({ category: "" });
-                    navigate("/");
+                    navigate("/login");
                   }}
-                />
+                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+                >
+                  <LogIn size={20} />
+                  <span>Login</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+                >
+                  <LogOut size={20} />
+                  <span>Logout</span>
+                </button>
+              )}
+            </nav>
+          </div>
+        </aside>
+
+        {/* Hauptinhalt mit korrekter Positionierung */}
+        <div className="flex-1 ml-64">
+          <main className="max-w-7xl mx-auto px-4">
+            <div className="py-6">
+              <CityBar
+                onLocationSelect={handleLocationChange}
+                selectedLocation={location}
+              />
+              <CategoryFilter
+                prevDateRange={{
+                  startDate: startDate ? new Date(startDate) : null,
+                  endDate: endDate ? new Date(endDate) : null,
+                }}
+                events={favoriteEvents}
+                viewMode={viewMode}
+                category={category}
+                onCategoryChange={handleCategoryChange}
+                setDateRange={handleDateChange}
+                onViewModeChange={handleViewChange}
+              />
+            </div>
+            {loading ? (
+              <div className="search-loading">
+                <div className="search-spinner"></div>
               </div>
-
-              <div className="flex items-center gap-4">
-                <button
-                  className="search-icon"
-                  onClick={() => setIsSearchOpen(true)}
-                >
-                  <Search size={24} color="white" />
-                </button>
-                <button
-                  className="upload-icon"
-                  onClick={() => {
-                    setIsUploadOpen(!isUploadOpen);
-                  }}
-                >
-                  <Upload size={24} color="white" />
-                </button>
-
-                <button
-                  className="search-icon"
-                  onClick={() => navigate("/my-groups")}
-                >
-                  <Send size={24} color="white" />
-                </button>
-                {/* <ViewToggle view={viewMode} onViewChange={setViewMode} /> */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowMenu(!showMenu)}
-                    className="p-2 rounded-lg glass-effect text-white dark:text-white menu-button"
-                  >
-                    <Menu size={24} />
-                  </button>
-                  {showMenu && (
-                    <div className="absolute right-0 top-full mt-2 w-48 rounded-lg shadow-lg py-2 bg-blue-500 menu-container">
-                      <button
-                        onClick={() => {
-                          if (loggedIn) {
-                            navigate(`/profile/${user?.id}`);
-                          } else {
-                            navigate("/login");
-                          }
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                      >
-                        <UserIcon size={20} />
-                        <h3>Profile</h3>
-                      </button>
-                      <button
-                        onClick={() => {
-                          navigate(`/me`);
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                      >
-                        <Settings size={20} />
-                        <h3>Settings</h3>
-                      </button>
-                      <button
-                        onClick={() => {
-                          navigate("/admin/events/create");
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                      >
-                        <Plus size={20} />
-                        <p>Create Event</p>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowUploads(!showUploads);
-                          handleOnUpload();
-                          setShowMenu(false);
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                      >
-                        <Upload size={20} />
-                        {showUploads ? "Hide My Events" : "My Events"}
-                      </button>
-                      <button
-                        onClick={handleInstallClick}
-                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                      >
-                        <Smartphone size={20} />
-                        <p>Install App</p>
-                      </button>
-                      {/* About Button */}
-                      <button
-                        onClick={() => {
-                          navigate("/about");
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                      >
-                        <Info size={20} />
-                        <p>About</p>
-                      </button>
-                      {/* Login Button */}
-                      {!loggedIn ? (
-                        <button
-                          onClick={() => {
-                            navigate("/login");
-                          }}
-                          className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                        >
-                          <LogIn size={20} />
-                          <p>Login</p>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10"
-                        >
-                          <LogOut size={20} />
-                          <p>Logout</p>
-                        </button>
-                      )}
-                    </div>
-                  )}
+            ) : searchPerformed && events.length === 0 ? (
+              <div className="no-results mt-10">
+                <div className="no-results-content text-center flex flex-col items-center justify-center">
+                  <div className="no-results-icon text-7xl">🚫</div>
+                  <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
                 </div>
               </div>
-            </div>
-          </div>
-        </header>
-
-        <main className="max-w-7xl mx-auto">
-          <div className="px-4 py-6">
-            <CityBar
-              onLocationSelect={handleLocationChange}
-              selectedLocation={location}
-            />
-
-            <CategoryFilter
-              prevDateRange={{
-                startDate: startDate ? new Date(startDate) : null,
-                endDate: endDate ? new Date(endDate) : null,
-              }}
-              events={favoriteEvents}
-              viewMode={viewMode}
-              category={category}
-              onCategoryChange={handleCategoryChange}
-              setDateRange={handleDateChange}
-              onViewModeChange={handleViewChange}
-            />
-          </div>
-          {loading ? (
-            <div className="search-loading">
-              <div className="search-spinner"></div>
-            </div>
-          ) : searchPerformed && events.length === 0 ? (
-            <div className="no-results mt-10">
-              <div className="no-results-content text-center flex flex-col items-center justify-center">
-                <div className="no-results-icon text-7xl">🚫</div>
-                <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
-              </div>
-            </div>
-          ) : viewMode === "Home" ? (
-            <EventPage
-              favoriteEvents={favoriteEvents}
-              feedItemsResponse={followedProfiles}
-            />
-          ) : (
-            <EventPage
-              favoriteEvents={events}
-              feedItemsResponse={feedItemsResponse}
-            />
-          )}
-        </main>
-        <SearchModal
-          prompt={prompt}
-          isOpen={isSearchOpen}
-          onClose={() => setIsSearchOpen(false)}
-          onSearch={handleSearch}
-        />
-        <UploadModal
-          isOpen={isUploadOpen}
-          onClose={() => setIsUploadOpen(false)}
-          onUpload={handleOnUpload}
-        />
-        <Footer />
+            ) : viewMode === "Home" ? (
+              <EventPage
+                favoriteEvents={favoriteEvents}
+                feedItemsResponse={followedProfiles}
+              />
+            ) : (
+              <EventPage
+                favoriteEvents={events}
+                feedItemsResponse={feedItemsResponse}
+              />
+            )}
+          </main>
+          <SearchModal
+            prompt={prompt}
+            isOpen={isSearchOpen}
+            onClose={() => setIsSearchOpen(false)}
+            onSearch={handleSearch}
+          />
+          <UploadModal
+            isOpen={isUploadOpen}
+            onClose={() => setIsUploadOpen(false)}
+            onUpload={handleOnUpload}
+          />
+          <Footer />
+        </div>
       </div>
     </>
   );
