@@ -31,7 +31,7 @@ export const SideBar = ({
   const navigate = useNavigate();
 
   return (
-    <div>
+    <div className="side-bar">
       {/* Desktop Sidebar */}
       <aside className="hidden md:block fixed left-0 top-0 h-screen w-64 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-r-[1px] border-r-[color:var(--color-neon-blue-light)]">
         <div className="p-4">

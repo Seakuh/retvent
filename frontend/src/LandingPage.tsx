@@ -1,12 +1,6 @@
-import {
-  Compass,
-  Home,
-  MessageCircle,
-  Plus,
-  User as UserIcon,
-} from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BottomBar } from "./BottomBar";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { CityBar } from "./components/CityBar/CityBar";
 import { EventPage } from "./components/EventPage/EventPage";
@@ -259,26 +253,40 @@ function LandingPage() {
   return (
     <>
       <HelmetMeta />
-      <div className="min-h-screen flex">
-        <SideBar
-          setSearchPerformed={setSearchPerformed}
-          setSearchState={setSearchState}
-          setIsSearchOpen={setIsSearchOpen}
-          isSearchOpen={isSearchOpen}
-          isUploadOpen={isUploadOpen}
-          showUploads={showUploads}
-          setShowUploads={setShowUploads}
-          handleOnUpload={handleOnUpload}
-          handleInstallClick={handleInstallClick}
-          handleLogout={handleLogout}
-          loggedIn={loggedIn}
-          user={user}
-          setIsUploadOpen={setIsUploadOpen}
-        />
+      <div>
+        {/* Sidebar Desktop */}
+        {/* Desktop */}
+        {window.innerWidth >= 768 ? (
+          <SideBar
+            setSearchPerformed={setSearchPerformed}
+            setSearchState={setSearchState}
+            setIsSearchOpen={setIsSearchOpen}
+            isSearchOpen={isSearchOpen}
+            isUploadOpen={isUploadOpen}
+            showUploads={showUploads}
+            setShowUploads={setShowUploads}
+            handleOnUpload={handleOnUpload}
+            handleInstallClick={handleInstallClick}
+            handleLogout={handleLogout}
+            loggedIn={loggedIn}
+            user={user}
+            setIsUploadOpen={setIsUploadOpen}
+          />
+        ) : (
+          /* Mobile */
+          <BottomBar
+            setViewMode={setViewMode}
+            setSearchState={setSearchState}
+            setIsUploadOpen={setIsUploadOpen}
+            loggedIn={loggedIn}
+            user={user}
+            navigate={navigate}
+          />
+        )}
         {/* Hauptinhalt */}
         <div className="flex-1 md:ml-64">
-          <main className="max-w-7xl mx-auto px-4 pb-20 md:pb-0">
-            <div className="py-6">
+          <main className="max-w-7xl mx-auto md:pb-0">
+            <div className="py-6 px-4 sticky top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
               <CityBar
                 onLocationSelect={handleLocationChange}
                 selectedLocation={location}
@@ -332,58 +340,6 @@ function LandingPage() {
           />
           <Footer />
         </div>
-
-        {/* Mobile Navigation Bar - sticky am unteren Rand */}
-        <nav className="md:hidden sticky bottom-0 left-0 right-0 h-14 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-t-[1px] border-t-[color:var(--color-neon-blue-light)] w-full z-50">
-          <div className="flex justify-around items-center h-full w-full">
-            <button
-              onClick={() => {
-                setViewMode("Home");
-                setSearchState({ view: "Home" });
-              }}
-              className="flex items-center justify-center text-white p-2"
-            >
-              <Home size={22} />
-            </button>
-
-            <button
-              onClick={() => {
-                setViewMode("All");
-                setSearchState({ view: "All" });
-              }}
-              className="flex items-center justify-center text-white p-2"
-            >
-              <Compass size={22} />
-            </button>
-
-            <button
-              onClick={() => setIsUploadOpen(true)}
-              className="flex items-center justify-center text-white p-2"
-            >
-              <Plus size={22} />
-            </button>
-
-            <button
-              onClick={() => navigate("/my-groups")}
-              className="flex items-center justify-center text-white p-2"
-            >
-              <MessageCircle size={22} />
-            </button>
-
-            <button
-              onClick={() => {
-                if (loggedIn) {
-                  navigate(`/profile/${user?.id}`);
-                } else {
-                  navigate("/login");
-                }
-              }}
-              className="flex items-center justify-center text-white p-2"
-            >
-              <UserIcon size={22} />
-            </button>
-          </div>
-        </nav>
       </div>
     </>
   );
