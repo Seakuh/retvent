@@ -1,5 +1,5 @@
 import React from "react";
-import { Event, formatDate } from "../../utils";
+import { Event, formatDate, getDaysUntilDate } from "../../utils";
 import "./EventGalleryII.css";
 import { RealListItem } from "./Items/RealListItem";
 
@@ -62,9 +62,9 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
   return (
     <div className="event-gallery-container">
       {/* Today Section */}
-      {/* <div className="event-date-heading-container">
+      <div className="event-date-heading-container">
         {todayEvents.length > 0 && <h2 className="section-title">Today</h2>}
-      </div> */}
+      </div>
       <div className="event-date-section">
         <div className="event-date-heading-container">
           {/* <h3 className="event-date-heading-sub">
@@ -90,14 +90,14 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
         {Object.keys(groupedUpcomingEvents).length > 0 &&
           Object.entries(groupedUpcomingEvents).map(([date, eventsForDate]) => (
             <>
-              {/* <div className="event-date-heading-container">
+              <div className="event-date-heading-container">
                 <h2 className="section-title">{date}</h2>
                 <h3 className="event-date-heading-sub">
                   {getDaysUntilDate(date) === 1
                     ? "tomorrow"
                     : `in ${getDaysUntilDate(date)} days`}
                 </h3>
-              </div> */}
+              </div>
               <div key={date} className="event-date-section">
                 <div className="real-event-list-item-container">
                   {eventsForDate.map((event) => (

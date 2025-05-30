@@ -70,3 +70,21 @@
   width: 4rem;
   max-width: 4rem;
 }
+
+
+@media (max-width: 768px) {
+  .profile-card-container {
+    display: flex;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .profile-card-border {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+}
