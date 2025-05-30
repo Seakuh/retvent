@@ -1,7 +1,10 @@
 import {
+  Compass,
+  Home,
   Info,
   LogIn,
   LogOut,
+  MessageCircle,
   Plus,
   Search,
   Send,
@@ -263,14 +266,14 @@ function LandingPage() {
     <>
       <HelmetMeta />
       <div className="min-h-screen flex">
-        {/* Transparente Sidebar */}
-        <aside className="fixed left-0 top-0 h-screen w-64 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-r-[1px] border-r-[color:var(--color-neon-blue-light)]">
+        {/* Desktop Sidebar - nur auf md und größer sichtbar */}
+        <aside className="hidden md:block fixed left-0 top-0 h-screen w-64 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-r-[1px] border-r-[color:var(--color-neon-blue-light)]">
           <div className="p-4">
             <div className="flex items-center gap-3 cursor-pointer mb-8">
               <img
                 src="/logo.png"
                 alt="Logo"
-                className="w-8 h-8 rounded-md"
+                className="w-8 h-8 rounded-md ml-3"
                 onClick={() => {
                   setSearchPerformed(false);
                   setSearchState({ view: "All" });
@@ -395,9 +398,9 @@ function LandingPage() {
           </div>
         </aside>
 
-        {/* Hauptinhalt mit korrekter Positionierung */}
-        <div className="flex-1 ml-64">
-          <main className="max-w-7xl mx-auto px-4">
+        {/* Hauptinhalt */}
+        <div className="flex-1 md:ml-64">
+          <main className="max-w-7xl mx-auto px-4 pb-20 md:pb-0">
             <div className="py-6">
               <CityBar
                 onLocationSelect={handleLocationChange}
@@ -452,6 +455,58 @@ function LandingPage() {
           />
           <Footer />
         </div>
+
+        {/* Mobile Navigation Bar - sticky am unteren Rand */}
+        <nav className="md:hidden sticky bottom-0 left-0 right-0 h-14 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-t-[1px] border-t-[color:var(--color-neon-blue-light)] w-full z-50">
+          <div className="flex justify-around items-center h-full w-full">
+            <button
+              onClick={() => {
+                setViewMode("Home");
+                setSearchState({ view: "Home" });
+              }}
+              className="flex items-center justify-center text-white p-2"
+            >
+              <Home size={22} />
+            </button>
+
+            <button
+              onClick={() => {
+                setViewMode("All");
+                setSearchState({ view: "All" });
+              }}
+              className="flex items-center justify-center text-white p-2"
+            >
+              <Compass size={22} />
+            </button>
+
+            <button
+              onClick={() => setIsUploadOpen(true)}
+              className="flex items-center justify-center text-white p-2"
+            >
+              <Plus size={22} />
+            </button>
+
+            <button
+              onClick={() => navigate("/my-groups")}
+              className="flex items-center justify-center text-white p-2"
+            >
+              <MessageCircle size={22} />
+            </button>
+
+            <button
+              onClick={() => {
+                if (loggedIn) {
+                  navigate(`/profile/${user?.id}`);
+                } else {
+                  navigate("/login");
+                }
+              }}
+              className="flex items-center justify-center text-white p-2"
+            >
+              <UserIcon size={22} />
+            </button>
+          </div>
+        </nav>
       </div>
     </>
   );
