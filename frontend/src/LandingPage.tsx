@@ -253,9 +253,8 @@ function LandingPage() {
   return (
     <>
       <HelmetMeta />
-      <div>
-        {/* Sidebar Desktop */}
-        {/* Desktop */}
+      {/* Sidebar Desktop - komplett getrennt */}
+      <div className="fixed left-0 top-0 h-screen w-64 z-50">
         <SideBar
           setSearchPerformed={setSearchPerformed}
           setSearchState={setSearchState}
@@ -271,7 +270,11 @@ function LandingPage() {
           user={user}
           setIsUploadOpen={setIsUploadOpen}
         />
-        /* Mobile */
+      </div>
+
+      {/* Hauptinhalt - komplett getrennt */}
+      <div className="ml-64">
+        {/* Mobile */}
         <BottomBar
           setViewMode={setViewMode}
           setSearchState={setSearchState}
@@ -280,63 +283,60 @@ function LandingPage() {
           user={user}
           navigate={navigate}
         />
-        {/* Hauptinhalt */}
-        <div className="flex-1">
-          <main className="max-w-7xl mx-auto md:pb-0">
-            <div className="z-index-100000000000 py-6 px-4 sticky top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
-              <CityBar
-                onLocationSelect={handleLocationChange}
-                selectedLocation={location}
-              />
-              <CategoryFilter
-                prevDateRange={{
-                  startDate: startDate ? new Date(startDate) : null,
-                  endDate: endDate ? new Date(endDate) : null,
-                }}
-                events={favoriteEvents}
-                viewMode={viewMode}
-                category={category}
-                onCategoryChange={handleCategoryChange}
-                setDateRange={handleDateChange}
-                onViewModeChange={handleViewChange}
-              />
+        <main className="max-w-7xl mx-auto md:pb-0">
+          <div className="z-index-100000000000 py-6 px-4 sticky top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
+            <CityBar
+              onLocationSelect={handleLocationChange}
+              selectedLocation={location}
+            />
+            <CategoryFilter
+              prevDateRange={{
+                startDate: startDate ? new Date(startDate) : null,
+                endDate: endDate ? new Date(endDate) : null,
+              }}
+              events={favoriteEvents}
+              viewMode={viewMode}
+              category={category}
+              onCategoryChange={handleCategoryChange}
+              setDateRange={handleDateChange}
+              onViewModeChange={handleViewChange}
+            />
+          </div>
+          {loading ? (
+            <div className="search-loading">
+              <div className="search-spinner"></div>
             </div>
-            {loading ? (
-              <div className="search-loading">
-                <div className="search-spinner"></div>
+          ) : searchPerformed && events.length === 0 ? (
+            <div className="no-results mt-10">
+              <div className="no-results-content text-center flex flex-col items-center justify-center">
+                <div className="no-results-icon text-7xl">🚫</div>
+                <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
               </div>
-            ) : searchPerformed && events.length === 0 ? (
-              <div className="no-results mt-10">
-                <div className="no-results-content text-center flex flex-col items-center justify-center">
-                  <div className="no-results-icon text-7xl">🚫</div>
-                  <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
-                </div>
-              </div>
-            ) : viewMode === "Home" ? (
-              <EventPage
-                favoriteEvents={favoriteEvents}
-                feedItemsResponse={followedProfiles}
-              />
-            ) : (
-              <EventPage
-                favoriteEvents={events}
-                feedItemsResponse={feedItemsResponse}
-              />
-            )}
-          </main>
-          <SearchModal
-            prompt={prompt}
-            isOpen={isSearchOpen}
-            onClose={() => setIsSearchOpen(false)}
-            onSearch={handleSearch}
-          />
-          <UploadModal
-            isOpen={isUploadOpen}
-            onClose={() => setIsUploadOpen(false)}
-            onUpload={handleOnUpload}
-          />
-          <Footer />
-        </div>
+            </div>
+          ) : viewMode === "Home" ? (
+            <EventPage
+              favoriteEvents={favoriteEvents}
+              feedItemsResponse={followedProfiles}
+            />
+          ) : (
+            <EventPage
+              favoriteEvents={events}
+              feedItemsResponse={feedItemsResponse}
+            />
+          )}
+        </main>
+        <SearchModal
+          prompt={prompt}
+          isOpen={isSearchOpen}
+          onClose={() => setIsSearchOpen(false)}
+          onSearch={handleSearch}
+        />
+        <UploadModal
+          isOpen={isUploadOpen}
+          onClose={() => setIsUploadOpen(false)}
+          onUpload={handleOnUpload}
+        />
+        <Footer />
       </div>
     </>
   );
