@@ -7,7 +7,7 @@
 .event-date-heading-container {
     position: -webkit-sticky; /* Für Safari Support */
     position: sticky;
-    z-index: 1000;
+    z-index: 10;
     top: 10rem;
     width: 100%;
     background-color: var(--color-neon-blue-dark-2);

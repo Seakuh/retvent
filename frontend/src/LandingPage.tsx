@@ -282,7 +282,7 @@ function LandingPage() {
         />
         {/* Hauptinhalt */}
         <div className="flex-1 md:ml-64">
-          <main className="max-w-7xl mx-auto md:pb-0">
+          <main className="">
             <div className="z-index-100000000000 py-6 px-4 sticky top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
               <CityBar
                 onLocationSelect={handleLocationChange}
