@@ -1,0 +1,11 @@
+.mobile-nav {
+  @apply md:hidden sticky bottom-0 left-0 right-0 h-14 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-t-[1px] border-t-[color:var(--color-neon-blue-light)] w-full z-50;
+}
+
+.mobile-nav-content {
+  @apply flex justify-around items-center h-full w-full;
+}
+
+.nav-icon-button {
+  @apply flex items-center justify-center text-white p-2;
+} 
