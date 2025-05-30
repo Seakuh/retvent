@@ -1,5 +1,5 @@
 import React from "react";
-import { Event, formatDate, getDaysUntilDate } from "../../utils";
+import { Event, formatDate, getDaysPast, getDaysUntilDate } from "../../utils";
 import "./EventGalleryII.css";
 import { RealListItem } from "./Items/RealListItem";
 
@@ -115,14 +115,14 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
           <div className="event-list">
             {Object.entries(groupedPastEvents).map(([date, eventsForDate]) => (
               <div key={date} className="event-date-section">
-                {/* <div className="event-date-heading-container">
+                <div className="event-date-heading-container">
                   <h2 className="section-title">{date}</h2>
                   <h3 className="event-date-heading-sub event-date-heading-sub-past">
                     {getDaysPast(date) <= 1
                       ? "yesterday"
                       : `${getDaysPast(date)} days ago`}
                   </h3>
-                </div> */}
+                </div>
                 <div className="real-event-list-item-container">
                   {eventsForDate.map((event) => (
                     <RealListItem

@@ -61,7 +61,7 @@ export const EventSection = ({ title, events }: EventSectionProps) => {
         <></>
       ) : (
         <>
-          <h2 className="popular-title">Trends</h2>
+          <h2 className="popular-title">🔥 Trends</h2>
           <div className="event-list-wrapper">
             {!isAtStart && events.length > 0 && (
               <button
