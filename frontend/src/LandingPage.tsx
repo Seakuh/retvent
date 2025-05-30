@@ -253,8 +253,8 @@ function LandingPage() {
   return (
     <>
       <HelmetMeta />
-      {/* Sidebar Desktop - komplett getrennt */}
-      <div className="fixed left-0 top-0 h-screen w-64 z-50">
+      {/* Sidebar Desktop - nur auf Desktop sichtbar */}
+      <div className="fixed left-0 top-0 h-screen w-64 z-50 hidden md:block">
         <SideBar
           setSearchPerformed={setSearchPerformed}
           setSearchState={setSearchState}
@@ -272,8 +272,10 @@ function LandingPage() {
         />
       </div>
 
-      {/* Hauptinhalt - komplett getrennt */}
-      <div className="ml-64">
+      {/* Hauptinhalt - mit responsivem Margin */}
+      <div className="md:ml-64">
+        {" "}
+        {/* Margin nur auf Desktop */}
         {/* Mobile */}
         <BottomBar
           setViewMode={setViewMode}
