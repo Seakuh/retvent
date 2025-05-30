@@ -120,3 +120,11 @@
 .past-event {
   opacity: 0.5;
 }
+
+
+@media (max-width: 768px) {
+  .real-event-thumbnail {
+    max-height: 300px;
+  }
+}
+
