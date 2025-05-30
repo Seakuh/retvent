@@ -1,4 +1,4 @@
-import { Compass, Home, Plus, Send, UserIcon } from "lucide-react";
+import { Compass, Home, Plus, Send, Settings } from "lucide-react";
 import "./BottomBar.css";
 import { User } from "./utils";
 
@@ -58,7 +58,7 @@ export const BottomBar = ({
               }
             }}
           >
-            <UserIcon size={22} />
+            <Settings size={22} />
           </button>
         </div>
       </nav>

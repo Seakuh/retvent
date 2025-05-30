@@ -7,6 +7,7 @@ import {
   Comment as CommentType,
   defaultProfileImage,
   Event,
+  FeedResponse,
   formatProfileDate,
   type Profile as ProfileType,
 } from "../../../utils";

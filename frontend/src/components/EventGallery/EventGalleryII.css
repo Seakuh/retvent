@@ -7,8 +7,8 @@
 .event-date-heading-container {
     position: -webkit-sticky; /* Für Safari Support */
     position: sticky;
-    top: 0px;
-    z-index: 10;
+    z-index: 1000;
+    top: 10rem;
     width: 100%;
     background-color: var(--color-neon-blue-dark-2);
     margin: 0 auto;
@@ -26,7 +26,7 @@
     text-transform: uppercase;
     position: -webkit-sticky;
     position: sticky;
-    top: 75px;
+    top: 10rem;
     z-index: 10;
     padding: 1rem 0;
     /* Stelle sicher, dass der Container einen definierten Kontext hat */
@@ -133,6 +133,7 @@
     font-size: 0.9rem;
     color: #aaa;
     padding-top: 0.5rem;
+    margin-top: 1rem;
 }
 
 .event-meta-container span {

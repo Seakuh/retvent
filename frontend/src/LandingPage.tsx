@@ -256,37 +256,34 @@ function LandingPage() {
       <div>
         {/* Sidebar Desktop */}
         {/* Desktop */}
-        {window.innerWidth >= 768 ? (
-          <SideBar
-            setSearchPerformed={setSearchPerformed}
-            setSearchState={setSearchState}
-            setIsSearchOpen={setIsSearchOpen}
-            isSearchOpen={isSearchOpen}
-            isUploadOpen={isUploadOpen}
-            showUploads={showUploads}
-            setShowUploads={setShowUploads}
-            handleOnUpload={handleOnUpload}
-            handleInstallClick={handleInstallClick}
-            handleLogout={handleLogout}
-            loggedIn={loggedIn}
-            user={user}
-            setIsUploadOpen={setIsUploadOpen}
-          />
-        ) : (
-          /* Mobile */
-          <BottomBar
-            setViewMode={setViewMode}
-            setSearchState={setSearchState}
-            setIsUploadOpen={setIsUploadOpen}
-            loggedIn={loggedIn}
-            user={user}
-            navigate={navigate}
-          />
-        )}
+        <SideBar
+          setSearchPerformed={setSearchPerformed}
+          setSearchState={setSearchState}
+          setIsSearchOpen={setIsSearchOpen}
+          isSearchOpen={isSearchOpen}
+          isUploadOpen={isUploadOpen}
+          showUploads={showUploads}
+          setShowUploads={setShowUploads}
+          handleOnUpload={handleOnUpload}
+          handleInstallClick={handleInstallClick}
+          handleLogout={handleLogout}
+          loggedIn={loggedIn}
+          user={user}
+          setIsUploadOpen={setIsUploadOpen}
+        />
+        /* Mobile */
+        <BottomBar
+          setViewMode={setViewMode}
+          setSearchState={setSearchState}
+          setIsUploadOpen={setIsUploadOpen}
+          loggedIn={loggedIn}
+          user={user}
+          navigate={navigate}
+        />
         {/* Hauptinhalt */}
         <div className="flex-1 md:ml-64">
           <main className="max-w-7xl mx-auto md:pb-0">
-            <div className="py-6 px-4 sticky top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
+            <div className="z-index-100000000000 py-6 px-4 sticky top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
               <CityBar
                 onLocationSelect={handleLocationChange}
                 selectedLocation={location}
