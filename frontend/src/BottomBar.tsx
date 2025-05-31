@@ -1,10 +1,10 @@
 import { Home, Search, Send, Settings } from "lucide-react";
 import "./BottomBar.css";
+import { useLandingSearch } from "./LandinSearchContext";
 import { User } from "./utils";
 
 interface BottomBarProps {
   setViewMode: (view: string) => void;
-  setSearchState: (state: any) => void;
   setIsUploadOpen: (isOpen: boolean) => void;
   loggedIn: boolean;
   user: User;
@@ -13,12 +13,13 @@ interface BottomBarProps {
 
 export const BottomBar = ({
   setViewMode,
-  setSearchState,
   setIsUploadOpen,
   loggedIn,
   user,
   navigate,
 }: BottomBarProps) => {
+  const { setSearchState } = useLandingSearch();
+
   return (
     <div className="bottom-bar">
       <nav>
@@ -35,7 +36,7 @@ export const BottomBar = ({
           <button
             onClick={() => {
               setViewMode("Search");
-              setSearchState({ view: "All" });
+              setSearchState({ view: "Search" });
             }}
           >
             <Search size={22} />
