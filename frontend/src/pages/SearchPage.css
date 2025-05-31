@@ -13,6 +13,7 @@
 
 .search-page-input {
   width: 90%;
+  color: white;
   margin: 0 auto;
   position: fixed;
   z-index: 1000;

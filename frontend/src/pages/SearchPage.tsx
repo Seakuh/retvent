@@ -14,10 +14,12 @@ export const SearchPage: FC = () => {
       setEvents(results);
     };
 
-    fetchEvents();
-    console.log(events);
+    const debounceTimer = setTimeout(() => {
+      fetchEvents();
+    }, 600);
+
     return () => {
-      // Cleanup if needed
+      clearTimeout(debounceTimer);
     };
   }, [searchTerm]);
 
