@@ -27,8 +27,14 @@ export const SideBar = ({
   isSearchOpen,
   isUploadOpen,
   setIsUploadOpen,
+  setViewMode,
 }) => {
   const navigate = useNavigate();
+
+  const goStart = () => {
+    console.log("GO START");
+    setViewMode("All");
+  };
 
   return (
     <div className="side-bar">
@@ -36,27 +42,18 @@ export const SideBar = ({
       <aside className="hidden md:block fixed left-0 top-0 h-screen w-64 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-r-[1px] border-r-[color:var(--color-neon-blue-light)]">
         <div className="p-4">
           <div className="flex items-center gap-3 cursor-pointer mb-8">
-            <img
-              src="/logo.png"
-              alt="Logo"
-              className="w-8 h-8 rounded-md ml-3"
-              onClick={() => {
-                setSearchPerformed(false);
-                setSearchState({ view: "All" });
-                setSearchState({ prompt: "" });
-                setSearchState({ location: "Worldwide" });
-                setSearchState({ startDate: "" });
-                setSearchState({ endDate: "" });
-                setSearchState({ category: "" });
-                navigate("/");
-              }}
-            />
+            <div className="logo-touch-container" onClick={goStart}>
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="w-8 h-8 rounded-md ml-3"
+              />
+            </div>
           </div>
-
           <nav className="space-y-2">
             <button
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
-              onClick={() => setIsSearchOpen(true)}
+              onClick={() => setViewMode("Search")}
             >
               <Search size={20} />
               <span className="hidden md:inline">Search</span>

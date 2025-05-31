@@ -9,7 +9,6 @@ import {
   getLatestFeedAll,
   getLatestFeedByFollowing,
 } from "./components/Feed/service";
-import SearchModal from "./components/SearchModal/SearchModal";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
 import { HelmetMeta } from "./LandingPageHelmet";
@@ -91,6 +90,7 @@ function LandingPage() {
   }, []);
 
   const handleSearch = async (searchTerm: string) => {
+    setViewMode("Search");
     setSearchState({ prompt: searchTerm });
     setLoading(true);
     setSearchPerformed(true);
@@ -262,6 +262,7 @@ function LandingPage() {
           setIsSearchOpen={setIsSearchOpen}
           isSearchOpen={isSearchOpen}
           isUploadOpen={isUploadOpen}
+          setViewMode={setViewMode}
           showUploads={showUploads}
           setShowUploads={setShowUploads}
           handleOnUpload={handleOnUpload}
@@ -287,24 +288,26 @@ function LandingPage() {
           navigate={navigate}
         />
         <main className="max-w-7xl mx-auto md:pb-0">
-          <div className="z-index-100000000000 py-6 px-4 top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
-            <CityBar
-              onLocationSelect={handleLocationChange}
-              selectedLocation={location}
-            />
-            <CategoryFilter
-              prevDateRange={{
-                startDate: startDate ? new Date(startDate) : null,
-                endDate: endDate ? new Date(endDate) : null,
-              }}
-              events={favoriteEvents}
-              viewMode={viewMode}
-              category={category}
-              onCategoryChange={handleCategoryChange}
-              setDateRange={handleDateChange}
-              onViewModeChange={handleViewChange}
-            />
-          </div>
+          {viewMode !== "Search" && (
+            <div className="z-index-100000000000 py-6 px-4 top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
+              <CityBar
+                onLocationSelect={handleLocationChange}
+                selectedLocation={location}
+              />
+              <CategoryFilter
+                prevDateRange={{
+                  startDate: startDate ? new Date(startDate) : null,
+                  endDate: endDate ? new Date(endDate) : null,
+                }}
+                events={favoriteEvents}
+                viewMode={viewMode}
+                category={category}
+                onCategoryChange={handleCategoryChange}
+                setDateRange={handleDateChange}
+                onViewModeChange={handleViewChange}
+              />
+            </div>
+          )}
           {loading ? (
             <div className="search-loading">
               <div className="search-spinner"></div>
@@ -330,12 +333,12 @@ function LandingPage() {
             />
           )}
         </main>
-        <SearchModal
+        {/* <SearchModal
           prompt={prompt}
           isOpen={isSearchOpen}
           onClose={() => setIsSearchOpen(false)}
           onSearch={handleSearch}
-        />
+        /> */}
         <UploadModal
           isOpen={isUploadOpen}
           onClose={() => setIsUploadOpen(false)}

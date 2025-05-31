@@ -1,9 +1,14 @@
 import { API_URL, Event } from "../utils";
 
-export const searchNew = async (query?: string): Promise<Event[]> => {
+export const searchNew = async (
+  query?: string,
+  offset: number = 0
+): Promise<Event[]> => {
   try {
     const response = await fetch(
-      `${API_URL}events/search/new?limit=40&query=${query || ""}`
+      `${API_URL}events/search/new?limit=40&offset=${offset}&query=${
+        query || ""
+      }`
     );
     const data = await response.json();
     return data as Event[];

@@ -66,14 +66,14 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
               section === "past" ? "past-title" : ""
             }`}
           >
-            {section === "upcoming" && (
+            {/* {section === "upcoming" && (
               <span className="event-section-next-title-text">
                 Next{" "}
                 <span className="days-until">
                   in {(sectionData as { days: number }).days} days
                 </span>
               </span>
-            )}
+            )} */}
           </h2>
           <div className="event-grid-gallery">
             {(section === "upcoming"
