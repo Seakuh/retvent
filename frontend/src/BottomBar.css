@@ -41,7 +41,7 @@
   color: var(--color-neon-blue) !important;
   border: 2px solid var(--color-neon-blue);
   background-color: rgba(var(--color-neon-blue-dark), 0.5);
-  box-shadow: 0 0 0.5rem var(--color-neon-blue);
+  box-shadow: 0 0 0.3rem var(--color-neon-blue);
 }
 
 .bottom-bar button {
