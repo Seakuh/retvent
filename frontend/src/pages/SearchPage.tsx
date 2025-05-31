@@ -14,7 +14,7 @@ export const SearchPage: FC = () => {
     };
 
     fetchEvents();
-
+    console.log(events);
     return () => {
       // Cleanup if needed
     };
