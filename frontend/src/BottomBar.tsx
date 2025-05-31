@@ -1,4 +1,4 @@
-import { Compass, Home, Plus, Send, Settings } from "lucide-react";
+import { Compass, Home, Send, Settings } from "lucide-react";
 import "./BottomBar.css";
 import { User } from "./utils";
 
@@ -41,8 +41,11 @@ export const BottomBar = ({
             <Compass size={22} />
           </button>
 
-          <button onClick={() => setIsUploadOpen(true)}>
-            <Plus size={22} />
+          <button
+            className="create-event-plus"
+            onClick={() => setIsUploadOpen(true)}
+          >
+            +
           </button>
 
           <button onClick={() => navigate("/my-groups")}>

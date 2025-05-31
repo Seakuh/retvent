@@ -32,6 +32,18 @@
   align-items: center;
 }
 
+.create-event-plus{
+  font-size: 3rem;
+  font-weight: 400;
+  position: relative;
+  padding: 1.5rem !important;
+  border-radius: 50%;
+  color: var(--color-neon-blue) !important;
+  border: 2px solid var(--color-neon-blue);
+  background-color: rgba(var(--color-neon-blue-dark), 0.5);
+  box-shadow: 0 0 0.5rem var(--color-neon-blue);
+}
+
 .bottom-bar button {
   display: flex;
   align-items: center;

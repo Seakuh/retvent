@@ -8,7 +8,7 @@
     position: -webkit-sticky; /* Für Safari Support */
     position: sticky;
     z-index: 10;
-    top: 10rem;
+    top: 0;
     width: 100%;
     background-color: var(--color-neon-blue-dark-2);
     margin: 0 auto;
@@ -26,7 +26,6 @@
     text-transform: uppercase;
     position: -webkit-sticky;
     position: sticky;
-    top: 10rem;
     z-index: 10;
     padding: 1rem 0;
     /* Stelle sicher, dass der Container einen definierten Kontext hat */
