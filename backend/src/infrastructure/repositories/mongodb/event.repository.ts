@@ -83,7 +83,7 @@ export class MongoEventRepository implements IEventRepository {
     if (searchQuery) {
       query.$or = [
         { tags: { $regex: searchQuery, $options: 'i' } },
-        { title: { $regex: query, $options: 'i' } },
+        { title: { $regex: searchQuery, $options: 'i' } },
       ];
     }
 
@@ -91,6 +91,9 @@ export class MongoEventRepository implements IEventRepository {
       .find(query)
       .sort({ createdAt: -1 })
       .skip(offset)
+      .select(
+        'id description title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username',
+      )
       .limit(limit)
       .exec();
   }
