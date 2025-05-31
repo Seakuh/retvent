@@ -7,17 +7,15 @@
 
 .search-page-input-container{
   z-index: 1000;
+  padding: 1.5rem;
+  gap: 1rem;
   position: sticky;
   top: env(safe-area-inset-top, 0); /* Berücksichtigt den Notch/Status-Bar Bereich */
   max-width: 80rem;
-  width: 100%;
   background-color: var(--color-neon-blue-dark-2);
-  padding: 1rem;
-  margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
   flex-direction: column;
 }
 
@@ -31,26 +29,15 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   background: var(--color-neon-blue-light);
-  margin: 0 auto;
 }
 
 @media screen and (max-width: 768px) {
-  .search-page-input {
-  }
-  
-  .search-page-input-container {
-    padding: 0.5rem;
-    width: 100%;
-  }
-
   .trend-component {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    margin: 0 -0.5rem; /* Negative margin to allow full width */
-    padding: 0 0.5rem; /* Add padding to compensate */
   }
 
   .trend-component::-webkit-scrollbar {
@@ -61,7 +48,6 @@
     display: inline-flex; /* Changed to inline-flex */
     flex-wrap: nowrap;
     gap: 0.5rem;
-    padding: 0.5rem 0;
     white-space: nowrap;
     min-width: min-content; /* Ensure content doesn't shrink */
   }
