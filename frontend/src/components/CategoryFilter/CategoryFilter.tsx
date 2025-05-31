@@ -87,7 +87,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         onClick={() => onViewModeChange("Home")}
       >
         <Heart size={20} />
-        Yours
+        Liked
       </button>
 
       {/* All events button */}
