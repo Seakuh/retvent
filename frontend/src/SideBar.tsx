@@ -1,4 +1,5 @@
 import {
+  Grid3X3,
   Info,
   LogIn,
   LogOut,
@@ -46,7 +47,7 @@ export const SideBar = ({
               <img
                 src="/logo.png"
                 alt="Logo"
-                className="w-8 h-8 rounded-md ml-3"
+                className="w-12 h-12 rounded-md ml-3"
               />
             </div>
           </div>
@@ -99,7 +100,7 @@ export const SideBar = ({
               <span className="hidden md:inline">Settings</span>
             </button>
 
-            <button
+            {/* <button
               onClick={() => {
                 navigate("/admin/events/create");
               }}
@@ -107,7 +108,7 @@ export const SideBar = ({
             >
               <Plus size={20} />
               <span className="hidden md:inline">Create Event</span>
-            </button>
+            </button> */}
 
             <button
               onClick={() => {
@@ -116,7 +117,7 @@ export const SideBar = ({
               }}
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
             >
-              <Upload size={20} />
+              <Grid3X3 size={20} />
               <span className="hidden md:inline">
                 {showUploads ? "Hide My Events" : "My Events"}
               </span>
