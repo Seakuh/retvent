@@ -2,19 +2,20 @@
   max-width: 80rem;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .search-page-input-container{
   z-index: 1000;
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px); /* Berücksichtigt den Notch/Status-Bar Bereich */
   max-width: 80rem;
   width: 100%;
   background-color: var(--color-neon-blue-dark-2);
   padding: 1rem;
   margin: 0 auto;
   display: flex;
+  justify-content: center;
   align-items: center;
 }
 
@@ -28,5 +29,15 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   background: var(--color-neon-blue-light);
+  margin: 0 auto;
 }
 
+@media screen and (max-width: 768px) {
+  .search-page-input {
+    width: 90%;
+  }
+  
+  .search-page-input-container {
+    padding: 0.5rem;
+  }
+}
