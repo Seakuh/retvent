@@ -36,6 +36,7 @@ export const SearchPage: FC = () => {
 
           const sortedTags = Object.entries(tagCounts)
             .sort(([, a], [, b]) => b - a)
+            .map(([tag, count]) => [tag.toLowerCase(), count])
             .slice(0, 5);
 
           setTopTags(sortedTags);
@@ -87,9 +88,13 @@ export const SearchPage: FC = () => {
         <div className="trend-component">
           {topTags.length > 0 && (
             <div className="top-tags">
-              🔥 Trends
               {topTags.map(([tag, count]) => (
-                <span key={tag} className="search-page-tag">
+                <span
+                  key={tag}
+                  className="search-page-tag"
+                  onClick={() => setSearchTerm(tag)}
+                  style={{ cursor: "pointer" }}
+                >
                   #{tag}
                 </span>
               ))}
