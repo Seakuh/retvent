@@ -8,7 +8,7 @@
 .search-page-input-container{
   z-index: 1000;
   position: sticky;
-  top: env(safe-area-inset-top, 0px); /* Berücksichtigt den Notch/Status-Bar Bereich */
+  top: env(safe-area-inset-top, 0); /* Berücksichtigt den Notch/Status-Bar Bereich */
   max-width: 80rem;
   width: 100%;
   background-color: var(--color-neon-blue-dark-2);
@@ -23,7 +23,7 @@
 
 .search-page-input {
   color: white;
-  width: 60%;
+  width: 100%;
   border-radius: 6rem;
   border: 1px solid var(--color-neon-blue);
   font-size: 16px;
@@ -36,7 +36,6 @@
 
 @media screen and (max-width: 768px) {
   .search-page-input {
-    width: 90%;
   }
   
   .search-page-input-container {
