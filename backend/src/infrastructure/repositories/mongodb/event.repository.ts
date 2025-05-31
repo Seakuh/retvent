@@ -92,7 +92,7 @@ export class MongoEventRepository implements IEventRepository {
       .sort({ createdAt: -1 })
       .skip(offset)
       .select(
-        'id description title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username',
+        'id title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username',
       )
       .limit(limit)
       .exec();
