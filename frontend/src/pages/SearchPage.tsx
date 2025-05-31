@@ -98,7 +98,10 @@ export const SearchPage: FC = () => {
                 <span
                   key={tag}
                   className="search-page-tag"
-                  onClick={() => setSearchTerm(tag)}
+                  onClick={() => {
+                    setSearchTerm(tag);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   style={{ cursor: "pointer" }}
                 >
                   #{tag}
