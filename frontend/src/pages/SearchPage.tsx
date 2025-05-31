@@ -29,14 +29,20 @@ export const SearchPage: FC = () => {
 
           const tagCounts = results.reduce((acc, event) => {
             event.tags?.forEach((tag) => {
-              acc[tag] = (acc[tag] || 0) + 1;
+              const normalizedTag = tag
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9äöüß]/g, "");
+
+              if (normalizedTag) {
+                acc[normalizedTag] = (acc[normalizedTag] || 0) + 1;
+              }
             });
             return acc;
           }, {} as Record<string, number>);
 
           const sortedTags = Object.entries(tagCounts)
             .sort(([, a], [, b]) => b - a)
-            .map(([tag, count]) => [tag.toLowerCase(), count])
             .slice(0, 5);
 
           setTopTags(sortedTags);
