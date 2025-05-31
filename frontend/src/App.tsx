@@ -23,6 +23,7 @@ import { PwaInstall } from "./components/PwaInstall/PwaInstall";
 import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
+import { SearchPage } from "./pages/SearchPage";
 import { syncFavorites } from "./service";
 // const queryClient = new QueryClient({
 //   defaultOptions: {
@@ -95,6 +96,8 @@ const App: React.FC = () => {
                   <Route path="/about" element={<About />} />
                   <Route path="/profile/:artistName" element={<Profile />} />
                   <Route path="/install-app" element={<PwaInstall />} />
+                  <Route path="/search" element={<SearchPage />} />
+                  <Route path="/search/:query?" element={<SearchPage />} />
 
                   <Route path="/imprint" element={<Imprint />} />
                   <Route

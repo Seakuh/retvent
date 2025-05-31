@@ -14,6 +14,7 @@ import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
 import { HelmetMeta } from "./LandingPageHelmet";
 import { useLandingSearch } from "./LandinSearchContext";
+import { SearchPage } from "./pages/SearchPage";
 import { searchEvents } from "./service";
 import { SideBar } from "./SideBar";
 import { ViewMode } from "./types/event";
@@ -320,6 +321,8 @@ function LandingPage() {
               favoriteEvents={favoriteEvents}
               feedItemsResponse={followedProfiles}
             />
+          ) : viewMode === "Search" ? (
+            <SearchPage />
           ) : (
             <EventPage
               favoriteEvents={events}

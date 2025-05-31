@@ -1,4 +1,4 @@
-import { Compass, Home, Send, Settings } from "lucide-react";
+import { Home, Search, Send, Settings } from "lucide-react";
 import "./BottomBar.css";
 import { User } from "./utils";
 
@@ -34,11 +34,11 @@ export const BottomBar = ({
 
           <button
             onClick={() => {
-              setViewMode("All");
+              setViewMode("Search");
               setSearchState({ view: "All" });
             }}
           >
-            <Compass size={22} />
+            <Search size={22} />
           </button>
 
           <button
