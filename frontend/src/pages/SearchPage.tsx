@@ -10,6 +10,7 @@ export const SearchPage: FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [topTags, setTopTags] = useState<[string, number][]>([]);
   const offsetRef = useRef(0);
 
   const fetchEvents = useCallback(
@@ -25,6 +26,20 @@ export const SearchPage: FC = () => {
             currentOffset === 0 ? results : [...prev, ...results]
           );
           setHasMore(true);
+
+          const tagCounts = results.reduce((acc, event) => {
+            event.tags?.forEach((tag) => {
+              acc[tag] = (acc[tag] || 0) + 1;
+            });
+            return acc;
+          }, {} as Record<string, number>);
+
+          const sortedTags = Object.entries(tagCounts)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 5);
+
+          setTopTags(sortedTags);
+          console.log("Top 5 Tags:", sortedTags);
         }
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -69,6 +84,18 @@ export const SearchPage: FC = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <div className="trend-component">
+          {topTags.length > 0 && (
+            <div className="top-tags">
+              🔥 Trends
+              {topTags.map(([tag, count]) => (
+                <span key={tag} className="search-page-tag">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {events.length === 0 && !loading ? (

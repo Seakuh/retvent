@@ -17,6 +17,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
+  flex-direction: column;
 }
 
 .search-page-input {
@@ -61,4 +63,20 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+  }
+
+  .top-tags {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    
+  }
+
+  .search-page-tag{
+    color: var(--color-neon-blue);
+  }
+
+  .top-tags{
+    color: white
   }
