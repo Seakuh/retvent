@@ -14,7 +14,7 @@ export const EventGridItem: React.FC<EventGridItemProps> = ({
 }) => {
   return (
     <a
-      key={event.id}
+      key={event.id || event._id}
       onClick={() => handleEventClick(event.id || event._id || "")}
       className={`event-grid-item ${isPast ? "past" : ""}`}
     >
@@ -25,6 +25,7 @@ export const EventGridItem: React.FC<EventGridItemProps> = ({
           loading="eager"
           decoding="async"
           fetchPriority="high"
+          onLoad={(e) => e.currentTarget.classList.add("loaded")}
         />
       </div>
       {/* <div className="event-grid-item-info">
