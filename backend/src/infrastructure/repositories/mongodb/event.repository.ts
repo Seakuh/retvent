@@ -77,6 +77,23 @@ export class MongoEventRepository implements IEventRepository {
       commentCount: commentCountMap.get(event._id.toString()) || 0,
     }));
   }
+  findNewEvents(offset: number, limit: number, searchQuery: string) {
+    const query: any = {};
+
+    if (searchQuery) {
+      query.$or = [
+        { tags: { $regex: searchQuery, $options: 'i' } },
+        { title: { $regex: query, $options: 'i' } },
+      ];
+    }
+
+    return this.eventModel
+      .find(query)
+      .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(limit)
+      .exec();
+  }
 
   getRankedPopularEvents() {
     return this.eventModel.aggregate([

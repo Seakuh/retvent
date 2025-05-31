@@ -582,6 +582,15 @@ export class EventController {
     return this.eventService.getPopularCities(limit);
   }
 
+  @Get('search/new')
+  async getNewEvents(
+    @Query('offset') offset: number = 0,
+    @Query('limit') limit: number = 10,
+    @Query('query') query?: string,
+  ) {
+    return this.eventService.findNewEvents(offset, limit, query);
+  }
+
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   async updateEvent(

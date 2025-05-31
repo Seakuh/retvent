@@ -47,6 +47,10 @@ export class EventService {
     );
   }
 
+  findNewEvents(offset: number, limit: number, query: string) {
+    return this.eventRepository.findNewEvents(offset, limit, query);
+  }
+
   getRankedPopularEvents() {
     return this.eventRepository.getRankedPopularEvents();
   }
