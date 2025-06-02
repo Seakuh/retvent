@@ -30,7 +30,7 @@ export const searchProfiles = async (username: string): Promise<Profile[]> => {
   if (!username) return [];
 
   try {
-    const response = await fetch(`${API_URL}profile/username/${username}`);
+    const response = await fetch(`${API_URL}profile/search/${username}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

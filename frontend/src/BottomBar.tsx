@@ -1,4 +1,4 @@
-import { Home, Plus, Search, Send, Settings } from "lucide-react";
+import { Home, Plus, Search, Settings, ShoppingBag } from "lucide-react";
 import "./BottomBar.css";
 import { useLandingSearch } from "./LandinSearchContext";
 import { User } from "./utils";
@@ -26,8 +26,9 @@ export const BottomBar = ({
         <div>
           <button
             onClick={() => {
-              setViewMode("Home");
-              setSearchState({ view: "Home" });
+              setViewMode("All");
+              setSearchState({ view: "All" });
+              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
             <Home size={22} />
@@ -37,6 +38,7 @@ export const BottomBar = ({
             onClick={() => {
               setViewMode("Search");
               setSearchState({ view: "Search" });
+              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
             <Search size={22} />
@@ -50,7 +52,7 @@ export const BottomBar = ({
           </button>
 
           <button onClick={() => navigate("/my-groups")}>
-            <Send size={22} />
+            <ShoppingBag size={22} />
           </button>
 
           <button
