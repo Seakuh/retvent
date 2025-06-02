@@ -650,6 +650,7 @@ export const handleLogout = () => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("favoriteEventIds");
   localStorage.removeItem("following");
+  window.location.href = "/";
 };
 
 export const getDaysUntilDate = (date: string | Date): number => {

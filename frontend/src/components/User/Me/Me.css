@@ -22,6 +22,17 @@
   position: relative;
 }
 
+.logout-button {
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
 .preferences-button {
   background: linear-gradient(135deg, #e55e46 0%, #63f187 100%);
   color: white;

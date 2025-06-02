@@ -8,6 +8,7 @@ import {
   calculateUserLevel,
   defaultUserPreferences,
   fallBackProfileImage,
+  handleLogout,
   USER_LEVELS,
 } from "../../../utils";
 import { EmbeddingPreferences } from "../../EventDetail/components/EmbeddingPreferences/EmbeddingPreferences";
@@ -332,6 +333,9 @@ export const Me: React.FC = () => {
 
           <button className="update-button" onClick={handleUpdate}>
             {isUpdating ? "Updating..." : "Update Profile"}
+          </button>
+          <button className="logout-button" onClick={handleLogout}>
+            Logout
           </button>
         </div>
         <div className="member-since">
