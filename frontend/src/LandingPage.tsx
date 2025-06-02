@@ -280,7 +280,7 @@ function LandingPage() {
         {/* Margin nur auf Desktop */}
         {/* Mobile */}
         <BottomBar
-          setViewMode={setViewMode}
+          setViewMode={handleViewChange}
           setSearchState={setSearchState}
           setIsUploadOpen={setIsUploadOpen}
           loggedIn={loggedIn}
