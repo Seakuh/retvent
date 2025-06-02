@@ -1,4 +1,4 @@
-import { Calendar, Heart, SlidersHorizontal, Telescope } from "lucide-react";
+import { Calendar, House, SlidersHorizontal, Telescope } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { ViewMode } from "../../types/event";
 import { categoriesToFilter, Event } from "../../utils";
@@ -86,8 +86,8 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         className={`category-button ${viewMode === "Home" ? "active" : ""}`}
         onClick={() => onViewModeChange("Home")}
       >
-        <Heart size={20} />
-        Liked
+        <House size={20} />
+        Home
       </button>
 
       {/* All events button */}
