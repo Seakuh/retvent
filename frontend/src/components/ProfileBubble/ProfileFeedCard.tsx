@@ -5,7 +5,7 @@ interface ProfileFeedCardProps {
   feed: FeedResponse;
   setShowFeedModal: (show: boolean) => void;
   setCurrentFeedItem: (item: FeedResponse) => void;
-  size?: "small" | "large";
+  size?: "small" | "large" | "medium";
   onFeedCardClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   profileImageUrl: string;
 }
@@ -24,7 +24,7 @@ export const ProfileFeedCard = ({
     <div className="profile-feed-card-container">
       <div
         className={`profile-feed-card-border ${
-          size === "large" ? "large" : ""
+          size === "large" ? "large" : size === "medium" ? "medium" : "small"
         }`}
         onClick={handleClick}
       >

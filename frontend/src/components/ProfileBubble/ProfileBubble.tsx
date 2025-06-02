@@ -10,7 +10,7 @@ import { ProfileFeedCard } from "./ProfileFeedCard";
 interface ProfileBubbleProps {
   profileId: string;
   profileImageUrl: string;
-  size?: "small" | "large";
+  size?: "small" | "large" | "medium";
 }
 
 export const ProfileBubble = ({
@@ -94,7 +94,9 @@ export const ProfileBubble = ({
 
   return (
     <div
-      className={`profile-feed-wrapper ${size === "large" ? "large" : "small"}`}
+      className={`profile-feed-wrapper ${
+        size === "large" ? "large" : size === "medium" ? "medium" : "small"
+      }`}
     >
       {!isAtStart && (
         <button

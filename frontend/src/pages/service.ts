@@ -1,4 +1,4 @@
-import { API_URL, Event } from "../utils";
+import { API_URL, Event, Profile } from "../utils";
 
 export const searchNew = async (
   query?: string,
@@ -26,3 +26,18 @@ export const searchNew = async (
 // ) {
 //   return this.eventService.findNewEvents(offset, limit, query);
 // }
+export const searchProfiles = async (username: string): Promise<Profile[]> => {
+  if (!username) return [];
+
+  try {
+    const response = await fetch(`${API_URL}profile/username/${username}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return Array.isArray(data) ? data : [data];
+  } catch (error) {
+    console.error("Error fetching profiles:", error);
+    return [];
+  }
+};

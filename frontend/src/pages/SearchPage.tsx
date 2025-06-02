@@ -1,18 +1,19 @@
 import { Rabbit } from "lucide-react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import EventGalleryIII from "../components/EventGallery/EventGalleryIII";
-import { Event } from "../utils";
+import { defaultProfileImage, Event, Profile } from "../utils";
 import "./SearchPage.css";
-import { searchNew } from "./service";
-
+import { searchNew, searchProfiles } from "./service";
 export const SearchPage: FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [events, setEvents] = useState<Event[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [topTags, setTopTags] = useState<[string, number][]>([]);
   const offsetRef = useRef(0);
-
+  const navigate = useNavigate();
   const fetchEvents = useCallback(
     async (currentOffset: number) => {
       setLoading(true);
@@ -56,10 +57,17 @@ export const SearchPage: FC = () => {
     [searchTerm]
   );
 
+  const fetchProfiles = useCallback(async () => {
+    const results = await searchProfiles(searchTerm);
+    setProfiles(results);
+    console.log("Profiles", results);
+  }, [searchTerm]);
+
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       offsetRef.current = 0;
       fetchEvents(0);
+      fetchProfiles();
     }, 500);
 
     return () => clearTimeout(debounceTimer);
@@ -91,7 +99,7 @@ export const SearchPage: FC = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <div className="trend-component">
+        {/* <div className="trend-component">
           {topTags.length > 0 && (
             <div className="top-tags">
               {topTags.map(([tag, count]) => (
@@ -109,8 +117,37 @@ export const SearchPage: FC = () => {
               ))}
             </div>
           )}
-        </div>
+        </div> */}
       </div>
+      {profiles.length > 0 && (
+        <div className="search-page-profiles-container">
+          {profiles.map((profile) => (
+            <div key={profile.id}>
+              <div
+                className="search-profile-card-inner"
+                onClick={() => {
+                  navigate(`/profile/${profile.userId}`);
+                }}
+              >
+                <img
+                  className="search-profile-card-image"
+                  src={
+                    profile.profileImageUrl
+                      ? `https://img.event-scanner.com/insecure/rs:fill:96:96/plain/${profile.profileImageUrl}@webp`
+                      : defaultProfileImage
+                  }
+                  loading="lazy"
+                />
+              </div>
+              <div className="profile-card-username-container">
+                <h3 className="profile-card-username">
+                  {profile.username || "Profile"}
+                </h3>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {events.length === 0 && !loading ? (
         <div className="no-results">

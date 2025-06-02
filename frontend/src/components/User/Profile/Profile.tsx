@@ -221,11 +221,17 @@ export const Profile: React.FC = () => {
           headerImageUrl={user.headerImageUrl || defaultProfileImage}
           username={user.username}
         />
-        <div className="profile-bubble-container">
+        <div
+          className="profile-bubble-container"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate(`/profile/${userId}`);
+          }}
+        >
           <ProfileBubble
             profileId={userId || ""}
             profileImageUrl={user.profileImageUrl || ""}
-            size="large"
+            size="medium"
           />
         </div>
         <div>

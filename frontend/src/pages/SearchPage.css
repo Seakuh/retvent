@@ -31,6 +31,35 @@
   background: var(--color-neon-blue-light);
 }
 
+.search-page-profile-username {
+  color: white;
+  font-weight: 600;
+  text-align: center;
+}
+
+.search-profile-card-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.search-profile-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.search-page-profiles-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 1rem;
+}
+
 @media screen and (max-width: 768px) {
   .trend-component {
     width: 100%;
