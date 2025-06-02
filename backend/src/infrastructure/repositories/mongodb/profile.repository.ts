@@ -30,6 +30,15 @@ export class MongoProfileRepository implements IProfileRepository {
     );
   }
 
+  searchProfilesByQuery(query: string): Profile[] | PromiseLike<Profile[]> {
+    return this.profileModel.find({
+      $or: [
+        { username: { $regex: query, $options: 'i' } },
+        { name: { $regex: query, $options: 'i' } },
+      ],
+    });
+  }
+
   findAllLatest() {
     return this.profileModel.find().sort({ createdAt: -1 }).exec();
   }

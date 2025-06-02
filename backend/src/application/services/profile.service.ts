@@ -278,4 +278,7 @@ export class ProfileService {
   async searchProfiles(query: string): Promise<Profile[]> {
     return this.profileRepository.searchProfiles(query);
   }
+  async searchProfilesByQuery(query: string): Promise<Profile[]> {
+    return this.profileRepository.searchProfilesByQuery(query);
+  }
 }

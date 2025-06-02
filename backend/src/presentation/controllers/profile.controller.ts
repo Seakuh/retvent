@@ -101,6 +101,13 @@ export class ProfileController {
     return this.profileService.findByUsername(username);
   }
 
+  @Get('search/:query')
+  async searchProfilesByQuery(
+    @Param('query') query: string,
+  ): Promise<Profile[]> {
+    return this.profileService.searchProfilesByQuery(query);
+  }
+
   @Get('email/:email')
   async getProfileByEmail(@Param('email') email: string): Promise<Profile> {
     return this.profileService.findByEmail(email);
