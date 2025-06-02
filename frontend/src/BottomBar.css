@@ -1,13 +1,13 @@
 .bottom-bar {
   position: fixed;
-  bottom: 1.2rem;
+  bottom: 1rem;
   left: 0;
   right: 0;
   height: 4rem;
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(3rem);
   background-color: rgba(var(--color-neon-blue-dark), 0.8);
-  border: 2px solid var(--color-neon-blue-light);
-  width: 90%;
+  border: 1px solid var(--color-neon-blue-light);
+  width: 95%;
   margin: 0 auto;
   z-index: 1000;
   overflow-x: hidden;
@@ -30,18 +30,6 @@
   justify-content: space-between;
   width: 100%;
   align-items: center;
-}
-
-.create-event-plus{
-  font-size: 3rem;
-  font-weight: 400;
-  position: relative;
-  padding: 1.5rem !important;
-  border-radius: 50%;
-  color: var(--color-neon-blue) !important;
-  border: 2px solid var(--color-neon-blue);
-  background-color: rgba(var(--color-neon-blue-dark), 0.5);
-  box-shadow: 0 0 0.3rem var(--color-neon-blue);
 }
 
 .bottom-bar button {

@@ -1,4 +1,4 @@
-import { Home, Search, Send, Settings } from "lucide-react";
+import { Home, Plus, Search, Send, Settings } from "lucide-react";
 import "./BottomBar.css";
 import { useLandingSearch } from "./LandinSearchContext";
 import { User } from "./utils";
@@ -46,7 +46,7 @@ export const BottomBar = ({
             className="create-event-plus"
             onClick={() => setIsUploadOpen(true)}
           >
-            +
+            <Plus size={22} />
           </button>
 
           <button onClick={() => navigate("/my-groups")}>
