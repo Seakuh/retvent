@@ -15,6 +15,7 @@ import Register from "./components/Auth/Register";
 import CommentGuidelines from "./components/CommentGuidelines/CommentGuidelines";
 import { GroupInvite } from "./components/CommunityDetailBar/GroupInvite/GroupInvite";
 import { EventDetail } from "./components/EventDetail/EventDetail";
+import { AdvertisingOptions } from "./components/EventDetail/components/OwnerComponent/Advertising/AdvertisingOptions";
 import { FeedProvider } from "./components/Feed/FeedProvider";
 import { GroupChat } from "./components/GroupChat/GroupChat";
 import { GroupChatPage } from "./components/GroupChat/GroupChatPage";
@@ -91,6 +92,10 @@ const App: React.FC = () => {
                   <Route path="/profile/:userId" element={<Profile />} />
                   <Route path="/event/:eventId" element={<EventDetail />} />
                   <Route path="/category/:category" element={<LandingPage />} />
+                  <Route
+                    path="/advertising/:eventId"
+                    element={<AdvertisingOptions />}
+                  />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/imprint" element={<Imprint />} />
                   <Route path="/terms" element={<Terms />} />

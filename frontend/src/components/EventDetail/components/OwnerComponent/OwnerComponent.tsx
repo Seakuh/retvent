@@ -59,7 +59,7 @@ export const OwnerComponent = () => {
   };
 
   const handleAdvertising = () => {
-    navigate(`/admin/events/edit/${eventId}`);
+    navigate(`/advertising/${eventId}`);
   };
 
   const handleOpen = (type: string) => {
