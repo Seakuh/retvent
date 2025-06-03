@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { AdBanner } from "../../../../../Advertisement/AdBanner/AdBanner";
 import "./AdvertisingOptions.css";
 
 interface AdvertisingOption {
@@ -108,6 +109,8 @@ export const AdvertisingOptions = () => {
 
   return (
     <div className="advertising-options">
+      <AdBanner />
+
       <h2>Advertise Your Event</h2>
       <div className="options-container">
         {advertisingOptions.map((option) => (
