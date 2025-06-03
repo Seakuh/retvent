@@ -14,10 +14,11 @@ import {
   Request,
   UnauthorizedException,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
@@ -203,6 +204,39 @@ export class EventController {
       );
     } catch (error) {
       console.error('V5 Upload - Error:', error);
+      throw error;
+    }
+  }
+  @Post('v6/upload/event-images')
+  @UseGuards(UploadGuard)
+  @UseInterceptors(FilesInterceptor('images'))
+  async uploadEventImagesV6(
+    @UploadedFiles() images: Express.Multer.File[],
+    @Body() body: { location: string },
+    @Request() req,
+  ) {
+    try {
+      // Location-String zu Objekt parsen
+      const locationData = JSON.parse(body.location);
+
+      // Koordinaten extrahieren
+      const lonFromBodyCoordinates = locationData.coordinates[0];
+      const latFromBodyCoordinates = locationData.coordinates[1];
+
+      const results = [];
+      for (const image of images) {
+        const result = await this.eventService.processEventImageUploadV5(
+          image,
+          lonFromBodyCoordinates,
+          latFromBodyCoordinates,
+          req.user.id,
+        );
+        results.push(result);
+      }
+
+      return results;
+    } catch (error) {
+      console.error('V6 Upload - Error:', error);
       throw error;
     }
   }
@@ -392,6 +426,40 @@ export class EventController {
   @Get('latest')
   async getLatestEvents(@Query('limit') limit: number = 10) {
     const events = await this.eventService.findLatest(limit);
+    return { events };
+  }
+
+  @Get('advertisement/events')
+  async getAdvertisementEvents(@Query('limit') limit: number = 10) {
+    const events = await this.eventService.findAdvertisementEvents(limit);
+    return { events };
+  }
+
+  // @Post('advertisement/create')
+  // @UseGuards(JwtAuthGuard)
+  // @UseInterceptors(FileInterceptor('file'))
+  // async createAdvertisementEvent(
+  //   @UploadedFile() file: Express.Multer.File,
+  //   @Body() eventData: any,
+  //   @Request() req,
+  // ) {
+  //   const event = await this.eventService.createAdvertisementEvent(
+  //     file,
+  //     eventData,
+  //     req.user.id,
+  //   );
+  //   return { event };
+  // }
+
+  @Get('latest/stars')
+  async getLatestEventsStars(@Query('limit') limit: number = 10) {
+    const events = await this.eventService.findLatestStars(limit);
+    return { events };
+  }
+
+  @Get('sponsored/latest')
+  async getSponsoredEvents(@Query('limit') limit: number = 10) {
+    const events = await this.eventService.findSponsoredEvents(limit);
     return { events };
   }
 

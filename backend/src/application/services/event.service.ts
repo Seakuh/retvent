@@ -47,6 +47,14 @@ export class EventService {
     );
   }
 
+  // createAdvertisementEvent(file: Express.Multer.File, eventData: any, id: any) {
+  //   this.eventRepository.createAvertisementEvent();
+  // }
+
+  findAdvertisementEvents(limit: number) {
+    return this.eventRepository.findAdvertisementEvents(limit);
+  }
+
   findNewEvents(offset: number, limit: number, query: string) {
     return this.eventRepository.findNewEvents(offset, limit, query);
   }
@@ -74,12 +82,20 @@ export class EventService {
     return this.eventRepository.updateLineupProfile(eventId, profileId, userId);
   }
 
+  findLatestStars(limit: number) {
+    return this.eventRepository.findLatestStars(limit);
+  }
+
   getPopularEventsNearby(lat: number, lon: number, limit: number) {
     return this.eventRepository.getPopularEventsNearby(lat, lon, limit);
   }
 
   getPopularEventsByCategory(category: string, limit: number) {
     return this.eventRepository.getPopularEventsByCategory(category, limit);
+  }
+
+  findSponsoredEvents(limit: number) {
+    return this.eventRepository.findSponsoredEvents(limit);
   }
 
   async getCategories() {

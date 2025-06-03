@@ -101,6 +101,12 @@ export class ProfileController {
     return this.profileService.findByUsername(username);
   }
 
+  @Get('sponsored/latest')
+  async getSponsoredProfiles(@Query('limit') limit: number = 10) {
+    const profiles = await this.profileService.findSponsoredProfiles(limit);
+    return { profiles };
+  }
+
   @Get('search/:query')
   async searchProfilesByQuery(
     @Param('query') query: string,

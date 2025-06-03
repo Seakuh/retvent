@@ -63,6 +63,16 @@ export class MongoProfileRepository implements IProfileRepository {
     );
   }
 
+  findSponsoredProfiles(limit: number) {
+    return this.profileModel
+      .find({
+        isSponsored: true,
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .exec();
+  }
+
   findMissingProfileEmbeddings(BATCH_SIZE: number) {
     return this.profileModel
       .find({ userId: { $exists: true } })

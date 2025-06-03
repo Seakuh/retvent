@@ -228,6 +228,10 @@ export class ProfileService {
     }
   }
 
+  async findSponsoredProfiles(limit: number) {
+    return this.profileRepository.findSponsoredProfiles(limit);
+  }
+
   async updateHeaderPicture(
     id: string,
     @UploadedFile() file: Express.Multer.File,

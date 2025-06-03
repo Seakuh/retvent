@@ -98,6 +98,51 @@ export class MongoEventRepository implements IEventRepository {
       .exec();
   }
 
+  findAdvertisementEvents(limit: number) {
+    return this.eventModel
+      .find({
+        isAdvertisement: true,
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .exec();
+  }
+
+  findSponsoredEvents(limit: number) {
+    return this.eventModel
+      .find({
+        isSponsored: true,
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .exec();
+  }
+
+  findLatestStars(limit: number) {
+    return this.eventModel
+      .aggregate([
+        {
+          $addFields: {
+            totalEngagement: {
+              $add: [
+                { $size: { $ifNull: ['$likes', []] } },
+                { $size: { $ifNull: ['$comments', []] } },
+              ],
+            },
+          },
+        },
+        {
+          $sort: {
+            totalEngagement: -1,
+          },
+        },
+        {
+          $limit: limit,
+        },
+      ])
+      .exec();
+  }
+
   getRankedPopularEvents() {
     return this.eventModel.aggregate([
       {
