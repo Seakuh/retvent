@@ -2,6 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AdBanner } from "../../../../../Advertisement/AdBanner/AdBanner";
+import { Event } from "../../../../../utils";
 import { AdminService } from "../../../../Admin/admin.service";
 import "./AdvertisingOptions.css";
 interface AdvertisingOption {
