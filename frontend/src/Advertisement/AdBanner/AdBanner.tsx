@@ -6,6 +6,8 @@ import { getAdvertisementEvents } from "./service";
 export const AdBanner: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,6 +40,32 @@ export const AdBanner: React.FC = () => {
     );
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      handleNext();
+    }
+    if (isRightSwipe) {
+      handlePrev();
+    }
+
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
   if (events.length === 0) return null;
 
   return (
@@ -57,6 +85,9 @@ export const AdBanner: React.FC = () => {
       <div
         className="ad-banner-content"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {events.map((event) => (
           <a
