@@ -358,63 +358,85 @@
 
   .event-selection h3 {
     font-size: 1.5rem;
-    color: #1a1a1a;
+    color: white;
     margin-bottom: 1.5rem;
     text-align: center;
   }
 
   .event-list {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    max-width: 800px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 1rem;
   }
 
   .event-card {
     background: white;
-    border-radius: 16px;
-    padding: 1.5rem;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
     border: 2px solid transparent;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    width: 200px;
+    height: 280px;
+    margin: 0 auto;
   }
 
-  .event-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  .event-thumbnail {
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+    position: relative;
   }
 
-  .event-card.selected {
-    border-color: #667eea;
-    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  .event-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .event-card:hover .event-image {
+    transform: scale(1.05);
+  }
+
+  .event-details {
+    padding: 1rem;
+    height: calc(100% - 140px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .event-card h4 {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #1a1a1a;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.5rem 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.3;
   }
 
   .event-date {
     color: #64748b;
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
+    font-size: 0.85rem;
+    margin: 0;
   }
 
-  .event-location {
-    color: #475569;
-    font-size: 0.9rem;
+  .event-card.selected {
+    border-color: #667eea;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
   }
 
   /* Dark mode support */
   @media (prefers-color-scheme: dark) {
-    .event-selection h3 {
-      color: #f1f5f9;
-    }
-
     .event-card {
       background: rgba(30, 41, 59, 0.9);
     }
@@ -423,11 +445,7 @@
       color: #f1f5f9;
     }
 
-    .event-card.selected {
-      background: linear-gradient(135deg, #334155, #1e293b);
-    }
-
-    .event-date, .event-location {
+    .event-date {
       color: #94a3b8;
     }
   }
@@ -435,6 +453,18 @@
   /* Tablet and Desktop Styles */
   @media (min-width: 768px) {
     .event-list {
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 2rem;
     }
+  }
+
+  /* Loading state */
+  .event-card.loading {
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
   }

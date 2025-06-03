@@ -126,7 +126,7 @@ export const AdvertisingOptions = () => {
     },
     {
       id: "premium",
-      name: "Premium Spotlight",
+      name: "Spotlight",
       price: 99.99,
       duration: 7,
       description: "7 days maximum visibility with premium click guarantee",
@@ -140,7 +140,7 @@ export const AdvertisingOptions = () => {
       ],
     },
     {
-      id: "vip",
+      id: "showcase",
       name: "Showcase",
       price: 199.99,
       duration: 14,
@@ -207,11 +207,21 @@ export const AdvertisingOptions = () => {
               }`}
               onClick={() => setSelectedEvent(event.id)}
             >
-              <h4>{event.title}</h4>
-              <p className="event-date">{formatDate(event.startDate)}</p>
+              <div className="event-thumbnail">
+                <img
+                  src={`https://img.event-scanner.com/insecure/rs:fill:320:350/q:70/plain/${event.imageUrl}@webp`}
+                  alt={event.title}
+                  className="event-image"
+                />
+              </div>
+              <div className="event-details">
+                <h4>{event.title}</h4>
+                <p className="event-date">{formatDate(event.startDate)}</p>
+              </div>
             </div>
           ))}
         </div>
+        <h3>Select Your Advertising Package</h3>
       </div>
 
       <div className="options-container">
