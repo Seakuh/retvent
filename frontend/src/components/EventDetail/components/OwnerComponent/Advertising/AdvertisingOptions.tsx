@@ -1,14 +1,15 @@
+import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AdBanner } from "../../../../../Advertisement/AdBanner/AdBanner";
 import "./AdvertisingOptions.css";
-
 interface AdvertisingOption {
   id: string;
   name: string;
   price: number;
   duration: number; // in Tagen
   description: string;
+  features: string[];
 }
 
 interface PaymentModalProps {
@@ -35,6 +36,16 @@ const PaymentModal = ({
             <h3>{selectedOption.name} Package</h3>
             <p>Duration: {selectedOption.duration} days</p>
             <p>Price: {selectedOption.price}€</p>
+            <div className="legal-notice">
+              <p>
+                By proceeding with payment, you agree to our Terms of Service
+                and Advertising Guidelines.
+              </p>
+              <p>
+                All prices include VAT. Refunds are available within 24 hours of
+                purchase if the campaign hasn't started.
+              </p>
+            </div>
           </div>
         )}
         <div className="payment-form">
@@ -62,28 +73,54 @@ export const AdvertisingOptions = () => {
   const { eventId } = useParams();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const navigate = useNavigate();
 
   const advertisingOptions: AdvertisingOption[] = [
     {
       id: "basic",
-      name: "Basic",
+      name: "Basic Highlight",
       price: 49.99,
       duration: 3,
-      description: "3 days on homepage",
+      description: "3 days premium visibility with guaranteed clicks",
+      features: [
+        "Premium placement in homepage banner",
+        "Guaranteed 500+ clicks",
+        "Enhanced visibility for 3 days",
+        "Basic analytics dashboard",
+        "Standard support",
+      ],
     },
     {
       id: "premium",
-      name: "Premium",
+      name: "Premium Spotlight",
       price: 99.99,
       duration: 7,
-      description: "7 days on homepage",
+      description: "7 days maximum visibility with premium click guarantee",
+      features: [
+        "Top placement in homepage banner",
+        "Guaranteed 1,500+ clicks",
+        "3x higher visibility for 7 days",
+        "Advanced analytics dashboard",
+        "Priority support",
+        "Social media promotion",
+      ],
     },
     {
       id: "vip",
-      name: "VIP",
+      name: "Showcase",
       price: 199.99,
       duration: 14,
-      description: "14 days on homepage",
+      description: "14 days exclusive visibility with VIP click guarantee",
+      features: [
+        "Exclusive banner placement",
+        "Guaranteed 3,500+ clicks",
+        "5x higher visibility for 14 days",
+        "Premium analytics dashboard",
+        "24/7 priority support",
+        "Social media campaign",
+        "Email newsletter feature",
+        "Custom promotion strategy",
+      ],
     },
   ];
 
@@ -103,6 +140,10 @@ export const AdvertisingOptions = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const selectedOptionData = advertisingOptions.find(
     (opt) => opt.id === selectedOption
   );
@@ -110,8 +151,17 @@ export const AdvertisingOptions = () => {
   return (
     <div className="advertising-options">
       <AdBanner />
+      <button className="back-button" onClick={handleBack}>
+        <ChevronLeft className="h-5 w-5" />
+      </button>
+      <div className="advertising-header">
+        <h2>Boost Your Event Visibility</h2>
+        <p className="subtitle">
+          Get your event featured on our homepage and reach thousands of
+          potential attendees
+        </p>
+      </div>
 
-      <h2>Advertise Your Event</h2>
       <div className="options-container">
         {advertisingOptions.map((option) => (
           <div
@@ -125,15 +175,40 @@ export const AdvertisingOptions = () => {
             <p className="price">{option.price}€</p>
             <p className="duration">{option.duration} days</p>
             <p className="description">{option.description}</p>
+            <ul className="features-list">
+              {option.features.map((feature, index) => (
+                <li key={index}>{feature}</li>
+              ))}
+            </ul>
           </div>
         ))}
       </div>
+
+      <div className="legal-section">
+        <h4>Terms & Conditions</h4>
+        <ul>
+          <li>
+            All advertising campaigns are subject to our content guidelines
+          </li>
+          <li>
+            We reserve the right to reject or modify content that violates our
+            policies
+          </li>
+          <li>
+            Campaign start date will be confirmed within 24 hours of purchase
+          </li>
+          <li>
+            Refunds are available within 24 hours if the campaign hasn't started
+          </li>
+        </ul>
+      </div>
+
       <button
         className="confirm-button"
         onClick={handlePayment}
         disabled={!selectedOption}
       >
-        Advertise Now
+        Start Campaign
       </button>
 
       <PaymentModal

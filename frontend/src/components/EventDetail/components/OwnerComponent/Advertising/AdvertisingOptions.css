@@ -1,144 +1,352 @@
+/* Modern Mobile-First Advertising Options Styles */
+
 .advertising-options {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.options-container {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  margin: 2rem 0;
-}
-
-.option-card {
-  background: white;
-  border-radius: 15px;
-  padding: 2rem;
-  width: 250px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.option-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.option-card.selected {
-  border: 2px solid #007bff;
-  transform: translateY(-5px);
-}
-
-.price {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #007bff;
-  margin: 1rem 0;
-}
-
-.duration {
-  font-size: 1.2rem;
-  color: #666;
-}
-
-.description {
-  margin-top: 1rem;
-  color: #444;
-}
-
-.confirm-button {
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: block;
-  margin: 2rem auto;
-}
-
-.confirm-button:hover {
-  background: #0056b3;
-}
-
-.confirm-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 500px;
-}
-
-.checkout-details {
-  margin: 1.5rem 0;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 10px;
-}
-
-.payment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-.payment-form input {
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-}
-
-.card-details {
-  display: flex;
-  gap: 1rem;
-}
-
-.card-details input {
-  width: 50%;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.cancel-button {
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  padding: 0.8rem 1.5rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.cancel-button:hover {
-  background: #5a6268;
-}
+    padding: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    color: #1a1a1a;
+  }
+  
+  .options-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+    padding: 0 0.5rem;
+  }
+  
+  .option-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .option-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .option-card:hover::before {
+    transform: scaleX(1);
+  }
+  
+  .option-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 1);
+  }
+  
+  .option-card.selected {
+    border: 2px solid #667eea;
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+    background: rgba(255, 255, 255, 1);
+  }
+  
+  .option-card.selected::before {
+    transform: scaleX(1);
+  }
+  
+  .price {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 1.5rem 0 0.5rem 0;
+    line-height: 1.2;
+  }
+  
+  .duration {
+    font-size: 1.1rem;
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  
+  .description {
+    margin-top: 1.5rem;
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  
+  .confirm-button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 2.5rem auto;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    min-width: 200px;
+  }
+  
+  .confirm-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+  }
+  
+  .confirm-button:active {
+    transform: translateY(0);
+  }
+  
+  .confirm-button:disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+  }
+  
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  .checkout-details {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+  }
+  
+  .payment-form input {
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: #fafafa;
+  }
+  
+  .payment-form input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+  
+  .card-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .cancel-button {
+    background: #64748b;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.875rem 1.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    min-width: 120px;
+  }
+  
+  .cancel-button:hover {
+    background: #475569;
+    transform: translateY(-1px);
+  }
+  
+  /* Tablet Styles */
+  @media (min-width: 768px) {
+    .advertising-options {
+      padding: 2rem;
+    }
+    
+    .options-container {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 2rem auto;
+    }
+    
+    .option-card {
+      padding: 2.5rem;
+    }
+    
+    .modal-content {
+      padding: 3rem;
+    }
+  }
+  
+  /* Desktop Styles */
+  @media (min-width: 1024px) {
+    .advertising-options {
+      padding: 3rem;
+    }
+    
+    .options-container {
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 1000px;
+    }
+    
+    .option-card {
+      width: auto;
+      max-width: 320px;
+    }
+    
+    .modal-buttons {
+      flex-wrap: nowrap;
+    }
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .option-card {
+      border: 2px solid #000;
+      background: #fff;
+    }
+    
+    .price {
+      color: #000;
+      -webkit-text-fill-color: #000;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .option-card,
+    .confirm-button,
+    .cancel-button {
+      transition: none;
+    }
+    
+    .option-card:hover {
+      transform: none;
+    }
+    
+    .modal-overlay,
+    .modal-content {
+      animation: none;
+    }
+  }
+  
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .advertising-options {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #f1f5f9;
+    }
+    
+    .option-card {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #f1f5f9;
+    }
+    
+    .option-card:hover,
+    .option-card.selected {
+      background: rgba(30, 41, 59, 0.95);
+    }
+    
+    .duration {
+      color: #94a3b8;
+    }
+    
+    .description {
+      color: #cbd5e1;
+    }
+    
+    .modal-content {
+      background: #1e293b;
+      color: #f1f5f9;
+    }
+    
+    .checkout-details {
+      background: linear-gradient(135deg, #334155, #475569);
+      border-color: #475569;
+    }
+    
+    .payment-form input {
+      background: #334155;
+      border-color: #475569;
+      color: #f1f5f9;
+    }
+    
+    .payment-form input:focus {
+      background: #1e293b;
+      border-color: #667eea;
+    }
+  }
