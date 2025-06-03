@@ -1,10 +1,10 @@
 import { Heart } from "lucide-react";
+import { AdBanner } from "../../Advertisement/AdBanner/AdBanner";
 import { Event, FeedResponse } from "../../utils";
 import { EventGalleryII } from "../EventGallery/EventGalleryII";
 import { ExploreFeed } from "../Feed/ExploreFeed";
 import "./EventPage.css";
 import { EventSection } from "./EventSection";
-
 export const EventPage = ({
   favoriteEvents,
   feedItemsResponse,
@@ -14,6 +14,7 @@ export const EventPage = ({
 }) => {
   return (
     <div className="event-page-container">
+      <AdBanner />
       <ExploreFeed feedItemsResponse={feedItemsResponse} />
       {favoriteEvents.length === 0 && (
         <div className="no-liked-events">
