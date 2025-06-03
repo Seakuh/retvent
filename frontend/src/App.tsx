@@ -24,6 +24,7 @@ import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
 import { SearchPage } from "./pages/SearchPage";
+import { ShoppingPage } from "./pages/ShoppingPage";
 import { syncFavorites } from "./service";
 // const queryClient = new QueryClient({
 //   defaultOptions: {
@@ -125,6 +126,7 @@ const App: React.FC = () => {
                       </ProtectedRoute>
                     }
                   />
+                  <Route path="/shopping" element={<ShoppingPage />} />
                   {/* <Route
                   path="/admin/dashboard"
                   element={

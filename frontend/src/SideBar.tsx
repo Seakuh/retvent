@@ -7,6 +7,7 @@ import {
   Search,
   Send,
   Settings,
+  ShoppingBag,
   Smartphone,
   Upload,
   UserIcon,
@@ -66,6 +67,14 @@ export const SideBar = ({
             >
               <Upload size={20} />
               <span className="hidden md:inline">Upload</span>
+            </button>
+
+            <button
+              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              onClick={() => navigate("/shopping")}
+            >
+              <ShoppingBag size={20} />
+              <span className="hidden md:inline">Fits</span>
             </button>
 
             <button

@@ -4,11 +4,14 @@
  * A modal interface for uploading event images either via camera or file selection.
  * Once a file is selected, it displays upload progress and handles success/error states.
  */
-import { Camera, Upload } from "lucide-react";
+import { Camera, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import ErrorDialog from "../components/ErrorDialog/ErrorDialog";
-import { uploadEventImage } from "../components/EventScanner/service";
+import {
+  uploadEventImage,
+  uploadEventImages,
+} from "../components/EventScanner/service";
 import { ProcessingAnimation } from "../components/ProcessingAnimation/ProcessingAnimation";
 import { UploadAnimation } from "../components/UploadAnimation/UploadAnimation";
 import "./UploadModal.css";
@@ -40,9 +43,47 @@ export const UploadModal = ({
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const navigate = useNavigate();
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+
+    setSelectedFiles((prev) => [...prev, ...imageFiles]);
+
+    imageFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewImages((prev) => [...prev, e.target?.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
   /**
    * Handles file selection from either camera or file system
    */
@@ -108,30 +149,100 @@ export const UploadModal = ({
     return interval;
   };
 
+  const handleUpload = async () => {
+    if (selectedFiles.length === 0) return;
+
+    setIsUploading(true);
+    setProgress(25);
+    setError(null);
+
+    const interval = setProgressInterval();
+
+    try {
+      const eventResponses = await uploadEventImages(selectedFiles);
+
+      if (!eventResponses || eventResponses.length === 0) {
+        setError(
+          "The images could not be recognized. Please try again with different images."
+        );
+      } else {
+        setProgress(100);
+        setUploadedEvent(eventResponses[0]); // Navigate to the first event
+      }
+    } catch (err) {
+      setError(
+        "There was a problem uploading the images. Please try again later."
+      );
+    } finally {
+      clearInterval(interval);
+      setIsUploading(false);
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <div>
       {!isUploading && !isProcessing && (
         <div className="upload-modal-overlay" onClick={onClose}>
           <div onClick={(e) => e.stopPropagation()}>
             <div className="upload-modal-content">
-              <div className="upload-buttons">
-                {/* Camera access button */}
-                <button
-                  className="upload-button camera-button"
-                  onClick={() => cameraInputRef.current?.click()}
-                >
-                  <Camera size={24} />
-                  <span>Open Camera</span>
-                </button>
+              <div
+                className={`upload-dropzone ${isDragging ? "dragging" : ""}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <div className="upload-buttons">
+                  {/* Camera access button */}
+                  <button
+                    className="upload-button camera-button"
+                    onClick={() => cameraInputRef.current?.click()}
+                  >
+                    <Camera size={24} />
+                    <span>Open Camera</span>
+                  </button>
 
-                {/* File system access button */}
-                <button
-                  className="upload-button file-button"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <Upload size={24} />
-                  <span>Select File</span>
-                </button>
+                  {/* File system access button */}
+                  <button
+                    className="upload-button file-button"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload size={24} />
+                    <span>Select File</span>
+                  </button>
+                  <p className="drag-drop-text">Drag & Drop here</p>
+                  {/* <button
+                    className="upload-button create-advertisement-button"
+                    onClick={() => navigate("/create-advertisement")}
+                  >
+                    <Image size={24} />
+                    <span>Drop Images Here</span>
+                  </button> */}
+                </div>
+
+                {previewImages.length > 0 && (
+                  <>
+                    <div className="preview-container">
+                      {previewImages.map((image, index) => (
+                        <div key={index} className="preview-item">
+                          <img src={image} alt={`Preview ${index + 1}`} />
+                          <button
+                            className="remove-image"
+                            onClick={() => removeImage(index)}
+                          >
+                            <X size={20} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      className="upload-all-button"
+                      onClick={handleUpload}
+                    >
+                      Upload all images
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 

@@ -41,3 +41,15 @@ export const searchProfiles = async (username: string): Promise<Profile[]> => {
     return [];
   }
 };
+
+export const getFits = async (): Promise<Profile[]> => {
+  try {
+    const response = await fetch(`${API_URL}profile/sponsored/latest`);
+    const data = await response.json();
+    console.log(data);
+    return data.profiles as Profile[];
+  } catch (error) {
+    console.error("Error fetching fits:", error);
+    return [];
+  }
+};

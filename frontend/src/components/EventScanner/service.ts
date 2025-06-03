@@ -57,6 +57,66 @@ export const uploadEventImage = async (
   }
 };
 
+export const uploadEventImages = async (
+  images: File[]
+): Promise<{ _id: string }[]> => {
+  try {
+    const position = await getCurrentPosition();
+    const { latitude, longitude } = position.coords || {
+      latitude: 52.52,
+      longitude: 13.405,
+    };
+
+    const formData = new FormData();
+    images.forEach((image) => {
+      formData.append("images", image);
+    });
+
+    const location = {
+      type: "Point",
+      coordinates: [longitude, latitude],
+    };
+    formData.append("location", JSON.stringify(location));
+
+    const endpoint = localStorage.getItem("access_token")
+      ? `${API_URL}events/v6/upload/event-images`
+      : `${API_URL}events/upload/event-images`;
+
+    const token = localStorage.getItem("access_token");
+    const headers: HeadersInit = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: headers,
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Server Antwort:", errorText);
+      throw new Error(`Upload failed: ${response.status} ${errorText}`);
+    }
+
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      data.forEach((event) => {
+        if (event._id) {
+          saveEventToLocalStorage(event._id);
+        }
+      });
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Fehler beim Hochladen:", error);
+    throw error;
+  }
+};
+
 // ✅ Hilfsfunktion für Geolocation mit Promise
 const getCurrentPosition = (): Promise<GeolocationPosition> => {
   return new Promise((resolve, reject) => {

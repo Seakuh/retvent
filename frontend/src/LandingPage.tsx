@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AdBanner } from "./Advertisement/AdBanner/AdBanner";
 import { BottomBar } from "./BottomBar";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { CityBar } from "./components/CityBar/CityBar";
@@ -19,7 +20,6 @@ import { SideBar } from "./SideBar";
 import { ViewMode } from "./types/event";
 import { UploadModal } from "./UploadModal/UploadModal";
 import { Event, FeedResponse } from "./utils";
-
 function LandingPage() {
   // Search State
   const {
@@ -308,6 +308,7 @@ function LandingPage() {
               />
             </div>
           )}
+          <AdBanner />
           {loading ? (
             <div className="search-loading">
               <div className="search-spinner"></div>
