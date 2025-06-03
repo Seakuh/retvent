@@ -1,7 +1,8 @@
 import { ChevronLeft } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AdBanner } from "../../../../../Advertisement/AdBanner/AdBanner";
+import { AdminService } from "../../../../Admin/admin.service";
 import "./AdvertisingOptions.css";
 interface AdvertisingOption {
   id: string;
@@ -69,12 +70,44 @@ const PaymentModal = ({
   );
 };
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return "Date not available";
+  }
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 export const AdvertisingOptions = () => {
   const { eventId } = useParams();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const navigate = useNavigate();
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const adminService = new AdminService();
+  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
 
+  useEffect(() => {
+    fetchHostEvents();
+  }, []);
+
+  const fetchHostEvents = async () => {
+    try {
+      const id = JSON.parse(localStorage.getItem("user")!).id;
+      const hostEvents = await adminService.getHostEvents(id);
+      console.log(hostEvents.events);
+      setEvents(hostEvents.events);
+    } catch (error) {
+      console.error("Failed to fetch events:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const advertisingOptions: AdvertisingOption[] = [
     {
       id: "basic",
@@ -160,6 +193,24 @@ export const AdvertisingOptions = () => {
           Get your event featured on our homepage and reach thousands of
           potential attendees
         </p>
+      </div>
+
+      <div className="event-selection">
+        <h3>Select Your Event</h3>
+        <div className="event-list">
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className={`event-card ${
+                selectedEvent === event.id ? "selected" : ""
+              }`}
+              onClick={() => setSelectedEvent(event.id)}
+            >
+              <h4>{event.title}</h4>
+              <p className="event-date">{formatDate(event.startDate)}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="options-container">
