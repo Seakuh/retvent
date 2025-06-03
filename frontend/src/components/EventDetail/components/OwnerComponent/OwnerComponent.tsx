@@ -1,4 +1,10 @@
-import { ClockIcon, FilmIcon, ImageIcon, PencilIcon } from "lucide-react";
+import {
+  ClockIcon,
+  FilmIcon,
+  ImageIcon,
+  MegaphoneIcon,
+  PencilIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./OwnerComponent.css";
@@ -7,8 +13,8 @@ import { addGifs, addLineup, addTeaser } from "./service";
 export const OwnerComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { eventId } = useParams();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -35,6 +41,9 @@ export const OwnerComponent = () => {
         case "update":
           navigate(`/admin/events/edit/${eventId}`);
           break;
+        case "advertising":
+          navigate(`/admin/events/edit/${eventId}`);
+          break;
       }
 
       console.log("Upload erfolgreich");
@@ -46,6 +55,10 @@ export const OwnerComponent = () => {
   };
 
   const handleEdit = () => {
+    navigate(`/admin/events/edit/${eventId}`);
+  };
+
+  const handleAdvertising = () => {
     navigate(`/admin/events/edit/${eventId}`);
   };
 
@@ -104,6 +117,14 @@ export const OwnerComponent = () => {
         onClick={() => handleOpen("video")}
       >
         <FilmIcon className="h-10 w-10" />
+      </button>
+      {/* Teaser Video hinzufügen */}
+      <button
+        className="event-owner-info-button"
+        title="Add Video"
+        onClick={handleAdvertising}
+      >
+        <MegaphoneIcon className="h-10 w-10" />
       </button>
     </div>
   );
