@@ -84,6 +84,13 @@ export const OwnerComponent = () => {
 
   return (
     <div className="event-owner-info">
+      <button
+        className="event-owner-info-button"
+        title="Add Video"
+        onClick={handleAdvertising}
+      >
+        <MegaphoneIcon className="h-10 w-10" />
+      </button>
       {/* Update hinzufügen */}
       <button
         className="event-owner-info-button"
@@ -119,13 +126,6 @@ export const OwnerComponent = () => {
         <FilmIcon className="h-10 w-10" />
       </button>
       {/* Teaser Video hinzufügen */}
-      <button
-        className="event-owner-info-button"
-        title="Add Video"
-        onClick={handleAdvertising}
-      >
-        <MegaphoneIcon className="h-10 w-10" />
-      </button>
     </div>
   );
 };

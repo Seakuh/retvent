@@ -9,7 +9,7 @@
     color: #1a1a1a;
   }
   
-  .options-container {
+  .advertising-options-container {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -17,7 +17,7 @@
     padding: 0 0.5rem;
   }
   
-  .option-card {
+  .advertising-option-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     border-radius: 24px;
@@ -30,7 +30,7 @@
     overflow: hidden;
   }
   
-  .option-card::before {
+  .advertising-option-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -42,28 +42,28 @@
     transition: transform 0.3s ease;
   }
   
-  .option-card:hover::before {
+  .advertising-option-card:hover::before {
     transform: scaleX(1);
   }
   
-  .option-card:hover {
+  .advertising-option-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
     background: rgba(255, 255, 255, 1);
   }
   
-  .option-card.selected {
+  .advertising-option-card.selected {
     border: 2px solid #667eea;
     transform: translateY(-8px);
     box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
     background: rgba(255, 255, 255, 1);
   }
   
-  .option-card.selected::before {
+  .advertising-option-card.selected::before {
     transform: scaleX(1);
   }
   
-  .price {
+  .advertising-price {
     font-size: clamp(1.8rem, 4vw, 2.5rem);
     font-weight: 800;
     background: linear-gradient(135deg, #667eea, #764ba2);
@@ -74,14 +74,14 @@
     line-height: 1.2;
   }
   
-  .duration {
+  .advertising-duration {
     font-size: 1.1rem;
     color: #64748b;
     font-weight: 500;
     margin-bottom: 1rem;
   }
   
-  .description {
+  .advertising-description {
     margin-top: 1.5rem;
     color: #475569;
     font-size: 0.95rem;
@@ -89,7 +89,7 @@
     font-weight: 400;
   }
   
-  .confirm-button {
+  .advertising-confirm-button {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     border: none;
@@ -105,17 +105,17 @@
     min-width: 200px;
   }
   
-  .confirm-button:hover {
+  .advertising-confirm-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
     background: linear-gradient(135deg, #5a67d8, #6b46c1);
   }
   
-  .confirm-button:active {
+  .advertising-confirm-button:active {
     transform: translateY(0);
   }
   
-  .confirm-button:disabled {
+  .advertising-confirm-button:disabled {
     background: #e2e8f0;
     color: #94a3b8;
     cursor: not-allowed;
@@ -123,7 +123,7 @@
     box-shadow: none;
   }
   
-  .modal-overlay {
+  .advertising-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -144,12 +144,12 @@
     to { opacity: 1; }
   }
   
-  .modal-content {
+  .advertising-modal-content {
     background: white;
     padding: 2rem;
     border-radius: 24px;
     width: 100%;
-    max-width: 500px;
+    max-width: 80rem;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
@@ -167,7 +167,7 @@
     }
   }
   
-  .checkout-details {
+  .advertising-checkout-details {
     margin: 1.5rem 0;
     padding: 1.5rem;
     background: linear-gradient(135deg, #f8fafc, #e2e8f0);
@@ -175,14 +175,14 @@
     border: 1px solid #e2e8f0;
   }
   
-  .payment-form {
+  .advertising-payment-form {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
     margin: 1.5rem 0;
   }
   
-  .payment-form input {
+  .advertising-payment-form input {
     padding: 1rem;
     border: 2px solid #e2e8f0;
     border-radius: 12px;
@@ -191,20 +191,20 @@
     background: #fafafa;
   }
   
-  .payment-form input:focus {
+  .advertising-payment-form input:focus {
     outline: none;
     border-color: #667eea;
     background: white;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
   }
   
-  .card-details {
+  .advertising-card-details {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
   
-  .modal-buttons {
+  .advertising-modal-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
@@ -212,9 +212,10 @@
     flex-wrap: wrap;
   }
   
-  .cancel-button {
+  .advertising-cancel-button {
     background: #64748b;
     color: white;
+    height: 3rem;
     border: none;
     border-radius: 50px;
     padding: 0.875rem 1.75rem;
@@ -224,7 +225,7 @@
     min-width: 120px;
   }
   
-  .cancel-button:hover {
+  .advertising-cancel-button:hover {
     background: #475569;
     transform: translateY(-1px);
   }
@@ -235,18 +236,18 @@
       padding: 2rem;
     }
     
-    .options-container {
+    .advertising-options-container {
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 2rem;
       max-width: 900px;
       margin: 2rem auto;
     }
     
-    .option-card {
+    .advertising-option-card {
       padding: 2.5rem;
     }
     
-    .modal-content {
+    .advertising-modal-content {
       padding: 3rem;
     }
   }
@@ -257,29 +258,29 @@
       padding: 3rem;
     }
     
-    .options-container {
+    .advertising-options-container {
       grid-template-columns: repeat(3, 1fr);
       max-width: 1000px;
     }
     
-    .option-card {
+    .advertising-option-card {
       width: auto;
       max-width: 320px;
     }
     
-    .modal-buttons {
+    .advertising-modal-buttons {
       flex-wrap: nowrap;
     }
   }
   
   /* High contrast mode support */
   @media (prefers-contrast: high) {
-    .option-card {
+    .advertising-option-card {
       border: 2px solid #000;
       background: #fff;
     }
     
-    .price {
+    .advertising-price {
       color: #000;
       -webkit-text-fill-color: #000;
     }
@@ -287,18 +288,18 @@
   
   /* Reduced motion support */
   @media (prefers-reduced-motion: reduce) {
-    .option-card,
-    .confirm-button,
-    .cancel-button {
+    .advertising-option-card,
+    .advertising-confirm-button,
+    .advertising-cancel-button {
       transition: none;
     }
     
-    .option-card:hover {
+    .advertising-option-card:hover {
       transform: none;
     }
     
-    .modal-overlay,
-    .modal-content {
+    .advertising-modal-overlay,
+    .advertising-modal-content {
       animation: none;
     }
   }
@@ -310,60 +311,60 @@
       color: #f1f5f9;
     }
     
-    .option-card {
+    .advertising-option-card {
       background: rgba(30, 41, 59, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: #f1f5f9;
     }
     
-    .option-card:hover,
-    .option-card.selected {
+    .advertising-option-card:hover,
+    .advertising-option-card.selected {
       background: rgba(30, 41, 59, 0.95);
     }
     
-    .duration {
+    .advertising-duration {
       color: #94a3b8;
     }
     
-    .description {
+    .advertising-description {
       color: #cbd5e1;
     }
     
-    .modal-content {
+    .advertising-modal-content {
       background: #1e293b;
       color: #f1f5f9;
     }
     
-    .checkout-details {
+    .advertising-checkout-details {
       background: linear-gradient(135deg, #334155, #475569);
       border-color: #475569;
     }
     
-    .payment-form input {
+    .advertising-payment-form input {
       background: #334155;
       border-color: #475569;
       color: #f1f5f9;
     }
     
-    .payment-form input:focus {
+    .advertising-payment-form input:focus {
       background: #1e293b;
       border-color: #667eea;
     }
   }
 
-  .event-selection {
+  .advertising-event-selection {
     margin: 2rem 0;
     padding: 0 1rem;
   }
 
-  .event-selection h3 {
+  .advertising-event-selection h3 {
     font-size: 1.5rem;
     color: white;
     margin-bottom: 1.5rem;
     text-align: center;
   }
 
-  .event-list {
+  .advertising-event-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1.5rem;
@@ -372,7 +373,11 @@
     padding: 1rem;
   }
 
-  .event-card {
+  .advertising-form-label-headline {
+    color: white !important;
+  }
+
+  .advertising-event-card {
     background: white;
     border-radius: 12px;
     cursor: pointer;
@@ -385,25 +390,25 @@
     margin: 0 auto;
   }
 
-  .event-thumbnail {
+  .advertising-event-thumbnail {
     width: 100%;
     height: 140px;
     overflow: hidden;
     position: relative;
   }
 
-  .event-image {
+  .advertising-event-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
   }
 
-  .event-card:hover .event-image {
+  .advertising-event-card:hover .advertising-event-image {
     transform: scale(1.05);
   }
 
-  .event-details {
+  .advertising-event-details {
     padding: 1rem;
     height: calc(100% - 140px);
     display: flex;

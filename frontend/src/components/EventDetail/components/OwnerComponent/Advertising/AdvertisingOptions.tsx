@@ -1,10 +1,18 @@
-import { ChevronLeft } from "lucide-react";
+import {
+  CardElement,
+  Elements,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AdBanner } from "../../../../../Advertisement/AdBanner/AdBanner";
-import { Event } from "../../../../../utils";
+import { API_URL, Event } from "../../../../../utils";
 import { AdminService } from "../../../../Admin/admin.service";
 import "./AdvertisingOptions.css";
+
 interface AdvertisingOption {
   id: string;
   name: string;
@@ -18,56 +26,163 @@ interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedOption: AdvertisingOption | null;
+  selectedEvent: Event | null;
   onConfirm: () => void;
 }
 
-const PaymentModal = ({
-  isOpen,
-  onClose,
+// Stripe public key (sollte in einer .env Datei gespeichert werden)
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+interface PaymentFormProps {
+  selectedOption: AdvertisingOption;
+  selectedEvent: Event;
+  onSuccess: () => void;
+  onError: (error: string) => void;
+  onClose: () => void;
+}
+
+const PaymentForm = ({
   selectedOption,
-  onConfirm,
-}: PaymentModalProps) => {
-  if (!isOpen) return null;
+  selectedEvent,
+  onSuccess,
+  onError,
+  onClose,
+}: PaymentFormProps) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!stripe || !elements || !selectedEvent) {
+      return;
+    }
+
+    setIsProcessing(true);
+    setErrorMessage(null);
+
+    try {
+      // 1. Erstelle Payment Intent
+      const response = await fetch(
+        `${API_URL}events/${selectedEvent.id}/create-payment-intent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`, // JWT Token
+          },
+          body: JSON.stringify({
+            amount: selectedOption.price,
+            currency: "eur",
+            packageId: selectedOption.id,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create payment intent");
+      }
+
+      const { clientSecret, paymentIntentId } = await response.json();
+
+      // 2. Bestätige die Zahlung mit Stripe
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: elements.getElement(CardElement)!,
+            billing_details: {
+              // Hier können weitere Rechnungsdetails hinzugefügt werden
+            },
+          },
+        }
+      );
+
+      if (error) {
+        setErrorMessage(error.message || "Payment failed");
+      } else if (paymentIntent.status === "succeeded") {
+        onSuccess();
+      }
+    } catch (error) {
+      setErrorMessage("An unexpected error occurred");
+      console.error("Payment error:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>Checkout</h2>
-        {selectedOption && (
-          <div className="checkout-details">
-            <h3>{selectedOption.name} Package</h3>
-            <p>Duration: {selectedOption.duration} days</p>
-            <p>Price: {selectedOption.price}€</p>
-            <div className="legal-notice">
-              <p>
-                By proceeding with payment, you agree to our Terms of Service
-                and Advertising Guidelines.
-              </p>
-              <p>
-                All prices include VAT. Refunds are available within 24 hours of
-                purchase if the campaign hasn't started.
-              </p>
-            </div>
-          </div>
-        )}
-        <div className="payment-form">
-          <input type="text" placeholder="Card Number" />
-          <div className="card-details">
-            <input type="text" placeholder="MM/YY" />
-            <input type="text" placeholder="CVC" />
-          </div>
-          <input type="text" placeholder="Name on Card" />
+    <form onSubmit={handleSubmit} className="payment-form">
+      <div className="package-summary">
+        <h4>Selected Package</h4>
+        <div className="package-details">
+          <span className="package-name">{selectedOption.name}</span>
+          <span className="package-price">{selectedOption.price}€</span>
         </div>
-        <div className="modal-buttons">
-          <button className="cancel-button" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="confirm-button" onClick={onConfirm}>
-            Pay Now
-          </button>
+        <div className="package-features">
+          {selectedOption.features.map((feature, index) => (
+            <div key={index} className="feature-item">
+              <span className="check-icon">✓</span>
+              {feature}
+            </div>
+          ))}
         </div>
       </div>
-    </div>
+
+      <div className="form-group">
+        <label className="form-label-headline">Card Information</label>
+        <div className="card-element-container">
+          <CardElement
+            options={{
+              style: {
+                base: {
+                  backgroundColor: "blue",
+                  fontSize: "24px",
+                  color: "white",
+                  fontFamily: '"Open Sans", sans-serif',
+                  "::placeholder": {
+                    color: "white",
+                  },
+                  padding: "12px",
+                },
+                invalid: {
+                  color: "#fa755a",
+                  iconColor: "#fa755a",
+                },
+              },
+              hidePostalCode: false,
+            }}
+          />
+        </div>
+      </div>
+
+      {errorMessage && (
+        <div className="error-message">
+          <span className="error-icon">!</span>
+          {errorMessage}
+        </div>
+      )}
+
+      <div className="modal-buttons">
+        <button
+          type="button"
+          className="cancel-button"
+          onClick={onClose}
+          disabled={isProcessing}
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="confirm-button"
+          disabled={!stripe || isProcessing}
+        >
+          {isProcessing ? "Processing..." : `Pay ${selectedOption.price}€`}
+        </button>
+      </div>
+    </form>
   );
 };
 
@@ -81,6 +196,81 @@ const formatDate = (dateString: string) => {
     month: "long",
     day: "numeric",
   });
+};
+
+const PaymentModal = ({
+  isOpen,
+  onClose,
+  selectedOption,
+  selectedEvent,
+  onConfirm,
+}: PaymentModalProps) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>Complete Your Purchase</h2>
+          <button className="close-button" onClick={onClose}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {selectedOption && selectedEvent && (
+          <div className="checkout-details">
+            <div className="selected-event">
+              <div className="event-thumbnail">
+                <img
+                  src={selectedEvent.imageUrl || "/default-event-image.jpg"}
+                  alt={selectedEvent.title}
+                />
+              </div>
+              <div className="event-info">
+                <h4>{selectedEvent.title}</h4>
+                <p className="event-date">
+                  {formatDate(selectedEvent.startDate)}
+                </p>
+              </div>
+            </div>
+
+            <div className="package-info">
+              <h3>{selectedOption.name}</h3>
+              <div className="package-highlights">
+                <div className="highlight-item">
+                  <span className="highlight-label">Duration</span>
+                  <span className="highlight-value">
+                    {selectedOption.duration} days
+                  </span>
+                </div>
+                <div className="highlight-item">
+                  <span className="highlight-label">Price</span>
+                  <span className="highlight-value price-tag">
+                    {selectedOption.price}€
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <Elements stripe={stripePromise}>
+              <PaymentForm
+                selectedOption={selectedOption}
+                selectedEvent={selectedEvent}
+                onSuccess={() => {
+                  onConfirm();
+                  onClose();
+                }}
+                onError={(error) => {
+                  console.error(error);
+                }}
+                onClose={onClose}
+              />
+            </Elements>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export const AdvertisingOptions = () => {
@@ -196,27 +386,29 @@ export const AdvertisingOptions = () => {
         </p>
       </div>
 
-      <div className="event-selection">
+      <div className="advertising-event-selection">
         <h3>Select Your Event</h3>
-        <div className="event-list">
+        <div className="advertising-event-list">
           {events.map((event) => (
             <div
               key={event.id}
-              className={`event-card ${
+              className={`advertising-event-card ${
                 selectedEvent === event.id ? "selected" : ""
               }`}
               onClick={() => setSelectedEvent(event.id)}
             >
-              <div className="event-thumbnail">
+              <div className="advertising-event-thumbnail">
                 <img
                   src={`https://img.event-scanner.com/insecure/rs:fill:320:350/q:70/plain/${event.imageUrl}@webp`}
                   alt={event.title}
-                  className="event-image"
+                  className="advertising-event-image"
                 />
               </div>
-              <div className="event-details">
+              <div className="advertising-event-details">
                 <h4>{event.title}</h4>
-                <p className="event-date">{formatDate(event.startDate)}</p>
+                <p className="advertising-event-date">
+                  {formatDate(event.startDate)}
+                </p>
               </div>
             </div>
           ))}
@@ -224,19 +416,19 @@ export const AdvertisingOptions = () => {
         <h3>Select Your Advertising Package</h3>
       </div>
 
-      <div className="options-container">
+      <div className="advertising-options-container">
         {advertisingOptions.map((option) => (
           <div
             key={option.id}
-            className={`option-card ${
+            className={`advertising-option-card ${
               selectedOption === option.id ? "selected" : ""
             }`}
             onClick={() => setSelectedOption(option.id)}
           >
             <h3>{option.name}</h3>
-            <p className="price">{option.price}€</p>
-            <p className="duration">{option.duration} days</p>
-            <p className="description">{option.description}</p>
+            <p className="advertising-price">{option.price}€</p>
+            <p className="advertising-duration">{option.duration} days</p>
+            <p className="advertising-description">{option.description}</p>
             <ul className="features-list">
               {option.features.map((feature, index) => (
                 <li key={index}>{feature}</li>
@@ -277,6 +469,9 @@ export const AdvertisingOptions = () => {
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         selectedOption={selectedOptionData || null}
+        selectedEvent={
+          events.find((event) => event.id === selectedEvent) || null
+        }
         onConfirm={handlePaymentConfirm}
       />
     </div>
