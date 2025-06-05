@@ -6,6 +6,7 @@ export interface IEvent {
   startDate: Date;
   startTime: string;
   hostId: string;
+  isSponsored?: boolean;
   hostUsername?: string;
   locationId?: string;
   category?: string;

@@ -11,8 +11,9 @@ export class Event {
   ticketLink?: string;
   imageUrl?: string;
   lineup?: any[];
+  isSponsored?: boolean;
   socialMediaLinks?: Record<string, string>;
   tags?: string[];
   createdAt: Date;
   updatedAt: Date;
-} 
+}

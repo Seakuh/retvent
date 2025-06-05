@@ -15,6 +15,7 @@ export interface IEvent extends Document {
   locationId?: string;
   category?: string;
   price?: string | number;
+  isSponsored?: boolean;
   ticketLink?: string;
   lineup?: {
     name: string;

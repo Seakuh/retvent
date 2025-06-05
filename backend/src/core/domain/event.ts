@@ -13,6 +13,7 @@ export class Event implements IEvent {
   startDate: Date;
   startTime: string;
   endDate?: Date;
+  isSponsored?: boolean;
   endTime?: string;
   // Beziehungen
   hostId: string;

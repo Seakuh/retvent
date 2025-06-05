@@ -877,6 +877,10 @@ export class EventService {
     return this.eventRepository.updateEventImage(eventId, imageUrl);
   }
 
+  createSponsoredEvent(eventId: string, sponsored: boolean, sub: any) {
+    return this.eventRepository.createSponsoredEvent(eventId, sponsored, sub);
+  }
+
   // deleteLineupPicture(id: string, userId: string) {
   //   return this.eventRepository.deleteLineupPicture(id, userId);
   // }

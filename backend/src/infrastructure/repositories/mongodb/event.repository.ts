@@ -101,7 +101,7 @@ export class MongoEventRepository implements IEventRepository {
   findAdvertisementEvents(limit: number) {
     return this.eventModel
       .find({
-        isAdvertisement: true,
+        $or: [{ isAdvertisement: true }, { isSponsored: true }],
       })
       .sort({ createdAt: -1 })
       .limit(limit)
@@ -449,6 +449,14 @@ export class MongoEventRepository implements IEventRepository {
       .exec();
 
     return events.map((event) => this.toMapEntity(event)); // Verwende toMapEntity statt toEntity
+  }
+
+  createSponsoredEvent(eventId: string, sponsored: boolean, sub: any) {
+    return this.eventModel.findByIdAndUpdate(eventId, {
+      $set: {
+        isSponsored: sponsored,
+      },
+    });
   }
 
   async createEventFromFormData(eventData: Partial<Event>): Promise<Event> {

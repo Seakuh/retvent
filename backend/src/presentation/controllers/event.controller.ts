@@ -21,17 +21,21 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
+import { PaymentService } from '../../application/services/payment.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
+import { CreatePaymentIntentDto } from '../dtos/create-payment-intent.dto';
 import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UploadGuard } from '../guards/upload.guard';
+
 @Controller('events')
 export class EventController {
   constructor(
     // private readonly meetupService: MeetupService,
     private readonly eventService: EventService,
     private readonly eventMapper: EventMapper,
+    private readonly paymentService: PaymentService,
   ) {}
 
   // get popular events number, @Query('lon') lon: number, @Query('limit') limit: number = 10) {
@@ -805,5 +809,53 @@ export class EventController {
       eventId,
       body.prompt,
     );
+  }
+
+  @Post(':eventId/create-sponsored')
+  @UseGuards(JwtAuthGuard)
+  async createSponsoredEvent(
+    @Param('eventId') eventId: string,
+    @Body() body: { sponsored: boolean },
+    @Request() req,
+  ) {
+    console.log('createSponsoredEvent', eventId, body.sponsored, req.user.sub);
+    return this.eventService.createSponsoredEvent(
+      eventId,
+      body.sponsored,
+      req.user.sub,
+    );
+  }
+
+  @Post(':eventId/create-payment-intent')
+  @UseGuards(JwtAuthGuard)
+  async createEventPaymentIntent(
+    @Param('eventId') eventId: string,
+    @Body() createPaymentIntentDto: CreatePaymentIntentDto,
+  ) {
+    // Hole Event-Informationen
+    const event = await this.eventService.getEventById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event nicht gefunden');
+    }
+
+    // Erstelle Payment Intent mit Event-spezifischen Daten
+    const paymentIntent = await this.paymentService.createPaymentIntent({
+      ...createPaymentIntentDto,
+      description: `Add for Event: ${event.title}`,
+      metadata: {
+        eventId: event.id,
+        eventTitle: event.title,
+      },
+    });
+
+    return {
+      clientSecret: paymentIntent.clientSecret,
+      paymentIntentId: paymentIntent.paymentIntentId,
+      event: {
+        id: event.id,
+        title: event.title,
+        price: event.price,
+      },
+    };
   }
 }
