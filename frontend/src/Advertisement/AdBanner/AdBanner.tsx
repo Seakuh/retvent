@@ -12,7 +12,7 @@ export const AdBanner: React.FC = () => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const data = await getAdvertisementEvents(5);
+      const data = await getAdvertisementEvents(10);
       setEvents(data);
     };
     fetchEvents();

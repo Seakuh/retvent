@@ -1,9 +1,4 @@
-import {
-  CardElement,
-  Elements,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
+import { Elements, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -65,7 +60,7 @@ const PaymentForm = ({
     setErrorMessage(null);
 
     try {
-      const response = await createSponsored(selectedEvent._id!, true);
+      const response = await createSponsored(selectedEvent.id!, true);
       console.log(response);
       // try {
       //   // 1. Erstelle Payment Intent
@@ -134,7 +129,7 @@ const PaymentForm = ({
       <div className="form-group">
         <label className="form-label-headline">Card Information</label>
         <div className="card-element-container">
-          <CardElement
+          {/* <CardElement
             options={{
               style: {
                 base: {
@@ -153,7 +148,7 @@ const PaymentForm = ({
               },
               hidePostalCode: false,
             }}
-          />
+          /> */}
         </div>
       </div>
 
@@ -205,7 +200,7 @@ const PaymentModal = ({
   onConfirm,
 }: PaymentModalProps) => {
   if (!isOpen) return null;
-
+  console.log(selectedEvent);
   return (
     <div className="advertising-modal-overlay">
       <div className="advertising-modal-content">
@@ -378,7 +373,7 @@ export const AdvertisingOptions = () => {
   return (
     <div className="advertising-options">
       <AdBanner />
-      <button className="advertising-back-button" onClick={handleBack}>
+      <button className="back-button" onClick={handleBack}>
         <ChevronLeft className="h-5 w-5" />
       </button>
       <div className="advertising-header">
