@@ -1,5 +1,5 @@
-import { Elements, useElements, useStripe } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+// import { Elements, useElements, useStripe } from "@stripe/react-stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -27,7 +27,7 @@ interface PaymentModalProps {
 }
 
 // Stripe public key (sollte in einer .env Datei gespeichert werden)
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 interface PaymentFormProps {
   selectedOption: AdvertisingOption;
@@ -44,8 +44,8 @@ const PaymentForm = ({
   onError,
   onClose,
 }: PaymentFormProps) => {
-  const stripe = useStripe();
-  const elements = useElements();
+  // const stripe = useStripe();
+  // const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -250,10 +250,10 @@ const PaymentModal = ({
               </div>
             </div>
 
-            <Elements stripe={stripePromise}>
-              <PaymentForm
-                selectedOption={selectedOption}
-                selectedEvent={selectedEvent}
+            {/* <Elements stripe={stripePromise}> */}
+            {/* <PaymentForm
+              selectedOption={selectedOption}
+              selectedEvent={selectedEvent}
                 onSuccess={() => {
                   onConfirm();
                   onClose();
@@ -262,8 +262,8 @@ const PaymentModal = ({
                   console.error(error);
                 }}
                 onClose={onClose}
-              />
-            </Elements>
+              /> */}
+            {/* </Elements> */}
           </div>
         )}
       </div>
