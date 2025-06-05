@@ -39,7 +39,11 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   };
 
   return (
-    <div className="real-list-item-container">
+    <div
+      className={`real-list-item-container ${
+        event.isSponsored ? "real-sponsored-list-item" : ""
+      }`}
+    >
       <RealListItemProfileHeader
         profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
         name={event?.host?.username || ""}

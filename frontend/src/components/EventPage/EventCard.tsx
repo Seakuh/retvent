@@ -65,7 +65,9 @@ export const EventCard = ({ event }: { event: Event }) => {
       onClick={() => {
         navigate(`/event/${event.id || event._id}`);
       }}
-      className={`event-card-container card-${event.id}`}
+      className={`${
+        event.isSponsored ? "sponsored-card" : ""
+      } event-card-container card-${event.id}`}
     >
       <RealListItemProfileHeader
         profileUrl={event.host?.profileImageUrl ?? event.imageUrl ?? ""}

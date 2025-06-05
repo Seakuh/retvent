@@ -19,6 +19,12 @@
   justify-content: center;
 }
 
+.sponsored-card {
+  border: 1px solid var(--color-neon-blue);
+}
+
+
+
 .event-card-image {
   object-fit: cover;
 }

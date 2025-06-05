@@ -210,6 +210,7 @@ export interface Event {
   // ID
   id?: string;
   _id?: string;
+  isSponsored?: boolean;
   // Titel
   title: string;
   // Beschreibung
