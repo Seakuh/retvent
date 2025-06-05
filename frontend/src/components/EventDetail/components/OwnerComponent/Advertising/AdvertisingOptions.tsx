@@ -3,6 +3,7 @@
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { AdBanner } from "../../../../../Advertisement/AdBanner/AdBanner";
 import { Event } from "../../../../../utils";
 import { AdminService } from "../../../../Admin/admin.service";
@@ -158,24 +159,6 @@ const PaymentForm = ({
           {errorMessage}
         </div>
       )}
-
-      <div className="advertising-modal-buttons">
-        <button
-          type="button"
-          className="advertising-cancel-button"
-          onClick={onClose}
-          disabled={isProcessing}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="advertising-confirm-button"
-          disabled={!stripe || isProcessing}
-        >
-          {isProcessing ? "Processing..." : `Pay ${selectedOption.price}€`}
-        </button>
-      </div>
     </form>
   );
 };
@@ -247,6 +230,22 @@ const PaymentModal = ({
                     {selectedOption.price}€
                   </span>
                 </div>
+              </div>
+              <div className="advertising-modal-buttons">
+                <button
+                  type="button"
+                  className="advertising-cancel-button"
+                  onClick={onClose}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="advertising-confirm-button"
+                  onClick={onConfirm}
+                >
+                  {`Pay ${selectedOption.price}€`}
+                </button>
               </div>
             </div>
 
@@ -350,12 +349,15 @@ export const AdvertisingOptions = () => {
     setShowPaymentModal(true);
   };
 
-  const handlePaymentConfirm = async () => {
+  const handlePaymentConfirm = async (selectedEventId: string) => {
     try {
       // Hier API-Call implementieren
       // await api.purchaseAdvertising(selectedOption);
+      const response = await createSponsored(selectedEventId, true);
+      console.log(response);
       setShowPaymentModal(false);
       // Erfolgsmeldung anzeigen
+      toast.success("Payment successful");
     } catch (error) {
       // Fehlerbehandlung
       console.error("Payment failed:", error);
@@ -472,7 +474,7 @@ export const AdvertisingOptions = () => {
         selectedEvent={
           events.find((event) => event.id === selectedEvent) || null
         }
-        onConfirm={handlePaymentConfirm}
+        onConfirm={() => handlePaymentConfirm(selectedEvent!)}
       />
     </div>
   );
