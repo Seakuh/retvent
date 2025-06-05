@@ -41,7 +41,7 @@ export class MongoEventRepository implements IEventRepository {
       .find(query)
       .sort({ createdAt: -1 })
       .select(
-        'id description title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username',
+        'id description title imageUrl isSponsored startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username',
       )
       .limit(40)
       .exec();
