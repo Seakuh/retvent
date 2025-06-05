@@ -1,9 +1,11 @@
+import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { MessageSchema } from 'src/core/domain/message.schema';
+import { MailService } from '../../application/services/mail.service';
 import { CoreModule } from '../../core/core.module';
 import { AuthController } from '../../presentation/controllers/auth.controller';
 import { UploadGuard } from '../../presentation/guards/upload.guard';
@@ -14,6 +16,17 @@ import { AuthService } from '../services/auth.service';
 import { JwtStrategy } from '../strategies/jwt.strategy';
 @Module({
   imports: [
+    MailerModule.forRoot({
+      transport: {
+        host: 'w014770a.kasserver.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -50,6 +63,7 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
     AuthService,
     JwtStrategy,
     UploadGuard,
+    MailService,
   ],
   exports: [AuthService, JwtModule, UploadGuard],
 })

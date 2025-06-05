@@ -9,6 +9,7 @@ import { CommentService } from 'src/application/services/comment.service';
 import { EventEmbeddingService } from 'src/application/services/eventembedding.service';
 import { FeedService } from 'src/application/services/feed.service';
 import { GroupService } from 'src/application/services/group.service';
+import { MailService } from 'src/application/services/mail.service';
 import { MessageService } from 'src/application/services/message.service';
 import { ProfileService } from 'src/application/services/profile.service';
 import { MessageSchema } from 'src/core/domain/message.schema';
@@ -108,6 +109,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     GroupService,
     MessageService,
     ChatGPTService,
+    MailService,
     FeedService,
     EventEmbeddingService,
     ImageService,
@@ -204,6 +206,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     CommentService,
     ProfileService,
     MessageService,
+    MailService,
   ],
 })
 export class InfrastructureModule {}

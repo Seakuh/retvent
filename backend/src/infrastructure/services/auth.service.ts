@@ -6,6 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MailService } from '../../application/services/mail.service';
 import { Profile } from '../../core/domain/profile';
 import { User } from '../../core/domain/user';
 import { BcryptService } from '../../core/services/bcrypt.service';
@@ -18,10 +19,12 @@ export class AuthService {
     @InjectModel('Profile') private profileModel: Model<Profile>,
     private jwtService: JwtService,
     private readonly bcryptService: BcryptService,
+    private readonly mailService: MailService,
   ) {}
 
   async registerWithProfile(registerDto: RegisterUserDto) {
     const { email, password, username } = registerDto;
+    console.log('### New User Registration ###', registerDto);
 
     const existingUser = await this.userModel.findOne({
       $or: [{ email }, { username }],
@@ -55,6 +58,12 @@ export class AuthService {
       email: user.email,
       username: user.username,
     };
+
+    await this.mailService.sendRegisterEmail(
+      user.email,
+      'Welcome to Event Scanner',
+      user.username,
+    );
 
     return {
       access_token: this.jwtService.sign(payload),
@@ -94,6 +103,12 @@ export class AuthService {
       email: user.email,
       username: user.username,
     };
+
+    await this.mailService.sendRegisterEmail(
+      user.email,
+      'Welcome to Event Scanner',
+      user.username,
+    );
 
     return {
       access_token: this.jwtService.sign(payload),
