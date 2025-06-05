@@ -10,7 +10,6 @@ import { EventEmbeddingService } from 'src/application/services/eventembedding.s
 import { FeedService } from 'src/application/services/feed.service';
 import { GroupService } from 'src/application/services/group.service';
 import { MessageService } from 'src/application/services/message.service';
-import { PaymentService } from 'src/application/services/payment.service';
 import { ProfileService } from 'src/application/services/profile.service';
 import { MessageSchema } from 'src/core/domain/message.schema';
 import { ArtistController } from 'src/presentation/controllers/artist.controller';
@@ -112,7 +111,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     FeedService,
     EventEmbeddingService,
     ImageService,
-    PaymentService,
     VideoService,
     GeolocationService,
     LocationService,
@@ -204,7 +202,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     BcryptService,
     UserService,
     CommentService,
-    PaymentService,
     ProfileService,
     MessageService,
   ],

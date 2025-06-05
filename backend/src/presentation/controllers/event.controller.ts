@@ -21,9 +21,7 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
-import { PaymentService } from '../../application/services/payment.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
-import { CreatePaymentIntentDto } from '../dtos/create-payment-intent.dto';
 import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -35,7 +33,6 @@ export class EventController {
     // private readonly meetupService: MeetupService,
     private readonly eventService: EventService,
     private readonly eventMapper: EventMapper,
-    private readonly paymentService: PaymentService,
   ) {}
 
   // get popular events number, @Query('lon') lon: number, @Query('limit') limit: number = 10) {
@@ -830,7 +827,7 @@ export class EventController {
   @UseGuards(JwtAuthGuard)
   async createEventPaymentIntent(
     @Param('eventId') eventId: string,
-    @Body() createPaymentIntentDto: CreatePaymentIntentDto,
+    // @Body() createPaymentIntentDto: CreatePaymentIntentDto,
   ) {
     // Hole Event-Informationen
     const event = await this.eventService.getEventById(eventId);
@@ -839,18 +836,18 @@ export class EventController {
     }
 
     // Erstelle Payment Intent mit Event-spezifischen Daten
-    const paymentIntent = await this.paymentService.createPaymentIntent({
-      ...createPaymentIntentDto,
-      description: `Add for Event: ${event.title}`,
-      metadata: {
-        eventId: event.id,
-        eventTitle: event.title,
-      },
-    });
+    // const paymentIntent = await this.paymentService.createPaymentIntent({
+    //   ...createPaymentIntentDto,
+    //   description: `Add for Event: ${event.title}`,
+    //   metadata: {
+    //     eventId: event.id,
+    //     eventTitle: event.title,
+    //   },
+    // });
 
     return {
-      clientSecret: paymentIntent.clientSecret,
-      paymentIntentId: paymentIntent.paymentIntentId,
+      // clientSecret: paymentIntent.clientSecret,
+      // paymentIntentId: paymentIntent.paymentIntentId,
       event: {
         id: event.id,
         title: event.title,
