@@ -9,8 +9,9 @@ import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AdBanner } from "../../../../../Advertisement/AdBanner/AdBanner";
-import { API_URL, Event } from "../../../../../utils";
+import { Event } from "../../../../../utils";
 import { AdminService } from "../../../../Admin/admin.service";
+import { createSponsored } from "../service";
 import "./AdvertisingOptions.css";
 
 interface AdvertisingOption {
@@ -64,47 +65,46 @@ const PaymentForm = ({
     setErrorMessage(null);
 
     try {
-      // 1. Erstelle Payment Intent
-      const response = await fetch(
-        `${API_URL}events/${selectedEvent.id}/create-payment-intent`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`, // JWT Token
-          },
-          body: JSON.stringify({
-            amount: selectedOption.price,
-            currency: "eur",
-            packageId: selectedOption.id,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to create payment intent");
-      }
-
-      const { clientSecret, paymentIntentId } = await response.json();
-
-      // 2. Bestätige die Zahlung mit Stripe
-      const { error, paymentIntent } = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: elements.getElement(CardElement)!,
-            billing_details: {
-              // Hier können weitere Rechnungsdetails hinzugefügt werden
-            },
-          },
-        }
-      );
-
-      if (error) {
-        setErrorMessage(error.message || "Payment failed");
-      } else if (paymentIntent.status === "succeeded") {
-        onSuccess();
-      }
+      const response = await createSponsored(selectedEvent._id!, true);
+      console.log(response);
+      // try {
+      //   // 1. Erstelle Payment Intent
+      //   const response = await fetch(
+      //     `${API_URL}events/${selectedEvent.id}/create-payment-intent`,
+      //     {
+      //       method: "POST",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //         Authorization: `Bearer ${localStorage.getItem("access_token")}`, // JWT Token
+      //       },
+      //       body: JSON.stringify({
+      //         amount: selectedOption.price,
+      //         currency: "eur",
+      //         packageId: selectedOption.id,
+      //       }),
+      //     }
+      //   );
+      //   if (!response.ok) {
+      //     throw new Error("Failed to create payment intent");
+      //   }
+      //   const { clientSecret, paymentIntentId } = await response.json();
+      //   // 2. Bestätige die Zahlung mit Stripe
+      //   const { error, paymentIntent } = await stripe.confirmCardPayment(
+      //     clientSecret,
+      //     {
+      //       payment_method: {
+      //         card: elements.getElement(CardElement)!,
+      //         billing_details: {
+      //           // Hier können weitere Rechnungsdetails hinzugefügt werden
+      //         },
+      //       },
+      //     }
+      //   );
+      //   if (error) {
+      //     setErrorMessage(error.message || "Payment failed");
+      //   } else if (paymentIntent.status === "succeeded") {
+      //     onSuccess();
+      //   }
     } catch (error) {
       setErrorMessage("An unexpected error occurred");
       console.error("Payment error:", error);
@@ -138,14 +138,13 @@ const PaymentForm = ({
             options={{
               style: {
                 base: {
-                  backgroundColor: "blue",
+                  backgroundColor: "gray",
                   fontSize: "24px",
                   color: "white",
                   fontFamily: '"Open Sans", sans-serif',
                   "::placeholder": {
                     color: "white",
                   },
-                  padding: "12px",
                 },
                 invalid: {
                   color: "#fa755a",
@@ -165,10 +164,10 @@ const PaymentForm = ({
         </div>
       )}
 
-      <div className="modal-buttons">
+      <div className="advertising-modal-buttons">
         <button
           type="button"
-          className="cancel-button"
+          className="advertising-cancel-button"
           onClick={onClose}
           disabled={isProcessing}
         >
@@ -176,7 +175,7 @@ const PaymentForm = ({
         </button>
         <button
           type="submit"
-          className="confirm-button"
+          className="advertising-confirm-button"
           disabled={!stripe || isProcessing}
         >
           {isProcessing ? "Processing..." : `Pay ${selectedOption.price}€`}
@@ -208,44 +207,48 @@ const PaymentModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
+    <div className="advertising-modal-overlay">
+      <div className="advertising-modal-content">
+        <div className="advertising-modal-header">
           <h2>Complete Your Purchase</h2>
-          <button className="close-button" onClick={onClose}>
+          <button className="advertising-modal-close-button" onClick={onClose}>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {selectedOption && selectedEvent && (
-          <div className="checkout-details">
-            <div className="selected-event">
-              <div className="event-thumbnail">
+          <div className="advertising-checkout-details">
+            <div className="advertising-selected-event">
+              <div className="advertising-event-thumbnail">
                 <img
                   src={selectedEvent.imageUrl || "/default-event-image.jpg"}
                   alt={selectedEvent.title}
                 />
               </div>
-              <div className="event-info">
-                <h4>{selectedEvent.title}</h4>
-                <p className="event-date">
+              <div className="advertising-event-info">
+                <h4 className="advertising-event-title">
+                  {selectedEvent.title}
+                </h4>
+                <p className="advertising-event-date">
                   {formatDate(selectedEvent.startDate)}
                 </p>
               </div>
             </div>
 
-            <div className="package-info">
-              <h3>{selectedOption.name}</h3>
-              <div className="package-highlights">
-                <div className="highlight-item">
-                  <span className="highlight-label">Duration</span>
-                  <span className="highlight-value">
+            <div className="advertising-package-info">
+              <h3 className="advertising-package-title">
+                {selectedOption.name}
+              </h3>
+              <div className="advertising-package-highlights">
+                <div className="advertising-highlight-item">
+                  <span className="advertising-highlight-label">Duration</span>
+                  <span className="advertising-highlight-value">
                     {selectedOption.duration} days
                   </span>
                 </div>
-                <div className="highlight-item">
-                  <span className="highlight-label">Price</span>
-                  <span className="highlight-value price-tag">
+                <div className="advertising-highlight-item">
+                  <span className="advertising-highlight-label">Price</span>
+                  <span className="advertising-highlight-value advertising-price-tag">
                     {selectedOption.price}€
                   </span>
                 </div>
@@ -375,12 +378,12 @@ export const AdvertisingOptions = () => {
   return (
     <div className="advertising-options">
       <AdBanner />
-      <button className="back-button" onClick={handleBack}>
+      <button className="advertising-back-button" onClick={handleBack}>
         <ChevronLeft className="h-5 w-5" />
       </button>
       <div className="advertising-header">
         <h2>Boost Your Event Visibility</h2>
-        <p className="subtitle">
+        <p className="advertising-subtitle">
           Get your event featured on our homepage and reach thousands of
           potential attendees
         </p>
@@ -393,7 +396,7 @@ export const AdvertisingOptions = () => {
             <div
               key={event.id}
               className={`advertising-event-card ${
-                selectedEvent === event.id ? "selected" : ""
+                selectedEvent === event.id ? "advertising-selected" : ""
               }`}
               onClick={() => setSelectedEvent(event.id)}
             >
@@ -405,7 +408,7 @@ export const AdvertisingOptions = () => {
                 />
               </div>
               <div className="advertising-event-details">
-                <h4>{event.title}</h4>
+                <h4 className="advertising-event-title">{event.title}</h4>
                 <p className="advertising-event-date">
                   {formatDate(event.startDate)}
                 </p>
@@ -421,44 +424,46 @@ export const AdvertisingOptions = () => {
           <div
             key={option.id}
             className={`advertising-option-card ${
-              selectedOption === option.id ? "selected" : ""
+              selectedOption === option.id ? "advertising-selected" : ""
             }`}
             onClick={() => setSelectedOption(option.id)}
           >
-            <h3>{option.name}</h3>
+            <h3 className="advertising-option-title">{option.name}</h3>
             <p className="advertising-price">{option.price}€</p>
             <p className="advertising-duration">{option.duration} days</p>
             <p className="advertising-description">{option.description}</p>
-            <ul className="features-list">
+            <ul className="advertising-features-list">
               {option.features.map((feature, index) => (
-                <li key={index}>{feature}</li>
+                <li key={index} className="advertising-feature-item">
+                  {feature}
+                </li>
               ))}
             </ul>
           </div>
         ))}
       </div>
 
-      <div className="legal-section">
-        <h4>Terms & Conditions</h4>
-        <ul>
-          <li>
+      <div className="advertising-legal-section">
+        <h4 className="advertising-legal-title">Terms & Conditions</h4>
+        <ul className="advertising-legal-list">
+          <li className="advertising-legal-item">
             All advertising campaigns are subject to our content guidelines
           </li>
-          <li>
+          <li className="advertising-legal-item">
             We reserve the right to reject or modify content that violates our
             policies
           </li>
-          <li>
+          <li className="advertising-legal-item">
             Campaign start date will be confirmed within 24 hours of purchase
           </li>
-          <li>
+          <li className="advertising-legal-item">
             Refunds are available within 24 hours if the campaign hasn't started
           </li>
         </ul>
       </div>
 
       <button
-        className="confirm-button"
+        className="advertising-confirm-button"
         onClick={handlePayment}
         disabled={!selectedOption}
       >

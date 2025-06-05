@@ -55,3 +55,16 @@ export const addUpdate = async (eventId: string, image: File) => {
   });
   return response.json();
 };
+
+export const createSponsored = async (eventId: string, sponsored: boolean) => {
+  const accessToken = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}events/${eventId}/create-sponsored`, {
+    method: "POST",
+    body: JSON.stringify({ sponsored }),
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return response.json();
+};

@@ -378,16 +378,28 @@
   }
 
   .advertising-event-card {
-    background: white;
+    background: transparent;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    border: 2px solid transparent;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     width: 200px;
     height: 280px;
     margin: 0 auto;
+    backdrop-filter: blur(10px);
+  }
+
+  .advertising-event-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(102, 126, 234, 0.5);
+  }
+
+  .advertising-event-card.advertising-selected {
+    border-color: #667eea;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
   }
 
   .advertising-event-thumbnail {
@@ -472,4 +484,225 @@
     0% { opacity: 1; }
     50% { opacity: 0.5; }
     100% { opacity: 1; }
+  }
+
+  /* Neue Klassen hinzufügen */
+  .advertising-back-button {
+    /* ... existing styles ... */
+  }
+
+  .advertising-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .advertising-subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+  }
+
+  .advertising-option-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .advertising-features-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+
+  .advertising-feature-item {
+    margin: 0.5rem 0;
+    color: #475569;
+  }
+
+  .advertising-legal-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+  }
+
+  .advertising-legal-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .advertising-legal-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .advertising-legal-item {
+    margin: 0.5rem 0;
+    color: #64748b;
+  }
+
+  /* Anpassung der selected-Klasse */
+  .advertising-selected {
+    border-color: #667eea;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+  }
+
+  /* Dark mode Anpassungen */
+  @media (prefers-color-scheme: dark) {
+    .advertising-subtitle {
+      color: #94a3b8;
+    }
+
+    .advertising-feature-item {
+      color: #cbd5e1;
+    }
+
+    .advertising-legal-section {
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    .advertising-legal-item {
+      color: #94a3b8;
+    }
+  }
+
+  .advertising-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+
+  .advertising-modal-content {
+    background: rgba(30, 41, 59, 0.95);
+    padding: 2rem;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 80rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+    color: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .advertising-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .advertising-modal-header h2 {
+    color: #f1f5f9;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .advertising-modal-close-button {
+    background: transparent;
+    border: none;
+    color: #f1f5f9;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .advertising-modal-close-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .advertising-checkout-details {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .advertising-payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+  }
+
+  .advertising-payment-form input {
+    padding: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.05);
+    color: #f1f5f9;
+  }
+
+  .advertising-payment-form input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .advertising-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .advertising-cancel-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+    border: none;
+    border-radius: 50px;
+    padding: 0.875rem 1.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .advertising-cancel-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .advertising-confirm-button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.875rem 1.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .advertising-confirm-button:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+  }
+
+  /* Dark mode Anpassungen */
+  @media (prefers-color-scheme: dark) {
+    .advertising-event-card {
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    .advertising-event-title {
+      color: #f1f5f9;
+    }
+
+    .advertising-event-date {
+      color: #94a3b8;
+    }
   }
