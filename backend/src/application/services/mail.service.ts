@@ -39,9 +39,19 @@ export class MailService {
       to,
       subject,
       html,
+      from: 'info@event-scanner.com',
       text: `🎉🎉🎉 Welcome ${username}, Let's discover the world of events with Event Scanner`,
     });
 
     console.log('### Mail Result ###', result);
+  }
+
+  async sendSponsoredMail(to: string, subject: string, html: string) {
+    await this.mailerService.sendMail({
+      to,
+      subject,
+      html,
+      from: 'info@event-scanner.com',
+    });
   }
 }

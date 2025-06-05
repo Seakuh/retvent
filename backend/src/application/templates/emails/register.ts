@@ -1,5 +1,4 @@
-export const registerTemplate = `
-<!DOCTYPE html>
+export const registerTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -29,7 +28,7 @@ export const registerTemplate = `
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, var(--color-neon-blue-dark-2) 0%, #001122 100%);
+            background: #0a0a0a;
             color: #ffffff;
             line-height: 1.6;
         }
@@ -37,14 +36,13 @@ export const registerTemplate = `
         .email-container {
             max-width: 600px;
             margin: 0 auto;
-            background: linear-gradient(145deg, #0a0a0a, #1a1a2e);
+            background: #0a0a0a;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         .header {
-            background: linear-gradient(135deg, var(--color-neon-blue) 0%, var(--color-neon-purple) 100%);
+            background: #0a0a0a;
             padding: 40px 30px;
             text-align: center;
             position: relative;
@@ -58,8 +56,8 @@ export const registerTemplate = `
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, var(--color-neon-pink-light) 0%, transparent 70%);
-            animation: pulse 3s ease-in-out infinite;
+            background: transparent;
+            animation: none;
         }
 
         @keyframes pulse {
@@ -69,11 +67,12 @@ export const registerTemplate = `
 
         .logo {
             width: 120px;
-            height: auto;
+            height: 120px;
             margin-bottom: 20px;
             position: relative;
             z-index: 2;
-            filter: drop-shadow(0 0 20px var(--color-neon-blue-light));
+            border-radius: 24px;
+            object-fit: cover;
         }
 
         .welcome-title {
@@ -82,7 +81,7 @@ export const registerTemplate = `
             margin-bottom: 10px;
             position: relative;
             z-index: 2;
-            text-shadow: 0 0 20px var(--color-neon-blue-light);
+            color: #01cdfe;
         }
 
         .subtitle {
@@ -90,6 +89,7 @@ export const registerTemplate = `
             opacity: 0.9;
             position: relative;
             z-index: 2;
+            color: #ffffff;
         }
 
         .content {
@@ -99,7 +99,7 @@ export const registerTemplate = `
         .greeting {
             font-size: 20px;
             margin-bottom: 25px;
-            color: var(--color-neon-green);
+            color: #01cdfe;
             text-align: center;
         }
 
@@ -118,22 +118,23 @@ export const registerTemplate = `
             display: flex;
             align-items: center;
             margin-bottom: 20px;
-            padding: 15px;
-            background: linear-gradient(90deg, var(--color-neon-blue-light) 0%, var(--color-neon-pink-light) 100%);
-            border-radius: 12px;
-            border-left: 4px solid var(--color-neon-green);
-            transition: transform 0.3s ease;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 16px;
+            border: 2px solid #333333;
+            transition: all 0.3s ease;
         }
 
         .feature-item:hover {
-            transform: translateX(5px);
+            border-color: var(--color-neon-blue);
+            background: #222222;
         }
 
         .feature-icon {
             width: 24px;
             height: 24px;
             margin-right: 15px;
-            color: var(--color-neon-green);
+            color: var(--color-neon-blue);
             font-size: 20px;
         }
 
@@ -147,36 +148,37 @@ export const registerTemplate = `
             text-align: center;
             margin: 40px 0;
             padding: 30px;
-            background: linear-gradient(135deg, var(--color-neon-pink-light) 0%, var(--color-neon-blue-light) 100%);
+            background: #1a1a1a;
             border-radius: 15px;
-            border: 1px solid var(--color-neon-purple);
+            border: 2px solid #333333;
         }
 
         .cta-button {
             display: inline-block;
-            padding: 15px 35px;
-            background: linear-gradient(135deg, var(--color-neon-pink) 0%, var(--color-neon-orange) 100%);
+            padding: 16px 40px;
             color: #ffffff;
             text-decoration: none;
-            border-radius: 30px;
+            border-radius: 12px;
             font-weight: bold;
             font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 113, 206, 0.3);
             text-transform: uppercase;
             letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            background: #0099cc;
+
         }
 
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 113, 206, 0.5);
         }
 
         .footer {
-            background: var(--color-neon-blue-dark-2);
+            background: #0a0a0a;
             padding: 30px;
             text-align: center;
-            border-top: 1px solid var(--color-neon-blue-light);
+            border-top: 1px solid #333333;
         }
 
         .footer-text {
@@ -199,7 +201,7 @@ export const registerTemplate = `
         }
 
         .social-link:hover {
-            color: var(--color-neon-green);
+            color: #ffffff;
         }
 
         @media (max-width: 600px) {
@@ -276,9 +278,9 @@ export const registerTemplate = `
             </div>
             
             <div class="cta-section">
-                <h3 style="color: var(--color-neon-yellow); margin-bottom: 15px;">Ready to Get Started?</h3>
-                <p style="margin-bottom: 20px; color: #cccccc;">Explore events, create memories, and connect with your community.</p>
-                <a href="https://event-scanner.com" class="cta-button">Start Exploring</a>
+                <h3 style="color:white; margin-bottom: 15px;">Ready to Get Started?</h3>
+                <p style="margin-bottom: 20px; color: #ffffff;">Explore events, create memories, and connect with your community.</p>
+                <a href="https://event-scanner.com/dashboard" class="cta-button">Start Exploring</a>
             </div>
         </div>
         
@@ -288,12 +290,7 @@ export const registerTemplate = `
                 Follow us to stay connected and never miss an update.
             </div>
             
-            <div class="social-links">
-                <a href="#" class="social-link">Instagram</a>
-                <a href="#" class="social-link">Twitter</a>
-                <a href="#" class="social-link">Facebook</a>
-            </div>
-            
+
             <div style="font-size: 12px; color: #666666; margin-top: 20px;">
                 © 2025 Event Scanner. All rights reserved.<br>
                 If you have any questions, feel free to contact our support team.

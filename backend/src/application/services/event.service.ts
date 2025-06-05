@@ -14,6 +14,7 @@ import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/
 import { ImageService } from '../../infrastructure/services/image.service';
 import { VideoService } from '../../infrastructure/services/video.service';
 import { FeedService } from './feed.service';
+import { MailService } from './mail.service';
 import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 @Injectable()
@@ -27,6 +28,7 @@ export class EventService {
     private readonly userService: UserService,
     private readonly feedService: FeedService,
     private readonly videoService: VideoService,
+    private readonly mailService: MailService,
   ) {}
   getEventsByTag(tag: string) {
     return this.eventRepository.getEventsByTag(tag);
@@ -878,9 +880,18 @@ export class EventService {
   }
 
   createSponsoredEvent(eventId: string, sponsored: boolean, sub: any) {
-    return this.eventRepository.createSponsoredEvent(eventId, sponsored, sub);
+    const event = this.eventRepository.createSponsoredEvent(
+      eventId,
+      sponsored,
+      sub,
+    );
+    return event;
+    // this.mailService.sendSponsoredMail(
+    //   'danielenderle1996@gmail.com',
+    //   'sponsored',
+    //   `Sponsored Event: `,
+    // );
   }
-
   // deleteLineupPicture(id: string, userId: string) {
   //   return this.eventRepository.deleteLineupPicture(id, userId);
   // }

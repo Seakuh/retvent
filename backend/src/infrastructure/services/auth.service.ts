@@ -106,7 +106,7 @@ export class AuthService {
 
     await this.mailService.sendRegisterEmail(
       user.email,
-      'Welcome to Event Scanner',
+      `🎉 🎉 🎉 ${user.username} - Welcome to Event Scanner | The world of events`,
       user.username,
     );
 

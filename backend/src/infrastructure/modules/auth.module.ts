@@ -16,16 +16,22 @@ import { AuthService } from '../services/auth.service';
 import { JwtStrategy } from '../strategies/jwt.strategy';
 @Module({
   imports: [
-    MailerModule.forRoot({
-      transport: {
-        host: 'w014770a.kasserver.com',
-        port: 587,
-        secure: false,
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASSWORD,
+    MailerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('MAIL_HOST'),
+          port: configService.get<number>('MAIL_PORT'),
+          secure: true,
+          auth: {
+            user: configService.get<string>('MAIL_USER'),
+            pass: configService.get<string>('MAIL_PASSWORD'),
+          },
         },
-      },
+        defaults: {
+          from: configService.get<string>('MAIL_FROM'),
+        },
+      }),
     }),
     ConfigModule.forRoot({
       isGlobal: true,
