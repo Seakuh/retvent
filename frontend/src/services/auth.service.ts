@@ -15,6 +15,15 @@ export interface RegisterDto {
   email: string;
   password: string;
   isArtist: boolean;
+  prompt?: string;
+}
+
+export interface RegisterDtoV2 {
+  username: string;
+  email: string;
+  password: string;
+  isArtist: boolean;
+  prompt: string;
 }
 
 export interface AuthResponse {
@@ -77,8 +86,9 @@ export class AuthService {
   }
 
   async register(userData: RegisterDto): Promise<AuthResponse> {
+    console.log(userData);
     try {
-      const response = await fetch(`${this.baseUrl}/v2/register`, {
+      const response = await fetch(`${this.baseUrl}/v3/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

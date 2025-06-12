@@ -12,6 +12,8 @@ const Register: React.FC = () => {
     email: "",
     password: "",
     isArtist: true, // Always an artist
+    prompt: "", // Neue Beschreibung
+    images: [] as File[], // Neue Bilder-Array
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,12 +30,34 @@ const Register: React.FC = () => {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newImages = Array.from(e.target.files);
+      setFormData({ ...formData, images: [...formData.images, ...newImages] });
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setFormData({
+      ...formData,
+      images: formData.images.filter((_, i) => i !== index),
+    });
+  };
+
   return (
     <div className="auth-container">
       <div className="auth-box">
         <h2>Register 📝</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
+          <textarea
+            placeholder="Write something about you"
+            value={formData.prompt}
+            onChange={(e) =>
+              setFormData({ ...formData, prompt: e.target.value })
+            }
+            className="description-input"
+          />
           <input
             type="email"
             placeholder="Email"
@@ -62,6 +86,37 @@ const Register: React.FC = () => {
             }
             required
           />
+          {/* <div className="image-upload-container">
+            <label className="upload-label">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageChange}
+                className="image-upload-input"
+              />
+              <div className="upload-placeholder">
+                <span>Drop images here or click to upload</span>
+              </div>
+            </label>
+            <div className="image-preview">
+              {formData.images.map((image, index) => (
+                <div key={index} className="preview-item">
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt={`Preview ${index}`}
+                  />
+                  <button
+                    type="button"
+                    className="remove-image"
+                    onClick={() => removeImage(index)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div> */}
           <button type="submit">Register</button>
         </form>
         <p>
