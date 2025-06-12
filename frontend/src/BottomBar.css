@@ -4,9 +4,9 @@
   left: 0;
   right: 0;
   height: 4rem;
-  backdrop-filter: blur(2rem);
-  background-color: rgba(0, 0, 0, 0.8);
-  border: 1px solid var(--color-neon-blue-light);
+  backdrop-filter: blur(3px);
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 0.5px solid var(--color-neon-blue-light);
   width: 95%;
   margin: 0 auto;
   z-index: 1000;
