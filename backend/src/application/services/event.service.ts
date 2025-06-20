@@ -38,6 +38,9 @@ export class EventService {
     startDate?: string,
     endDate?: string,
   ) {
+    if (!startDate && !endDate) {
+      return this.eventRepository.findTodayEvents();
+    }
     return this.eventRepository.searchEventsWithUserInput(
       location,
       category,
