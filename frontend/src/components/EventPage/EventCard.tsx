@@ -85,6 +85,8 @@ export const EventCard = ({ event }: { event: Event }) => {
         location={event.city ?? "TBA"}
       />
       <div className="event-card-info-container">
+        <h3 className="event-card-title">{event.title}</h3>
+
         <span className="event-card-date">
           {(() => {
             try {
@@ -116,8 +118,18 @@ export const EventCard = ({ event }: { event: Event }) => {
           })()}
         </span>
 
-        <h3 className="event-card-title">{event.title}</h3>
-        <div className="event-card-description">{event.description}</div>
+        {event.lineup && event.lineup.length > 0 ? (
+          <div className="event-card-lineup">
+            {event.lineup.map((artist) => (
+              <p key={artist.name}>{artist.name}</p>
+            ))}
+          </div>
+        ) : (
+          <div className="event-card-lineup">
+            <p>{event.description}</p>
+          </div>
+        )}
+        {/* <div className="event-card-description">{event.description}</div> */}
         {/* <div className="event-tags-real-list-item event-card-tags">
           {event.tags?.map((tag) => (
             <span key={tag} className="event-tag">

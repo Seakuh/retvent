@@ -9,7 +9,7 @@ import { ProfileFeedCard } from "./ProfileFeedCard";
 
 interface ProfileBubbleProps {
   profileId: string;
-  profileImageUrl: string;
+  profileImageUrl?: string;
   size?: "small" | "large" | "medium";
 }
 
@@ -111,7 +111,7 @@ export const ProfileBubble = ({
         <ProfileFeedCard
           key={profileId + "-profile-feed-card"}
           feed={feedItems[0]}
-          profileImageUrl={profileImageUrl}
+          profileImageUrl={profileImageUrl || "/user_picture.png"}
           setShowFeedModal={setIsFeedModalOpen}
           setCurrentFeedItem={setCurrentFeedItem}
           size={size}

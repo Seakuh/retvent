@@ -1,11 +1,27 @@
 .real-list-item-profile-header {
   background-color: black;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem;
+  padding: 0.5rem 0.5rem 0 0.5rem;
   color: white;
+}
+
+.event-card-lineup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  gap: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: gray;
 }
 
 .real-list-item-profile-header-image {

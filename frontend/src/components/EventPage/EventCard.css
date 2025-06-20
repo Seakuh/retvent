@@ -33,7 +33,7 @@
 .event-card-info-container {
   width: 100%;
   background-color: black;
-  padding: 1rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

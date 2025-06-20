@@ -1,4 +1,4 @@
-import { Eye, Heart, MessageCircle, Send } from "lucide-react";
+import { Eye, Heart, MessageCircle } from "lucide-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
@@ -44,12 +44,6 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
         event.isSponsored ? "real-sponsored-list-item" : ""
       }`}
     >
-      <RealListItemProfileHeader
-        profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
-        name={event?.host?.username || ""}
-        id={event?.hostId || ""}
-        location={event?.city || "TBA"}
-      />
       <div
         key={event.id || event._id}
         className={`real-event-list-item ${isPast ? "past-event" : ""}`}
@@ -63,6 +57,12 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             decoding="async"
           />
         </div>
+        <RealListItemProfileHeader
+          profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
+          name={event?.host?.username || ""}
+          id={event?.hostId || ""}
+          location={event?.city || "TBA"}
+        />
         <div className="miniature-event-info">
           {/* <h2 className="event-info-date"> */}
           {/* {formatDate(event.startDate as string)} */}
@@ -115,31 +115,27 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             {event.city || "TBA"}
           </span> */}
           <div className="event-meta-container">
-            <div className="event-meta-container-left">
-              <span className="views">
-                <Eye size={25} />
-                {event.views}
-              </span>
-              <span className="comments">
-                <MessageCircle size={25} />
-                {event.commentCount}
-              </span>
-            </div>
             <div className="event-meta-container-right">
-              <div onClick={(e) => shareEventId(e, event.id!)}>
-                <Send size={25} color="white" />
-              </div>
-
               <div
                 onClick={(e) => handleLike(e)}
                 className="event-card-like-container"
               >
                 <Heart
-                  size={25}
+                  size={20}
                   color={isFavorite(event.id!) ? "red" : "white"}
                   fill={isFavorite(event.id!) ? "red" : "none"}
                 />
               </div>
+            </div>
+            <div className="event-meta-container-left">
+              <span className="views">
+                <Eye size={20} />
+                {event.views}
+              </span>
+              <span className="comments">
+                <MessageCircle size={20} />
+                {event.commentCount}
+              </span>
             </div>
           </div>
         </div>

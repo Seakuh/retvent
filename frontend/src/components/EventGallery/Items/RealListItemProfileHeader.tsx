@@ -31,7 +31,7 @@ export const RealListItemProfileHeader = ({
       <div className="real-list-item-profile-header-left">
         <ProfileBubble
           profileId={id || ""}
-          profileImageUrl={profileUrl || ""}
+          profileImageUrl={profileUrl || "/user_picture.png"}
           size="small"
         />
         {/* <img
