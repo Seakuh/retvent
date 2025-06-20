@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../../infrastructure/services/auth.service';
 import { LoginDto, LoginV2Dto } from '../dtos/login.dto';
-import { RegisterUserDto } from '../dtos/register-user.dto';
+import { RegisterUserDto, RegisterUserDtoV2 } from '../dtos/register-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('auth')
@@ -29,6 +29,15 @@ export class AuthController {
   async registerV2(@Body() registerDto: RegisterUserDto) {
     try {
       return await this.authService.registerWithProfile(registerDto);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Post('v3/register')
+  async registerV3(@Body() registerDto: RegisterUserDtoV2) {
+    try {
+      return await this.authService.registerWithProfileV2(registerDto);
     } catch (error) {
       throw new BadRequestException(error.message);
     }

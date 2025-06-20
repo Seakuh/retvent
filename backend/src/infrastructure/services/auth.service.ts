@@ -10,7 +10,10 @@ import { Profile } from '../../core/domain/profile';
 import { User } from '../../core/domain/user';
 import { BcryptService } from '../../core/services/bcrypt.service';
 import { LoginDto, LoginV2Dto } from '../../presentation/dtos/login.dto';
-import { RegisterUserDto } from '../../presentation/dtos/register-user.dto';
+import {
+  RegisterUserDto,
+  RegisterUserDtoV2,
+} from '../../presentation/dtos/register-user.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -43,6 +46,53 @@ export class AuthService {
     await this.profileModel.create({
       userId: user._id,
       username,
+      email,
+      followerCount: 0,
+      followingCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const payload = {
+      sub: user._id.toString(),
+      email: user.email,
+      username: user.username,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        username: user.username,
+      },
+    };
+  }
+
+  async registerWithProfileV2(registerDto: RegisterUserDtoV2) {
+    const { email, password, username, prompt } = registerDto;
+
+    const existingUser = await this.userModel.findOne({
+      $or: [{ email }, { username }],
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('User already exists');
+    }
+
+    const hashedPassword = await this.bcryptService.hash(password);
+
+    const user = await this.userModel.create({
+      email,
+      username,
+      password: hashedPassword,
+      points: 0,
+    });
+
+    await this.profileModel.create({
+      userId: user._id,
+      username,
+      description: prompt,
       email,
       followerCount: 0,
       followingCount: 0,
