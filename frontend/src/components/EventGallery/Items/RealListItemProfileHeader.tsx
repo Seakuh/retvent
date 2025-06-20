@@ -1,4 +1,4 @@
-import { Ellipsis, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ProfileBubble } from "../../ProfileBubble/ProfileBubble";
 import "./RealListItemProfileHeader.css";
@@ -53,14 +53,14 @@ export const RealListItemProfileHeader = ({
           </p>
         </div>
       </div>
-      <div className="real-list-item-profile-header-right">
+      {/* <div className="real-list-item-profile-header-right">
         <Ellipsis
           className="real-list-item-profile-header-ellipsis"
           size={25}
           color="white"
           onClick={(e) => handleEllipsisClick(e)}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
