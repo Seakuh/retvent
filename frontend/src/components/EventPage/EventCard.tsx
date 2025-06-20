@@ -69,12 +69,6 @@ export const EventCard = ({ event }: { event: Event }) => {
         event.isSponsored ? "sponsored-card" : ""
       } event-card-container card-${event.id}`}
     >
-      <RealListItemProfileHeader
-        profileUrl={event.host?.profileImageUrl ?? event.imageUrl ?? ""}
-        name={event.host?.username ?? ""}
-        id={event.hostId ?? ""}
-        location={event.city ?? "TBA"}
-      />
       <div className="event-card-image-container">
         <img
           className="event-card-image"
@@ -84,6 +78,12 @@ export const EventCard = ({ event }: { event: Event }) => {
           alt={event.title}
         />
       </div>
+      <RealListItemProfileHeader
+        profileUrl={event.host?.profileImageUrl ?? event.imageUrl ?? ""}
+        name={event.host?.username ?? ""}
+        id={event.hostId ?? ""}
+        location={event.city ?? "TBA"}
+      />
       <div className="event-card-info-container">
         <span className="event-card-date">
           {(() => {
@@ -115,6 +115,7 @@ export const EventCard = ({ event }: { event: Event }) => {
             }
           })()}
         </span>
+
         <h3 className="event-card-title">{event.title}</h3>
         <div className="event-card-description">{event.description}</div>
         {/* <div className="event-tags-real-list-item event-card-tags">

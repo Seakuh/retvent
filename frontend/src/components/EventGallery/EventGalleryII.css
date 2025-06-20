@@ -10,7 +10,7 @@
     z-index: 10;
     top: 0;
     width: 100%;
-    background-color: var(--color-neon-blue-dark-2);
+    backdrop-filter: blur(10px);
     margin: 0 auto;
     /* Stelle sicher, dass der Container einen definierten Kontext hat */
     transform: translateZ(0);
