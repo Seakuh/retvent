@@ -1,4 +1,11 @@
-import { ChevronLeft, Heart, MessageCircle, Send } from "lucide-react";
+import {
+  ChevronLeft,
+  Clock,
+  ExternalLink,
+  Heart,
+  MessageCircle,
+  Send,
+} from "lucide-react";
 import React, {
   useCallback,
   useContext,
@@ -7,6 +14,7 @@ import React, {
   useState,
 } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { EventLineup } from "../components/EventDetail/components/EventLineup";
 import { UserContext } from "../contexts/UserContext";
 import { DEFAULT_IMAGE, Event } from "../utils";
 import "./ReelPage.css";
@@ -18,11 +26,18 @@ const ReelPage: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLiked, setIsLiked] = useState<{ [key: string]: boolean }>({});
   const [showSwipeIndicator, setShowSwipeIndicator] = useState(true);
+  const [showLineup, setShowLineup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
   const [events, setEvents] = useState<Event[]>([]);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [touchStart, setTouchStart] = useState<{
+    x: number | null;
+    y: number | null;
+  }>({ x: null, y: null });
+  const [touchEnd, setTouchEnd] = useState<{
+    x: number | null;
+    y: number | null;
+  }>({ x: null, y: null });
   const [isScrolling, setIsScrolling] = useState(false);
 
   // Minimum swipe distance (in px)
@@ -45,43 +60,62 @@ const ReelPage: React.FC = () => {
   }, []);
 
   const handleSwipe = useCallback(
-    (direction: "up" | "down") => {
-      if (isScrolling) return; // Verhindert zu schnelles Scrollen
+    (direction: "up" | "down" | "left" | "right") => {
+      if (isScrolling) return;
 
       setIsScrolling(true);
 
       if (direction === "up" && currentIndex < events.length - 1) {
         setCurrentIndex((prev) => prev + 1);
+        setShowLineup(false);
       } else if (direction === "down" && currentIndex > 0) {
         setCurrentIndex((prev) => prev - 1);
+        setShowLineup(false);
+      } else if (direction === "left") {
+        setShowLineup(true);
+      } else if (direction === "right") {
+        setShowLineup(false);
       }
 
-      // Debounce für Scroll-Events
       setTimeout(() => setIsScrolling(false), 300);
     },
     [currentIndex, events.length, isScrolling]
   );
 
   const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientY);
+    setTouchEnd({ x: null, y: null });
+    setTouchStart({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    });
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientY);
+    setTouchEnd({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    });
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart.x || !touchStart.y || !touchEnd.x || !touchEnd.y) return;
 
-    const distance = touchStart - touchEnd;
-    const isUpSwipe = distance > minSwipeDistance;
-    const isDownSwipe = distance < -minSwipeDistance;
+    const distanceX = touchStart.x - touchEnd.x;
+    const distanceY = touchStart.y - touchEnd.y;
+    const isHorizontalSwipe = Math.abs(distanceX) > Math.abs(distanceY);
 
-    if (isUpSwipe) {
-      handleSwipe("up");
-    } else if (isDownSwipe) {
-      handleSwipe("down");
+    if (isHorizontalSwipe) {
+      if (distanceX > minSwipeDistance) {
+        handleSwipe("left");
+      } else if (distanceX < -minSwipeDistance) {
+        handleSwipe("right");
+      }
+    } else {
+      if (distanceY > minSwipeDistance) {
+        handleSwipe("up");
+      } else if (distanceY < -minSwipeDistance) {
+        handleSwipe("down");
+      }
     }
   };
 
@@ -165,6 +199,65 @@ const ReelPage: React.FC = () => {
     navigate(-1);
   };
 
+  const renderLineup2 = (event: Event) => {
+    return (
+      <EventLineup
+        lineup={event.lineup || []}
+        lineupPictureUrls={event.lineupPictureUrl || []}
+      />
+    );
+  };
+
+  const renderLineup = (event: Event) => {
+    if (!event.lineup || event.lineup.length === 0) {
+      return (
+        <div className="lineup-container" onClick={handleLineupClick}>
+          <div className="lineup-content">
+            <h2 className="lineup-title">Lineup</h2>
+            <p className="no-lineup">Kein Lineup verfügbar</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="lineup-container" onClick={handleLineupClick}>
+        <div className="lineup-content">
+          <h2 className="lineup-title">Lineup</h2>
+          <div className="artists-list">
+            {event.lineup.map((artist, index) => (
+              <div key={index} className="artist-item">
+                <div className="artist-info-container">
+                  <span className="artist-name">{artist.name}</span>
+                  <a
+                    href={`https://www.google.com/search?q=${encodeURIComponent(
+                      artist.name + " " + artist.role || " DJ"
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="linup-search-link"
+                  >
+                    <ExternalLink className="h-5 w-5" />
+                  </a>
+                </div>
+                {artist.startTime && (
+                  <span className="artist-time">{artist.startTime}</span>
+                )}
+                {artist.role && (
+                  <span className="artist-role">{artist.role}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const handleLineupClick = () => {
+    setShowLineup(!showLineup);
+  };
+
   const renderReelItem = (event: Event, index: number) => {
     return (
       <div
@@ -184,6 +277,9 @@ const ReelPage: React.FC = () => {
 
         {/* Overlay für bessere Lesbarkeit */}
         <div className="reel-overlay" />
+
+        {/* Lineup Overlay */}
+        {showLineup && renderLineup(event)}
 
         {/* Event Info */}
         <div className="reel-content">
@@ -243,6 +339,17 @@ const ReelPage: React.FC = () => {
                 <p className="event-views-reel">{event.views} views</p>
               </div>
             </div>
+            {/* Lineup Button für Desktop */}
+            {event.lineup && event.lineup.length > 0 && (
+              <button
+                className="lineup-button"
+                onClick={handleLineupClick}
+                title="Lineup anzeigen"
+              >
+                <Clock size={24} />
+                <span>Lineup</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
