@@ -1,5 +1,6 @@
 import {
   ChevronLeft,
+  ChevronRight,
   Clock,
   ExternalLink,
   Heart,
@@ -14,7 +15,6 @@ import React, {
   useState,
 } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { EventLineup } from "../components/EventDetail/components/EventLineup";
 import { UserContext } from "../contexts/UserContext";
 import { DEFAULT_IMAGE, Event } from "../utils";
 import "./ReelPage.css";
@@ -199,15 +199,6 @@ const ReelPage: React.FC = () => {
     navigate(-1);
   };
 
-  const renderLineup2 = (event: Event) => {
-    return (
-      <EventLineup
-        lineup={event.lineup || []}
-        lineupPictureUrls={event.lineupPictureUrl || []}
-      />
-    );
-  };
-
   const renderLineup = (event: Event) => {
     if (!event.lineup || event.lineup.length === 0) {
       return (
@@ -270,7 +261,7 @@ const ReelPage: React.FC = () => {
           className="reel-background"
           style={{
             backgroundImage: event.imageUrl
-              ? `url(${event.imageUrl})`
+              ? `url(https://img.event-scanner.com/insecure/rs:auto/plain/${event.imageUrl}@webp)`
               : "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
           }}
         />
@@ -307,11 +298,11 @@ const ReelPage: React.FC = () => {
               className={`action-btn like-btn ${
                 isLiked[event.id || ""] ? "liked" : ""
               }`}
-              onClick={() => handleLike(event.id || "")}
+              onClick={() => handleLike(event._id!)}
             >
               <Heart
-                color={isFavorite(event.id!) ? "red" : "white"}
-                fill={isFavorite(event.id!) ? "red" : "none"}
+                color={isFavorite(event._id!) ? "red" : "white"}
+                fill={isFavorite(event._id!) ? "red" : "none"}
                 size={32}
               />
             </button>
@@ -327,10 +318,28 @@ const ReelPage: React.FC = () => {
 
           {/* Event Details unten */}
           <div className="reel-footer">
-            <div
-              className="event-info"
-              onClick={() => navigate(`/event/${event._id}`)}
-            >
+            <div className="reel-button-container">
+              <button
+                className="lineup-button"
+                onClick={() => navigate(`/event/${event._id}`)}
+                title="Lineup anzeigen"
+              >
+                <ChevronRight size={24} />
+                <span>Details</span>
+              </button>
+              {/* Lineup Button für Desktop */}
+              {event.lineup && event.lineup.length > 0 && (
+                <button
+                  className="lineup-button"
+                  onClick={handleLineupClick}
+                  title="Lineup anzeigen"
+                >
+                  <Clock size={24} />
+                  <span>Lineup</span>
+                </button>
+              )}
+            </div>
+            <div className="event-info">
               <h3 className="event-title">{event.title}</h3>
               <div className="event-date-facts">
                 <p className="event-date">
@@ -339,17 +348,6 @@ const ReelPage: React.FC = () => {
                 <p className="event-views-reel">{event.views} views</p>
               </div>
             </div>
-            {/* Lineup Button für Desktop */}
-            {event.lineup && event.lineup.length > 0 && (
-              <button
-                className="lineup-button"
-                onClick={handleLineupClick}
-                title="Lineup anzeigen"
-              >
-                <Clock size={24} />
-                <span>Lineup</span>
-              </button>
-            )}
           </div>
         </div>
       </div>
