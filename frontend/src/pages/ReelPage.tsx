@@ -1,14 +1,23 @@
 import {
+  ChevronDown,
   ChevronLeft,
+  ChevronUp,
   Heart,
   MessageCircle,
   MoreVertical,
   Send,
+  User2,
 } from "lucide-react";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
-import { DEFAULT_IMAGE, Event } from "../utils";
+import { Event } from "../utils";
 import "./ReelPage.css";
 import { getReelEvents } from "./service";
 
@@ -44,20 +53,23 @@ const ReelPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSwipe = (direction: "up" | "down") => {
-    if (isScrolling) return; // Verhindert zu schnelles Scrollen
+  const handleSwipe = useCallback(
+    (direction: "up" | "down") => {
+      if (isScrolling) return; // Verhindert zu schnelles Scrollen
 
-    setIsScrolling(true);
+      setIsScrolling(true);
 
-    if (direction === "up" && currentIndex < events.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    } else if (direction === "down" && currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
-    }
+      if (direction === "up" && currentIndex < events.length - 1) {
+        setCurrentIndex((prev) => prev + 1);
+      } else if (direction === "down" && currentIndex > 0) {
+        setCurrentIndex((prev) => prev - 1);
+      }
 
-    // Debounce für Scroll-Events
-    setTimeout(() => setIsScrolling(false), 300);
-  };
+      // Debounce für Scroll-Events
+      setTimeout(() => setIsScrolling(false), 300);
+    },
+    [currentIndex, events.length, isScrolling]
+  );
 
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
@@ -83,19 +95,22 @@ const ReelPage: React.FC = () => {
   };
 
   // Scroll-Handler für Desktop
-  const handleWheel = (e: WheelEvent) => {
-    e.preventDefault();
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      e.preventDefault();
 
-    if (isScrolling) return;
+      if (isScrolling) return;
 
-    if (e.deltaY > 0) {
-      // Scroll nach unten = Event nach oben
-      handleSwipe("up");
-    } else {
-      // Scroll nach oben = Event nach unten
-      handleSwipe("down");
-    }
-  };
+      if (e.deltaY > 0) {
+        // Scroll nach unten = Event nach oben
+        handleSwipe("up");
+      } else {
+        // Scroll nach oben = Event nach unten
+        handleSwipe("down");
+      }
+    },
+    [handleSwipe, isScrolling]
+  );
 
   const handleLike = (eventId: string) => {
     if (isFavorite(eventId)) {
@@ -114,6 +129,7 @@ const ReelPage: React.FC = () => {
     return diffDays;
   };
 
+  // Event Listeners Setup
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === "ArrowUp") {
@@ -148,7 +164,7 @@ const ReelPage: React.FC = () => {
       }
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [currentIndex, isScrolling]);
+  }, [handleWheel, handleSwipe]);
 
   if (!events.length) {
     return <div className="reel-container">Keine Events verfügbar</div>;
@@ -168,14 +184,11 @@ const ReelPage: React.FC = () => {
         {/* Event Bild als Hintergrund */}
         <div
           className="reel-background"
-          onClick={() => navigate(`/event/${event.id}`)}
           style={{
+            borderRadius: "2rem",
             backgroundImage: event.imageUrl
               ? `url(${event.imageUrl})`
               : "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
           }}
         />
 
@@ -185,10 +198,7 @@ const ReelPage: React.FC = () => {
         {/* Event Info */}
         <div className="reel-content">
           {/* Host Info oben */}
-          <div
-            className="reel-header"
-            onClick={() => navigate(`/profile/${event.hostId}`)}
-          >
+          <div className="reel-header">
             <div className="host-info">
               <div className="host-avatar">
                 {event.host?.profileImageUrl ? (
@@ -197,7 +207,7 @@ const ReelPage: React.FC = () => {
                     alt={event.host.username}
                   />
                 ) : (
-                  <img src={DEFAULT_IMAGE} alt={event.host.username} />
+                  <User2 size={40} />
                 )}
               </div>
               <span className="host-name">
@@ -263,6 +273,19 @@ const ReelPage: React.FC = () => {
         {/* Alle Events werden gerendert, jedes an seiner Position */}
         {events.map((event, index) => renderReelItem(event, index))}
       </div>
+
+      {/* Swipe Indicator */}
+      {showSwipeIndicator && (
+        <div className={`swipe-indicator ${showSwipeIndicator ? "show" : ""}`}>
+          <div className="swipe-text">
+            Swipe nach oben/unten oder scrollen
+            <span className="swipe-arrow">
+              <ChevronUp size={20} />
+              <ChevronDown size={20} />
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
