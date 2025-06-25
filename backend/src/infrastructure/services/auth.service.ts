@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
+import { Keypair } from '@solana/web3.js';
+import bs58 from 'bs58';
 import { Model } from 'mongoose';
 import { Profile } from '../../core/domain/profile';
 import { User } from '../../core/domain/user';
@@ -14,11 +16,13 @@ import {
   RegisterUserDto,
   RegisterUserDtoV2,
 } from '../../presentation/dtos/register-user.dto';
+
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel('User') private userModel: Model<User>,
     @InjectModel('Profile') private profileModel: Model<Profile>,
+
     private jwtService: JwtService,
     private readonly bcryptService: BcryptService,
   ) {}
@@ -66,6 +70,67 @@ export class AuthService {
         email: user.email,
         username: user.username,
       },
+    };
+  }
+
+  // WEB 3 ------------------------------------------------
+  async registerWithProfileAndWallet(registerDto: RegisterUserDtoV2) {
+    console.log('registerDto', registerDto);
+    const { email, password, username, prompt } = registerDto;
+
+    const existingUser = await this.userModel.findOne({
+      $or: [{ email }, { username }],
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('User already exists');
+    }
+
+    const hashedPassword = await this.bcryptService.hash(password);
+    const { publicKey, privateKey } = this.createSolanaWallet();
+
+    const user = await this.userModel.create({
+      email,
+      username,
+      password: hashedPassword,
+      solanaWalletAddress: publicKey,
+      solanaWalletPrivateKey: privateKey,
+    });
+
+    await this.profileModel.create({
+      userId: user._id,
+      username,
+      email,
+      followerCount: 0,
+      followingCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const payload = {
+      sub: user._id.toString(),
+      email: user.email,
+      username: user.username,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        username: user.username,
+        solanaWalletAddress: user.solanaWalletAddress,
+        solanaWalletPrivateKey: user.solanaWalletPrivateKey,
+      },
+    };
+  }
+
+  createSolanaWallet() {
+    const keypair = Keypair.generate();
+
+    return {
+      publicKey: keypair.publicKey.toBase58(), // 🔐 Adresse für Nutzer
+      privateKey: bs58.encode(keypair.secretKey), // ⚠️ Optional, sicher speichern!
     };
   }
 
@@ -183,6 +248,8 @@ export class AuthService {
         id: user._id.toString(),
         email: user.email,
         username: user.username,
+        solanaWalletAddress: user.solanaWalletAddress,
+        solanaWalletPrivateKey: user.solanaWalletPrivateKey,
       },
     };
   }
@@ -214,6 +281,8 @@ export class AuthService {
         id: user._id.toString(),
         email: user.email,
         username: user.username,
+        solanaWalletAddress: user.solanaWalletAddress,
+        solanaWalletPrivateKey: user.solanaWalletPrivateKey,
       },
     };
   }

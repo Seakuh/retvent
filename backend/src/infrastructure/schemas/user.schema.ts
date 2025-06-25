@@ -12,6 +12,8 @@ export const UserSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   points: { type: Number, default: 0 },
+  solanaWalletAddress: { type: String, default: '' },
+  solanaWalletPrivateKey: { type: String, default: '' },
   followedProfiles: { type: [String], default: [] },
   favoriteEventIds: { type: [String], default: [] },
 });

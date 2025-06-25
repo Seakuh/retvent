@@ -43,6 +43,15 @@ export class AuthController {
     }
   }
 
+  @Post('v4/register')
+  async registerV4(@Body() registerDto: RegisterUserDtoV2) {
+    try {
+      return await this.authService.registerWithProfileAndWallet(registerDto);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     try {
