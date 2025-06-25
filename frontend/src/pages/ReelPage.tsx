@@ -4,12 +4,11 @@ import {
   MessageCircle,
   MoreVertical,
   Send,
-  User2,
 } from "lucide-react";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
-import { Event } from "../utils";
+import { DEFAULT_IMAGE, Event } from "../utils";
 import "./ReelPage.css";
 import { getReelEvents } from "./service";
 
@@ -191,7 +190,7 @@ const ReelPage: React.FC = () => {
                     alt={event.host.username}
                   />
                 ) : (
-                  <User2 size={40} />
+                  <img src={DEFAULT_IMAGE} alt={event.host.username} />
                 )}
               </div>
               <span className="host-name">
