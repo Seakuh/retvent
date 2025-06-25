@@ -349,7 +349,10 @@ const ReelPage: React.FC = () => {
         <div className="reel-content">
           {/* Host Info oben */}
           <div className="reel-header">
-            <div className="host-info">
+            <div
+              className="host-info"
+              onClick={() => navigate(`/profile/${event.hostId}`)}
+            >
               <div className="host-avatar">
                 {event.host?.profileImageUrl ? (
                   <img
