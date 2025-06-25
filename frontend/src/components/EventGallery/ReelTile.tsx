@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Event, getDaysUntilDate } from "../../utils";
+import { Event, formatDate, getDaysUntilDate } from "../../utils";
 import "./ReelTile.css";
 interface ReelTileProps {
   events: Event[];
@@ -31,7 +31,12 @@ const ReelTile: React.FC<ReelTileProps> = ({ events }) => {
                 <div className="reel-tile-content">
                   <h3 className="reel-tile-title">{event.title}</h3>
                   <p className="reel-tile-date">
-                    in {getDaysUntilDate(event.startDate || "")} Tagen
+                    {getDaysUntilDate(formatDate(event.startDate as string)) ===
+                    1
+                      ? "tomorrow"
+                      : `in ${getDaysUntilDate(
+                          formatDate(event.startDate as string)
+                        )} days`}
                   </p>
                 </div>
               </div>

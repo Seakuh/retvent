@@ -59,6 +59,15 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
   const groupedUpcomingEvents = groupEventsByDate(upcomingEvents);
   const groupedPastEvents = groupEventsByDate(pastEvents);
 
+  // Funktion um zufällig zu entscheiden ob ein ReelTile eingefügt werden soll
+  const shouldShowReelTile = () => Math.random() < 0.5; // 30% Wahrscheinlichkeit
+
+  // Funktion um zufällige Events für ReelTile zu wählen
+  const getRandomEventsForReel = (allEvents: Event[]) => {
+    const shuffled = [...allEvents].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, Math.min(5, shuffled.length));
+  };
+
   return (
     <div className="event-gallery-container">
       {/* Today Section */}
@@ -89,25 +98,31 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
       {/* Upcoming Section */}
       <div className="event-list">
         {Object.keys(groupedUpcomingEvents).length > 0 &&
-          Object.entries(groupedUpcomingEvents).map(([date, eventsForDate]) => (
-            <>
-              <div className="event-date-heading-container">
-                <h2 className="section-title">{date}</h2>
-                <h3 className="event-date-heading-sub">
-                  {getDaysUntilDate(date) === 1
-                    ? "tomorrow"
-                    : `in ${getDaysUntilDate(date)} days`}
-                </h3>
-              </div>
-              <div key={date} className="event-date-section">
-                <div className="real-event-list-item-container">
-                  {eventsForDate.map((event) => (
-                    <RealListItem key={getEventId(event)} event={event} />
-                  ))}
+          Object.entries(groupedUpcomingEvents).map(
+            ([date, eventsForDate], index) => (
+              <React.Fragment key={date}>
+                <div className="event-date-heading-container">
+                  <h2 className="section-title">{date}</h2>
+                  <h3 className="event-date-heading-sub">
+                    {getDaysUntilDate(date) === 1
+                      ? "tomorrow"
+                      : `in ${getDaysUntilDate(date)} days`}
+                  </h3>
                 </div>
-              </div>
-            </>
-          ))}
+                <div className="event-date-section">
+                  {/* Zufälliges ReelTile vor den Events */}
+                  {shouldShowReelTile() && (
+                    <ReelTile events={getRandomEventsForReel(events)} />
+                  )}
+                  <div className="real-event-list-item-container">
+                    {eventsForDate.map((event) => (
+                      <RealListItem key={getEventId(event)} event={event} />
+                    ))}
+                  </div>
+                </div>
+              </React.Fragment>
+            )
+          )}
       </div>
 
       {/* Past Events Section */}
@@ -124,6 +139,10 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
                       : `${getDaysPast(date)} days ago`}
                   </h3>
                 </div>
+                {/* Zufälliges ReelTile vor den vergangenen Events */}
+                {shouldShowReelTile() && (
+                  <ReelTile events={getRandomEventsForReel(events)} />
+                )}
                 <div className="real-event-list-item-container">
                   {eventsForDate.map((event) => (
                     <RealListItem
