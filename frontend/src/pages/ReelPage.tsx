@@ -1,10 +1,4 @@
-import {
-  ChevronLeft,
-  Heart,
-  MessageCircle,
-  MoreVertical,
-  Send,
-} from "lucide-react";
+import { ChevronLeft, Heart, MessageCircle, Send } from "lucide-react";
 import React, {
   useCallback,
   useContext,
@@ -211,17 +205,6 @@ const ReelPage: React.FC = () => {
               </span>
             </div>
           </div>
-
-          {/* Event Details unten */}
-          <div className="reel-footer">
-            <div className="event-info">
-              <h3 className="event-title">{event.title}</h3>
-              <p className="event-date">
-                in {getDaysUntilEvent(event.startDate)} Tagen
-              </p>
-            </div>
-          </div>
-
           {/* Action Buttons rechts */}
           <div className="reel-actions">
             <button
@@ -243,10 +226,22 @@ const ReelPage: React.FC = () => {
             <button className="action-btn">
               <Send size={28} />
             </button>
+          </div>
 
-            <button className="action-btn">
-              <MoreVertical size={28} />
-            </button>
+          {/* Event Details unten */}
+          <div className="reel-footer">
+            <div
+              className="event-info"
+              onClick={() => navigate(`/event/${event._id}`)}
+            >
+              <h3 className="event-title">{event.title}</h3>
+              <div className="event-date-facts">
+                <p className="event-date">
+                  in {getDaysUntilEvent(event.startDate)} days
+                </p>
+                <p className="event-views-reel">{event.views} views</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
