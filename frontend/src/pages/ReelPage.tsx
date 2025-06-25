@@ -216,15 +216,16 @@ const ReelPage: React.FC = () => {
               <Heart
                 color={isFavorite(event.id!) ? "red" : "white"}
                 fill={isFavorite(event.id!) ? "red" : "none"}
+                size={32}
               />
             </button>
 
             <button className="action-btn">
-              <MessageCircle size={28} />
+              <MessageCircle size={32} />
             </button>
 
             <button className="action-btn">
-              <Send size={28} />
+              <Send size={32} />
             </button>
           </div>
 
