@@ -24,6 +24,7 @@ import { PwaInstall } from "./components/PwaInstall/PwaInstall";
 import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
+import ReelPage from "./pages/ReelPage";
 import { SearchPage } from "./pages/SearchPage";
 import { ShoppingPage } from "./pages/ShoppingPage";
 import { syncFavorites } from "./service";
@@ -104,7 +105,7 @@ const App: React.FC = () => {
                   <Route path="/install-app" element={<PwaInstall />} />
                   <Route path="/search" element={<SearchPage />} />
                   <Route path="/search/:query?" element={<SearchPage />} />
-
+                  <Route path="/reel/:eventId" element={<ReelPage />} />
                   <Route path="/imprint" element={<Imprint />} />
                   <Route
                     path="/group/invite/:userId/:tokenId"

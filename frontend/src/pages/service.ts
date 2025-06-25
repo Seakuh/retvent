@@ -53,3 +53,14 @@ export const getFits = async (): Promise<Profile[]> => {
     return [];
   }
 };
+
+export const getReelEvents = async (eventId?: string): Promise<Event[]> => {
+  try {
+    const response = await fetch(`${API_URL}events/reel/${eventId || ""}`);
+    const data = await response.json();
+    return data as Event[];
+  } catch (error) {
+    console.error("Error fetching reel events:", error);
+    return [];
+  }
+};

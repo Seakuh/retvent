@@ -2,7 +2,7 @@ import React from "react";
 import { Event, formatDate, getDaysPast, getDaysUntilDate } from "../../utils";
 import "./EventGalleryII.css";
 import { RealListItem } from "./Items/RealListItem";
-
+import ReelTile from "./ReelTile";
 interface EventGalleryProps {
   events: Event[];
 }
@@ -78,6 +78,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
               })()}
             </h3> */}
         </div>
+        <ReelTile events={todayEvents} />
         <div className="real-event-list-item-container">
           {todayEvents.map((event) => (
             <RealListItem key={getEventId(event)} event={event} />
