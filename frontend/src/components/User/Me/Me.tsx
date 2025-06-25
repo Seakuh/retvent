@@ -33,6 +33,12 @@ export const Me: React.FC = () => {
     defaultUserPreferences
   );
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [solanaWalletAddress, setSolanaWalletAddress] = useState<string>(
+    localStorage.getItem("solanaWalletAddress") || ""
+  );
+  const [solanaWalletPrivateKey, setSolanaWalletPrivateKey] = useState<string>(
+    localStorage.getItem("solanaWalletPrivateKey") || ""
+  );
 
   // Abgeleitete Werte
   const userLevel = calculateUserLevel(me?.points || 0);
@@ -340,6 +346,57 @@ export const Me: React.FC = () => {
         </div>
         <div className="member-since">
           Member since {formatDate(new Date(me.createdAt))}
+        </div>
+        <div className="solana-wallet-section">
+          <div className="solana-wallet-section-header">
+            <span className="solana-wallet-section-header-text">
+              Solana Wallet
+            </span>
+            <span className="solana-wallet-section-header-emoji">💰</span>
+          </div>
+          <div
+            className="solana-wallet-address"
+            onClick={() => {
+              navigator.clipboard.writeText(solanaWalletAddress);
+              const hint = document.createElement("div");
+              hint.textContent = "Copied!";
+              hint.style.position = "fixed";
+              hint.style.padding = "8px";
+              hint.style.background = "rgba(0,0,0,0.8)";
+              hint.style.color = "white";
+              hint.style.borderRadius = "4px";
+              hint.style.zIndex = "1000";
+              document.body.appendChild(hint);
+              const rect = event.target.getBoundingClientRect();
+              hint.style.top = `${rect.bottom + 5}px`;
+              hint.style.left = `${rect.left}px`;
+              setTimeout(() => hint.remove(), 2000);
+            }}
+          >
+            Solana Wallet Address:
+            {solanaWalletAddress}
+          </div>
+          <div
+            className="solana-wallet-private-key"
+            onClick={() => {
+              navigator.clipboard.writeText(solanaWalletPrivateKey);
+              const hint = document.createElement("div");
+              hint.textContent = "Copied!";
+              hint.style.position = "fixed";
+              hint.style.padding = "8px";
+              hint.style.background = "rgba(0,0,0,0.8)";
+              hint.style.color = "white";
+              hint.style.borderRadius = "4px";
+              hint.style.zIndex = "1000";
+              document.body.appendChild(hint);
+              const rect = event.target.getBoundingClientRect();
+              hint.style.top = `${rect.bottom + 5}px`;
+              hint.style.left = `${rect.left}px`;
+              setTimeout(() => hint.remove(), 2000);
+            }}
+          >
+            Solana Wallet Private Key: {solanaWalletPrivateKey}
+          </div>
         </div>
       </div>
     </div>

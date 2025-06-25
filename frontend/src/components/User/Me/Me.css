@@ -99,6 +99,63 @@
   opacity: 0;
 }
 
+.solana-wallet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0 auto;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 8px;
+  padding: 1rem;
+  max-width: 80rem;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.solana-wallet-section-header-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+}
+
+
+
+.solana-wallet-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.solana-wallet-address {
+  color: white;
+  font-size: 14px;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.solana-wallet-address:hover {
+  transform: scale(1.05);
+}
+
+.solana-wallet-private-key {
+  color: white;
+  font-size: 14px;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.solana-wallet-private-key:hover {
+  transform: scale(1.05);
+}
+
 .header-image-container:hover::after {
   opacity: 1;
 }
