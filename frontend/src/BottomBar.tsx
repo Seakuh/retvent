@@ -1,4 +1,4 @@
-import { Home, Plus, Search, Settings, ShoppingBag } from "lucide-react";
+import { Home, Plus, Search, Send, Settings } from "lucide-react";
 import "./BottomBar.css";
 import { useLandingSearch } from "./LandinSearchContext";
 import { User } from "./utils";
@@ -52,7 +52,7 @@ export const BottomBar = ({
           </button>
 
           <button onClick={() => navigate("/my-groups")}>
-            <ShoppingBag size={22} />
+            <Send size={22} />
           </button>
 
           <button
