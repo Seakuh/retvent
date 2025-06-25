@@ -1,12 +1,9 @@
 import {
-  ChevronDown,
   ChevronLeft,
-  ChevronUp,
   Heart,
   MessageCircle,
   MoreVertical,
   Send,
-  User2,
 } from "lucide-react";
 import React, {
   useCallback,
@@ -17,7 +14,7 @@ import React, {
 } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
-import { Event } from "../utils";
+import { DEFAULT_IMAGE, Event } from "../utils";
 import "./ReelPage.css";
 import { getReelEvents } from "./service";
 
@@ -185,7 +182,6 @@ const ReelPage: React.FC = () => {
         <div
           className="reel-background"
           style={{
-            borderRadius: "2rem",
             backgroundImage: event.imageUrl
               ? `url(${event.imageUrl})`
               : "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
@@ -207,7 +203,7 @@ const ReelPage: React.FC = () => {
                     alt={event.host.username}
                   />
                 ) : (
-                  <User2 size={40} />
+                  <img src={DEFAULT_IMAGE} alt="Default Avatar" />
                 )}
               </div>
               <span className="host-name">
@@ -273,19 +269,6 @@ const ReelPage: React.FC = () => {
         {/* Alle Events werden gerendert, jedes an seiner Position */}
         {events.map((event, index) => renderReelItem(event, index))}
       </div>
-
-      {/* Swipe Indicator */}
-      {showSwipeIndicator && (
-        <div className={`swipe-indicator ${showSwipeIndicator ? "show" : ""}`}>
-          <div className="swipe-text">
-            Swipe nach oben/unten oder scrollen
-            <span className="swipe-arrow">
-              <ChevronUp size={20} />
-              <ChevronDown size={20} />
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
