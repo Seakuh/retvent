@@ -53,6 +53,11 @@ export class EventController {
     return this.eventService.getPopularEventsByCategory(category, limit);
   }
 
+  @Get('reel/:eventId?')
+  async getReelEvents(@Param('eventId') eventId?: string) {
+    return this.eventService.getReelEvents(eventId);
+  }
+
   @Get('search/plattforms')
   async searchEventPlattforms(
     @Query('query') query: string,

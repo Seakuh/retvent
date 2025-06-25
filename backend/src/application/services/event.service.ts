@@ -54,6 +54,10 @@ export class EventService {
   //   this.eventRepository.createAvertisementEvent();
   // }
 
+  getReelEvents(eventId?: string) {
+    return this.eventRepository.getReelEvents(eventId || '');
+  }
+
   findAdvertisementEvents(limit: number) {
     return this.eventRepository.findAdvertisementEvents(limit);
   }

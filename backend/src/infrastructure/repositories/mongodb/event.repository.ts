@@ -98,6 +98,40 @@ export class MongoEventRepository implements IEventRepository {
       .exec();
   }
 
+  async getReelEvents(eventId?: string) {
+    if (eventId) {
+      const event = await this.eventModel.findById(eventId).exec();
+      if (!event) {
+        return this.eventModel
+          .find({ startDate: { $gt: new Date() } })
+          .sort({ startDate: 1 })
+          .select(
+            'id title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username commentCount tags',
+          )
+          .limit(20)
+          .exec();
+      }
+      const otherEvents = await this.eventModel
+        .find({
+          _id: { $ne: eventId },
+          startDate: { $gt: new Date() },
+        })
+        .sort({ startDate: 1 })
+        .select(
+          'id title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username commentCount tags',
+        )
+        .limit(19)
+        .exec();
+      return [event, ...otherEvents];
+    }
+
+    return this.eventModel
+      .find({ startDate: { $gt: new Date() } })
+      .sort({ startDate: 1 })
+      .limit(20)
+      .exec();
+  }
+
   findAdvertisementEvents(limit: number) {
     return this.eventModel
       .find({
