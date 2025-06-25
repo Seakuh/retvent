@@ -181,7 +181,10 @@ const ReelPage: React.FC = () => {
         {/* Event Info */}
         <div className="reel-content">
           {/* Host Info oben */}
-          <div className="reel-header">
+          <div
+            className="reel-header"
+            onClick={() => navigate(`/profile/${event.hostId}`)}
+          >
             <div className="host-info">
               <div className="host-avatar">
                 {event.host?.profileImageUrl ? (

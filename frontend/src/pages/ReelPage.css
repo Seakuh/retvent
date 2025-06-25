@@ -53,8 +53,9 @@
 }
 
 .reel-header {
-  top:2rem;
+  margin-top: 1rem !important;
   display: flex;
+  cursor: pointer;
   align-items: center;
   margin: 0 auto;
 }
@@ -110,7 +111,7 @@
 }
 
 .event-date {
-  color: #e0e0e0;
+  color: var(--color-neon-blue);
   font-size: 1rem;
   margin: 0;
 }
