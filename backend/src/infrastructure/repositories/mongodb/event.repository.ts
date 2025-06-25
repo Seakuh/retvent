@@ -98,7 +98,7 @@ export class MongoEventRepository implements IEventRepository {
       .exec();
   }
 
-  async getReelEvents(eventId?: string) {
+  async getReelEvents(eventId?: string, offset?: number, limit?: number) {
     if (eventId) {
       const event = await this.eventModel.findById(eventId).exec();
       if (!event) {
@@ -108,7 +108,8 @@ export class MongoEventRepository implements IEventRepository {
           .select(
             'id title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username commentCount tags',
           )
-          .limit(20)
+          .limit(limit)
+          .skip(offset)
           .exec();
       }
       const otherEvents = await this.eventModel
@@ -120,7 +121,8 @@ export class MongoEventRepository implements IEventRepository {
         .select(
           'id title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username commentCount tags',
         )
-        .limit(19)
+        .limit(limit)
+        .skip(offset)
         .exec();
       return [event, ...otherEvents];
     }
@@ -128,7 +130,8 @@ export class MongoEventRepository implements IEventRepository {
     return this.eventModel
       .find({ startDate: { $gt: new Date() } })
       .sort({ startDate: 1 })
-      .limit(20)
+      .limit(limit)
+      .skip(offset)
       .exec();
   }
 
