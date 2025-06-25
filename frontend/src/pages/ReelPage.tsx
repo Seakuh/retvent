@@ -232,7 +232,6 @@ const ReelPage: React.FC = () => {
 
             <button className="action-btn">
               <MessageCircle size={28} />
-              <span className="count">{event.commentCount || 0}</span>
             </button>
 
             <button className="action-btn">
