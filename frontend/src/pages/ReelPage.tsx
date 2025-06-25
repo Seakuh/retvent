@@ -18,9 +18,16 @@ const ReelPage: React.FC = () => {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLiked, setIsLiked] = useState<{ [key: string]: boolean }>({});
+  const [showSwipeIndicator, setShowSwipeIndicator] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
   const [events, setEvents] = useState<Event[]>([]);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50;
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -30,11 +37,64 @@ const ReelPage: React.FC = () => {
     fetchEvents();
   }, [eventId]);
 
+  // Hide swipe indicator after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSwipeIndicator(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleSwipe = (direction: "up" | "down") => {
+    if (isScrolling) return; // Verhindert zu schnelles Scrollen
+
+    setIsScrolling(true);
+
     if (direction === "up" && currentIndex < events.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else if (direction === "down" && currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
+    }
+
+    // Debounce für Scroll-Events
+    setTimeout(() => setIsScrolling(false), 300);
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientY);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientY);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isUpSwipe = distance > minSwipeDistance;
+    const isDownSwipe = distance < -minSwipeDistance;
+
+    if (isUpSwipe) {
+      handleSwipe("up");
+    } else if (isDownSwipe) {
+      handleSwipe("down");
+    }
+  };
+
+  // Scroll-Handler für Desktop
+  const handleWheel = (e: WheelEvent) => {
+    e.preventDefault();
+
+    if (isScrolling) return;
+
+    if (e.deltaY > 0) {
+      // Scroll nach unten = Event nach oben
+      handleSwipe("up");
+    } else {
+      // Scroll nach oben = Event nach unten
+      handleSwipe("down");
     }
   };
 
@@ -55,22 +115,43 @@ const ReelPage: React.FC = () => {
     return diffDays;
   };
 
-  const currentEvent = events[currentIndex];
-
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === "ArrowUp") {
-        handleSwipe("up");
-      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
         handleSwipe("down");
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        handleSwipe("up");
+      } else if (e.key === "PageUp") {
+        e.preventDefault();
+        handleSwipe("down");
+      } else if (e.key === "PageDown") {
+        e.preventDefault();
+        handleSwipe("up");
+      } else if (e.key === " ") {
+        e.preventDefault();
+        handleSwipe("up");
       }
     };
 
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [currentIndex]);
+    // Wheel-Event für Desktop-Scrolling
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("wheel", handleWheel, { passive: false });
+    }
 
-  if (!currentEvent) {
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      if (container) {
+        container.removeEventListener("wheel", handleWheel);
+      }
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [currentIndex, isScrolling]);
+
+  if (!events.length) {
     return <div className="reel-container">Keine Events verfügbar</div>;
   }
 
@@ -78,18 +159,19 @@ const ReelPage: React.FC = () => {
     navigate(-1);
   };
 
-  return (
-    <div className="reel-container" ref={containerRef}>
-      <button onClick={handleBack} className="back-button">
-        <ChevronLeft className="h-5 w-5" />{" "}
-      </button>
-      <div className="reel-video-container">
+  const renderReelItem = (event: Event, index: number) => {
+    return (
+      <div
+        key={event.id}
+        className="reel-item"
+        style={{ top: `${index * 100}vh` }}
+      >
         {/* Event Bild als Hintergrund */}
         <div
           className="reel-background"
           style={{
-            backgroundImage: currentEvent.imageUrl
-              ? `url(${currentEvent.imageUrl})`
+            backgroundImage: event.imageUrl
+              ? `url(${event.imageUrl})`
               : "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
           }}
         />
@@ -103,19 +185,17 @@ const ReelPage: React.FC = () => {
           <div className="reel-header">
             <div className="host-info">
               <div className="host-avatar">
-                {currentEvent.host?.profileImageUrl ? (
+                {event.host?.profileImageUrl ? (
                   <img
-                    src={currentEvent.host.profileImageUrl}
-                    alt={currentEvent.host.username}
+                    src={event.host.profileImageUrl}
+                    alt={event.host.username}
                   />
                 ) : (
                   <User2 size={40} />
                 )}
               </div>
               <span className="host-name">
-                {currentEvent.host?.username ||
-                  currentEvent.hostUsername ||
-                  "Unknown"}
+                {event.host?.username || event.hostUsername || "Unknown"}
               </span>
             </div>
           </div>
@@ -123,9 +203,9 @@ const ReelPage: React.FC = () => {
           {/* Event Details unten */}
           <div className="reel-footer">
             <div className="event-info">
-              <h3 className="event-title">{currentEvent.title}</h3>
+              <h3 className="event-title">{event.title}</h3>
               <p className="event-date">
-                in {getDaysUntilEvent(currentEvent.startDate)} Tagen
+                in {getDaysUntilEvent(event.startDate)} Tagen
               </p>
             </div>
           </div>
@@ -134,19 +214,19 @@ const ReelPage: React.FC = () => {
           <div className="reel-actions">
             <button
               className={`action-btn like-btn ${
-                isLiked[currentEvent.id || ""] ? "liked" : ""
+                isLiked[event.id || ""] ? "liked" : ""
               }`}
-              onClick={() => handleLike(currentEvent.id || "")}
+              onClick={() => handleLike(event.id || "")}
             >
               <Heart
-                color={isFavorite(currentEvent.id!) ? "red" : "white"}
-                fill={isFavorite(currentEvent.id!) ? "red" : "none"}
+                color={isFavorite(event.id!) ? "red" : "white"}
+                fill={isFavorite(event.id!) ? "red" : "none"}
               />
             </button>
 
             <button className="action-btn">
               <MessageCircle size={28} />
-              <span className="count">{currentEvent.commentCount || 0}</span>
+              <span className="count">{event.commentCount || 0}</span>
             </button>
 
             <button className="action-btn">
@@ -158,6 +238,25 @@ const ReelPage: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="reel-container" ref={containerRef}>
+      <button onClick={handleBack} className="back-button">
+        <ChevronLeft className="h-5 w-5" />
+      </button>
+
+      <div
+        className="reel-stack"
+        style={{ transform: `translateY(-${currentIndex * 100}vh)` }}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        {/* Alle Events werden gerendert, jedes an seiner Position */}
+        {events.map((event, index) => renderReelItem(event, index))}
       </div>
     </div>
   );
