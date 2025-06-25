@@ -478,3 +478,39 @@
   font-weight: bold;
   border-radius: inherit;
 }
+
+@media (max-width: 768px) {
+  .solana-wallet-section-header-text {
+    font-size: 1.2rem;
+  }
+
+  .solana-wallet-section {
+    max-width: 100%;
+    margin: 0 1rem;
+    width: calc(100% - 2rem);
+  }
+
+  .solana-wallet-section-header-text {
+    font-size: 1.2rem;
+  }
+
+  .solana-wallet-section-header-emoji {
+    font-size: 1.2rem;
+  }
+
+  .solana-wallet-address {
+    font-size: 1rem;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .solana-wallet-private-key {
+    font-size: 1rem;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
