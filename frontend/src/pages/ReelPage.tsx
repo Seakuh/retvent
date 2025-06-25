@@ -39,17 +39,65 @@ const ReelPage: React.FC = () => {
     y: number | null;
   }>({ x: null, y: null });
   const [isScrolling, setIsScrolling] = useState(false);
+  const [page, setPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
 
+  // Initial load
   useEffect(() => {
-    const fetchEvents = async () => {
-      const events = await getReelEvents(eventId);
-      setEvents(events);
+    const fetchInitialEvents = async () => {
+      setIsLoading(true);
+      try {
+        const initialEvents = await getReelEvents(eventId, 0, 10);
+        setEvents(initialEvents);
+        setPage(1);
+        setHasMore(initialEvents.length === 10);
+        setInitialLoadDone(true);
+      } catch (error) {
+        console.error("Error loading events:", error);
+        setHasMore(false);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    fetchEvents();
+    fetchInitialEvents();
   }, [eventId]);
+
+  // Load more events when needed
+  const loadMoreEvents = useCallback(async () => {
+    if (isLoadingMore || !hasMore || !initialLoadDone) return;
+
+    setIsLoadingMore(true);
+    try {
+      const offset = page * 10;
+      const newEvents = await getReelEvents(eventId, offset, 10);
+
+      if (newEvents.length === 0) {
+        setHasMore(false);
+      } else {
+        // Check for duplicates based on Event ID
+        setEvents((prev) => {
+          const existingIds = new Set(prev.map((event) => event._id));
+          const uniqueNewEvents = newEvents.filter(
+            (event) => !existingIds.has(event._id)
+          );
+          return [...prev, ...uniqueNewEvents];
+        });
+        setPage((prev) => prev + 1);
+        setHasMore(newEvents.length === 10);
+      }
+    } catch (error) {
+      console.error("Error loading more events:", error);
+      setHasMore(false);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [eventId, page, isLoadingMore, hasMore, initialLoadDone]);
 
   // Hide swipe indicator after 3 seconds
   useEffect(() => {
@@ -81,6 +129,27 @@ const ReelPage: React.FC = () => {
     },
     [currentIndex, events.length, isScrolling]
   );
+
+  // Separate useEffect for loading new events
+  useEffect(() => {
+    // Load more events when we're at the second-to-last event (for better UX)
+    if (
+      currentIndex >= events.length - 2 &&
+      hasMore &&
+      !isLoadingMore &&
+      initialLoadDone &&
+      events.length > 0
+    ) {
+      loadMoreEvents();
+    }
+  }, [
+    currentIndex,
+    events.length,
+    hasMore,
+    isLoadingMore,
+    initialLoadDone,
+    loadMoreEvents,
+  ]);
 
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd({ x: null, y: null });
@@ -119,7 +188,7 @@ const ReelPage: React.FC = () => {
     }
   };
 
-  // Scroll-Handler für Desktop
+  // Scroll-Handler for Desktop
   const handleWheel = useCallback(
     (e: WheelEvent) => {
       e.preventDefault();
@@ -175,7 +244,7 @@ const ReelPage: React.FC = () => {
       }
     };
 
-    // Wheel-Event für Desktop-Scrolling
+    // Wheel-Event for Desktop-Scrolling
     const container = containerRef.current;
     if (container) {
       container.addEventListener("wheel", handleWheel, { passive: false });
@@ -190,6 +259,10 @@ const ReelPage: React.FC = () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, [handleWheel, handleSwipe]);
+
+  if (!events.length && isLoading) {
+    return <div className="reel-container">Lade Events...</div>;
+  }
 
   if (!events.length) {
     return <div className="reel-container">Keine Events verfügbar</div>;
@@ -327,7 +400,7 @@ const ReelPage: React.FC = () => {
                 <ChevronRight size={24} />
                 <span>Details</span>
               </button>
-              {/* Lineup Button für Desktop */}
+              {/* Lineup Button for Desktop */}
               {event.lineup && event.lineup.length > 0 && (
                 <button
                   className="lineup-button"
@@ -367,9 +440,14 @@ const ReelPage: React.FC = () => {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        {/* Alle Events werden gerendert, jedes an seiner Position */}
+        {/* All events are rendered, each at its position */}
         {events.map((event, index) => renderReelItem(event, index))}
       </div>
+
+      {/* Loading indicator for more events */}
+      {isLoadingMore && (
+        <div className="loading-more-indicator">Loading more events...</div>
+      )}
     </div>
   );
 };
