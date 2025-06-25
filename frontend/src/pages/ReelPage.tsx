@@ -168,10 +168,14 @@ const ReelPage: React.FC = () => {
         {/* Event Bild als Hintergrund */}
         <div
           className="reel-background"
+          onClick={() => navigate(`/event/${event.id}`)}
           style={{
             backgroundImage: event.imageUrl
               ? `url(${event.imageUrl})`
               : "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         />
 
