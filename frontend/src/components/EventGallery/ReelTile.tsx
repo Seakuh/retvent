@@ -23,7 +23,7 @@ const ReelTile: React.FC<ReelTileProps> = ({ events }) => {
               className="reel-tile-image"
               style={{
                 backgroundImage: event.imageUrl
-                  ? `url(${event.imageUrl})`
+                  ? `url(https://img.event-scanner.com/insecure/rs:fill:200:200/plain/${event.imageUrl}@webp)`
                   : "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
               }}
             >
@@ -32,7 +32,11 @@ const ReelTile: React.FC<ReelTileProps> = ({ events }) => {
                   <h3 className="reel-tile-title">{event.title}</h3>
                   <p className="reel-tile-date">
                     {getDaysUntilDate(formatDate(event.startDate as string)) ===
-                    1
+                    0
+                      ? "today"
+                      : getDaysUntilDate(
+                          formatDate(event.startDate as string)
+                        ) === 1
                       ? "tomorrow"
                       : `in ${getDaysUntilDate(
                           formatDate(event.startDate as string)
