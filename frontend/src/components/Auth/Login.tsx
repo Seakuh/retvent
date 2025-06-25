@@ -33,6 +33,14 @@ const Login: React.FC = () => {
 
       // Neue Daten setzen
       localStorage.setItem("access_token", response.access_token);
+      localStorage.setItem(
+        "solanaWalletAddress",
+        response.user.solanaWalletAddress
+      );
+      localStorage.setItem(
+        "solanaWalletPrivateKey",
+        response.user.solanaWalletPrivateKey
+      );
       localStorage.setItem("user", JSON.stringify(response.user));
 
       // Favoriten synchronisieren und warten bis es fertig ist

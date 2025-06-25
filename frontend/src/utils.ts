@@ -287,6 +287,8 @@ export interface Profile {
   following?: string[];
   createdAt: Date;
   updatedAt: Date;
+  solanaWalletAddress?: string;
+  solanaWalletPrivateKey?: string;
   points?: number;
   id: string;
   email: string;

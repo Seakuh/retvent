@@ -29,6 +29,8 @@ export interface RegisterDtoV2 {
 export interface AuthResponse {
   access_token: string;
   user: {
+    solanaWalletPrivateKey: string;
+    solanaWalletAddress: string;
     id: string;
     email: string;
     username: string;
@@ -88,7 +90,7 @@ export class AuthService {
   async register(userData: RegisterDto): Promise<AuthResponse> {
     console.log(userData);
     try {
-      const response = await fetch(`${this.baseUrl}/v3/register`, {
+      const response = await fetch(`${this.baseUrl}/v4/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
