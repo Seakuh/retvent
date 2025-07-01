@@ -1,11 +1,21 @@
 .reel-tile-container {
-  width: 470px;
   max-width: 100%;
   margin: 0 auto;
   margin-bottom: 1rem;
 }
 
+.reel-tile-slider {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+  height: 500px;
+  padding: 1rem;
+}
+
 .reel-tile-grid {
+  width: 470px !important;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
@@ -23,7 +33,6 @@
 .reel-tile-item {
   position: relative;
   border-radius: 16px;
-  border: 0.5px solid var(--color-neon-blue);
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;

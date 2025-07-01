@@ -229,7 +229,7 @@ const ReelPage: React.FC = () => {
         <div className="lineup-container" onClick={handleLineupClick}>
           <div className="lineup-content">
             <h2 className="lineup-title">Lineup</h2>
-            <p className="no-lineup">Kein Lineup verfügbar</p>
+            <p className="no-lineup">no lineup</p>
           </div>
         </div>
       );

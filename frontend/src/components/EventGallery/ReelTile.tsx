@@ -5,9 +5,11 @@ import "./ReelTile.css";
 
 interface ReelTileProps {
   events: Event[];
+  direction?: "horizontal" | "vertical" | "grid";
 }
 
-const ReelTile: React.FC<ReelTileProps> = ({ events }) => {
+const ReelTile: React.FC<ReelTileProps> = ({ events, direction = "grid" }) => {
+  // 🎯 Moved default here
   const navigate = useNavigate();
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
@@ -40,7 +42,11 @@ const ReelTile: React.FC<ReelTileProps> = ({ events }) => {
 
   return (
     <div className="reel-tile-container">
-      <div className="reel-tile-grid">
+      <div
+        className={`${
+          direction === "grid" ? "reel-tile-grid" : "reel-tile-slider"
+        }`}
+      >
         {displayEvents.map((event, index) => {
           const imageUrl = event.imageUrl;
           const isLoaded = imageUrl ? loadedImages[imageUrl] : false;

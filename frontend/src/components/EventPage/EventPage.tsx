@@ -2,6 +2,7 @@ import { Heart } from "lucide-react";
 import { AdBanner } from "../../Advertisement/AdBanner/AdBanner";
 import { Event, FeedResponse } from "../../utils";
 import { EventGalleryII } from "../EventGallery/EventGalleryII";
+import ReelTile from "../EventGallery/ReelTile";
 import { ExploreFeed } from "../Feed/ExploreFeed";
 import "./EventPage.css";
 import { EventSection } from "./EventSection";
@@ -15,6 +16,7 @@ export const EventPage = ({
   return (
     <div className="event-page-container">
       <AdBanner />
+      <ReelTile events={favoriteEvents} direction="horizontal" />
       <ExploreFeed feedItemsResponse={feedItemsResponse} />
       {favoriteEvents.length === 0 && (
         <div className="no-liked-events">
