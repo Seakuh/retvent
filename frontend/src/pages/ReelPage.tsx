@@ -67,36 +67,15 @@ const ReelPage: React.FC = () => {
     fetchInitialEvents();
   }, [eventId]);
 
-  // Load more events when needed
-  const loadMoreEvents = useCallback(async () => {
-    if (isLoadingMore || !hasMore || !initialLoadDone) return;
-
-    setIsLoadingMore(true);
-    try {
-      const offset = page * 10;
-      const newEvents = await getReelEvents(eventId, offset, 10);
-
-      if (newEvents.length === 0) {
-        setHasMore(false);
-      } else {
-        // Check for duplicates based on Event ID
-        setEvents((prev) => {
-          const existingIds = new Set(prev.map((event) => event._id));
-          const uniqueNewEvents = newEvents.filter(
-            (event) => !existingIds.has(event._id)
-          );
-          return [...prev, ...uniqueNewEvents];
-        });
-        setPage((prev) => prev + 1);
-        setHasMore(newEvents.length === 10);
-      }
-    } catch (error) {
-      console.error("Error loading more events:", error);
-      setHasMore(false);
-    } finally {
-      setIsLoadingMore(false);
+  useEffect(() => {
+    const loadMoreEvents = async () => {
+      const newEvents = await getReelEvents(eventId, events.length, 10);
+      setEvents((prev) => [...prev, ...newEvents]);
+    };
+    if (currentIndex === events.length - 2) {
+      loadMoreEvents();
     }
-  }, [eventId, page, isLoadingMore, hasMore, initialLoadDone]);
+  }, [eventId, events.length, currentIndex]);
 
   const handleSwipe = useCallback(
     (direction: "up" | "down" | "left" | "right") => {
@@ -120,27 +99,6 @@ const ReelPage: React.FC = () => {
     },
     [currentIndex, events.length, isScrolling]
   );
-
-  // Separate useEffect for loading new events
-  useEffect(() => {
-    // Load more events when we're at the second-to-last event (for better UX)
-    if (
-      currentIndex >= events.length - 2 &&
-      hasMore &&
-      !isLoadingMore &&
-      initialLoadDone &&
-      events.length > 0
-    ) {
-      loadMoreEvents();
-    }
-  }, [
-    currentIndex,
-    events.length,
-    hasMore,
-    isLoadingMore,
-    initialLoadDone,
-    loadMoreEvents,
-  ]);
 
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd({ x: null, y: null });
