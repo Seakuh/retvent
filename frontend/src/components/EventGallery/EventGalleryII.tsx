@@ -87,7 +87,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
               })()}
             </h3> */}
         </div>
-        <ReelTile events={todayEvents} />
+        <ReelTile events={[...todayEvents, ...events].slice(0, 4)} />
         <div className="real-event-list-item-container">
           {todayEvents.map((event) => (
             <RealListItem key={getEventId(event)} event={event} />
