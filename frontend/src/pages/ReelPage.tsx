@@ -61,7 +61,7 @@ const ReelPage: React.FC = () => {
 
   useEffect(() => {
     const loadMoreEvents = async () => {
-      const newEvents = await getReelEvents(eventId, events.length, 10);
+      const newEvents = await getReelEvents("", events.length, 10);
       setEvents((prev) => [...prev, ...newEvents]);
     };
     if (currentIndex === events.length - 2) {
