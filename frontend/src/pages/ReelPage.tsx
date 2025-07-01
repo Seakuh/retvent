@@ -24,8 +24,6 @@ const ReelPage: React.FC = () => {
   const { eventId } = useParams<{ eventId?: string }>();
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLiked, setIsLiked] = useState<{ [key: string]: boolean }>({});
-  const [showSwipeIndicator, setShowSwipeIndicator] = useState(true);
   const [showLineup, setShowLineup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
@@ -44,6 +42,7 @@ const ReelPage: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -98,14 +97,6 @@ const ReelPage: React.FC = () => {
       setIsLoadingMore(false);
     }
   }, [eventId, page, isLoadingMore, hasMore, initialLoadDone]);
-
-  // Hide swipe indicator after 3 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSwipeIndicator(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleSwipe = useCallback(
     (direction: "up" | "down" | "left" | "right") => {
@@ -166,7 +157,7 @@ const ReelPage: React.FC = () => {
     });
   };
 
-  const onTouchEnd = () => {
+  const onTouchEnd = (e: React.TouchEvent) => {
     if (!touchStart.x || !touchStart.y || !touchEnd.x || !touchEnd.y) return;
 
     const distanceX = touchStart.x - touchEnd.x;
@@ -183,6 +174,8 @@ const ReelPage: React.FC = () => {
       if (distanceY > minSwipeDistance) {
         handleSwipe("up");
       } else if (distanceY < -minSwipeDistance) {
+        // Verhindere Browser-Refresh beim Swipen nach unten
+        e.preventDefault();
         handleSwipe("down");
       }
     }
@@ -260,6 +253,14 @@ const ReelPage: React.FC = () => {
     };
   }, [handleWheel, handleSwipe]);
 
+  // Bild geladen Callback
+  const handleImageLoad = (imageUrl: string) => {
+    setLoadedImages((prev) => ({ ...prev, [imageUrl]: true }));
+  };
+  const handleImageError = (imageUrl: string) => {
+    setLoadedImages((prev) => ({ ...prev, [imageUrl]: true }));
+  };
+
   if (!events.length && isLoading) {
     return <div className="reel-container">Lade Events...</div>;
   }
@@ -323,6 +324,8 @@ const ReelPage: React.FC = () => {
   };
 
   const renderReelItem = (event: Event, index: number) => {
+    const imageUrl = event.imageUrl;
+    const isLoaded = imageUrl ? loadedImages[imageUrl] : false;
     return (
       <div
         key={event.id}
@@ -331,20 +334,50 @@ const ReelPage: React.FC = () => {
       >
         {/* Event Bild als Hintergrund */}
         <div
-          className="reel-background"
-          style={{
-            backgroundImage: event.imageUrl
-              ? `url(https://img.event-scanner.com/insecure/rs:auto/plain/${event.imageUrl}@webp)`
-              : "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
-          }}
-        />
-
+          className="reel-background-wrapper"
+          style={{ position: "relative", width: "100%", height: "100%" }}
+        >
+          {imageUrl && (
+            <>
+              <img
+                src={`https://img.event-scanner.com/insecure/rs:auto/plain/${imageUrl}@webp`}
+                alt={event.title}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  zIndex: 1,
+                  opacity: isLoaded ? 1 : 0,
+                  transition: "opacity 0.5s",
+                }}
+                onLoad={() => handleImageLoad(imageUrl)}
+                onError={() => handleImageError(imageUrl)}
+                draggable={false}
+              />
+              {!isLoaded && (
+                <div className="reel-tile-loading">
+                  <div className="loading-spinner"></div>
+                </div>
+              )}
+            </>
+          )}
+          {!imageUrl && (
+            <div
+              className="reel-background"
+              style={{
+                backgroundImage:
+                  "linear-gradient(45deg, #667eea 0%, #764ba2 100%)",
+              }}
+            />
+          )}
+        </div>
         {/* Overlay für bessere Lesbarkeit */}
         <div className="reel-overlay" />
-
         {/* Lineup Overlay */}
         {showLineup && renderLineup(event)}
-
         {/* Event Info */}
         <div className="reel-content">
           {/* Host Info oben */}
@@ -372,7 +405,7 @@ const ReelPage: React.FC = () => {
           <div className="reel-actions">
             <button
               className={`action-btn like-btn ${
-                isLiked[event.id || ""] ? "liked" : ""
+                isFavorite(event._id!) ? "liked" : ""
               }`}
               onClick={() => handleLike(event._id!)}
             >
