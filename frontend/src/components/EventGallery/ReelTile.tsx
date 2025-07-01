@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Event, formatDate, getDaysUntilDate } from "../../utils";
 import "./ReelTile.css";
@@ -38,11 +38,6 @@ const ReelTile: React.FC<ReelTileProps> = ({ events }) => {
     }));
   };
 
-  // Debug: Log current loaded images
-  useEffect(() => {
-    console.log("📊 Currently loaded images:", loadedImages);
-  }, [loadedImages]);
-
   return (
     <div className="reel-tile-container">
       <div className="reel-tile-grid">
@@ -65,7 +60,7 @@ const ReelTile: React.FC<ReelTileProps> = ({ events }) => {
                     className={`reel-tile-image ${
                       isLoaded ? "loaded" : "loading"
                     }`}
-                    loading="eager"
+                    loading="lazy"
                     onLoad={() => handleImageLoad(imageUrl)}
                     onError={(e) => handleImageError(imageUrl, e)}
                   />

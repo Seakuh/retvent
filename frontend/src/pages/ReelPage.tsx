@@ -37,11 +37,7 @@ const ReelPage: React.FC = () => {
     y: number | null;
   }>({ x: null, y: null });
   const [isScrolling, setIsScrolling] = useState(false);
-  const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
   // Minimum swipe distance (in px)
@@ -54,12 +50,8 @@ const ReelPage: React.FC = () => {
       try {
         const initialEvents = await getReelEvents(eventId, 0, 10);
         setEvents(initialEvents);
-        setPage(1);
-        setHasMore(initialEvents.length === 10);
-        setInitialLoadDone(true);
       } catch (error) {
         console.error("Error loading events:", error);
-        setHasMore(false);
       } finally {
         setIsLoading(false);
       }
@@ -439,7 +431,7 @@ const ReelPage: React.FC = () => {
       </div>
 
       {/* Loading indicator for more events */}
-      {isLoadingMore && (
+      {isLoading && (
         <div className="loading-more-indicator">Loading more events...</div>
       )}
     </div>
