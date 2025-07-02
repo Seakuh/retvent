@@ -60,9 +60,12 @@ export const getReelEvents = async (
   limit: number = 10
 ): Promise<Event[]> => {
   try {
-    const response = await fetch(
-      `${API_URL}events/reel/${eventId || ""}?offset=${offset}&limit=${limit}`
-    );
+    // Konstruiere die URL korrekt - entweder mit eventId oder ohne
+    const baseUrl = eventId
+      ? `${API_URL}events/reel/${eventId}?offset=${offset}&limit=${limit}`
+      : `${API_URL}events/reel?offset=${offset}&limit=${limit}`;
+
+    const response = await fetch(baseUrl);
     const data = await response.json();
     return data as Event[];
   } catch (error) {
