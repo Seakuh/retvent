@@ -1,0 +1,24 @@
+.event-card-exchange {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.event-card-exchange-button {
+  background-color: #00ff00;
+  color: #fff;
+  border: none;
+  width: 100%;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.event-card-exchange-button:hover {
+  background-color: #3dff3d;
+}

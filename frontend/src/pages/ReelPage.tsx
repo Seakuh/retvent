@@ -211,6 +211,9 @@ const ReelPage: React.FC = () => {
     setLoadedImages((prev) => ({ ...prev, [imageUrl]: true }));
   };
 
+  console.log("Events:", events);
+  console.log("Current Index:", currentIndex);
+
   if (!events.length && isLoading) {
     return <div className="reel-container">Lade Events...</div>;
   }

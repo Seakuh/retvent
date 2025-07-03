@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { Event, getDaysUntilDate } from "../../utils";
 import { RealListItemProfileHeader } from "../EventGallery/Items/RealListItemProfileHeader";
+import { EventCardExchange } from "../Exchange/EventCardExchange";
 import "./EventCard.css";
 export const EventCard = ({ event }: { event: Event }) => {
   const navigate = useNavigate();
@@ -84,6 +85,7 @@ export const EventCard = ({ event }: { event: Event }) => {
         id={event.hostId ?? ""}
         location={event.city ?? "TBA"}
       />
+      <EventCardExchange event={event} />
       <div className="event-card-info-container">
         <h3 className="event-card-title">{event.title}</h3>
 
