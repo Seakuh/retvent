@@ -37,6 +37,7 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
             {startDate && (
               <div onClick={() => handleAddToCalendar}>
                 {new Date(startDate).toLocaleDateString("de-DE", {
+                  weekday: "short",
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
