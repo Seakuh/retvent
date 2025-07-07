@@ -16,6 +16,9 @@ const ReelTile: React.FC<ReelTileProps> = ({ events, direction = "grid" }) => {
   // Zeige maximal 4 Events an
   const displayEvents = events.slice(0, 4);
 
+  // 🎯 Check if we have fewer than 4 events
+  const hasFewEvents = displayEvents.length < 4;
+
   const handleImageLoad = (imageUrl: string) => {
     console.log(`🖼️ Image loaded: ${imageUrl}`); // Debug log
     setLoadedImages((prev) => ({
@@ -45,7 +48,7 @@ const ReelTile: React.FC<ReelTileProps> = ({ events, direction = "grid" }) => {
       <div
         className={`${
           direction === "grid" ? "reel-tile-grid" : "reel-tile-slider"
-        }`}
+        } ${direction === "grid" && hasFewEvents ? "few-events" : ""}`}
       >
         {displayEvents.map((event, index) => {
           const imageUrl = event.imageUrl;

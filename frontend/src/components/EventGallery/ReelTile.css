@@ -25,6 +25,11 @@
   padding: 1rem;
 }
 
+.reel-tile-grid.few-events {
+  grid-template-rows: 1fr;
+  height: 250px;
+}
+
 .reel-tile-date {
   font-size: 0.8rem;
   color: var(--color-neon-blue);
