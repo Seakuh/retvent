@@ -53,6 +53,7 @@ export class EventController {
     return this.eventService.getPopularEventsByCategory(category, limit);
   }
 
+  // get reel events
   @Get('reel/:eventId?')
   async getReelEvents(
     @Param('eventId') eventId?: string,
