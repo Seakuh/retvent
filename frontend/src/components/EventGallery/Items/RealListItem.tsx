@@ -33,6 +33,52 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
     // setIsLiked nicht nötig, da wir isFavorite vom Context nutzen
   };
 
+  const handleAddToCalendar = () => {
+    if (!event?.startDate) return;
+
+    const formatDate = (date: string) => {
+      return date.replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    };
+
+    const startDate = new Date(event.startDate);
+    const endDate = new Date(startDate);
+    endDate.setHours(endDate.getHours() + 5);
+
+    // Format: YYYYMMDDTHHMMSSZ
+    const formattedStart = formatDate(startDate.toISOString());
+    const formattedEnd = formatDate(endDate.toISOString());
+
+    const description =
+      `${event.title} | \nhttps://event-scanner.com/event/${event.id}\n\n` +
+      "\n-----------------------\nDescription\n" +
+      event.description +
+      " " +
+      (event.lineup
+        ? "\n-----------------------\nLineup:\n" +
+          event.lineup.map((artist) => artist.name).join("\n")
+        : "");
+
+    let location = "";
+    if (event.address) {
+      location =
+        event.address.city +
+        " " +
+        event.address.street +
+        " " +
+        event.address.houseNumber;
+    } else if (event.city) {
+      location = event.city;
+    }
+
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+      event.title
+    )}&dates=${formattedStart}/${formattedEnd}&details=${encodeURIComponent(
+      description
+    )}&location=${encodeURIComponent(location)}`;
+
+    window.open(googleCalendarUrl, "_blank");
+  };
+
   const shareEventId = (
     e: React.MouseEvent<HTMLDivElement>,
     eventId: string
@@ -199,7 +245,11 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                     }
                   />
                 )}
-                <CalendarPlus size={20} color={"white"} />
+                <CalendarPlus
+                  size={20}
+                  color={"white"}
+                  onClick={handleAddToCalendar}
+                />
               </div>
             </div>
             <div className="event-meta-container-left">
