@@ -28,8 +28,8 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
   return (
     <div className="event-basic-info">
       {/* <h2 className="section-headline">Date & Time</h2> */}
-      <div
-        className="info-item calendar-text-container"
+      <button
+        className="button-17 info-item calendar-text-container"
         onClick={handleAddToCalendar}
       >
         <div className="info-text">
@@ -50,10 +50,10 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
         <div className="map-plus-calendar-container">
           <Calendar className="navigation-info-icon h-5 w-5" />
         </div>
-      </div>
+      </button>
 
-      <div
-        className="info-item location-text"
+      <button
+        className="button-17 info-item location-text"
         onClick={() => {
           // Baue ein Array der vorhandenen Teile der Adresse
           const parts = [
@@ -95,7 +95,7 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
         <div className="map-plus-calendar-container">
           <MapPin className="navigation-info-icon h-5 w-5" />
         </div>
-      </div>
+      </button>
       {/* <hr className="border-gray-700" /> */}
       {/* <div className="event-basic-info-description"> */}
       {/* <div className="event-description-text">{description}</div> */}
