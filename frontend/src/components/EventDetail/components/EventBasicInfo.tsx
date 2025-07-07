@@ -1,4 +1,4 @@
-import { CalendarPlus, MapPinned } from "lucide-react";
+import { CalendarPlus, MapPin } from "lucide-react";
 
 interface address {
   city?: string;
@@ -52,30 +52,33 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
         </div>
       </div>
 
-      <div className="info-item location-text" onClick={handleAddToCalendar}>
+      <div
+        className="info-item location-text"
+        onClick={() => {
+          // Baue ein Array der vorhandenen Teile der Adresse
+          const parts = [
+            address?.street,
+            address?.houseNumber,
+            address?.city,
+          ].filter(Boolean); // entfernt undefined/null/leere Strings
+
+          const searchQuery = parts.length > 0 ? parts.join(", ") : city || "";
+
+          if (searchQuery) {
+            window.open(
+              `https://www.google.com/maps?q=${encodeURIComponent(
+                searchQuery
+              )}`,
+              "_blank"
+            );
+          } else {
+            alert("Keine Adresse verfügbar für die Maps-Suche");
+          }
+        }}
+      >
         <div className="info-text">
           <div className="map-plus-calendar-container">
-            <MapPinned
-              onClick={() => {
-                if (
-                  address &&
-                  address.street &&
-                  address.houseNumber &&
-                  address.city
-                ) {
-                  window.open(
-                    `https://www.google.com/maps?q=${address.street}, ${address.houseNumber}, ${address.city}`,
-                    "_blank"
-                  );
-                } else if (city) {
-                  window.open(
-                    `https://www.google.com/maps?q=${city}`,
-                    "_blank"
-                  );
-                }
-              }}
-              className="navigation-info-icon h-5 w-5"
-            />
+            <MapPin className="navigation-info-icon h-5 w-5" />
           </div>
           <div>
             {city ? (
