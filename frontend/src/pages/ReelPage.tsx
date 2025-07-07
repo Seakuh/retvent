@@ -39,6 +39,7 @@ const ReelPage: React.FC = () => {
   const [isScrolling, setIsScrolling] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -59,21 +60,30 @@ const ReelPage: React.FC = () => {
     fetchInitialEvents();
   }, [eventId]);
 
+  // Load more events when approaching the end
   useEffect(() => {
     const loadMoreEvents = async () => {
-      const newEvents = await getReelEvents("", events.length, 10);
-      setEvents((prev) => [...prev, ...newEvents]);
+      if (currentIndex >= events.length - 3 && !isLoading) {
+        setIsLoading(true);
+        try {
+          const newEvents = await getReelEvents("", events.length, 10);
+          setEvents((prev) => [...prev, ...newEvents]);
+        } catch (error) {
+          console.error("Error loading more events:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
     };
-    if (currentIndex === events.length - 2) {
-      loadMoreEvents();
-    }
-  }, [eventId, events.length, currentIndex]);
+    loadMoreEvents();
+  }, [currentIndex, events.length, isLoading]);
 
   const handleSwipe = useCallback(
     (direction: "up" | "down" | "left" | "right") => {
-      if (isScrolling) return;
+      if (isScrolling || isTransitioning) return;
 
       setIsScrolling(true);
+      setIsTransitioning(true);
 
       if (direction === "up" && currentIndex < events.length - 1) {
         setCurrentIndex((prev) => prev + 1);
@@ -87,9 +97,12 @@ const ReelPage: React.FC = () => {
         setShowLineup(false);
       }
 
-      setTimeout(() => setIsScrolling(false), 300);
+      setTimeout(() => {
+        setIsScrolling(false);
+        setIsTransitioning(false);
+      }, 300);
     },
-    [currentIndex, events.length, isScrolling]
+    [currentIndex, events.length, isScrolling, isTransitioning]
   );
 
   const onTouchStart = (e: React.TouchEvent) => {
@@ -136,7 +149,7 @@ const ReelPage: React.FC = () => {
     (e: WheelEvent) => {
       e.preventDefault();
 
-      if (isScrolling) return;
+      if (isScrolling || isTransitioning) return;
 
       if (e.deltaY > 0) {
         // Scroll nach unten = Event nach oben
@@ -146,7 +159,7 @@ const ReelPage: React.FC = () => {
         handleSwipe("down");
       }
     },
-    [handleSwipe, isScrolling]
+    [handleSwipe, isScrolling, isTransitioning]
   );
 
   const handleLike = (eventId: string) => {
@@ -273,33 +286,21 @@ const ReelPage: React.FC = () => {
     setShowLineup(!showLineup);
   };
 
-  const renderReelItem = (event: Event, index: number) => {
+  const renderReelItem = (event: Event) => {
     const imageUrl = event.imageUrl;
     const isLoaded = imageUrl ? loadedImages[imageUrl] : false;
+
     return (
-      <div
-        key={event.id}
-        className="reel-item"
-        style={{ top: `${index * 100}vh` }}
-      >
+      <div className="reel-item">
         {/* Event Bild als Hintergrund */}
-        <div
-          className="reel-background-wrapper"
-          style={{ position: "relative", width: "100%", height: "100%" }}
-        >
+        <div className="reel-background-wrapper">
           {imageUrl && (
             <>
               <img
                 src={`https://img.event-scanner.com/insecure/rs:auto/plain/${imageUrl}@webp`}
                 alt={event.title}
+                className="reel-background-image"
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  zIndex: 1,
                   opacity: isLoaded ? 1 : 0,
                   transition: "opacity 0.5s",
                 }}
@@ -324,10 +325,13 @@ const ReelPage: React.FC = () => {
             />
           )}
         </div>
+
         {/* Overlay für bessere Lesbarkeit */}
         <div className="reel-overlay" />
+
         {/* Lineup Overlay */}
         {showLineup && renderLineup(event)}
+
         {/* Event Info */}
         <div className="reel-content">
           {/* Host Info oben */}
@@ -351,6 +355,7 @@ const ReelPage: React.FC = () => {
               </span>
             </div>
           </div>
+
           {/* Action Buttons rechts */}
           <div className="reel-actions">
             <button
@@ -413,6 +418,8 @@ const ReelPage: React.FC = () => {
     );
   };
 
+  const currentEvent = events[currentIndex];
+
   return (
     <div className="reel-container" ref={containerRef}>
       <button onClick={handleBack} className="back-button">
@@ -421,13 +428,12 @@ const ReelPage: React.FC = () => {
 
       <div
         className="reel-stack"
-        style={{ transform: `translateY(-${currentIndex * 100}vh)` }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        {/* All events are rendered, each at its position */}
-        {events.map((event, index) => renderReelItem(event, index))}
+        {/* Only render the current event */}
+        {currentEvent && renderReelItem(currentEvent)}
       </div>
 
       {/* Loading indicator for more events */}
