@@ -169,6 +169,10 @@
   margin: 0;
 }
 
+.event-date.past {
+  color: #ff69b4;
+}
+
 .reel-actions {
   position: absolute;
   right: 2px;

@@ -35,6 +35,10 @@
   color: var(--color-neon-blue);
 }
 
+.reel-tile-date.past {
+  color: #ff69b4;
+}
+
 .reel-tile-item {
   position: relative;
   border-radius: 16px;

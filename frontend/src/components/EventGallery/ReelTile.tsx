@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Event, formatDate, getDaysUntilDate } from "../../utils";
+import { Event } from "../../utils";
 import "./ReelTile.css";
 
 interface ReelTileProps {
@@ -41,6 +41,32 @@ const ReelTile: React.FC<ReelTileProps> = ({ events, direction = "grid" }) => {
       ...prev,
       [imageUrl]: true,
     }));
+  };
+
+  const getEventDateInfo = (startDate?: Date | string) => {
+    if (!startDate) return { text: "no date", isPast: false };
+
+    const eventDate = new Date(startDate);
+    const today = new Date();
+    const diffTime = eventDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    let text: string;
+    const isPast = diffDays < 0;
+
+    if (diffDays === 0) {
+      text = "today";
+    } else if (diffDays === 1) {
+      text = "tomorrow";
+    } else if (diffDays === -1) {
+      text = "yesterday";
+    } else if (diffDays > 0) {
+      text = `in ${diffDays} days`;
+    } else {
+      text = `${Math.abs(diffDays)} days ago`;
+    }
+
+    return { text, isPast };
   };
 
   return (
@@ -96,19 +122,18 @@ const ReelTile: React.FC<ReelTileProps> = ({ events, direction = "grid" }) => {
                 <div className="reel-tile-overlay">
                   <div className="reel-tile-content">
                     <h3 className="reel-tile-title">{event.title}</h3>
-                    <p className="reel-tile-date">
-                      {getDaysUntilDate(
-                        formatDate(event.startDate as string)
-                      ) === 0
-                        ? "today"
-                        : getDaysUntilDate(
-                            formatDate(event.startDate as string)
-                          ) === 1
-                        ? "tomorrow"
-                        : `in ${getDaysUntilDate(
-                            formatDate(event.startDate as string)
-                          )} days`}
-                    </p>
+                    {(() => {
+                      const dateInfo = getEventDateInfo(event.startDate);
+                      return (
+                        <p
+                          className={`reel-tile-date ${
+                            dateInfo.isPast ? "past" : ""
+                          }`}
+                        >
+                          {dateInfo.text}
+                        </p>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>

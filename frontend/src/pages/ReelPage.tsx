@@ -170,13 +170,30 @@ const ReelPage: React.FC = () => {
     }
   };
 
-  const getDaysUntilEvent = (startDate?: Date | string) => {
-    if (!startDate) return 0;
+  const getEventDateInfo = (startDate?: Date | string) => {
+    if (!startDate) return { text: "no date", isPast: false };
+
     const eventDate = new Date(startDate);
     const today = new Date();
     const diffTime = eventDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+
+    let text: string;
+    const isPast = diffDays < 0;
+
+    if (diffDays === 0) {
+      text = "today";
+    } else if (diffDays === 1) {
+      text = "tomorrow";
+    } else if (diffDays === -1) {
+      text = "yesterday";
+    } else if (diffDays > 0) {
+      text = `in ${diffDays} days`;
+    } else {
+      text = `${Math.abs(diffDays)} days ago`;
+    }
+
+    return { text, isPast };
   };
 
   // Event Listeners Setup
@@ -406,9 +423,16 @@ const ReelPage: React.FC = () => {
             <div className="event-info">
               <h3 className="event-title">{event.title}</h3>
               <div className="event-date-facts">
-                <p className="event-date">
-                  in {getDaysUntilEvent(event.startDate)} days
-                </p>
+                {(() => {
+                  const dateInfo = getEventDateInfo(event.startDate);
+                  return (
+                    <p
+                      className={`event-date ${dateInfo.isPast ? "past" : ""}`}
+                    >
+                      {dateInfo.text}
+                    </p>
+                  );
+                })()}
                 <p className="event-views-reel">{event.views} views</p>
               </div>
             </div>
