@@ -169,14 +169,14 @@
       cursor: pointer;
       position: fixed;
       top: 2rem;
-      left: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
       z-index: 10;
+      left: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
     }
     
   
   .back-button:hover {
     transform: translateY(-2px);
-    background: var(--color-neon-blue);
+    color: white;
     box-shadow: 0 4px 12px rgba(var(--color-neon-blue-rgb), 0.3);
   }
   

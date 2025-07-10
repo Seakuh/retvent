@@ -1,6 +1,6 @@
 import { ChevronLeft } from "lucide-react";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
 import type { Profile, UserPreferences } from "../../../utils";
 import {
@@ -247,7 +247,7 @@ export const Me: React.FC = () => {
   }
 
   if (!me) {
-    return <div className="me-container">Profile not found</div>;
+    return <Navigate to="/login" />;
   }
 
   return (
