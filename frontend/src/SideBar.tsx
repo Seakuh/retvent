@@ -1,4 +1,5 @@
 import {
+  Compass,
   Grid3X3,
   Info,
   LogIn,
@@ -59,6 +60,14 @@ export const SideBar = ({
             >
               <Search size={20} />
               <span className="hidden md:inline">Search</span>
+            </button>
+
+            <button
+              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              onClick={goStart}
+            >
+              <Compass size={20} />
+              <span className="hidden md:inline">Explore</span>
             </button>
 
             <button
