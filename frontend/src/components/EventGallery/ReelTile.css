@@ -13,6 +13,12 @@
   padding: 1rem;
 }
 
+@media (max-width: 768px) {
+  .reel-tile-slider {
+    height: 250px;
+  }
+}
+
 .reel-tile-grid {
   width: 470px !important;
   margin: 0 auto;
