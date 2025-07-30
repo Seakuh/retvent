@@ -25,8 +25,8 @@ export class LocationDocument extends Document {
     type: {
       instagram: String,
       facebook: String,
-      twitter: String
-    }
+      twitter: String,
+    },
   })
   socialMediaLinks?: {
     instagram?: string;
@@ -37,8 +37,8 @@ export class LocationDocument extends Document {
   @Prop({
     type: {
       latitude: Number,
-      longitude: Number
-    }
+      longitude: Number,
+    },
   })
   coordinates?: {
     latitude: number;
@@ -61,4 +61,4 @@ export class LocationDocument extends Document {
   likeIds?: string[];
 }
 
-export const LocationSchema = SchemaFactory.createForClass(LocationDocument); 
+export const LocationSchema = SchemaFactory.createForClass(LocationDocument);

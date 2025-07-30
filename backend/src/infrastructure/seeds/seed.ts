@@ -9,7 +9,7 @@
 // async function bootstrap() {
 //   try {
 //     const app = await NestFactory.createApplicationContext(AppModule);
-    
+
 //     console.log('Getting repositories...');
 //     const locationRepo = app.get<ILocationRepository>('ILocationRepository');
 //     const eventRepo = app.get<IEventRepository>('IEventRepository');
@@ -66,4 +66,4 @@
 //   }
 // }
 
-// bootstrap(); 
+// bootstrap();

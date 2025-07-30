@@ -43,7 +43,7 @@ export async function setupTestApp(): Promise<TestContext> {
     .post('/auth/login')
     .send({
       email: testEmail,
-      password: 'password123'
+      password: 'password123',
     });
 
   const authToken = loginResponse.body.access_token;
@@ -53,6 +53,6 @@ export async function setupTestApp(): Promise<TestContext> {
     eventService,
     authToken,
     testUsername,
-    testUserId
+    testUserId,
   };
-} 
+}

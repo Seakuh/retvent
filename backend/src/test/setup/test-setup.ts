@@ -15,7 +15,7 @@ export async function clearTestDB() {
     await Promise.all(
       Object.values(collections).map(async (collection) => {
         await collection.deleteMany({}); // Clear each collection
-      })
+      }),
     );
     console.log('Test database cleared'); // Debug log
   }
@@ -24,4 +24,4 @@ export async function clearTestDB() {
 export async function closeTestDB() {
   await mongoose.disconnect();
   await mongod.stop();
-} 
+}

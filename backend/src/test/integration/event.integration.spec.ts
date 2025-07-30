@@ -18,7 +18,6 @@ describe('EventController (Integration)', () => {
   let jwtService: JwtService;
   let testUserId: string;
 
-
   beforeAll(async () => {
     await setupTestDB();
 
@@ -36,10 +35,10 @@ describe('EventController (Integration)', () => {
 
   beforeEach(async () => {
     await clearTestDB();
-    
+
     testUsername = `testuser${Date.now()}`;
     const testEmail = `test${Date.now()}@example.com`;
-    
+
     // Register user
     const registerResponse = await request(app.getHttpServer())
       .post('/auth/register')
@@ -49,18 +48,18 @@ describe('EventController (Integration)', () => {
         password: 'password123',
       });
 
-    console.log('Register response:', registerResponse.body);  // Debug log
-    testUserId = registerResponse.body.user.id;  // Make sure we get the ID from the correct place
+    console.log('Register response:', registerResponse.body); // Debug log
+    testUserId = registerResponse.body.user.id; // Make sure we get the ID from the correct place
 
     // Login
     const loginResponse = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
         email: testEmail,
-        password: 'password123'
+        password: 'password123',
       });
 
-    console.log('Login response:', loginResponse.body);  // Debug log
+    console.log('Login response:', loginResponse.body); // Debug log
     authToken = loginResponse.body.access_token;
 
     // Create test events with username
@@ -68,14 +67,14 @@ describe('EventController (Integration)', () => {
       title: 'Test Event 1',
       startDate: new Date(),
       startTime: '19:00',
-      hostUsername: testUsername  // Use username instead of ID
+      hostUsername: testUsername, // Use username instead of ID
     });
 
     await eventService.createEvent({
       title: 'Test Event 2',
       startDate: new Date(),
       startTime: '20:00',
-      hostUsername: testUsername  // Use username instead of ID
+      hostUsername: testUsername, // Use username instead of ID
     });
   });
 
@@ -91,7 +90,7 @@ describe('EventController (Integration)', () => {
         .send({
           title: 'Minimal Test Event',
           startDate: '2024-03-20',
-          startTime: '20:00'
+          startTime: '20:00',
         })
         .expect(201);
 
@@ -116,12 +115,12 @@ describe('EventController (Integration)', () => {
           startTime: '19:30',
           locationId: 'location123',
           category: 'music',
-          price: "15.99",
+          price: '15.99',
         })
         .expect(201);
 
       expect(response.body).toHaveProperty('id');
-      expect(response.body.price).toBe("15.99");
+      expect(response.body.price).toBe('15.99');
       expect(response.body.category).toBe('music');
       expect(response.body.hostId).toBe(testUserId);
     });
@@ -141,20 +140,26 @@ describe('EventController (Integration)', () => {
         .field('price', '49.99')
         .field('hostUsername', testUsername)
         .field('ticketLink', 'https://tickets.example.com/summer-fest')
-        .field('lineup', JSON.stringify([
-          { name: 'DJ Cool', role: 'Headliner', startTime: '22:00' },
-          { name: 'Band XYZ', role: 'Support', startTime: '20:00' }
-        ]))
-        .field('socialMediaLinks', JSON.stringify({
-          instagram: 'https://instagram.com/summerfest',
-          facebook: 'https://facebook.com/summerfest'
-        }))
+        .field(
+          'lineup',
+          JSON.stringify([
+            { name: 'DJ Cool', role: 'Headliner', startTime: '22:00' },
+            { name: 'Band XYZ', role: 'Support', startTime: '20:00' },
+          ]),
+        )
+        .field(
+          'socialMediaLinks',
+          JSON.stringify({
+            instagram: 'https://instagram.com/summerfest',
+            facebook: 'https://facebook.com/summerfest',
+          }),
+        )
         .field('tags', JSON.stringify(['musik', 'sommer', 'festival']))
         .expect(201);
 
       expect(response.body).toHaveProperty('id');
       expect(response.body).toHaveProperty('imageUrl');
-      expect(response.body.price).toBe("49.99");
+      expect(response.body.price).toBe('49.99');
       expect(response.body.category).toBe('festival');
       expect(response.body.hostId).toBe(testUserId);
       expect(response.body.lineup).toBeDefined();
@@ -180,11 +185,13 @@ describe('EventController (Integration)', () => {
 
       expect(response.body).toHaveProperty('id');
       expect(response.body).toHaveProperty('imageUrl');
-      expect(response.body.ticketLink).toBe('https://tickets.example.com/concert');
+      expect(response.body.ticketLink).toBe(
+        'https://tickets.example.com/concert',
+      );
       expect(response.body.hostUsername).toBe(testUsername);
       expect(new Date(response.body.startDate)).toBeInstanceOf(Date);
       expect(response.body.title).toBe('Concert with Tickets');
-      expect(response.body.price).toBe("29.99");
+      expect(response.body.price).toBe('29.99');
       expect(response.body.category).toBe('concert');
     });
 
@@ -197,7 +204,9 @@ describe('EventController (Integration)', () => {
         .field('startTime', '20:00')
         .expect(400);
 
-      expect(response.body.message).toContain(["startDate must be a valid ISO 8601 date string"]);
+      expect(response.body.message).toContain([
+        'startDate must be a valid ISO 8601 date string',
+      ]);
     });
   });
 
@@ -261,4 +270,4 @@ describe('EventController (Integration)', () => {
     await closeTestDB();
     await app.close();
   });
-}); 
+});

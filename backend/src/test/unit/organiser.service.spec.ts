@@ -48,4 +48,4 @@ describe('OrganiserService', () => {
       expect(mockMongoOrganiserRepository.create).toHaveBeenCalledWith(dto);
     });
   });
-}); 
+});

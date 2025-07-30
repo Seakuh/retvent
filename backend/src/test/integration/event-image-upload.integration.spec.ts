@@ -22,7 +22,7 @@ describe('EventService - Image Upload', () => {
     destination: '',
     filename: '',
     path: '',
-    stream: null
+    stream: null,
   };
 
   beforeEach(async () => {
@@ -32,7 +32,9 @@ describe('EventService - Image Upload', () => {
         {
           provide: ImageService,
           useValue: {
-            uploadImage: jest.fn().mockResolvedValue('https://example.com/image.jpg'),
+            uploadImage: jest
+              .fn()
+              .mockResolvedValue('https://example.com/image.jpg'),
           },
         },
         {
@@ -40,7 +42,7 @@ describe('EventService - Image Upload', () => {
           useValue: {
             getReverseGeocoding: jest.fn().mockResolvedValue({
               city: 'Berlin',
-              formattedAddress: 'Sample Street 123, Berlin'
+              formattedAddress: 'Sample Street 123, Berlin',
             }),
           },
         },
@@ -49,14 +51,18 @@ describe('EventService - Image Upload', () => {
           useValue: {
             extractEventFromFlyer: jest.fn().mockResolvedValue({
               title: 'Test Event',
-              description: 'Test Description'
+              description: 'Test Description',
             }),
           },
         },
         {
           provide: MongoEventRepository,
           useValue: {
-            create: jest.fn().mockImplementation((data) => Promise.resolve({ id: '123', ...data })),
+            create: jest
+              .fn()
+              .mockImplementation((data) =>
+                Promise.resolve({ id: '123', ...data }),
+              ),
           },
         },
       ],
@@ -70,12 +76,19 @@ describe('EventService - Image Upload', () => {
   });
 
   it('should process image upload with coordinates successfully', async () => {
-    const result = await service.processEventImageUpload(mockFile, 52.520008, 13.404954);
+    const result = await service.processEventImageUpload(
+      mockFile,
+      52.520008,
+      13.404954,
+    );
 
     expect(result).toBeDefined();
     expect(result.imageUrl).toBe('https://example.com/image.jpg');
     expect(result.location.city).toBe('Berlin');
-    expect(result.location.coordinates).toEqual({ lat: 52.520008, lng: 13.404954 });
+    expect(result.location.coordinates).toEqual({
+      lat: 52.520008,
+      lng: 13.404954,
+    });
   });
 
   it('should handle image upload without coordinates', async () => {
@@ -87,9 +100,15 @@ describe('EventService - Image Upload', () => {
   });
 
   it('should handle failed ChatGPT extraction gracefully', async () => {
-    jest.spyOn(chatGptService, 'extractEventFromFlyer').mockRejectedValue(new Error('API Error'));
+    jest
+      .spyOn(chatGptService, 'extractEventFromFlyer')
+      .mockRejectedValue(new Error('API Error'));
 
-    const result = await service.processEventImageUpload(mockFile, 52.520008, 13.404954);
+    const result = await service.processEventImageUpload(
+      mockFile,
+      52.520008,
+      13.404954,
+    );
 
     expect(result).toBeDefined();
     expect(result.imageUrl).toBe('https://example.com/image.jpg');
@@ -97,12 +116,21 @@ describe('EventService - Image Upload', () => {
   });
 
   it('should handle failed geolocation lookup gracefully', async () => {
-    jest.spyOn(geoService, 'getReverseGeocoding').mockRejectedValue(new Error('Geo API Error'));
+    jest
+      .spyOn(geoService, 'getReverseGeocoding')
+      .mockRejectedValue(new Error('Geo API Error'));
 
-    const result = await service.processEventImageUpload(mockFile, 52.520008, 13.404954);
+    const result = await service.processEventImageUpload(
+      mockFile,
+      52.520008,
+      13.404954,
+    );
 
     expect(result).toBeDefined();
-    expect(result.location.coordinates).toEqual({ lat: 52.520008, lng: 13.404954 });
+    expect(result.location.coordinates).toEqual({
+      lat: 52.520008,
+      lng: 13.404954,
+    });
     expect(result.location.city).toBeUndefined();
   });
-}); 
+});

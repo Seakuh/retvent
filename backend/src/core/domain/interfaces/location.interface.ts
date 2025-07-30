@@ -21,4 +21,4 @@ export interface ILocation {
   eventsCount: number;
   createdAt: Date;
   updatedAt: Date;
-} 
+}

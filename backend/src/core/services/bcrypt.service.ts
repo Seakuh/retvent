@@ -12,4 +12,4 @@ export class BcryptService {
   async compare(password: string, hash: string): Promise<boolean> {
     return bcrypt.compare(password, hash);
   }
-} 
+}

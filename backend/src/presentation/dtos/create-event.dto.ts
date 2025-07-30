@@ -1,6 +1,13 @@
-import { 
-  IsString, IsOptional, IsArray, IsUrl, ValidateNested, 
-  IsNumber, Matches, IsDateString, IsObject 
+import {
+  IsString,
+  IsOptional,
+  IsArray,
+  IsUrl,
+  ValidateNested,
+  IsNumber,
+  Matches,
+  IsDateString,
+  IsObject,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -61,7 +68,7 @@ export class CreateEventDto {
 
   @IsString()
   @Matches(/^\d{2}:\d{2}$/, {
-    message: 'startTime must be in format HH:mm'
+    message: 'startTime must be in format HH:mm',
   })
   startTime: string;
 

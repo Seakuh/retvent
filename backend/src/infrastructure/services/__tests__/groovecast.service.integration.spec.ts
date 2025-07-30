@@ -20,13 +20,13 @@ describe('GroovecastService Integration', () => {
       mimetype: 'image/jpeg',
       buffer: Buffer.from('test'),
       size: 1024,
-    } as Express.Multer.File
+    } as Express.Multer.File,
   };
 
   const mockGrooveCast: GrooveCast = {
     soundcloudUrl: 'https://soundcloud.com/test',
     season: 1,
-    imageUrl: 'https://storage.com/test.jpg'
+    imageUrl: 'https://storage.com/test.jpg',
   };
 
   beforeEach(async () => {
@@ -44,14 +44,18 @@ describe('GroovecastService Integration', () => {
         {
           provide: ImageService,
           useValue: {
-            uploadImage: jest.fn().mockResolvedValue('https://storage.com/test.jpg'),
+            uploadImage: jest
+              .fn()
+              .mockResolvedValue('https://storage.com/test.jpg'),
           },
         },
       ],
     }).compile();
 
     service = module.get<GroovecastService>(GroovecastService);
-    repository = module.get<MongoGrooveCastRepository>(MongoGrooveCastRepository);
+    repository = module.get<MongoGrooveCastRepository>(
+      MongoGrooveCastRepository,
+    );
     imageService = module.get<ImageService>(ImageService);
   });
 
@@ -81,6 +85,8 @@ describe('GroovecastService Integration', () => {
   it('should handle errors during creation', async () => {
     jest.spyOn(imageService, 'uploadImage').mockRejectedValueOnce(new Error());
 
-    await expect(service.create(mockCreateDto, mockCreateDto.image)).rejects.toThrow('Failed to create groovecast');
+    await expect(
+      service.create(mockCreateDto, mockCreateDto.image),
+    ).rejects.toThrow('Failed to create groovecast');
   });
-}); 
+});

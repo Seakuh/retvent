@@ -1,11 +1,11 @@
 export class EventUpdateHelper {
   static getChangedFields(original: any, updates: any): Partial<any> {
     const changes: Partial<any> = {};
-    
-    Object.keys(updates).forEach(key => {
+
+    Object.keys(updates).forEach((key) => {
       // Skip if field is undefined
       if (updates[key] === undefined) return;
-      
+
       // Deep comparison for objects
       if (typeof updates[key] === 'object' && updates[key] !== null) {
         if (JSON.stringify(updates[key]) !== JSON.stringify(original[key])) {
@@ -23,4 +23,4 @@ export class EventUpdateHelper {
 
     return changes;
   }
-} 
+}

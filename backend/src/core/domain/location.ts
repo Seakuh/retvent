@@ -5,7 +5,7 @@ export class Location implements ILocation {
   name: string;
   description: string;
   logoUrl: string;
-  
+
   // Kontakt & Social Media
   website?: string;
   whatsappGroupLink?: string;
@@ -15,19 +15,19 @@ export class Location implements ILocation {
     facebook?: string;
     twitter?: string;
   };
-  
+
   // GPS
   coordinates: {
     latitude: number;
     longitude: number;
   };
   address: string;
-  
+
   // Beziehungen als IDs
   eventIds: string[] = [];
   followerIds: string[] = [];
   likeIds: string[] = [];
-  
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
@@ -39,4 +39,4 @@ export class Location implements ILocation {
   constructor(data: Partial<Location>) {
     Object.assign(this, data);
   }
-} 
+}

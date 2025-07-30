@@ -37,14 +37,14 @@ export class MeetupService implements EventServicePort {
 
     const variables = {
       query: params.query,
-      location: params.location || "global",
+      location: params.location || 'global',
     };
 
     try {
       const response = await axios.post(
         this.MEETUP_API_URL,
         { query, variables },
-        { headers: { Authorization: `Bearer ${this.MEETUP_API_KEY}` } }
+        { headers: { Authorization: `Bearer ${this.MEETUP_API_KEY}` } },
       );
 
       const eventsData = response.data.data.findEvents.edges || [];
@@ -64,9 +64,8 @@ export class MeetupService implements EventServicePort {
           ticketUrl: event.eventUrl,
         };
       });
-
     } catch (error) {
-      console.error("Error fetching events from Meetup:", error);
+      console.error('Error fetching events from Meetup:', error);
       return [];
     }
   }

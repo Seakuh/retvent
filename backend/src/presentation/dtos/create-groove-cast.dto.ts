@@ -1,5 +1,5 @@
 export class CreateGrooveCastDto {
-    soundcloudUrl: string;
-    season: number;
-    image: Express.Multer.File;
+  soundcloudUrl: string;
+  season: number;
+  image: Express.Multer.File;
 }

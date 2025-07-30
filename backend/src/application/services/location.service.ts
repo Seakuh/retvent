@@ -1,13 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { MongoLocationRepository } from '../../infrastructure/repositories/mongodb/location.repository';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
-import { CreateLocationDto, UpdateLocationDto } from '../../core/dto/location.dto';
+import {
+  CreateLocationDto,
+  UpdateLocationDto,
+} from '../../core/dto/location.dto';
 
 @Injectable()
 export class LocationService {
   constructor(
     private readonly locationRepository: MongoLocationRepository,
-    private readonly eventRepository: MongoEventRepository
+    private readonly eventRepository: MongoEventRepository,
   ) {}
 
   async findAll() {
@@ -25,11 +28,15 @@ export class LocationService {
   async createLocation(createLocationDto: CreateLocationDto, userId: string) {
     return this.locationRepository.create({
       ...createLocationDto,
-      ownerId: userId
+      ownerId: userId,
     });
   }
 
-  async updateLocation(id: string, updateLocationDto: UpdateLocationDto, userId: string) {
+  async updateLocation(
+    id: string,
+    updateLocationDto: UpdateLocationDto,
+    userId: string,
+  ) {
     const location = await this.locationRepository.findById(id);
     if (!location) {
       throw new NotFoundException('Location not found');
@@ -54,7 +61,7 @@ export class LocationService {
 
   async getFollowedLocationsEvents(userId: string) {
     const locations = await this.locationRepository.findByFollowerId(userId);
-    const locationIds = locations.map(location => location.id);
+    const locationIds = locations.map((location) => location.id);
     return this.eventRepository.findByLocationIds(locationIds);
   }
-} 
+}

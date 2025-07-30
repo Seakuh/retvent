@@ -13,6 +13,8 @@ import { MessageService } from 'src/application/services/message.service';
 import { ProfileService } from 'src/application/services/profile.service';
 import { MessageSchema } from 'src/core/domain/message.schema';
 import { ArtistController } from 'src/presentation/controllers/artist.controller';
+import { SolanaController } from 'src/presentation/controllers/solana.controller';
+import { SolanaService } from 'src/presentation/controllers/solana.service';
 import { CommentController } from 'src/presentation/controllers/comment.controller';
 import { FeedController } from 'src/presentation/controllers/feed.controller';
 import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
@@ -100,6 +102,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MessageController,
     FeedController,
     ArtistController,
+    SolanaController,
   ],
   providers: [
     EventService,
@@ -133,6 +136,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     BcryptService,
     UserService,
     GroovecastService,
+    SolanaService,
     {
       provide: 'IEventRepository',
       useClass: MongoEventRepository,
@@ -204,6 +208,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     CommentService,
     ProfileService,
     MessageService,
+    SolanaService,
   ],
 })
 export class InfrastructureModule {}

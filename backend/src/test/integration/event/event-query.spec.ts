@@ -22,7 +22,7 @@ describe('Event Queries', () => {
       startTime: '19:00',
       category: 'music',
       hostId: ctx.testUserId,
-      hostUsername: ctx.testUsername
+      hostUsername: ctx.testUsername,
     });
 
     await ctx.eventService.createEvent({
@@ -31,7 +31,7 @@ describe('Event Queries', () => {
       startTime: '20:00',
       category: 'festival',
       hostId: ctx.testUserId,
-      hostUsername: ctx.testUsername
+      hostUsername: ctx.testUsername,
     });
   });
 
@@ -56,7 +56,7 @@ describe('Event Queries', () => {
           startTime: '19:00',
           category: 'music',
           hostId: ctx.testUserId,
-          hostUsername: ctx.testUsername
+          hostUsername: ctx.testUsername,
         });
       }
 
@@ -118,7 +118,7 @@ describe('Event Queries', () => {
           startTime: '19:00',
           category: 'music',
           hostId: ctx.testUserId,
-          hostUsername: ctx.testUsername
+          hostUsername: ctx.testUsername,
         });
       }
 
@@ -151,8 +151,9 @@ describe('Event Queries', () => {
 
       expect(response.body.events).toBeInstanceOf(Array);
       expect(response.body.events.length).toBe(2);
-      expect(new Date(response.body.events[0].createdAt).getTime())
-        .toBeGreaterThan(new Date(response.body.events[1].createdAt).getTime());
+      expect(
+        new Date(response.body.events[0].createdAt).getTime(),
+      ).toBeGreaterThan(new Date(response.body.events[1].createdAt).getTime());
     });
 
     it('should respect limit parameter', async () => {
@@ -163,7 +164,7 @@ describe('Event Queries', () => {
           startDate: new Date('2024-03-20'),
           startTime: '19:00',
           hostId: ctx.testUserId,
-          hostUsername: ctx.testUsername
+          hostUsername: ctx.testUsername,
         });
       }
 
@@ -176,8 +177,10 @@ describe('Event Queries', () => {
       expect(response.body.events).toBeInstanceOf(Array);
       expect(response.body.events.length).toBe(limit);
       // Check if sorted by createdAt desc
-      const dates = response.body.events.map(e => new Date(e.createdAt));
-      expect(dates).toEqual([...dates].sort((a, b) => b.getTime() - a.getTime()));
+      const dates = response.body.events.map((e) => new Date(e.createdAt));
+      expect(dates).toEqual(
+        [...dates].sort((a, b) => b.getTime() - a.getTime()),
+      );
     });
   });
 
@@ -190,7 +193,7 @@ describe('Event Queries', () => {
         startTime: '19:00',
         category: 'music',
         hostId: ctx.testUserId,
-        city: 'Berlin'
+        city: 'Berlin',
       });
 
       await ctx.eventService.createEvent({
@@ -199,7 +202,7 @@ describe('Event Queries', () => {
         startTime: '20:00',
         category: 'festival',
         hostId: ctx.testUserId,
-        city: 'Hamburg'
+        city: 'Hamburg',
       });
 
       const response = await request(ctx.app.getHttpServer())
@@ -232,7 +235,7 @@ describe('Event Queries', () => {
           startDate: new Date('2024-03-20'),
           startTime: '19:00',
           hostId: ctx.testUserId,
-          city: 'Berlin'
+          city: 'Berlin',
         });
       }
 
@@ -247,7 +250,7 @@ describe('Event Queries', () => {
         total: 15,
         page: 2,
         limit: 5,
-        pages: 3
+        pages: 3,
       });
     });
   });
@@ -258,7 +261,7 @@ describe('Event Queries', () => {
       description: 'Test Description',
       startDate: new Date(),
       endDate: new Date(),
-      organizerId: 'test-organizer-id'
+      organizerId: 'test-organizer-id',
       // location is omitted
     };
 
@@ -274,4 +277,4 @@ describe('Event Queries', () => {
   afterAll(async () => {
     await ctx.app.close();
   });
-}); 
+});

@@ -23,8 +23,8 @@ describe('Event Search', () => {
       hostUsername: ctx.testUsername,
       location: {
         city: 'Berlin',
-        address: 'Jazzclub Berlin'
-      }
+        address: 'Jazzclub Berlin',
+      },
     });
 
     await ctx.eventService.createEvent({
@@ -36,8 +36,8 @@ describe('Event Search', () => {
       hostUsername: ctx.testUsername,
       location: {
         city: 'Hamburg',
-        address: 'Reeperbahn'
-      }
+        address: 'Reeperbahn',
+      },
     });
   });
 
@@ -67,9 +67,9 @@ describe('Event Search', () => {
     it('should search events by query and city', async () => {
       const response = await request(ctx.app.getHttpServer())
         .get('/events/search')
-        .query({ 
+        .query({
           query: 'Rock',
-          city: 'Hamburg'
+          city: 'Hamburg',
         })
         .expect(200);
 
@@ -84,10 +84,10 @@ describe('Event Search', () => {
     it('should find nearby events', async () => {
       const response = await request(ctx.app.getHttpServer())
         .get('/events/nearby')
-        .query({ 
-          lat: 52.520008,  // Berlin coordinates
+        .query({
+          lat: 52.520008, // Berlin coordinates
           lon: 13.404954,
-          distance: 10 // 10km radius
+          distance: 10, // 10km radius
         })
         .expect(200);
 
@@ -100,4 +100,4 @@ describe('Event Search', () => {
   afterAll(async () => {
     await ctx.app.close();
   });
-}); 
+});

@@ -22,7 +22,7 @@ describe('Event Creation', () => {
         description: 'The biggest summer festival in Berlin',
         startDate: '2024-07-20',
         startTime: '18:00',
-        city: 'Berlin'
+        city: 'Berlin',
       };
 
       const response = await request(ctx.app.getHttpServer())
@@ -60,9 +60,9 @@ describe('Event Creation', () => {
           address: 'Hafenstraße 1',
           coordinates: {
             lat: 53.5511,
-            lng: 9.9937
-          }
-        }
+            lng: 9.9937,
+          },
+        },
       };
 
       const response = await request(ctx.app.getHttpServer())
@@ -81,9 +81,9 @@ describe('Event Creation', () => {
           address: 'Hafenstraße 1',
           coordinates: {
             lat: 53.5511,
-            lng: 9.9937
-          }
-        }
+            lng: 9.9937,
+          },
+        },
       });
 
       // Test searching by city
@@ -100,4 +100,4 @@ describe('Event Creation', () => {
   afterAll(async () => {
     await ctx.app.close();
   });
-}); 
+});

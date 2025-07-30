@@ -17,7 +17,9 @@ export class CreateLocationDto {
   };
 }
 
-export class UpdateLocationDto implements Partial<Omit<Location, 'id' | 'createdAt' | 'updatedAt'>> {
+export class UpdateLocationDto
+  implements Partial<Omit<Location, 'id' | 'createdAt' | 'updatedAt'>>
+{
   name?: string;
   description?: string;
   logoUrl?: string;
@@ -32,4 +34,4 @@ export class UpdateLocationDto implements Partial<Omit<Location, 'id' | 'created
     facebook?: string;
     twitter?: string;
   };
-} 
+}

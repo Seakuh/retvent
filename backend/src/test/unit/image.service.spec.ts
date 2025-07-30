@@ -46,7 +46,9 @@ describe('ImageService', () => {
     service = module.get<ImageService>(ImageService);
     configService = module.get<ConfigService>(ConfigService);
     mockS3Client = S3Client as jest.Mocked<typeof S3Client>;
-    jest.spyOn(mockS3Client.prototype, 'send').mockImplementation(() => Promise.resolve({}));
+    jest
+      .spyOn(mockS3Client.prototype, 'send')
+      .mockImplementation(() => Promise.resolve({}));
   });
 
   afterEach(() => {
@@ -67,7 +69,9 @@ describe('ImageService', () => {
     it('should return test URL in test environment', async () => {
       process.env.NODE_ENV = 'test';
       const result = await service.uploadImage(mockFile);
-      expect(result).toBe('https://images.vartakt.com/images/groovecast_season_II/f1f068d6-4412-4d66-bc39-7c8cc661f575.png?width=2000&height=2000&quality=100');
+      expect(result).toBe(
+        'https://images.vartakt.com/images/groovecast_season_II/f1f068d6-4412-4d66-bc39-7c8cc661f575.png?width=2000&height=2000&quality=100',
+      );
     });
 
     it('should upload image successfully to Hetzner', async () => {
@@ -78,15 +82,17 @@ describe('ImageService', () => {
       const result = await service.uploadImage(mockFile);
 
       // Updated URL pattern to match new Hetzner endpoint
-      expect(result).toMatch(/^https:\/\/events-bucket\.hel1\.your-objectstorage\.com\/events\/.+\.jpg$/);
+      expect(result).toMatch(
+        /^https:\/\/events-bucket\.hel1\.your-objectstorage\.com\/events\/.+\.jpg$/,
+      );
       expect(mockSend).toHaveBeenCalledWith(
         expect.objectContaining({
           input: expect.objectContaining({
             Bucket: 'events-bucket',
             ContentType: 'image/jpeg',
             ACL: 'public-read',
-          })
-        })
+          }),
+        }),
       );
     });
 
@@ -95,10 +101,16 @@ describe('ImageService', () => {
       const mockSend = jest.fn().mockResolvedValue({});
       mockS3Client.prototype.send = mockSend;
 
-      const pngFile = { ...mockFile, originalname: 'test.png', mimetype: 'image/png' };
+      const pngFile = {
+        ...mockFile,
+        originalname: 'test.png',
+        mimetype: 'image/png',
+      };
       const result = await service.uploadImage(pngFile);
 
-      expect(result).toMatch(/^https:\/\/events-bucket\.hel1\.your-objectstorage\.com\/events\/.+\.png$/);
+      expect(result).toMatch(
+        /^https:\/\/events-bucket\.hel1\.your-objectstorage\.com\/events\/.+\.png$/,
+      );
     });
 
     it('should handle upload errors gracefully', async () => {
@@ -107,7 +119,9 @@ describe('ImageService', () => {
       const mockSend = jest.fn().mockRejectedValue(mockError);
       mockS3Client.prototype.send = mockSend;
 
-      await expect(service.uploadImage(mockFile)).rejects.toThrow('Failed to upload image: Network error');
+      await expect(service.uploadImage(mockFile)).rejects.toThrow(
+        'Failed to upload image: Network error',
+      );
     });
 
     it('should handle missing file extension', async () => {
@@ -118,7 +132,9 @@ describe('ImageService', () => {
       const fileWithoutExt = { ...mockFile, originalname: 'testimage' };
       const result = await service.uploadImage(fileWithoutExt);
 
-      expect(result).toMatch(/^https:\/\/events-bucket\.hel1\.your-objectstorage\.com\/events\/.+$/);
+      expect(result).toMatch(
+        /^https:\/\/events-bucket\.hel1\.your-objectstorage\.com\/events\/.+$/,
+      );
     });
 
     it('should handle empty file buffer', async () => {
@@ -131,4 +147,4 @@ describe('ImageService', () => {
       expect(mockSend).toHaveBeenCalled();
     });
   });
-}); 
+});

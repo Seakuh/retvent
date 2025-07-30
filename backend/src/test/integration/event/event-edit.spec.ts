@@ -25,7 +25,7 @@ describe('Event Edit & Delete', () => {
       hostId: ctx.testUserId,
       city: 'Berlin',
       price: '20€',
-      ticketLink: 'https://tickets.com/original'
+      ticketLink: 'https://tickets.com/original',
     });
     testEventId = event.id;
   });
@@ -45,9 +45,9 @@ describe('Event Edit & Delete', () => {
           address: 'New Address 123',
           coordinates: {
             lat: 53.5511,
-            lng: 9.9937
-          }
-        }
+            lng: 9.9937,
+          },
+        },
       };
 
       const response = await request(ctx.app.getHttpServer())
@@ -60,7 +60,7 @@ describe('Event Edit & Delete', () => {
         ...updateData,
         hostId: ctx.testUserId,
         startDate: expect.any(String),
-        id: testEventId
+        id: testEventId,
       });
 
       // Verify DB update
@@ -82,7 +82,7 @@ describe('Event Edit & Delete', () => {
         title: 'Other User Event',
         startDate: new Date(),
         startTime: '19:00',
-        hostId: 'other-user-id'
+        hostId: 'other-user-id',
       });
 
       await request(ctx.app.getHttpServer())
@@ -98,11 +98,11 @@ describe('Event Edit & Delete', () => {
 
     it('should only update changed fields', async () => {
       const originalEvent = await ctx.eventService.findById(testEventId);
-      
+
       const updateData = {
         title: 'Updated Title',
         // description stays the same
-        startTime: '20:00'
+        startTime: '20:00',
       };
 
       const response = await request(ctx.app.getHttpServer())
@@ -117,7 +117,7 @@ describe('Event Edit & Delete', () => {
         updatedAt: expect.any(String),
         createdAt: expect.any(String),
         startDate: expect.any(String),
-        id: testEventId
+        id: testEventId,
       });
 
       // Verify only specified fields were updated
@@ -125,7 +125,9 @@ describe('Event Edit & Delete', () => {
       expect(updated?.title).toBe(updateData.title);
       expect(updated?.description).toBe(originalEvent?.description);
       expect(updated?.startTime).toBe(updateData.startTime);
-      expect(new Date(updated?.updatedAt!).getTime()).toBeGreaterThan(new Date(originalEvent?.updatedAt!).getTime());
+      expect(new Date(updated?.updatedAt!).getTime()).toBeGreaterThan(
+        new Date(originalEvent?.updatedAt!).getTime(),
+      );
     });
   });
 
@@ -137,7 +139,7 @@ describe('Event Edit & Delete', () => {
         .expect(200);
 
       expect(response.body).toEqual({
-        message: 'Event deleted successfully'
+        message: 'Event deleted successfully',
       });
 
       // Verify event was deleted
@@ -157,7 +159,7 @@ describe('Event Edit & Delete', () => {
         title: 'Other User Event',
         startDate: new Date(),
         startTime: '19:00',
-        hostId: 'other-user-id'
+        hostId: 'other-user-id',
       });
 
       await request(ctx.app.getHttpServer())
@@ -175,4 +177,4 @@ describe('Event Edit & Delete', () => {
   afterAll(async () => {
     await ctx.app.close();
   });
-}); 
+});

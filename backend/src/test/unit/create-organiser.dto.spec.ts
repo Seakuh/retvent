@@ -19,7 +19,7 @@ describe('CreateOrganiserDto', () => {
       location: '123456',
       genres: ['Rock', 'Pop'],
       socialMediaLinks: ['https://instagram.com/test'],
-      instagramLink: 'https://instagram.com/test'
+      instagramLink: 'https://instagram.com/test',
     };
 
     Object.assign(dto, validData);
@@ -27,4 +27,4 @@ describe('CreateOrganiserDto', () => {
     expect(dto.description).toBe(validData.description);
     expect(dto.contactMail).toBe(validData.contactMail);
   });
-}); 
+});

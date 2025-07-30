@@ -14,9 +14,9 @@ describe('GeolocationService', () => {
       address: {
         city: 'Berlin',
         country: 'Germany',
-        postcode: '10178'
-      }
-    }
+        postcode: '10178',
+      },
+    },
   };
 
   beforeEach(async () => {
@@ -51,17 +51,17 @@ describe('GeolocationService', () => {
         {
           headers: {
             'User-Agent': 'EventApp/1.0',
-            'Accept-Language': 'en'
-          }
-        }
+            'Accept-Language': 'en',
+          },
+        },
       );
     });
 
     it('should return "City not found" when no city data available', async () => {
       mockedAxios.get.mockResolvedValueOnce({
         data: {
-          address: {}
-        }
+          address: {},
+        },
       });
 
       const result = await service.getReverseGeocoding(0, 0);
@@ -80,13 +80,13 @@ describe('GeolocationService', () => {
         data: {
           address: {
             town: 'Small Town',
-            city: null
-          }
-        }
+            city: null,
+          },
+        },
       });
 
       const result = await service.getReverseGeocoding(52.520008, 13.404954);
       expect(result).toBe('Small Town');
     });
   });
-}); 
+});

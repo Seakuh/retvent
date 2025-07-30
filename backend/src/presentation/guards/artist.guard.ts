@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from '@nestjs/common';
 
 @Injectable()
 export class ArtistGuard implements CanActivate {
@@ -12,4 +17,4 @@ export class ArtistGuard implements CanActivate {
 
     return true;
   }
-} 
+}
