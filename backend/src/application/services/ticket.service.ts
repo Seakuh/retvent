@@ -1,24 +1,26 @@
 // tickets.service.ts
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { nanoid } from 'nanoid';
-import { Ticket } from '../../core/domain/ticket.schema';
+import { Ticket } from 'src/core/domain/ticket';
+import { MongoTicketRepository } from 'src/infrastructure/repositories/mongodb/ticket.repository';
+import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
 
 @Injectable()
 export class TicketsService {
-  constructor(@InjectModel(Ticket.name) private ticketModel: Model<Ticket>) {}
+  constructor(private readonly ticketRepository: MongoTicketRepository) {}
 
   async addGuest(dto: CreateTicketDto): Promise<Ticket> {
-    const ticket = new this.ticketModel({
+    const ticket = await this.ticketRepository.create({
       eventId: dto.eventId,
       email: dto.email,
       ticketId: nanoid(10), // 🔥 Ticket-ID generieren
+      status: 'pending',
+      createdAt: new Date(),
     });
-    return ticket.save();
+    return ticket;
   }
 
   async getTicketsForEvent(eventId: string): Promise<Ticket[]> {
-    return this.ticketModel.find({ eventId }).exec();
+    return this.ticketRepository.find({ eventId });
   }
 }
