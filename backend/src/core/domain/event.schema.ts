@@ -24,6 +24,7 @@ export interface IEvent extends Document {
     endTime: string;
     userId?: string;
   }[];
+  isPrivate?: boolean;
   socialMediaLinks?: {
     instagram?: string;
     facebook?: string;
@@ -68,6 +69,7 @@ const EventSchema = new Schema<IEvent>(
         endTime: { type: String, required: false },
       },
     ],
+    isPrivate: { type: Boolean, default: false },
     socialMediaLinks: {
       instagram: { type: String },
       facebook: { type: String },

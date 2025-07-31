@@ -35,6 +35,7 @@ export class Event implements IEvent {
     facebook?: string;
     twitter?: string;
   };
+  isPrivate?: boolean;
   tags?: string[];
   website?: string;
   likeIds?: string[];
