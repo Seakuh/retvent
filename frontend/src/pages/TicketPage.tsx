@@ -65,18 +65,64 @@ export const TicketPage = () => {
     <div className="ticket-page">
       <div className="ticket-container">
         <div className="ticket-header">
-          <h1 className="ticket-title">{event.title}</h1>
-          <p className="ticket-description">{event.description}</p>
+          {event.imageUrl && (
+            <div
+              className="ticket-header-content"
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "200px",
+                borderRadius: "12px",
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  backgroundImage: `url(${event.imageUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  filter: "blur(8px) brightness(0.7)",
+                  transform: "scale(1.1)",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  padding: "1.5rem",
+                  color: "white",
+                  textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+                }}
+              >
+                <h1
+                  className="ticket-title"
+                  style={{
+                    fontSize: "1.75rem",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  {event.title}
+                </h1>
+                <p
+                  className="ticket-description"
+                  style={{
+                    fontSize: "0.9rem",
+                    opacity: 0.9,
+                  }}
+                >
+                  {event.description}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
-
-        {event.imageUrl && (
-          <img
-            className="ticket-image"
-            src={event.imageUrl}
-            alt={`${event.title} event`}
-          />
-        )}
-
         <div className="qr-code-ticket-container">
           <QRCodeCanvas
             value={`${FRONTEND_URL}ticket/${ticket.ticketId}`}
