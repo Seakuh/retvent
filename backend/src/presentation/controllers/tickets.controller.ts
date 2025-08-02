@@ -1,6 +1,7 @@
 // tickets.controller.ts
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TicketsService } from 'src/application/services/ticket.service';
+import { Ticket } from 'src/core/domain/ticket';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
 
 @Controller('tickets')
@@ -12,8 +13,16 @@ export class TicketsController {
     return this.ticketsService.addGuest(dto);
   }
 
-  @Get(':eventId')
+  @Get('event/:eventId')
   async getTickets(@Param('eventId') eventId: string) {
-    return this.ticketsService.getTicketsForEvent(eventId);
+    const ticket = await this.ticketsService.getTicketsForEvent(eventId);
+    console.log(ticket);
+    return ticket;
+  }
+
+  @Get('/ticket/:ticketId')
+  async getTicket(@Param('ticketId') ticketId: string): Promise<Ticket> {
+    const ticket = await this.ticketsService.getTicketById(ticketId);
+    return ticket;
   }
 }

@@ -25,7 +25,7 @@ export class TicketsService {
   }
 
   async getTicketById(ticketId: string): Promise<Ticket> {
-    return this.ticketRepository.findById(ticketId);
+    return this.ticketRepository.findTicketId(ticketId);
   }
 
   async updateTicket(ticketId: string, ticket: Ticket): Promise<Ticket> {
