@@ -1,0 +1,32 @@
+.ticket-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: white;
+  padding: 20rem;
+}
+
+.ticket-image {
+  width: 50%;
+  height: 50%;
+}   
+
+.ticket-email {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.ticket-status {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.qr-code-ticket-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
