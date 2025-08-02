@@ -16,7 +16,7 @@ import { EventHost } from "./components/EventHost";
 import { EventLineup } from "./components/EventLineup";
 import { EventTags } from "./components/EventTags";
 import { MetaBar } from "./components/MetaBar";
-import { OwnerComponent } from "./components/OwnerComponent/OwnerComponent";
+import { HostView } from "./components/OwnerComponent/HostView";
 import "./EventDetail.css";
 import HelmetMeta from "./HelmMeta";
 export const EventDetail: React.FC = () => {
@@ -178,7 +178,7 @@ export const EventDetail: React.FC = () => {
           commentCount={event.commentCount ?? 0}
           city={event.city ?? ""}
         /> */}
-        {isOwner && <OwnerComponent />}
+        {isOwner && <HostView eventId={eventId || ""} />}
         <button className="back-button" onClick={handleBack}>
           <ChevronLeft className="h-5 w-5" />
         </button>

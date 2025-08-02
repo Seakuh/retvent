@@ -1,4 +1,4 @@
-import { API_URL, Event, Profile } from "../utils";
+import { API_URL, Event, Profile, Ticket } from "../utils";
 
 export const searchNew = async (
   query?: string,
@@ -71,5 +71,34 @@ export const getReelEvents = async (
   } catch (error) {
     console.error("Error fetching reel events:", error);
     return [];
+  }
+};
+
+export const getTicket = async (ticketId: string): Promise<Ticket> => {
+  try {
+    const response = await fetch(`${API_URL}tickets/ticket/${ticketId}`);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch tickets: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = await response.json();
+    console.log("data", data);
+    return data as Ticket;
+  } catch (error) {
+    console.error("🎫 Error fetching tickets:", error);
+    throw new Error("Failed to load tickets. Please try again later! 🙏");
+  }
+};
+
+export const getEvent = async (eventId: string): Promise<Event> => {
+  try {
+    const response = await fetch(`${API_URL}events/byId?id=${eventId}`);
+    const data = await response.json();
+    return data as Event;
+  } catch (error) {
+    console.error("🚨 Error fetching event:", error);
+    return {} as Event;
   }
 };

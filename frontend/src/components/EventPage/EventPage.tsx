@@ -104,9 +104,9 @@ export const EventPage = ({
 
   return (
     <div className="event-page-container">
+      <ExploreFeed feedItemsResponse={feedItemsResponse} />
       <AdBanner />
       <ReelTile events={favoriteEvents} direction="horizontal" />
-      <ExploreFeed feedItemsResponse={feedItemsResponse} />
       {favoriteEvents.length === 0 && (
         <div className="no-liked-events">
           <Heart size={100} />

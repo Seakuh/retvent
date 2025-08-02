@@ -27,6 +27,7 @@ import { UserContextProvider } from "./contexts/UserContextProvider";
 import ReelPage from "./pages/ReelPage";
 import { SearchPage } from "./pages/SearchPage";
 import { ShoppingPage } from "./pages/ShoppingPage";
+import { TicketPage } from "./pages/TicketPage";
 import { syncFavorites } from "./service";
 // const queryClient = new QueryClient({
 //   defaultOptions: {
@@ -104,6 +105,7 @@ const App: React.FC = () => {
                   <Route path="/profile/:artistName" element={<Profile />} />
                   <Route path="/install-app" element={<PwaInstall />} />
                   <Route path="/search" element={<SearchPage />} />
+                  <Route path="/ticket/:ticketId" element={<TicketPage />} />
                   <Route path="/search/:query?" element={<SearchPage />} />
                   <Route path="/reel/:eventId" element={<ReelPage />} />
                   <Route path="/imprint" element={<Imprint />} />

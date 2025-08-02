@@ -739,3 +739,11 @@ export const handleFollow = (userId: string) => {
     localStorage.setItem("following", JSON.stringify(following));
   }
 };
+
+export interface Ticket {
+  eventId: string;
+  email: string;
+  ticketId: string;
+  status: string;
+  createdAt: Date;
+}

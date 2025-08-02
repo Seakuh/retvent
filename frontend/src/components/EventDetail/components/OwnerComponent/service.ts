@@ -15,7 +15,7 @@ export const addLineup = async (eventId: string, image: File) => {
   return response.json();
 };
 
-export const addGifs = async (eventId: string, image: File) => {
+export const addGifs = async (eventId: string) => {
   const accessToken = localStorage.getItem("access_token");
   const response = await fetch(`${API_URL}events/gifs/upload`, {
     method: "POST",
@@ -64,6 +64,49 @@ export const createSponsored = async (eventId: string, sponsored: boolean) => {
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
+    },
+  });
+  return response.json();
+};
+
+// Ticket/Guest Management Functions
+export const createTicket = async (eventId: string, email: string) => {
+  const accessToken = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}tickets`, {
+    method: "POST",
+    body: JSON.stringify({ eventId, email }),
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return response.json();
+};
+
+export const getTicketsForEvent = async (eventId: string) => {
+  const accessToken = localStorage.getItem("access_token");
+  try {
+    const response = await fetch(`${API_URL}tickets/${eventId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch tickets");
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+    throw error;
+  }
+};
+
+export const deleteTicket = async (ticketId: string) => {
+  const accessToken = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}tickets/${ticketId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
     },
   });
   return response.json();
