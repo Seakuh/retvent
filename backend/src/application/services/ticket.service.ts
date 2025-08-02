@@ -23,4 +23,16 @@ export class TicketsService {
   async getTicketsForEvent(eventId: string): Promise<Ticket[]> {
     return this.ticketRepository.find({ eventId });
   }
+
+  async getTicketById(ticketId: string): Promise<Ticket> {
+    return this.ticketRepository.findById(ticketId);
+  }
+
+  async updateTicket(ticketId: string, ticket: Ticket): Promise<Ticket> {
+    return this.ticketRepository.update(ticketId, ticket);
+  }
+
+  async deleteTicket(ticketId: string): Promise<boolean> {
+    return this.ticketRepository.delete(ticketId);
+  }
 }

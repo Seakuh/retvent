@@ -11,13 +11,16 @@ import { FeedService } from 'src/application/services/feed.service';
 import { GroupService } from 'src/application/services/group.service';
 import { MessageService } from 'src/application/services/message.service';
 import { ProfileService } from 'src/application/services/profile.service';
+import { TicketsService } from 'src/application/services/ticket.service';
 import { MessageSchema } from 'src/core/domain/message.schema';
+import { TicketSchema } from 'src/core/domain/ticket.schema';
 import { ArtistController } from 'src/presentation/controllers/artist.controller';
 import { CommentController } from 'src/presentation/controllers/comment.controller';
 import { FeedController } from 'src/presentation/controllers/feed.controller';
 import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
 import { MessageController } from 'src/presentation/controllers/message.controller';
 import { SearchController } from 'src/presentation/controllers/search.controller';
+import { TicketsController } from 'src/presentation/controllers/tickets.controller';
 import { UserController } from 'src/presentation/controllers/user.controller';
 import { EventMapper } from '../application/mappers/event.mapper';
 import { EventService } from '../application/services/event.service';
@@ -40,6 +43,7 @@ import { MongoGroupRepository } from './repositories/mongodb/group.repository';
 import { MongoLocationRepository } from './repositories/mongodb/location.repository';
 import { MongoMessageRepository } from './repositories/mongodb/message.repository';
 import { MongoProfileRepository } from './repositories/mongodb/profile.repository';
+import { MongoTicketRepository } from './repositories/mongodb/ticket.repository';
 import { MongoUserRepository } from './repositories/mongodb/user.repository';
 import { CommentSchema } from './schemas/comment.schema';
 import { EventSchema } from './schemas/event.schema';
@@ -86,6 +90,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       { name: 'Feed', schema: FeedSchema },
       { name: 'Message', schema: MessageSchema },
       { name: 'Group', schema: GroupSchema },
+      { name: 'Ticket', schema: TicketSchema },
     ]),
   ],
   controllers: [
@@ -100,6 +105,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MessageController,
     FeedController,
     ArtistController,
+    TicketsController,
   ],
   providers: [
     EventService,
@@ -108,6 +114,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     GroupService,
     MessageService,
     ChatGPTService,
+    TicketsService,
     FeedService,
     EventEmbeddingService,
     ImageService,
@@ -125,6 +132,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MongoProfileRepository,
     MongoMessageRepository,
     MongoFeedRepository,
+    MongoTicketRepository,
     JwtStrategy,
     JwtAuthGuard,
     OwnerGuard,
@@ -165,6 +173,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       provide: 'IFeedRepository',
       useClass: MongoFeedRepository,
     },
+    {
+      provide: 'ITicketRepository',
+      useClass: MongoTicketRepository,
+    },
   ],
   exports: [
     EventService,
@@ -186,6 +198,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     'IGroupRepository',
     'IMessageRepository',
     'IFeedRepository',
+    'ITicketRepository',
     JwtModule,
     MongoEventRepository,
     MongoProfileRepository,
@@ -194,6 +207,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MongoCommentRepository,
     MongoMessageRepository,
     MongoFeedRepository,
+    MongoTicketRepository,
     EventMapper,
     AuthModule,
     GeolocationService,
@@ -204,6 +218,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     CommentService,
     ProfileService,
     MessageService,
+    TicketsService,
   ],
 })
 export class InfrastructureModule {}

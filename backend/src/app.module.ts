@@ -2,7 +2,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
-import * as crypto from 'crypto';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import { ArtistController } from './presentation/controllers/artist.controller';
 import { CommentController } from './presentation/controllers/comment.controller';
@@ -13,9 +12,9 @@ import { GroupController } from './presentation/controllers/group.controller';
 import { MessageController } from './presentation/controllers/message.controller';
 import { ProfileController } from './presentation/controllers/profile.controller';
 import { SearchController } from './presentation/controllers/search.controller';
+import { TicketsController } from './presentation/controllers/tickets.controller';
 import { UserController } from './presentation/controllers/user.controller';
 const MONGODB_URI = 'mongodb://localhost:27017';
-(global as any).crypto = crypto;
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -28,6 +27,7 @@ const MONGODB_URI = 'mongodb://localhost:27017';
     CommentController,
     UserController,
     ProfileController,
+    TicketsController,
     SearchController,
     MessageController,
     GroupController,
