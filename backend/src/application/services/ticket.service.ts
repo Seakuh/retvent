@@ -33,144 +33,225 @@ export class TicketsService {
     <title>Event Ticket</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+      * {
+        box-sizing: border-box;
+      }
 
       body {
-        font-family: 'Inter', sans-serif;
-        background: black;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background: #f5f5f7;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 20px;
         margin: 0;
+        min-height: 100vh;
       }
 
       .ticket {
         background: #fff;
-        max-width: 420px;
+        max-width: 375px;
         width: 100%;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
         overflow: hidden;
-      }
-
-      .header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px;
-        background: #000;
-        color: #fff;
-      }
-
-      .header img {
-        height: 28px;
+        position: relative;
       }
 
       .event-image {
         width: 100%;
-        height: 200px;
+        height: 180px;
         object-fit: cover;
+        border-radius: 20px 20px 0 0;
       }
 
       .content {
-        padding: 16px;
+        padding: 24px;
       }
 
       .event-title {
-        font-size: 1.4rem;
+        font-size: 22px;
         font-weight: 600;
-        margin: 0 0 4px;
+        color: #1d1d1f;
+        margin: 0 0 6px 0;
+        line-height: 1.2;
       }
 
       .event-date {
-        color: #555;
-        font-size: 0.9rem;
-        margin-bottom: 8px;
+        color: #86868b;
+        font-size: 16px;
+        margin-bottom: 4px;
+        font-weight: 400;
       }
 
       .event-location {
-        font-size: 0.95rem;
-        margin-bottom: 12px;
+        color: #1d1d1f;
+        font-size: 16px;
+        margin-bottom: 20px;
+        font-weight: 400;
       }
 
-      .map {
+      .map-container {
+        margin-bottom: 24px;
+      }
+
+      .map-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+
+      .mini-map {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+      }
+
+      .mini-map:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .map-thumbnail {
         width: 100%;
-        height: 180px;
-        border-radius: 8px;
-        margin-bottom: 12px;
+        height: 100px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .map-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        backdrop-filter: blur(4px);
+      }
+
+      .mini-map:hover .map-overlay {
+        opacity: 1;
+      }
+
+      .route-text {
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        background: rgba(0, 122, 255, 0.9);
+        padding: 8px 16px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
       }
 
       .ticket-info {
-        background: #fafafa;
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 16px;
-        border: 1px solid #eee;
+        background: #f9f9f9ec;
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        border: none;
+        backdrop-filter: blur(10px);
       }
 
       .ticket-info p {
-        margin: 4px 0;
-        font-size: 0.95rem;
+        margin: 8px 0;
+        font-size: 14px;
+        color: #1d1d1f;
+      }
+
+      .ticket-info strong {
+        color: #86868b;
+        font-weight: 500;
       }
 
       .qr-section {
         text-align: center;
-        margin: 16px 0;
+        margin-bottom: 20px;
       }
 
-      .ticket-link {
-        display: block;
-        text-align: center;
-        color: #3b82f6;
+      .qr-code {
+        padding: 16px;
+        background: #fff;
+        border-radius: 12px;
+        display: inline-block;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        margin-bottom: 16px;
+      }
+
+      .view-ticket-btn {
+        display: inline-block;
+        color: white;
+        background: #007aff;
+        color: white;
         text-decoration: none;
-        font-weight: 500;
-        margin-top: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        padding: 14px 28px;
+        border-radius: 25px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+      }
+
+      .view-ticket-btn:hover {
+        background: #0056d3;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+      }
+
+      .view-ticket-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Perforated edge effect */
+      .ticket::before {
+        content: '';
+        position: absolute;
+        top: 200px;
+        left: -10px;
+        right: -10px;
+        height: 20px;
+        background: radial-gradient(circle at 10px 10px, transparent 5px, #f5f5f7 5px);
+        background-size: 20px 20px;
+        z-index: 1;
       }
     </style>
   </head>
   <body>
     <div class="ticket">
-      <div class="header">
-        <span>Event Ticket</span>
-        <img
-          src="https://event-scanner.com/logo.png"
-          alt="Event Scanner Logo"
-        />
-      </div>
-
       <!-- Event Image -->
       <img class="event-image" src="{{event.imageUrl}}" alt="{{event.title}}" />
 
       <div class="content">
-        <h2 class="event-title">{{event.title}}</h2>
+        <h1 class="event-title">{{event.title}}</h1>
         <p class="event-date">{{event.startDate}} um {{event.startTime}}</p>
-        <p class="event-location">{{event.city}}</p>
-
-        <!-- Optional Map -->
-        <iframe
-          class="map"
-          loading="lazy"
-          allowfullscreen
-          referrerpolicy="no-referrer-when-downgrade"
-          src="https://www.google.com/maps?q={{event.location.coordinates.lat}},{{event.location.coordinates.lon}}&hl=de;z=14&output=embed"
-        >
-        </iframe>
-        {{/if}}
+        
+        <!-- Miniaturkarte -->
+        <div class="map-container">
+      <a href="https://www.google.com/maps/dir/?api=1&destination={{event.location.coordinates.latitude}},{{event.location.coordinates.longitude}}" target="_blank">
+  <img src="https://staticmap.openstreetmap.de/staticmap.php?center={{event.location.coordinates.latitude}},{{event.location.coordinates.longitude}}&zoom=14&size=300x200&markers={{event.location.coordinates.latitude}},{{event.location.coordinates.longitude}},red-pushpin" 
+       alt="Karte zum Zielort" 
+       style="border:0; max-width:100%; height:auto;">
+</a>
 
         <div class="ticket-info">
           <p><strong>Ticket ID:</strong> {{ticket.ticketId}}</p>
-          <p><strong>Email:</strong> {{ticket.email}}</p>
-          <p><strong>Status:</strong> {{ticket.status}}</p>
-          <p><strong>Erstellt:</strong> {{ticket.createdAt}}</p>
+          <p><strong>E-Mail:</strong> {{ticket.email}}</p>
         </div>
 
         <!-- QR Code -->
         <div class="qr-section">
-          <canvas id="qr"></canvas>
-          <a class="ticket-link" href="{{ticket.ticketLink}}" target="_blank"
-            >Ticket öffnen</a
-          >
+          <div class="qr-code">
+            <canvas id="qr"></canvas>
+          </div>
+          <a class="view-ticket-btn" href="https://event-scanner.com/ticket/xIHOsRyQ8s">
+            Ticket anzeigen
+          </a>
         </div>
       </div>
     </div>
@@ -178,13 +259,13 @@ export class TicketsService {
     <!-- QRious for QR Code Generation -->
     <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
     <script>
-      const ticketHash = '{{ticket.hash}}'; // dynamically inserted
+      const ticketHash = '{{ticket.hash}}';
       const qr = new QRious({
         element: document.getElementById('qr'),
         value: ticketHash,
-        size: 140,
+        size: 120,
         background: '#fff',
-        foreground: '#000',
+        foreground: '#1d1d1f',
       });
     </script>
   </body>
@@ -244,7 +325,7 @@ export class TicketsService {
             : 'TBD',
           startTime: event?.startTime || 'TBD',
           imageUrl: event?.imageUrl || 'https://via.placeholder.com/400x200',
-          ticketLink: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/ticket/${ticket.ticketId}`,
+          ticketLink: `${process.env.FRONTEND_URL || 'https://event-scanner.com/'}/ticket/${ticket.ticketId}`,
         },
         ticket: {
           ticketId: ticket.ticketId,
@@ -257,7 +338,7 @@ export class TicketsService {
 
       await this.mailerService.sendMail({
         to: dto.email,
-        subject: `Ticket für ${event?.title || 'Event'} - ${ticket.ticketId}`,
+        subject: `🎫 Dein Ticket für ${event?.title || 'Event'} - ${ticket.ticketId}`,
         text: `Ihr Ticket wurde erstellt. Ihre Ticket-ID ist: ${ticket.ticketId}`,
         html: htmlContent,
       });

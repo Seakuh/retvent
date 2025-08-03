@@ -1,5 +1,13 @@
 // tickets.controller.ts
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { TicketsService } from 'src/application/services/ticket.service';
 import { Ticket } from 'src/core/domain/ticket';
@@ -34,5 +42,10 @@ export class TicketsController {
   async getTicket(@Param('ticketId') ticketId: string): Promise<Ticket> {
     const ticket = await this.ticketsService.getTicketById(ticketId);
     return ticket;
+  }
+
+  @Delete('/ticket/:ticketId')
+  async deleteTicket(@Param('ticketId') ticketId: string) {
+    return this.ticketsService.deleteTicket(ticketId);
   }
 }
