@@ -1,13 +1,18 @@
 // tickets.service.ts
+import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import { Ticket } from 'src/core/domain/ticket';
+import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
 import { MongoTicketRepository } from 'src/infrastructure/repositories/mongodb/ticket.repository';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
-
 @Injectable()
 export class TicketsService {
-  constructor(private readonly ticketRepository: MongoTicketRepository) {}
+  constructor(
+    private readonly ticketRepository: MongoTicketRepository,
+    private readonly eventRepository: MongoEventRepository,
+    private readonly mailerService: MailerService,
+  ) {}
 
   async addGuest(dto: CreateTicketDto): Promise<Ticket> {
     const ticket = await this.ticketRepository.create({
@@ -17,6 +22,15 @@ export class TicketsService {
       status: 'pending',
       createdAt: new Date(),
     });
+    try {
+      await this.mailerService.sendMail({
+        to: dto.email,
+        subject: 'Ticket erstellt',
+        text: `Ihr Ticket wurde erstellt. Ihre Ticket-ID ist: ${ticket.ticketId}`,
+      });
+    } catch (error) {
+      console.error('Fehler beim Senden der E-Mail:', error);
+    }
     return ticket;
   }
 

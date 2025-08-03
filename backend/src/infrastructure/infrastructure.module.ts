@@ -1,3 +1,4 @@
+import { MailerModule } from '@nestjs-modules/mailer';
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -9,6 +10,7 @@ import { CommentService } from 'src/application/services/comment.service';
 import { EventEmbeddingService } from 'src/application/services/eventembedding.service';
 import { FeedService } from 'src/application/services/feed.service';
 import { GroupService } from 'src/application/services/group.service';
+import { MailService } from 'src/application/services/mail.service';
 import { MessageService } from 'src/application/services/message.service';
 import { ProfileService } from 'src/application/services/profile.service';
 import { TicketsService } from 'src/application/services/ticket.service';
@@ -65,6 +67,27 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     CoreModule,
     AuthModule,
     ConfigModule,
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('EMAIL_HOST', 'smtp.gmail.com'),
+          port: configService.get<number>('EMAIL_PORT', 587),
+          secure: false, // true für Port 465
+          auth: {
+            user: configService.get<string>('EMAIL_USER'),
+            pass: configService.get<string>('EMAIL_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: configService.get<string>(
+            'EMAIL_FROM',
+            '"Event Scanner" <noreply@eventscanner.com>',
+          ),
+        },
+      }),
+    }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -114,6 +137,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     GroupService,
     MessageService,
     ChatGPTService,
+    MailService,
     TicketsService,
     FeedService,
     EventEmbeddingService,
