@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Event Ticket</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background: #f5f5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .ticket {
+        background: #fff;
+        max-width: 420px;
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        background: #000;
+        color: #fff;
+      }
+
+      .header img {
+        height: 28px;
+      }
+
+      .event-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .content {
+        padding: 16px;
+      }
+
+      .event-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin: 0 0 4px;
+      }
+
+      .event-date {
+        color: #555;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+      }
+
+      .event-location {
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+      }
+
+      .map {
+        width: 100%;
+        height: 180px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+      }
+
+      .ticket-info {
+        background: #fafafa;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        border: 1px solid #eee;
+      }
+
+      .ticket-info p {
+        margin: 4px 0;
+        font-size: 0.95rem;
+      }
+
+      .qr-section {
+        text-align: center;
+        margin: 16px 0;
+      }
+
+      .ticket-link {
+        display: block;
+        text-align: center;
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 500;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ticket">
+      <div class="header">
+        <span>Event Ticket</span>
+        <img
+          src="https://cdn.event-scanner.com/logo.png"
+          alt="Event Scanner Logo"
+        />
+      </div>
+
+      <!-- Event Image -->
+      <img class="event-image" src="{{event.imageUrl}}" alt="{{event.title}}" />
+
+      <div class="content">
+        <h2 class="event-title">{{event.title}}</h2>
+        <p class="event-date">{{event.startDate}} at {{event.startTime}}</p>
+        <p class="event-location">{{event.city}}</p>
+
+        <!-- Optional Map -->
+        {{#if event.location?.coordinates}}
+        <iframe
+          class="map"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q={{event.location.coordinates.lat}},{{event.location.coordinates.lon}}&hl=es;z=14&output=embed"
+        >
+        </iframe>
+        {{/if}}
+
+        <div class="ticket-info">
+          <p><strong>Ticket ID:</strong> {{ticket.ticketId}}</p>
+          <p><strong>Email:</strong> {{ticket.email}}</p>
+          <p><strong>Status:</strong> {{ticket.status}}</p>
+          <p><strong>Issued:</strong> {{ticket.createdAt}}</p>
+        </div>
+
+        <!-- QR Code -->
+        <div class="qr-section">
+          <canvas id="qr"></canvas>
+          <a class="ticket-link" href="{{event.ticketLink}}" target="_blank"
+            >Open Ticket Link</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- QRious for QR Code Generation -->
+    <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
+    <script>
+      const ticketHash = '{{ticket.hash}}'; // dynamically inserted
+      const qr = new QRious({
+        element: document.getElementById('qr'),
+        value: ticketHash,
+        size: 140,
+        background: '#fff',
+        foreground: '#000',
+      });
+    </script>
+  </body>
+</html>

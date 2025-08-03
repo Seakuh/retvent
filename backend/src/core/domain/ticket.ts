@@ -4,4 +4,5 @@ export class Ticket {
   ticketId: string;
   status: string;
   createdAt: Date;
+  hash: string;
 }

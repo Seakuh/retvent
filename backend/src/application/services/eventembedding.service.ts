@@ -154,7 +154,6 @@ export class EventEmbeddingService {
     return [
       event.title ?? '',
       event.description ?? '',
-      event.city ?? '',
       event.category ?? '',
       event.tags?.join(', ') ?? '',
       event.lineup?.map((l) => l.name).join(', ') ?? '',

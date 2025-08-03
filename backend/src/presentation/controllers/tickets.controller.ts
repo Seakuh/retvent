@@ -1,5 +1,6 @@
 // tickets.controller.ts
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { TicketsService } from 'src/application/services/ticket.service';
 import { Ticket } from 'src/core/domain/ticket';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
@@ -11,6 +12,15 @@ export class TicketsController {
   @Post()
   async createTicket(@Body() dto: CreateTicketDto) {
     return this.ticketsService.addGuest(dto);
+  }
+
+  @Get('validate/:ticketId')
+  @UseGuards(AuthGuard('jwt'))
+  async validateTicket(
+    @Param('ticketId') ticketId: string,
+    @Param('hash') hash: string,
+  ) {
+    return this.ticketsService.validateTicket(ticketId, hash);
   }
 
   @Get('event/:eventId')
