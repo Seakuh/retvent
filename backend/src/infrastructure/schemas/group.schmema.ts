@@ -21,4 +21,3 @@ export const GroupSchema = new Schema({
 
 GroupSchema.index({ eventId: 1 });
 GroupSchema.index({ name: 'text' });
-GroupSchema.index({ inviteToken: 1 }, { unique: true });

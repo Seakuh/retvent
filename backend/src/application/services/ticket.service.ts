@@ -1,7 +1,6 @@
 // tickets.service.ts
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { sha256 } from 'js-sha256';
 import { Event } from 'src/core/domain/event';
 import { Ticket } from 'src/core/domain/ticket';
 import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
@@ -19,8 +18,23 @@ export class TicketsService {
     private readonly mailerService: MailerService,
   ) {}
 
+  private simpleHash(input: string): string {
+    let hash = 0;
+    if (input.length === 0) return hash.toString();
+
+    for (let i = 0; i < input.length; i++) {
+      const char = input.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+
+    // Convert to positive hex string
+    return Math.abs(hash).toString(16).padStart(8, '0');
+  }
+
   generateTicketHash(ticketUid: string, email: string): string {
-    return sha256(`${ticketUid}:${email}:${SECRET}`);
+    const combined = `${ticketUid}:${email}:${SECRET}`;
+    return this.simpleHash(combined);
   }
 
   private getTicketTemplate(): string {
