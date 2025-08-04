@@ -1,7 +1,7 @@
 // tickets.service.ts
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import * as crypto from 'crypto';
+import { createHash } from 'crypto';
 import { Event } from 'src/core/domain/event';
 import { Ticket } from 'src/core/domain/ticket';
 import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
@@ -20,8 +20,7 @@ export class TicketsService {
   ) {}
 
   generateTicketHash(ticketUid: string, email: string): string {
-    return crypto
-      .createHash('sha256')
+    return createHash('sha256')
       .update(`${ticketUid}:${email}:${SECRET}`)
       .digest('hex');
   }
