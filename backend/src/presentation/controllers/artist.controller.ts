@@ -9,7 +9,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { randomBytes } from 'crypto';
 import { EventService } from '../../application/services/event.service';
 import { ProfileService } from '../../application/services/profile.service';
 import { AuthService } from '../../infrastructure/services/auth.service';
@@ -42,6 +41,16 @@ export class ArtistController {
   // }
 
   // create new artist
+
+  generateRandomPassword(length = 20): string {
+    let result = '';
+    const chars = 'abcdef0123456789';
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
   @Post('new')
   @UseInterceptors(FileInterceptor('image')) // <-- Wichtig!
   async create(
@@ -52,7 +61,7 @@ export class ArtistController {
     console.log('image', image);
     const user = await this.authService.register({
       email: createArtistDto.name + '@gmail.com',
-      password: randomBytes(10).toString('hex'),
+      password: this.generateRandomPassword(),
       username: createArtistDto.name,
     });
     if (!user) {
@@ -72,7 +81,7 @@ export class ArtistController {
     @Body() createArtistDto: CreateArtistDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    const password = randomBytes(10).toString('hex');
+    const password = this.generateRandomPassword();
     const user = await this.authService.register({
       email: createArtistDto.name + '@gmail.com',
       password: password,
