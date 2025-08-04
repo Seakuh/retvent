@@ -8,7 +8,6 @@ import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/ev
 import { MongoTicketRepository } from 'src/infrastructure/repositories/mongodb/ticket.repository';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
 import { v4 as uuidv4 } from 'uuid';
-(global as any).crypto = 'crypto';
 
 const SECRET = 'mySuperSecretKey';
 
