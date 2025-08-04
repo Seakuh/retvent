@@ -2,12 +2,12 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
-import { nanoid } from 'nanoid';
 import { Event } from 'src/core/domain/event';
 import { Ticket } from 'src/core/domain/ticket';
 import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
 import { MongoTicketRepository } from 'src/infrastructure/repositories/mongodb/ticket.repository';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 const SECRET = 'mySuperSecretKey';
 
@@ -301,7 +301,7 @@ export class TicketsService {
   }
 
   async addGuest(dto: CreateTicketDto): Promise<Ticket> {
-    const ticketId = nanoid(10);
+    const ticketId = uuidv4();
     const hash = this.generateTicketHash(ticketId, dto.email);
     const ticket = await this.ticketRepository.create({
       eventId: dto.eventId,
