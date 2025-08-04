@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { TicketsService } from 'src/application/services/ticket.service';
+import { Event } from 'src/core/domain/event';
 import { Ticket } from 'src/core/domain/ticket';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
 
@@ -42,6 +43,18 @@ export class TicketsController {
   async getTicket(@Param('ticketId') ticketId: string): Promise<Ticket> {
     const ticket = await this.ticketsService.getTicketById(ticketId);
     return ticket;
+  }
+
+  @Get('/event/:eventId/ticket/:ticketId')
+  async getTicketsForEvent(
+    @Param('eventId') eventId: string,
+    @Param('ticketId') ticketId: string,
+  ): Promise<{ ticket: Ticket; event: Event }> {
+    const { ticket, event } = await this.ticketsService.getTicketAndEvent(
+      ticketId,
+      eventId,
+    );
+    return { ticket, event };
   }
 
   @Delete('/ticket/:ticketId')

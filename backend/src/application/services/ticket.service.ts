@@ -3,6 +3,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { nanoid } from 'nanoid';
+import { Event } from 'src/core/domain/event';
 import { Ticket } from 'src/core/domain/ticket';
 import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
 import { MongoTicketRepository } from 'src/infrastructure/repositories/mongodb/ticket.repository';
@@ -385,5 +386,14 @@ export class TicketsService {
 
   async deleteTicket(ticketId: string): Promise<boolean> {
     return this.ticketRepository.delete(ticketId);
+  }
+
+  async getTicketAndEvent(
+    ticketId: string,
+    eventId: string,
+  ): Promise<{ ticket: Ticket; event: Event }> {
+    const ticket = await this.ticketRepository.findTicketId(ticketId);
+    const event = await this.eventRepository.findById(eventId);
+    return { ticket, event };
   }
 }
