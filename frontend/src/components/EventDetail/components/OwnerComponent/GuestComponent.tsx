@@ -1,28 +1,15 @@
-import {
-  AlertCircle,
-  CheckCircle,
-  Mail,
-  Plus,
-  Trash2,
-  Users,
-} from "lucide-react";
+import { AlertCircle, CheckCircle, Mail, Plus, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Ticket } from "../../../../utils";
 import "./GuestComponent.css";
 import { createTicket, deleteTicket, getTicketsForEvent } from "./service";
-
-interface Guest {
-  id: string;
-  email: string;
-  eventId: string;
-  createdAt?: string;
-}
 
 interface GuestComponentProps {
   eventId: string;
 }
 
 const GuestComponent: React.FC<GuestComponentProps> = ({ eventId }) => {
-  const [guests, setGuests] = useState<Guest[]>([]);
+  const [guests, setGuests] = useState<Ticket[]>([]);
   const [newEmail, setNewEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -82,11 +69,13 @@ const GuestComponent: React.FC<GuestComponentProps> = ({ eventId }) => {
     }
   };
 
-  const removeGuest = async (guestId: string) => {
+  const removeGuest = async (guestTicketId: string) => {
     try {
       setLoading(true);
-      await deleteTicket(guestId);
-      setGuests((prev) => prev.filter((guest) => guest.id !== guestId));
+      await deleteTicket(guestTicketId);
+      setGuests((prev) =>
+        prev.filter((guest) => guest.ticketId !== guestTicketId)
+      );
       setSuccess("Guest removed successfully! 🗑️");
       setTimeout(() => setSuccess(""), 3000);
     } catch {
@@ -106,8 +95,7 @@ const GuestComponent: React.FC<GuestComponentProps> = ({ eventId }) => {
     <div className="guest-component">
       <div className="guest-header">
         <div className="guest-header-content">
-          <Users className="guest-icon" />
-          <h3>Guest Management 👥</h3>
+          <h2 className="section-title">Guest List </h2>
           <span className="guest-count">{guests.length} guests</span>
         </div>
       </div>
@@ -176,7 +164,7 @@ const GuestComponent: React.FC<GuestComponentProps> = ({ eventId }) => {
           </div>
         ) : (
           guests.map((guest) => (
-            <div key={guest.id} className="guest-item">
+            <div key={guest.email} className="guest-item">
               <div className="guest-info">
                 <Mail className="guest-email-icon" />
                 <span className="guest-email">{guest.email}</span>
@@ -184,10 +172,10 @@ const GuestComponent: React.FC<GuestComponentProps> = ({ eventId }) => {
                   <span className="guest-date">
                     Added {new Date(guest.createdAt).toLocaleDateString()}
                   </span>
-                )}
+                )}{" "}
               </div>
               <button
-                onClick={() => removeGuest(guest.id)}
+                onClick={() => removeGuest(guest.ticketId)}
                 disabled={loading}
                 className="remove-guest-btn"
                 title="Remove guest"

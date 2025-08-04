@@ -21,6 +21,15 @@
   animation: slideInUp 0.6s ease-out;
 }
 
+.house-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  color: var(--color-neon-blue);
+}
+
 .ticket-container::before {
   content: '';
   position: absolute;
@@ -253,6 +262,120 @@
     margin: 1rem 0.5rem;
     padding: 0.9rem 1.5rem;
     font-size: 0.9rem;
+  }
+}
+
+/* Map View Styles */
+.map-view {
+  margin: 1.5rem 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.map-view h2 {
+  padding: 1rem 1rem 0.5rem 1rem;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+}
+
+.map-view .leaflet-container {
+  border-radius: 0 0 12px 12px;
+  height: 250px !important;
+  width: 100% !important;
+}
+
+.map-view .leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.map-view .leaflet-popup-content {
+  margin: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.map-view .leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Map click functionality styling */
+.map-view .leaflet-container {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.map-view .leaflet-container:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* No location fallback styling */
+.map-view .no-location {
+  padding: 2rem 1rem;
+  text-align: center;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 0 0 12px 12px;
+  color: #6c757d;
+}
+
+.map-view .no-location p {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #495057;
+}
+
+.map-view .no-location small {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Responsive map sizing */
+@media (max-width: 480px) {
+  .map-view {
+    margin: 1rem 0.5rem;
+  }
+  
+  .map-view h2 {
+    font-size: 1rem;
+    padding: 0.8rem 0.8rem 0.4rem 0.8rem;
+  }
+  
+  .map-view .leaflet-container {
+    height: 200px !important;
+  }
+  
+  .map-view .no-location {
+    padding: 1.5rem 0.8rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .map-view .leaflet-container {
+    height: 300px !important;
+  }
+  
+  .map-view h2 {
+    font-size: 1.2rem;
+    padding: 1.2rem 1.2rem 0.6rem 1.2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .map-view .leaflet-container {
+    height: 350px !important;
   }
 }
 

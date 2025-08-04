@@ -262,6 +262,12 @@ export interface Event {
   lineupPictureUrl?: string[];
   // comments
   commentCount?: number;
+
+  location?: {
+    type: string;
+    coordinates: number[];
+    city?: string;
+  };
 }
 
 export const defaultProfileImage =

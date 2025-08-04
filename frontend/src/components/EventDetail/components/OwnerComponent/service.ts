@@ -86,7 +86,7 @@ export const createTicket = async (eventId: string, email: string) => {
 export const getTicketsForEvent = async (eventId: string) => {
   const accessToken = localStorage.getItem("access_token");
   try {
-    const response = await fetch(`${API_URL}tickets/${eventId}`, {
+    const response = await fetch(`${API_URL}tickets/event/${eventId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -103,7 +103,7 @@ export const getTicketsForEvent = async (eventId: string) => {
 
 export const deleteTicket = async (ticketId: string) => {
   const accessToken = localStorage.getItem("access_token");
-  const response = await fetch(`${API_URL}tickets/${ticketId}`, {
+  const response = await fetch(`${API_URL}tickets/ticket/${ticketId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${accessToken}`,
