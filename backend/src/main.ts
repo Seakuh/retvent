@@ -6,7 +6,6 @@ import * as express from 'express';
 import * as path from 'path';
 import { AppModule } from './app.module';
 
-// Falls randomUUID fehlt, polyfill hinzufügen
 if (!(global as any).crypto?.randomUUID) {
   (global as any).crypto = Object.assign({}, (global as any).crypto, {
     randomUUID: () =>
