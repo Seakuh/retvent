@@ -1,6 +1,6 @@
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { House } from "lucide-react";
+import { ChevronLeft, House } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
@@ -81,8 +81,15 @@ export const TicketPage = () => {
     );
   }
 
+  const handleBack = () => {
+    navigate("/");
+  };
+
   return (
     <div className="ticket-page">
+      <button className="back-button" onClick={handleBack}>
+        <ChevronLeft className="h-5 w-5" />{" "}
+      </button>
       <div className="ticket-container">
         <div className="ticket-header">
           {event.imageUrl && (
@@ -199,7 +206,7 @@ export const TicketPage = () => {
               className="map-container"
               onClick={() => {
                 window.open(
-                  `https://www.google.com/maps?q=${event.uploadLat},${event.uploadLon}`,
+                  `https://www.google.com/maps?q=${event.location?.coordinates[0]},${event.location?.coordinates[1]}`,
                   "_blank"
                 );
               }}

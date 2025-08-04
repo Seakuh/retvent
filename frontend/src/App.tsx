@@ -24,6 +24,7 @@ import { PwaInstall } from "./components/PwaInstall/PwaInstall";
 import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
+import { MyTickets } from "./pages/MyTickets.";
 import ReelPage from "./pages/ReelPage";
 import { SearchPage } from "./pages/SearchPage";
 import { ShoppingPage } from "./pages/ShoppingPage";
@@ -131,6 +132,14 @@ const App: React.FC = () => {
                     element={
                       <ProtectedRoute>
                         <Me />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/my-tickets"
+                    element={
+                      <ProtectedRoute>
+                        <MyTickets />
                       </ProtectedRoute>
                     }
                   />

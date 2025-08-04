@@ -10,6 +10,7 @@ import {
   Settings,
   ShoppingBag,
   Smartphone,
+  Ticket,
   Upload,
   UserIcon,
 } from "lucide-react";
@@ -69,7 +70,13 @@ export const SideBar = ({
               <Compass size={20} />
               <span className="hidden md:inline">Explore</span>
             </button>
-
+            <button
+              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              onClick={() => navigate("/my-tickets")}
+            >
+              <Ticket size={20} />
+              <span className="hidden md:inline">My Tickets</span>
+            </button>
             <button
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
               onClick={() => setIsUploadOpen(!isUploadOpen)}

@@ -84,6 +84,16 @@ export const getTicket = async (ticketId: string): Promise<Ticket> => {
     }
 
     const data = await response.json();
+
+    // Save ticket ID to local storage array 🎟️
+    const savedTickets = JSON.parse(
+      localStorage.getItem("savedTickets") || "[]"
+    );
+    if (!savedTickets.includes(ticketId)) {
+      savedTickets.push(ticketId);
+      localStorage.setItem("savedTickets", JSON.stringify(savedTickets));
+    }
+
     console.log("data", data);
     return data as Ticket;
   } catch (error) {
