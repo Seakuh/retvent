@@ -1,9 +1,18 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { randomBytes } from 'crypto';
 import * as dotenv from 'dotenv';
 import * as express from 'express';
 import * as path from 'path';
 import { AppModule } from './app.module';
+
+// Falls randomUUID fehlt, polyfill hinzufügen
+if (!(global as any).crypto?.randomUUID) {
+  (global as any).crypto = Object.assign({}, (global as any).crypto, {
+    randomUUID: () =>
+      [4, 2, 2, 2, 6].map((len) => randomBytes(len).toString('hex')).join('-'),
+  });
+}
 
 async function bootstrap() {
   // Load .env file before creating the app
