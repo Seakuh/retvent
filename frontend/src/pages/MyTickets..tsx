@@ -1,21 +1,19 @@
 import { ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Ticket } from "../utils";
 import "./MyTickets.css";
-import { getTicket } from "./service";
+import { getTickets } from "./service";
 
 export const MyTickets = () => {
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
   const navigate = useNavigate();
   useEffect(() => {
     const savedTickets = JSON.parse(
       localStorage.getItem("savedTickets") || "[]"
     );
-    savedTickets.forEach((ticketId: string) => {
-      getTicket(ticketId).then((ticket) =>
-        setTickets((prev) => [...prev, ticket])
-      );
+    getTickets(savedTickets).then((tickets) => {
+      setTickets(tickets);
+      console.log(tickets);
     });
   }, []);
 

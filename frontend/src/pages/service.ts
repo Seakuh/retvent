@@ -74,6 +74,20 @@ export const getReelEvents = async (
   }
 };
 
+export const getTickets = async (ticketIds: string[]) => {
+  try {
+    console.log(ticketIds);
+    const response = await fetch(
+      `${API_URL}tickets/tickets/${ticketIds.join(",")}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("🎫 Error fetching tickets:", error);
+    return [];
+  }
+};
+
 export const getTicket = async (ticketId: string): Promise<Ticket> => {
   try {
     const response = await fetch(`${API_URL}tickets/ticket/${ticketId}`);
