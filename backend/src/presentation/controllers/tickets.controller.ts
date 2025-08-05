@@ -32,6 +32,11 @@ export class TicketsController {
     return this.ticketsService.validateTicket(ticketId, hash);
   }
 
+  @Get('tickets/:ticketIds')
+  async getTicketsById(@Param('ticketIds') ticketIds: string[]) {
+    return this.ticketsService.getTicketByIds(ticketIds);
+  }
+
   @Get('event/:eventId')
   async getTickets(@Param('eventId') eventId: string) {
     const ticket = await this.ticketsService.getTicketsForEvent(eventId);

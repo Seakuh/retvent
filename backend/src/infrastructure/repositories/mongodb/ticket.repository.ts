@@ -36,4 +36,8 @@ export class MongoTicketRepository implements ITicketRepository {
   async create(ticket: Ticket): Promise<Ticket> {
     return this.ticketModel.create(ticket);
   }
+
+  async findTicketsIds(ticketIds: string[]): Promise<Ticket[]> {
+    return this.ticketModel.find({ ticketId: { $in: ticketIds } }).exec();
+  }
 }

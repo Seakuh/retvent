@@ -187,7 +187,7 @@ export class TicketsService {
         margin-bottom: 20px;
       }
 
-      .qr-code {
+      .qr-code {  
         padding: 16px;
         background: #fff;
         border-radius: 12px;
@@ -243,13 +243,6 @@ export class TicketsService {
         <h1 class="event-title">{{event.title}}</h1>
         <p class="event-date">{{event.startDate}} um {{event.startTime}}</p>
         
-        <!-- Miniaturkarte -->
-        <div class="map-container">
-      <a href="https://www.google.com/maps/dir/?api=1&destination={{event.location.coordinates.latitude}},{{event.location.coordinates.longitude}}" target="_blank">
-  <img src="https://staticmap.openstreetmap.de/staticmap.php?center={{event.location.coordinates.latitude}},{{event.location.coordinates.longitude}}&zoom=14&size=300x200&markers={{event.location.coordinates.latitude}},{{event.location.coordinates.longitude}},red-pushpin" 
-       alt="Karte zum Zielort" 
-       style="border:0; max-width:100%; height:auto;">
-</a>
 
         <div class="ticket-info">
           <p><strong>Ticket ID:</strong> {{ticket.ticketId}}</p>
@@ -261,7 +254,7 @@ export class TicketsService {
           <div class="qr-code">
             <canvas id="qr"></canvas>
           </div>
-          <a class="view-ticket-btn" href="https://event-scanner.com/ticket/xIHOsRyQ8s">
+          <a class="view-ticket-btn" href="{{event.ticketLink}}">
             Ticket anzeigen
           </a>
         </div>
@@ -336,8 +329,8 @@ export class TicketsService {
             ? new Date(event.startDate).toLocaleDateString('de-DE')
             : 'TBD',
           startTime: event?.startTime || 'TBD',
-          imageUrl: event?.imageUrl || 'https://via.placeholder.com/400x200',
-          ticketLink: `${process.env.FRONTEND_URL || 'https://event-scanner.com/'}/ticket/${ticket.ticketId}`,
+          imageUrl: event?.imageUrl || 'https://event-scanner.com/logo.png',
+          ticketLink: `${process.env.FRONTEND_URL || 'https://event-scanner.com'}/ticket/${ticket.ticketId}`,
         },
         ticket: {
           ticketId: ticket.ticketId,
@@ -381,6 +374,26 @@ export class TicketsService {
     ticket.status = 'validated';
     await this.ticketRepository.update(ticketId, ticket);
     return ticket;
+  }
+
+  async getTicketByIds(ticketIds: string[]): Promise<any> {
+    console.log('ticketIds', ticketIds);
+    const tickets = await this.ticketRepository.findTicketsIds(ticketIds);
+    console.log('tickets', tickets);
+    const events = await this.eventRepository.getUserFavorites(
+      tickets.map((ticket) => ticket.eventId),
+    );
+    console.log('events', events);
+    const eventMap = new Map(events.map((event) => [event.id, event]));
+
+    return tickets.map((ticket) => ({
+      ticketId: ticket.ticketId,
+      email: ticket.email,
+      status: ticket.status,
+      createdAt: ticket.createdAt,
+      hash: ticket.hash,
+      event: eventMap.get(ticket.eventId),
+    }));
   }
 
   async getTicketsForEvent(eventId: string): Promise<Ticket[]> {
