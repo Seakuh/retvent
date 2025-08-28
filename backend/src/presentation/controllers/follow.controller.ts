@@ -20,6 +20,7 @@ export class FollowController {
     return this.followService.getFollowers(body.userId);
   }
 
+  // follow for more
   @Get('following')
   async getFollowing(@Body() body: { userId: string }) {
     return this.followService.getFollowing(body.userId);
