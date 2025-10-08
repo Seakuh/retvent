@@ -1,4 +1,4 @@
-import { Home, Plus, Search, Send, Settings } from "lucide-react";
+import { Film, Home, Plus, Search, Settings } from "lucide-react";
 import "./BottomBar.css";
 import { useLandingSearch } from "./LandinSearchContext";
 import { User } from "./utils";
@@ -33,6 +33,15 @@ export const BottomBar = ({
           >
             <Home size={22} />
           </button>
+          <button onClick={() => navigate("/reel")}>
+            <Film size={22} />
+          </button>
+          <button
+            className="create-event-plus"
+            onClick={() => setIsUploadOpen(true)}
+          >
+            <Plus size={22} />
+          </button>
 
           <button
             onClick={() => {
@@ -42,17 +51,6 @@ export const BottomBar = ({
             }}
           >
             <Search size={22} />
-          </button>
-
-          <button
-            className="create-event-plus"
-            onClick={() => setIsUploadOpen(true)}
-          >
-            <Plus size={22} />
-          </button>
-
-          <button onClick={() => navigate("/my-groups")}>
-            <Send size={22} />
           </button>
 
           <button

@@ -108,6 +108,7 @@ const App: React.FC = () => {
                   <Route path="/ticket/:ticketId" element={<TicketPage />} />
                   <Route path="/search/:query?" element={<SearchPage />} />
                   <Route path="/reel/:eventId" element={<ReelPage />} />
+                  <Route path="/reel/" element={<ReelPage />} />
                   <Route path="/imprint" element={<Imprint />} />
                   <Route
                     path="/group/invite/:userId/:tokenId"

@@ -2,7 +2,6 @@ import { Heart } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { AdBanner } from "../../Advertisement/AdBanner/AdBanner";
 import { FeedResponse } from "../../utils";
-import ReelTile from "../EventGallery/ReelTile";
 import { ExploreFeed } from "../Feed/ExploreFeed";
 import "./EventPage.css";
 import { EventSection } from "./EventSection";
@@ -74,7 +73,7 @@ export const EventPageOptimized = ({
   return (
     <div className="event-page-container">
       <AdBanner />
-      <ReelTile events={favoriteEvents} direction="horizontal" />
+      {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}
       <ExploreFeed feedItemsResponse={feedItemsResponse} />
 
       {favoriteEvents.length === 0 && (

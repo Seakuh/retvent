@@ -87,7 +87,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
               })()}
             </h3> */}
         </div>
-        <ReelTile events={[...todayEvents, ...events].slice(0, 4)} />
+        {/* <ReelTile events={[...todayEvents, ...events].slice(0, 4)} /> */}
         <div className="real-event-list-item-container">
           {todayEvents.map((event) => (
             <RealListItem key={getEventId(event)} event={event} />
@@ -110,10 +110,9 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
                   </h3>
                 </div>
                 <div className="event-date-section">
-                  {/* Zufälliges ReelTile vor den Events */}
-                  {shouldShowReelTile() && (
+                  {/* {shouldShowReelTile() && (
                     <ReelTile events={getRandomEventsForReel(events)} />
-                  )}
+                  )} */}
                   <div className="real-event-list-item-container">
                     {eventsForDate.map((event) => (
                       <RealListItem key={getEventId(event)} event={event} />

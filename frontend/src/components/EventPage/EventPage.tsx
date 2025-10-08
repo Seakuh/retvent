@@ -2,10 +2,8 @@ import { Heart } from "lucide-react";
 import { lazy, Suspense, useMemo } from "react";
 import { AdBanner } from "../../Advertisement/AdBanner/AdBanner";
 import { Event, FeedResponse } from "../../utils";
-import ReelTile from "../EventGallery/ReelTile";
 import { ExploreFeed } from "../Feed/ExploreFeed";
 import "./EventPage.css";
-import { EventSection } from "./EventSection";
 
 // 🚀 Lazy load components for better performance
 const LazyEventGalleryII = lazy(() =>
@@ -106,7 +104,7 @@ export const EventPage = ({
     <div className="event-page-container">
       <ExploreFeed feedItemsResponse={feedItemsResponse} />
       <AdBanner />
-      <ReelTile events={favoriteEvents} direction="horizontal" />
+      {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}
       {favoriteEvents.length === 0 && (
         <div className="no-liked-events">
           <Heart size={100} />
@@ -115,15 +113,16 @@ export const EventPage = ({
         </div>
       )}
       <div className="event-page-section-container">
-        <EventSection title="🔥 Trends" events={trendsEvents} />
+        {/* <EventSection title="🔥 Trends" events={trendsEvents} /> */}
         <div className="event-page-trends-container">
           {/* 🚀 Optimized rendering with memoized data */}
-          {filteredGroupedEvents.map(({ tag, events }) => (
+          {/* {filteredGroupedEvents.map(({ tag, events }) => (
             <div key={tag} className="event-page-section-container">
               <EventSection title={`#${tag}`} events={events} />
             </div>
-          ))}
+          ))} */}
         </div>
+
         <div className="event-favorites-container">
           <Suspense fallback={<div>Loading gallery...</div>}>
             <LazyEventGalleryII events={favoriteEvents} />
