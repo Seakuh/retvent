@@ -1,5 +1,6 @@
 import {
   Compass,
+  Film,
   Grid3X3,
   Info,
   LogIn,
@@ -62,6 +63,13 @@ export const SideBar = ({
               <span className="hidden md:inline">Search</span>
             </button>
 
+            <button
+              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              onClick={() => navigate("/reel")}
+            >
+              <Film size={20} />
+              <span className="hidden md:inline">Reels</span>
+            </button>
             <button
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
               onClick={goStart}
