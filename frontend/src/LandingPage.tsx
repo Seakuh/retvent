@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { BottomBar } from "./BottomBar";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { CityBar } from "./components/CityBar/CityBar";
-import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { fetchFavoriteEvents } from "./components/EventPage/service";
 import {
   getLatestFeedAll,
   getLatestFeedByFollowing,
 } from "./components/Feed/service";
+import { Trending } from "./components/Trending/Trending";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
 import { HelmetMeta } from "./LandingPageHelmet";
@@ -328,12 +328,15 @@ function LandingPage() {
           ) : viewMode === "Search" ? (
             <SearchPage />
           ) : viewMode === "Trending" ? (
-            <EventPage
-              favoriteEvents={favoriteEvents}
-              feedItemsResponse={followedProfiles}
+            <Trending
+              favoriteEvents={events}
+              feedItemsResponse={feedItemsResponse}
             />
           ) : (
-            <EventGalleryII events={events} />
+            <EventPage
+              favoriteEvents={events}
+              feedItemsResponse={feedItemsResponse}
+            />
           )}
         </main>
         {/* <SearchModal

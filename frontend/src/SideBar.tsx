@@ -1,7 +1,6 @@
 import {
-  Compass,
+  Calendar,
   Film,
-  Grid3X3,
   Info,
   LogIn,
   LogOut,
@@ -33,6 +32,7 @@ export const SideBar = ({
   setIsUploadOpen,
   setViewMode,
   setTrendingMode,
+  viewMode,
 }) => {
   const navigate = useNavigate();
 
@@ -63,10 +63,17 @@ export const SideBar = ({
               <Search size={20} />
               <span className="hidden md:inline">Search</span>
             </button>
+            <button
+              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              onClick={goStart}
+            >
+              <Calendar size={20} />
+              <span className="hidden md:inline">Now</span>
+            </button>
 
             <button
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
-              onClick={() => setTrendingMode("Trending")}
+              onClick={() => setViewMode("Trending")}
             >
               <TrendingUp size={20} />
               <span className="hidden md:inline">Trending</span>
@@ -78,13 +85,6 @@ export const SideBar = ({
             >
               <Film size={20} />
               <span className="hidden md:inline">Reels</span>
-            </button>
-            <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
-              onClick={goStart}
-            >
-              <Compass size={20} />
-              <span className="hidden md:inline">Explore</span>
             </button>
 
             <button
@@ -145,7 +145,7 @@ export const SideBar = ({
               <span className="hidden md:inline">Create Event</span>
             </button> */}
 
-            <button
+            {/* <button
               onClick={() => {
                 setShowUploads(!showUploads);
                 handleOnUpload();
@@ -156,7 +156,7 @@ export const SideBar = ({
               <span className="hidden md:inline">
                 {showUploads ? "Hide My Events" : "My Events"}
               </span>
-            </button>
+            </button> */}
 
             {/* <button
               onClick={handleInstallClick}
@@ -166,7 +166,7 @@ export const SideBar = ({
               <span className="hidden md:inline">Install App</span>
             </button> */}
 
-            <button
+            {/* <button
               onClick={() => {
                 navigate("/about");
               }}
@@ -174,7 +174,7 @@ export const SideBar = ({
             >
               <Info size={20} />
               <span className="hidden md:inline">About</span>
-            </button>
+            </button> */}
 
             {!loggedIn ? (
               <button
