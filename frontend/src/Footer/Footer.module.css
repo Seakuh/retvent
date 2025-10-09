@@ -266,11 +266,27 @@
   }
 
   .footerDescription {
-    display: none;
   }
 
   .footerAiHint {
+  }
+
+  .footer-content {
     display: none;
   }
-    
-} 
+
+  .footer-bottom {
+    display: none;
+  }
+
+  .footer-legal {
+    display: none;
+  }
+  .footer-legal {
+    opacity: 0.2;
+  }
+
+  .legal {
+    opacity: 0.2;
+  }
+}
