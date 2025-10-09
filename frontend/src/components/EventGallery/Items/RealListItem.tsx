@@ -5,7 +5,7 @@ import {
   Eye,
   Heart,
   MessageCircle,
-  Share2,
+  Send,
   TicketIcon,
 } from "lucide-react";
 import { useContext, useState } from "react";
@@ -182,6 +182,31 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             decoding="async"
           />
         </div>
+        <div className="event-meta-container">
+          <div className="event-meta-container-left">
+            <div
+              onClick={(e) => handleLike(e)}
+              className="event-card-like-container"
+            >
+              <Heart
+                size={20}
+                color={isFavorite(event.id!) ? "red" : "white"}
+                fill={isFavorite(event.id!) ? "red" : "none"}
+              />
+            </div>
+            <span className="">
+              <Eye size={20} />
+              {event.views}
+            </span>
+            <span className="comments">
+              <MessageCircle size={20} />
+              {event.commentCount}
+            </span>
+          </div>
+          <div onClick={(e) => shareEventId(e, event.id!)}>
+            <Send size={20} color={"white"} />
+          </div>
+        </div>
         <RealListItemProfileHeader
           profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
           name={event?.host?.username || ""}
@@ -222,12 +247,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               }
             })()}
           </span> */}
-          <h1 className="event-info-title-headline">
-            {event.title}
-            <div onClick={(e) => shareEventId(e, event.id!)}>
-              <Share2 size={20} color={"white"} />
-            </div>
-          </h1>
+          <h1 className="event-info-title-headline">{event.title}</h1>
 
           <h2 className="event-description-real-list-item">
             {event.description}
@@ -296,30 +316,6 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             <MapPin size={16} />
             {event.city || "TBA"}
           </span> */}
-          <div className="event-meta-container">
-            <div className="event-meta-container-right">
-              <div
-                onClick={(e) => handleLike(e)}
-                className="event-card-like-container"
-              >
-                <Heart
-                  size={20}
-                  color={isFavorite(event.id!) ? "red" : "white"}
-                  fill={isFavorite(event.id!) ? "red" : "none"}
-                />
-              </div>
-            </div>
-            <div className="event-meta-container-left">
-              <span className="views">
-                <Eye size={20} />
-                {event.views}
-              </span>
-              <span className="comments">
-                <MessageCircle size={20} />
-                {event.commentCount}
-              </span>
-            </div>
-          </div>
         </div>
       </div>
       {showLineup && renderLineup(event)}

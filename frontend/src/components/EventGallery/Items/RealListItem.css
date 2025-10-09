@@ -233,8 +233,20 @@
   gap: 4px;
 }
 
+.share-button {
+  display: flex;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
 .event-meta-container {
   display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  color: white !important;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .real-list-item-location {

@@ -1,5 +1,12 @@
-import { Calendar, House, SlidersHorizontal, Telescope } from "lucide-react";
+import {
+  Calendar,
+  House,
+  SlidersHorizontal,
+  Telescope,
+  TrendingUp,
+} from "lucide-react";
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ViewMode } from "../../types/event";
 import { categoriesToFilter, Event } from "../../utils";
 import { CalendarComponent } from "../EventDetail/components/Calendar/CalendarComponent";
@@ -37,6 +44,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   setDateRange,
   prevDateRange,
 }) => {
+  const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [showGenreModal, setShowGenreModal] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
@@ -97,6 +105,14 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       >
         <Telescope size={20} />
         All
+      </button>
+
+      <button
+        className={`category-button ${viewMode === "Trending" ? "active" : ""}`}
+        onClick={() => onViewModeChange("Trending")}
+      >
+        <TrendingUp size={20} />
+        Trending
       </button>
       {/* Calendar/date filter button */}
       <button
