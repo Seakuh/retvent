@@ -119,6 +119,11 @@
 }
 
 .event-info-title-headline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
     font-size: 2rem;
     white-space: nowrap;
     overflow: hidden;

@@ -5,6 +5,8 @@ import {
   Eye,
   Heart,
   MessageCircle,
+  Share2,
+  TicketIcon,
 } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -85,15 +87,29 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   ) => {
     e.preventDefault();
     e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
-    const shareData = {
-      url: `https://event-scanner.com/event/${eventId}`,
-    };
-    navigator.share(shareData);
+
+    const shareUrl = `https://event-scanner.com/event/${eventId}`;
+
+    if (navigator.share) {
+      // For mobile devices that support Web Share API
+      navigator.share({
+        url: shareUrl,
+      });
+    } else {
+      // Fallback for desktop browsers
+      navigator.clipboard
+        .writeText(shareUrl)
+        .then(() => {
+          // Could show a toast/notification here that URL was copied
+          alert("Link copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy:", err);
+        });
+    }
   };
 
-  const handleLineupClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleLineupClick = () => {
     setShowLineup(!showLineup);
   };
 
@@ -206,12 +222,69 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               }
             })()}
           </span> */}
-          <h1 className="event-info-title-headline">{event.title}</h1>
+          <h1 className="event-info-title-headline">
+            {event.title}
+            <div onClick={(e) => shareEventId(e, event.id!)}>
+              <Share2 size={20} color={"white"} />
+            </div>
+          </h1>
+
           <h2 className="event-description-real-list-item">
-            {event.lineup && event.lineup.length > 0
-              ? event.lineup.map((artist) => artist.name).join(" ")
-              : event.description}
+            {event.description}
           </h2>
+          <div className="event-info-button-container">
+            <button
+              className="lineup-button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.open(
+                  `https://google.com/search?q=${encodeURIComponent(
+                    event.title + " ticket"
+                  )}`
+                );
+              }}
+              title="Lineup anzeigen"
+            >
+              <TicketIcon size={24} />
+              <span>Ticket</span>
+            </button>
+            {/* Lineup Button for Desktop */}
+            {event.lineup && event.lineup.length > 0 && (
+              <button
+                className="lineup-button"
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleLineupClick();
+                }}
+                title="Lineup anzeigen"
+              >
+                <Clock size={24} />
+                <span>Lineup</span>
+              </button>
+            )}
+            <button
+              className="lineup-button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleAddToCalendar();
+              }}
+              title="Add to Calendar"
+            >
+              <CalendarPlus
+                size={20}
+                color={"white"}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleAddToCalendar();
+                }}
+              />
+              <span>Calendar</span>
+            </button>
+          </div>
           {/* <div className="event-tags-real-list-item">
           {event.tags?.map((tag) => (
             <span key={tag} className="event-tag">
@@ -233,22 +306,6 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                   size={20}
                   color={isFavorite(event.id!) ? "red" : "white"}
                   fill={isFavorite(event.id!) ? "red" : "none"}
-                />
-                {event.lineup && event.lineup.length > 0 && (
-                  <Clock
-                    size={20}
-                    color={"white"}
-                    onClick={(e: React.MouseEvent<SVGSVGElement>) =>
-                      handleLineupClick(
-                        e as unknown as React.MouseEvent<HTMLDivElement>
-                      )
-                    }
-                  />
-                )}
-                <CalendarPlus
-                  size={20}
-                  color={"white"}
-                  onClick={handleAddToCalendar}
                 />
               </div>
             </div>

@@ -13,6 +13,16 @@
   }
 }
 
+.event-info-button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  z-index: 0;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
 .real-event-list-item {
   display: flex;
   flex-direction: column;
@@ -272,6 +282,14 @@
 @media (max-width: 768px) {
   .real-event-thumbnail {
     max-height: 300px;
+  }
+
+  .event-info-button-container {
+    flex-direction: row;
+    gap: 0.5rem;
+    size: 0.5rem;
+    justify-content: flex-start;
+    align-items: center;
   }
 }
 
