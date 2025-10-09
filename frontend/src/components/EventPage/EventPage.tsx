@@ -1,6 +1,5 @@
 import { Heart } from "lucide-react";
 import { lazy, Suspense, useMemo } from "react";
-import { AdBanner } from "../../Advertisement/AdBanner/AdBanner";
 import { Event, FeedResponse } from "../../utils";
 import { ExploreFeed } from "../Feed/ExploreFeed";
 import "./EventPage.css";
@@ -103,7 +102,7 @@ export const EventPage = ({
   return (
     <div className="event-page-container">
       <ExploreFeed feedItemsResponse={feedItemsResponse} />
-      <AdBanner />
+      {/* <AdBanner /> */}
       {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}
       {favoriteEvents.length === 0 && (
         <div className="no-liked-events">
