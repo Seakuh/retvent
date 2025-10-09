@@ -1,4 +1,4 @@
-import { Film, Home, Plus, Search, Settings } from "lucide-react";
+import { Film, Home, Plus, Search, UserIcon } from "lucide-react";
 import "./BottomBar.css";
 import { useLandingSearch } from "./LandinSearchContext";
 import { User } from "./utils";
@@ -62,7 +62,7 @@ export const BottomBar = ({
               }
             }}
           >
-            <Settings size={22} />
+            <UserIcon size={22} />
           </button>
         </div>
       </nav>
