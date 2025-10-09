@@ -314,7 +314,7 @@ const ReelPage: React.FC = () => {
           {imageUrl && (
             <>
               <img
-                src={`https://img.event-scanner.com/insecure/rs:auto/plain/${imageUrl}@webp`}
+                src={`https://img.event-scanner.com/insecure/rs:fit:720:1280/q:70/plain/${imageUrl}@webp`}
                 alt={event.title}
                 className="reel-background-image"
                 style={{
@@ -324,6 +324,9 @@ const ReelPage: React.FC = () => {
                 onLoad={() => handleImageLoad(imageUrl)}
                 onError={() => handleImageError(imageUrl)}
                 draggable={false}
+                loading="eager"
+                fetchPriority="high"
+                decoding="sync"
               />
               {!isLoaded && (
                 <div className="reel-tile-loading">
