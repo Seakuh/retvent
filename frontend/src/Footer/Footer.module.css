@@ -252,4 +252,25 @@
   .separator {
     display: none;
   }
+
+  .footerLinks {
+    display: none;
+  }
+
+  .footerTitle {
+    display: none;
+  }
+
+  .footerHeading {
+    display: none;
+  }
+
+  .footerDescription {
+    display: none;
+  }
+
+  .footerAiHint {
+    display: none;
+  }
+    
 } 
