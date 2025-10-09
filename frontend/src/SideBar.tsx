@@ -123,7 +123,7 @@ export const SideBar = ({
               <span className="hidden md:inline">Profile</span>
             </button>
 
-            {/* <button
+            <button
               onClick={() => {
                 navigate(`/me`);
               }}
@@ -131,7 +131,7 @@ export const SideBar = ({
             >
               <Settings size={20} />
               <span className="hidden md:inline">Settings</span>
-            </button> */}
+            </button>
 
             {/* <button
               onClick={() => {
