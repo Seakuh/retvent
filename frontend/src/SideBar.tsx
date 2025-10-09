@@ -31,8 +31,6 @@ export const SideBar = ({
   isUploadOpen,
   setIsUploadOpen,
   setViewMode,
-  setTrendingMode,
-  viewMode,
 }) => {
   const navigate = useNavigate();
 
@@ -158,13 +156,13 @@ export const SideBar = ({
               </span>
             </button> */}
 
-            {/* <button
+            <button
               onClick={handleInstallClick}
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
             >
               <Smartphone size={20} />
               <span className="hidden md:inline">Install App</span>
-            </button> */}
+            </button>
 
             {/* <button
               onClick={() => {

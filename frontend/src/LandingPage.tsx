@@ -31,7 +31,7 @@ function LandingPage() {
     view,
     setSearchState,
   } = useLandingSearch();
-  const [viewMode, setViewMode] = useState<ViewMode>(view || "All");
+  const [viewMode, setViewMode] = useState<ViewMode>(view || "Trending");
   const { user, loggedIn, setLoggedIn, favoriteEventIds } =
     useContext(UserContext);
 
@@ -49,7 +49,6 @@ function LandingPage() {
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [trendingMode, setTrendingMode] = useState<ViewMode>("Trending");
   // Navigation State
   const navigate = useNavigate();
 
@@ -62,7 +61,7 @@ function LandingPage() {
     setFavoriteEvents([]);
     setFollowedProfiles([]);
     setLoggedIn(false);
-    setViewMode("All");
+    setViewMode("Trending");
     window.location.reload();
   };
 
@@ -271,7 +270,6 @@ function LandingPage() {
           loggedIn={loggedIn}
           user={user}
           setIsUploadOpen={setIsUploadOpen}
-          setTrendingMode={setTrendingMode}
         />
       </div>
 
