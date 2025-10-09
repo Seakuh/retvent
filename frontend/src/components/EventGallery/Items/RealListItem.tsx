@@ -1,11 +1,11 @@
 import {
   CalendarPlus,
-  Clock,
   ExternalLink,
   Eye,
   Heart,
   MessageCircle,
   Send,
+  Star,
   TicketIcon,
 } from "lucide-react";
 import { useContext, useState } from "react";
@@ -267,7 +267,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               title="Lineup anzeigen"
             >
               <TicketIcon size={24} />
-              <span>Ticket</span>
+              <span>Tickets</span>
             </button>
             {/* Lineup Button for Desktop */}
             {event.lineup && event.lineup.length > 0 && (
@@ -280,8 +280,8 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                 }}
                 title="Lineup anzeigen"
               >
-                <Clock size={24} />
-                <span>Lineup</span>
+                <Star size={24} />
+                <span>Artists</span>
               </button>
             )}
             <button
