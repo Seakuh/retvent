@@ -48,7 +48,7 @@ function LandingPage() {
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-
+  const [trendingMode, setTrendingMode] = useState<ViewMode>("Trending");
   // Navigation State
   const navigate = useNavigate();
 
@@ -270,6 +270,7 @@ function LandingPage() {
           loggedIn={loggedIn}
           user={user}
           setIsUploadOpen={setIsUploadOpen}
+          setTrendingMode={setTrendingMode}
         />
       </div>
 

@@ -9,7 +9,6 @@
     position: sticky;
     z-index: 10;
     top: 0;
-    width: 100%;
     backdrop-filter: blur(10px);
     margin: 0 auto;
     /* Stelle sicher, dass der Container einen definierten Kontext hat */
@@ -19,10 +18,12 @@
 
 .section-title {
     font-size: 2rem; 
-    margin-left: 1rem;
     font-weight: 600;
+    margin: 0 auto;
     color: white;
-    text-align: left;
+    width: 470px;
+    max-width: 470px !important;
+    text-align: center;
     text-transform: uppercase;
     position: -webkit-sticky;
     position: sticky;
@@ -47,7 +48,10 @@
     display: flex;
     flex-direction: row;
     align-items: baseline;
-    gap: 1rem;
+    width: 470px;
+    max-width: 100% !important;
+    margin: 0 auto;
+    text-align: center;
 
 }
 
@@ -62,8 +66,8 @@
 .event-date-heading-sub {
     font-size: 1rem;
     margin-bottom: 0.7rem;
-    text-align: left;
     color: var(--color-neon-blue);
+    text-align: center;
 }
 .event-date-heading-sub-past {
     color: var(--color-neon-pink);

@@ -9,8 +9,8 @@ import {
   Search,
   Send,
   Settings,
-  ShoppingBag,
   Smartphone,
+  TrendingUp,
   Upload,
   UserIcon,
 } from "lucide-react";
@@ -32,6 +32,7 @@ export const SideBar = ({
   isUploadOpen,
   setIsUploadOpen,
   setViewMode,
+  setTrendingMode,
 }) => {
   const navigate = useNavigate();
 
@@ -65,6 +66,14 @@ export const SideBar = ({
 
             <button
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              onClick={() => setTrendingMode("Trending")}
+            >
+              <TrendingUp size={20} />
+              <span className="hidden md:inline">Trending</span>
+            </button>
+
+            <button
+              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
               onClick={() => navigate("/reel")}
             >
               <Film size={20} />
@@ -86,20 +95,20 @@ export const SideBar = ({
               <span className="hidden md:inline">Upload</span>
             </button>
 
-            <button
+            {/* <button
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
               onClick={() => navigate("/shopping")}
             >
               <ShoppingBag size={20} />
               <span className="hidden md:inline">Fits</span>
-            </button>
+            </button> */}
 
             <button
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
               onClick={() => navigate("/my-groups")}
             >
               <Send size={20} />
-              <span className="hidden md:inline">My Groups</span>
+              <span className="hidden md:inline">Messages</span>
             </button>
 
             <button
@@ -116,7 +125,7 @@ export const SideBar = ({
               <span className="hidden md:inline">Profile</span>
             </button>
 
-            <button
+            {/* <button
               onClick={() => {
                 navigate(`/me`);
               }}
@@ -124,7 +133,7 @@ export const SideBar = ({
             >
               <Settings size={20} />
               <span className="hidden md:inline">Settings</span>
-            </button>
+            </button> */}
 
             {/* <button
               onClick={() => {
@@ -149,13 +158,13 @@ export const SideBar = ({
               </span>
             </button>
 
-            <button
+            {/* <button
               onClick={handleInstallClick}
               className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
             >
               <Smartphone size={20} />
               <span className="hidden md:inline">Install App</span>
-            </button>
+            </button> */}
 
             <button
               onClick={() => {
