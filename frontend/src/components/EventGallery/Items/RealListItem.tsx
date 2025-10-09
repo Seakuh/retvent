@@ -302,7 +302,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                   handleAddToCalendar();
                 }}
               />
-              <span>Calendar</span>
+              <span>Save</span>
             </button>
           </div>
           {/* <div className="event-tags-real-list-item">
