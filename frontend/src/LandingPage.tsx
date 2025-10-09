@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BottomBar } from "./BottomBar";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { CityBar } from "./components/CityBar/CityBar";
+import { EventGalleryII } from "./components/EventGallery/EventGalleryII";
 import { EventPage } from "./components/EventPage/EventPage";
 import { fetchFavoriteEvents } from "./components/EventPage/service";
 import {
@@ -326,11 +327,13 @@ function LandingPage() {
             />
           ) : viewMode === "Search" ? (
             <SearchPage />
-          ) : (
+          ) : viewMode === "Trending" ? (
             <EventPage
-              favoriteEvents={events}
-              feedItemsResponse={feedItemsResponse}
+              favoriteEvents={favoriteEvents}
+              feedItemsResponse={followedProfiles}
             />
+          ) : (
+            <EventGalleryII events={events} />
           )}
         </main>
         {/* <SearchModal
