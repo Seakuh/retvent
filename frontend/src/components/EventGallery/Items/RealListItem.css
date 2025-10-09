@@ -293,7 +293,6 @@
 
 @media (max-width: 768px) {
   .real-event-thumbnail {
-    max-height: 300px;
   }
 
   .event-info-button-container {
