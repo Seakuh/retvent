@@ -7,7 +7,7 @@ export const SponsoredDetail = () => {
       title: "Schallwerk Headphones",
       video:
         "https://event-scanner.b-cdn.net/play/509542/e30a068e-975d-4fe8-9b3b-4ae267792312",
-      link: "https://schallwerk.eu?ref:OTQxMTg5LjM0OTcuMTE3ODg0My5U",
+      link: "https://schallwerk.eu?ref=OTQxMTg5LjM0OTcuMTE3ODg0My5U",
     },
     {
       id: 2,
@@ -23,18 +23,15 @@ export const SponsoredDetail = () => {
   return (
     <div
       className="sponsored-detail"
-      onClick={() => {
-        window.open(randomAd.link, "_blank");
-      }}
+      onClick={() => window.open(randomAd.link, "_blank")}
     >
       <div className="sponsored-watermark">sponsored</div>
-      <video
+      <iframe
         src={randomAd.video}
         className="sponsored-video"
-        autoPlay
-        muted
-        playsInline
-        loop
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowFullScreen
+        title={randomAd.title}
       />
     </div>
   );
