@@ -6,14 +6,14 @@ export const SponsoredDetail = () => {
       id: 1,
       title: "Schallwerk Headphones",
       video:
-        "https://iframe.mediadelivery.net/play/509542/e30a068e-975d-4fe8-9b3b-4ae267792312",
+        "https://event-scanner.b-cdn.net/play/509542/e30a068e-975d-4fe8-9b3b-4ae267792312",
       link: "https://schallwerk.eu?ref:OTQxMTg5LjM0OTcuMTE3ODg0My5U",
     },
     {
       id: 2,
       title: "Lighter DIY",
       video:
-        "https://iframe.mediadelivery.net/play/509542/b15cf162-4b5f-4aa3-8177-09ea80dbcf01",
+        "https://event-scanner.b-cdn.net/play/509542/b15cf162-4b5f-4aa3-8177-09ea80dbcf01",
       link: "https://www.instagram.com/sturmzx2/",
     },
   ];
