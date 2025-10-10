@@ -1,5 +1,6 @@
 import React from "react";
 import { Event, formatDate, getDaysPast, getDaysUntilDate } from "../../utils";
+import { SponsoredDetail } from "../Sponsored/SponsoredDetail";
 import "./EventGalleryII.css";
 import { RealListItem } from "./Items/RealListItem";
 import ReelTile from "./ReelTile";
@@ -79,7 +80,10 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
           {/* <ReelTile events={[...todayEvents, ...events].slice(0, 4)} /> */}
           <div className="real-event-list-item-container">
             {todayEvents.map((event) => (
-              <RealListItem key={getEventId(event)} event={event} />
+              <div key={getEventId(event)}>
+                {Math.random() < 0.3 && <SponsoredDetail />}
+                <RealListItem key={getEventId(event)} event={event} />
+              </div>
             ))}
           </div>
         </div>
@@ -103,7 +107,10 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
                   )} */}
                   <div className="real-event-list-item-container">
                     {eventsForDate.map((event) => (
-                      <RealListItem key={getEventId(event)} event={event} />
+                      <div key={getEventId(event)}>
+                        {Math.random() < 0.3 && <SponsoredDetail />}
+                        <RealListItem key={getEventId(event)} event={event} />
+                      </div>
                     ))}
                   </div>
                 </div>
