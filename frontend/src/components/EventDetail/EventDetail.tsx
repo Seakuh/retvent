@@ -6,6 +6,7 @@ import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetch
 import CommentSection from "../Comment/CommentSection";
 import { CommunityBar } from "../CommunityDetailBar/CommunityBar";
 import { ImageModal } from "../ImageModal/ImageModal";
+import { SponsoredDetail } from "../Sponsored/SponsoredDetail";
 import { EventBasicInfo } from "./components/EventBasicInfo";
 import { EventDescription } from "./components/EventDescription";
 import { EventDetailError } from "./components/EventDetailError";
@@ -173,6 +174,7 @@ export const EventDetail: React.FC = () => {
           onImageClick={() => setShowImageModal(true)}
         />
         <MetaBar {...event} />
+        <SponsoredDetail />
         {/* <CommunitySection
           views={event.views ?? 0}
           commentCount={event.commentCount ?? 0}

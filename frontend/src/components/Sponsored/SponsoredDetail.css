@@ -1,0 +1,52 @@
+.sponsored-detail {
+  width: 80rem;
+    max-width: 100%;
+  margin-top: 1rem;
+  margin: 0 auto;
+  height: 12.5rem;
+  background-color: black;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sponsored-watermark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.sponsored-video {
+  width: 100%;
+  height: 100%;
+  border: none;
+  object-fit: cover;
+}
+
+.sponsored-link {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 10;
+  transition: background-color 0.2s ease;
+}
+
+.sponsored-link:hover {
+  background-color: #0056b3;
+  color: white;
+  text-decoration: none;
+}
