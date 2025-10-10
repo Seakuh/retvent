@@ -14,7 +14,7 @@ export const SponsoredDetail = () => {
       title: "Lighter DIY",
       video:
         "https://iframe.mediadelivery.net/play/509542/b15cf162-4b5f-4aa3-8177-09ea80dbcf01",
-      link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      link: "https://www.instagram.com/sturmzx2/",
     },
   ];
 
