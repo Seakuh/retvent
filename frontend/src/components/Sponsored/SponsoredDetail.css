@@ -1,13 +1,13 @@
 .sponsored-detail {
   width: 80rem;
     max-width: 100%;
-  margin-top: 1rem;
-  margin: 0 auto;
   height: 12.5rem;
   background-color: black;
   position: relative;
   border-radius: 8px;
   overflow: hidden;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .sponsored-watermark {
