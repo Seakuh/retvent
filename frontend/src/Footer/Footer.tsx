@@ -9,11 +9,6 @@ const Footer: React.FC = () => {
         {/* Company Section */}
         <div className={styles.footerSection}>
           <div className={styles.logoContainer}>
-            <img
-              src="/logo.png"
-              alt="Event Scanner Logo"
-              className={styles.logo}
-            />
             <h3 className={styles.footerHeading}>Event Scanner</h3>
           </div>
           <p className={styles.footerDescription}>
