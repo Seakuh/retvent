@@ -1,19 +1,19 @@
 import "./SponsoredDetail.css";
 
-export const SponsoredDetail = () => {
+export const SponsoredDetail = ({ size = "m" }: { size?: "s" | "m" | "l" }) => {
   const ads = [
     {
       id: 1,
       title: "Schallwerk Headphones",
       video:
-        "https://event-scanner.b-cdn.net/play/509542/e30a068e-975d-4fe8-9b3b-4ae267792312",
+        "https://event-scanner.b-cdn.net/event-scanner-advertisement/videos/tmprqg0ybrh.mp4",
       link: "https://schallwerk.eu?ref=OTQxMTg5LjM0OTcuMTE3ODg0My5U",
     },
     {
       id: 2,
       title: "Lighter DIY",
       video:
-        "https://event-scanner.b-cdn.net/play/509542/b15cf162-4b5f-4aa3-8177-09ea80dbcf01",
+        "https://event-scanner.b-cdn.net/event-scanner-advertisement/videos/tmpdlv1tkdy.mp4",
       link: "https://www.instagram.com/sturmzx2/",
     },
   ];
@@ -22,10 +22,9 @@ export const SponsoredDetail = () => {
 
   return (
     <div
-      className="sponsored-detail"
+      className={`sponsored-detail ${size}-size`}
       onClick={() => window.open(randomAd.link, "_blank")}
     >
-      <div className="sponsored-watermark">sponsored</div>
       <iframe
         src={randomAd.video}
         className="sponsored-video"

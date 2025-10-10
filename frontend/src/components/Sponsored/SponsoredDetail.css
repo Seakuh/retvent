@@ -1,5 +1,4 @@
 .sponsored-detail {
-  width: 80rem;
   margin: 0 auto;
   max-width: 100%;
   height: 12.5rem;
@@ -9,6 +8,14 @@
   overflow: hidden;
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+
+.sponsored-detail.s-size {
+  width: 470px;
+}
+
+.sponsored-detail.m-size {
+  width: 80rem;
 }
 
 .sponsored-watermark {
