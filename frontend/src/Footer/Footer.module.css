@@ -22,6 +22,21 @@
   gap: 1rem;
 }
 
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
 .footerHeading {
   font-size: 1.75rem;
   font-weight: 700;
@@ -205,6 +220,10 @@
     text-align: center;
   }
 
+  .logoContainer {
+    justify-content: center;
+  }
+
   .footerDescription {
     max-width: 100%;
   }
@@ -234,6 +253,15 @@
 
   .footerSection {
     text-align: center;
+  }
+
+  .logoContainer {
+    justify-content: center;
+  }
+
+  .logo {
+    width: 28px;
+    height: 28px;
   }
 
   .footerLinks {
