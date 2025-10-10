@@ -1,27 +1,26 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BottomBar } from "./BottomBar";
 import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
 import { CityBar } from "./components/CityBar/CityBar";
 import { EventPage } from "./components/EventPage/EventPage";
-import { fetchFavoriteEvents } from "./components/EventPage/service";
-import {
-  getLatestFeedAll,
-  getLatestFeedByFollowing,
-} from "./components/Feed/service";
 import { Trending } from "./components/Trending/Trending";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
+import { useClickOutside } from "./hooks/useClickOutside";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
+import { useLandingPageData } from "./hooks/useLandingPageData";
 import { HelmetMeta } from "./LandingPageHelmet";
 import { useLandingSearch } from "./LandinSearchContext";
 import { SearchPage } from "./pages/SearchPage";
-import { searchEvents } from "./service";
 import { SideBar } from "./SideBar";
 import { ViewMode } from "./types/event";
 import { UploadModal } from "./UploadModal/UploadModal";
-import { Event, FeedResponse } from "./utils";
+
 function LandingPage() {
-  // Search State
+  const navigate = useNavigate();
+
+  // Context
   const {
     location,
     startDate,
@@ -31,229 +30,205 @@ function LandingPage() {
     view,
     setSearchState,
   } = useLandingSearch();
-  const [viewMode, setViewMode] = useState<ViewMode>(view || "Trending");
   const { user, loggedIn, setLoggedIn, favoriteEventIds } =
     useContext(UserContext);
 
-  // Event State
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Local state
+  const [viewMode, setViewMode] = useState<ViewMode>(view || "Trending");
   const [showMenu, setShowMenu] = useState(false);
-
-  // User Page
-  const [favoriteEvents, setFavoriteEvents] = useState<Event[]>([]);
   const [showUploads, setShowUploads] = useState(false);
-  const [followedProfiles, setFollowedProfiles] = useState<FeedResponse[]>([]);
-
-  // Search State
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  // Navigation State
-  const navigate = useNavigate();
 
-  // Feed State
-  const [feedItemsResponse, setFeedItemsResponse] = useState<FeedResponse[]>(
-    []
+  // Memoized search params to prevent unnecessary re-renders
+  const searchParams = useMemo(
+    () => ({
+      location,
+      startDate,
+      endDate,
+      category,
+      prompt,
+    }),
+    [location, startDate, endDate, category, prompt]
   );
 
-  const handleLogout = () => {
-    setFavoriteEvents([]);
-    setFollowedProfiles([]);
+  // Custom hook for data fetching
+  const {
+    events,
+    favoriteEvents,
+    followedProfiles,
+    feedItemsResponse,
+    loading,
+    performSearch,
+  } = useLandingPageData({
+    favoriteEventIds,
+    loggedIn,
+    searchParams,
+  });
+
+  // Event handlers with useCallback to prevent unnecessary re-renders
+  const handleLogout = useCallback(() => {
     setLoggedIn(false);
     setViewMode("Trending");
-    window.location.reload();
-  };
+    setSearchState({ view: "Trending" });
+  }, [setLoggedIn, setSearchState]);
 
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key.toLowerCase() === "l") {
-        e.preventDefault();
-        setIsSearchOpen(true);
-      }
-      if (e.ctrlKey && e.key.toLowerCase() === "h") {
-        e.preventDefault();
-        setViewMode("Home");
-        setSearchState({ view: "Home" });
-      }
-      if (e.ctrlKey && e.key.toLowerCase() === "a") {
-        e.preventDefault();
-        setViewMode("All");
-        setSearchState({ view: "All" });
-      }
-    };
-    window.addEventListener("keydown", handleKeyPress);
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, []);
-
-  const handleSearch = async (searchTerm: string) => {
-    setViewMode("Search");
-    setSearchState({ prompt: searchTerm });
-    setLoading(true);
-    setSearchPerformed(true);
-    try {
-      const searchResults = await searchEvents(
-        location === "Worldwide" ? undefined : location,
-        category,
-        searchTerm,
-        startDate,
-        endDate
-      );
-      setEvents(searchResults as Event[]);
+  const handleSearch = useCallback(
+    async (searchTerm: string) => {
+      setViewMode("Search");
+      setSearchState({ prompt: searchTerm });
+      setSearchPerformed(true);
       setIsSearchOpen(false);
-    } catch (error) {
-      console.error("Error searching events:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleOnUpload = () => {
+      try {
+        await performSearch(searchTerm);
+      } catch (error) {
+        console.error("Error searching events:", error);
+      }
+    },
+    [performSearch, setSearchState]
+  );
+
+  const handleOnUpload = useCallback(() => {
     navigate("/admin/events");
-  };
+  }, [navigate]);
 
-  const handleViewChange = (view: ViewMode) => {
-    setSearchState({ view });
-    if (view == "All") {
+  const handleViewChange = useCallback(
+    (view: ViewMode) => {
+      setViewMode(view);
+
+      if (view === "All") {
+        setSearchState({
+          prompt: "",
+          category: "",
+          view: "All",
+          startDate: startDate || "",
+          endDate: endDate || "",
+        });
+      } else {
+        setSearchState({ view });
+      }
+    },
+    [setSearchState, startDate, endDate]
+  );
+
+  const handleCategoryChange = useCallback(
+    (category: string | null) => {
       setSearchState({
-        prompt: "",
-        category: "",
-        view: "All",
+        category: category || "",
         startDate: startDate || "",
         endDate: endDate || "",
+        prompt: prompt || "",
+        location: location || "",
       });
-      setViewMode("All");
-    }
-    setViewMode(view);
-  };
+    },
+    [setSearchState, startDate, endDate, prompt, location]
+  );
 
-  const handleCategoryChange = (category: string | null) => {
-    setSearchState({
-      category: category || "",
-      startDate: startDate || "",
-      endDate: endDate || "",
-      prompt: prompt || "",
-      location: location || "",
-    });
-  };
+  const handleDateChange = useCallback(
+    (dateRange: { startDate: Date | null; endDate: Date | null }) => {
+      setSearchState({
+        startDate: dateRange.startDate?.toISOString() || "",
+        endDate: dateRange.endDate?.toISOString() || "",
+      });
+    },
+    [setSearchState]
+  );
 
-  const handleDateChange = (dateRange: {
-    startDate: Date | null;
-    endDate: Date | null;
-  }) => {
-    setSearchState({
-      startDate: dateRange.startDate?.toISOString() || "",
-      endDate: dateRange.endDate?.toISOString() || "",
-    });
-  };
+  const handleLocationChange = useCallback(
+    (location: string) => {
+      setSearchState({ location });
+    },
+    [setSearchState]
+  );
 
-  const handleLocationChange = (location: string) => {
-    setSearchState({ location });
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (favoriteEventIds.length > 0) {
-          const [favoriteEvents, followedProfiles] = await Promise.all([
-            fetchFavoriteEvents(favoriteEventIds, {
-              startDate,
-              endDate,
-              category,
-              location,
-              prompt,
-            }),
-            getLatestFeedByFollowing(),
-          ]);
-          setFavoriteEvents(favoriteEvents);
-          setFollowedProfiles(followedProfiles);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [
-    startDate,
-    endDate,
-    category,
-    location,
-    prompt,
-    loggedIn,
-    favoriteEventIds,
-  ]);
-
-  useEffect(() => {
-    const searchQuery = prompt;
-    const categoryQuery = category;
-    const locationQuery = location;
-    const startDateQuery = startDate;
-    const endDateQuery = endDate;
-
-    const loadEvents = async () => {
-      setLoading(true);
-      try {
-        const events = await searchEvents(
-          locationQuery,
-          categoryQuery,
-          searchQuery,
-          startDateQuery,
-          endDateQuery
-        );
-        if (Array.isArray(events)) {
-          setEvents(events.reverse());
-        }
-      } catch (err) {
-        console.error("Error loading events:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const loadFeedItems = async () => {
-      const feedItemsResponse = await getLatestFeedAll();
-      setFeedItemsResponse(feedItemsResponse);
-    };
-    loadFeedItems();
-    loadEvents();
-    // loadProfiles();
-  }, [location, category, prompt, startDate, endDate, loggedIn]);
-
-  const handleInstallClick = async () => {
+  const handleInstallClick = useCallback(() => {
     navigate("/install-app");
-  };
+  }, [navigate]);
 
-  // Füge useEffect für den Click-Outside-Listener hinzu
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const menuButton = document.querySelector(".menu-button");
-      const menu = document.querySelector(".menu-container");
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onSearchOpen: useCallback(() => setIsSearchOpen(true), []),
+    onViewChange: handleViewChange,
+  });
 
-      if (
-        showMenu &&
-        menu &&
-        !menu.contains(event.target as Node) &&
-        menuButton &&
-        !menuButton.contains(event.target as Node)
-      ) {
-        setShowMenu(false);
-      }
-    };
+  // Click outside handler for menu
+  useClickOutside(showMenu, () => setShowMenu(false), {
+    button: ".menu-button",
+    container: ".menu-container",
+  });
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showMenu]);
+  // Memoize date range to prevent unnecessary re-renders
+  const dateRange = useMemo(
+    () => ({
+      startDate: startDate ? new Date(startDate) : null,
+      endDate: endDate ? new Date(endDate) : null,
+    }),
+    [startDate, endDate]
+  );
+
+  // Memoize content based on view mode
+  const renderContent = useMemo(() => {
+    if (loading) {
+      return (
+        <div className="search-loading">
+          <div className="search-spinner"></div>
+        </div>
+      );
+    }
+
+    if (searchPerformed && events.length === 0) {
+      return (
+        <div className="no-results mt-10">
+          <div className="no-results-content text-center flex flex-col items-center justify-center">
+            <div className="no-results-icon text-7xl">🚫</div>
+            <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
+          </div>
+        </div>
+      );
+    }
+
+    switch (viewMode) {
+      case "Home":
+        return (
+          <EventPage
+            favoriteEvents={favoriteEvents}
+            feedItemsResponse={followedProfiles}
+          />
+        );
+      case "Search":
+        return <SearchPage />;
+      case "Trending":
+        return (
+          <Trending
+            favoriteEvents={events}
+            feedItemsResponse={feedItemsResponse}
+          />
+        );
+      default:
+        return (
+          <EventPage
+            favoriteEvents={events}
+            feedItemsResponse={feedItemsResponse}
+          />
+        );
+    }
+  }, [
+    loading,
+    searchPerformed,
+    events,
+    viewMode,
+    favoriteEvents,
+    followedProfiles,
+    feedItemsResponse,
+  ]);
 
   return (
     <>
       <HelmetMeta />
-      {/* Sidebar Desktop - nur auf Desktop sichtbar */}
+
+      {/* Sidebar Desktop */}
       <div className="fixed left-0 top-0 h-screen w-64 z-50 hidden md:block">
         <SideBar
           setSearchPerformed={setSearchPerformed}
@@ -273,11 +248,9 @@ function LandingPage() {
         />
       </div>
 
-      {/* Hauptinhalt - mit responsivem Margin */}
+      {/* Main Content */}
       <div className="md:ml-64">
-        {" "}
-        {/* Margin nur auf Desktop */}
-        {/* Mobile */}
+        {/* Mobile Navigation */}
         <BottomBar
           setViewMode={handleViewChange}
           setSearchState={setSearchState}
@@ -286,18 +259,16 @@ function LandingPage() {
           user={user}
           navigate={navigate}
         />
+
         <main className="max-w-7xl mx-auto md:pb-0">
           {viewMode !== "Search" && (
-            <div className="z-index-100000000000 py-6 px-4 top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
+            <div className="py-6 px-4 top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
               <CityBar
                 onLocationSelect={handleLocationChange}
                 selectedLocation={location}
               />
               <CategoryFilter
-                prevDateRange={{
-                  startDate: startDate ? new Date(startDate) : null,
-                  endDate: endDate ? new Date(endDate) : null,
-                }}
+                prevDateRange={dateRange}
                 events={favoriteEvents}
                 viewMode={viewMode}
                 category={category}
@@ -307,47 +278,16 @@ function LandingPage() {
               />
             </div>
           )}
-          {loading ? (
-            <div className="search-loading">
-              <div className="search-spinner"></div>
-            </div>
-          ) : searchPerformed && events.length === 0 ? (
-            <div className="no-results mt-10">
-              <div className="no-results-content text-center flex flex-col items-center justify-center">
-                <div className="no-results-icon text-7xl">🚫</div>
-                <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
-              </div>
-            </div>
-          ) : viewMode === "Home" ? (
-            <EventPage
-              favoriteEvents={favoriteEvents}
-              feedItemsResponse={followedProfiles}
-            />
-          ) : viewMode === "Search" ? (
-            <SearchPage />
-          ) : viewMode === "Trending" ? (
-            <Trending
-              favoriteEvents={events}
-              feedItemsResponse={feedItemsResponse}
-            />
-          ) : (
-            <EventPage
-              favoriteEvents={events}
-              feedItemsResponse={feedItemsResponse}
-            />
-          )}
+
+          {renderContent}
         </main>
-        {/* <SearchModal
-          prompt={prompt}
-          isOpen={isSearchOpen}
-          onClose={() => setIsSearchOpen(false)}
-          onSearch={handleSearch}
-        /> */}
+
         <UploadModal
           isOpen={isUploadOpen}
           onClose={() => setIsUploadOpen(false)}
           onUpload={handleOnUpload}
         />
+
         <Footer />
       </div>
     </>
