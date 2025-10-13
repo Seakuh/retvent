@@ -1,6 +1,8 @@
+import { useEffect, useRef } from "react";
 import "./SponsoredDetail.css";
 
 export const SponsoredDetail = ({ size = "m" }: { size?: "s" | "m" | "l" }) => {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const ads = [
     {
       id: 1,
@@ -18,6 +20,44 @@ export const SponsoredDetail = ({ size = "m" }: { size?: "s" | "m" | "l" }) => {
 
   const ad = ads[Math.floor(Math.random() * ads.length)];
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Startzustand: pausiert, bis sichtbar
+    video.pause();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        video.pause();
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          video.play().catch(() => {
+            // Autoplay kann vom Browser blockiert werden; hier bewusst ignoriert
+            void 0;
+          });
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: [0, 0.5, 1] }
+    );
+
+    observer.observe(video);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   return (
     <div
       className={`sponsored-detail ${size}-size`}
@@ -27,12 +67,13 @@ export const SponsoredDetail = ({ size = "m" }: { size?: "s" | "m" | "l" }) => {
 
       <div className="video-frame">
         <video
+          ref={videoRef}
           src={ad.video}
           className="sponsored-video"
-          autoPlay
           muted
           loop
           playsInline
+          preload="metadata"
         />
       </div>
     </div>
