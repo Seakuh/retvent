@@ -3,8 +3,10 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { QdrantClient } from '@qdrant/js-client-rest';
 import { createHash } from 'crypto';
 
-const EVENTS_COLLECTION = process.env.QDRANT_EVENTS_COLLECTION || 'events';
-const USERS_COLLECTION = process.env.QDRANT_USERS_COLLECTION || 'users';
+const EVENTS_COLLECTION =
+  process.env.QDRANT_EVENTS_COLLECTION || 'event_embeddings';
+const USERS_COLLECTION =
+  process.env.QDRANT_USERS_COLLECTION || 'user_embeddings';
 const VECTOR_SIZE = Number(process.env.EMBEDDING_DIM || 1536);
 
 @Injectable()
@@ -61,7 +63,9 @@ export class QdrantService implements OnModuleInit {
       { field_name: 'city', field_schema: 'keyword' },
       { field_name: 'category', field_schema: 'keyword' },
       { field_name: 'tags', field_schema: 'keyword' },
+      { field_name: 'start_time', field_schema: 'integer' },
       { field_name: 'startTime', field_schema: 'integer' },
+      { field_name: 'popularity', field_schema: 'float' },
     ];
   }
 
@@ -73,6 +77,10 @@ export class QdrantService implements OnModuleInit {
       { field_name: 'category', field_schema: 'keyword' },
       { field_name: 'city', field_schema: 'keyword' },
       { field_name: 'languages', field_schema: 'keyword' },
+      { field_name: 'priceTier', field_schema: 'integer' },
+      { field_name: 'dayRateMin', field_schema: 'float' },
+      { field_name: 'dayRateMax', field_schema: 'float' },
+      { field_name: 'travelRadiusKm', field_schema: 'integer' },
     ];
   }
 
@@ -94,9 +102,7 @@ export class QdrantService implements OnModuleInit {
         );
         return;
       }
-      this.logger.warn(
-        `Payload index for "${field_name}" skipped: ${message}`,
-      );
+      this.logger.warn(`Payload index for "${field_name}" skipped: ${message}`);
     }
   }
 
@@ -127,6 +133,10 @@ export class QdrantService implements OnModuleInit {
     if (!points.length) {
       return;
     }
+
+    points.forEach((point, index) => {
+      this.assertVectorSize(point.vector, `upsert[${index}]`);
+    });
 
     const sample = points[0];
     const normalizedSampleId = this.normalizePointId(sample.id);
@@ -192,6 +202,23 @@ export class QdrantService implements OnModuleInit {
     return this.search(EVENTS_COLLECTION, params);
   }
 
+  async searchEventsSimilarById(
+    id: string | number,
+    params: {
+      limit?: number;
+      filter?: any;
+      scoreThreshold?: number;
+      withPayload?: boolean;
+      withVector?: boolean;
+    } = {},
+  ) {
+    const vector = await this.loadVectorById(EVENTS_COLLECTION, id);
+    return this.search(EVENTS_COLLECTION, {
+      vector,
+      ...params,
+    });
+  }
+
   /** Ähnliche User/Artists suchen */
   async searchUsersSimilar(params: {
     vector: number[];
@@ -215,6 +242,33 @@ export class QdrantService implements OnModuleInit {
         : [],
     );
     return this.search(USERS_COLLECTION, { ...rest, filter });
+  }
+
+  async searchUsersSimilarById(
+    id: string | number,
+    params: {
+      limit?: number;
+      filter?: any;
+      scoreThreshold?: number;
+      withPayload?: boolean;
+      withVector?: boolean;
+      category?: string;
+    } = {},
+  ) {
+    const vector = await this.loadVectorById(USERS_COLLECTION, id);
+    const { category, ...rest } = params;
+    const filter = this.mergeFilters(
+      rest.filter,
+      category
+        ? [
+            {
+              key: 'category',
+              match: { value: category },
+            },
+          ]
+        : [],
+    );
+    return this.search(USERS_COLLECTION, { ...rest, vector, filter });
   }
 
   /** Freitext-Suche für Lineup-/Technik-Vorschläge */
@@ -277,14 +331,25 @@ export class QdrantService implements OnModuleInit {
       withVector = false,
     } = params;
 
-    return this.client.search(collectionName, {
-      vector,
-      limit,
-      with_payload: withPayload,
-      with_vector: withVector,
-      filter,
-      score_threshold: scoreThreshold,
-    });
+    this.assertVectorSize(vector, 'search');
+
+    try {
+      return await this.client.search(collectionName, {
+        vector,
+        limit,
+        with_payload: withPayload,
+        with_vector: withVector,
+        filter,
+        score_threshold: scoreThreshold,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error searching "${collectionName}": ${this.extractErrorDetails(
+          error,
+        )}`,
+      );
+      throw error;
+    }
   }
 
   /** Empfehlungen basierend auf positiven/negativen IDs */
@@ -340,6 +405,28 @@ export class QdrantService implements OnModuleInit {
     });
   }
 
+  async deleteEvents(ids: (string | number)[]) {
+    return this.deletePoints(EVENTS_COLLECTION, ids);
+  }
+
+  async deleteUsers(ids: (string | number)[]) {
+    return this.deletePoints(USERS_COLLECTION, ids);
+  }
+
+  async retrieveEvents(
+    ids: (string | number)[],
+    options: { withPayload?: boolean; withVector?: boolean } = {},
+  ) {
+    return this.retrievePoints(EVENTS_COLLECTION, ids, options);
+  }
+
+  async retrieveUsers(
+    ids: (string | number)[],
+    options: { withPayload?: boolean; withVector?: boolean } = {},
+  ) {
+    return this.retrievePoints(USERS_COLLECTION, ids, options);
+  }
+
   private normalizePointId(id: string | number) {
     if (typeof id === 'number') {
       if (!Number.isSafeInteger(id) || id < 0) {
@@ -368,29 +455,156 @@ export class QdrantService implements OnModuleInit {
     const hash = createHash('sha1').update(trimmed).digest('hex');
     const timeLow = hash.slice(0, 8);
     const timeMid = hash.slice(8, 12);
-    const timeHi =
-      ((parseInt(hash.slice(12, 16), 16) & 0x0fff) | 0x5000)
-        .toString(16)
-        .padStart(4, '0');
-    const clockSeq =
-      ((parseInt(hash.slice(16, 20), 16) & 0x3fff) | 0x8000)
-        .toString(16)
-        .padStart(4, '0');
+    const timeHi = ((parseInt(hash.slice(12, 16), 16) & 0x0fff) | 0x5000)
+      .toString(16)
+      .padStart(4, '0');
+    const clockSeq = ((parseInt(hash.slice(16, 20), 16) & 0x3fff) | 0x8000)
+      .toString(16)
+      .padStart(4, '0');
     const node = hash.slice(20, 32);
     return `${timeLow}-${timeMid}-${timeHi}-${clockSeq}-${node}`;
   }
 
-  /** (Optional) Collection löschen/neu anlegen */
-  async recreateCollection(collectionName: 'events' | 'users' = 'events') {
+  private async loadVectorById(collectionName: string, id: string | number) {
+    const normalizedId = this.normalizePointId(id);
+    let point;
     try {
-      await this.client.deleteCollection(
-        collectionName === 'events' ? EVENTS_COLLECTION : USERS_COLLECTION,
+      [point] = await this.client.retrieve(collectionName, {
+        ids: [normalizedId],
+        with_vector: true,
+        with_payload: false,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error retrieving vector ${normalizedId} from "${collectionName}": ${this.extractErrorDetails(
+          error,
+        )}`,
       );
-    } catch {}
-    if (collectionName === 'events') {
-      await this.ensureCollection(EVENTS_COLLECTION, this.eventIndexes());
-    } else {
-      await this.ensureCollection(USERS_COLLECTION, this.userIndexes());
+      throw error;
     }
+    if (!point || !point.vector) {
+      throw new Error(
+        `Vector for id "${id}" (${normalizedId}) not found in "${collectionName}"`,
+      );
+    }
+    const vector = point.vector as number[];
+    this.assertVectorSize(vector, `loadVectorById(${normalizedId})`);
+    return vector;
+  }
+
+  private async deletePoints(collectionName: string, ids: (string | number)[]) {
+    if (!ids.length) {
+      return;
+    }
+    const normalized = ids.map((id) => this.normalizePointId(id));
+    this.logger.log(
+      `Deleting ${normalized.length} points from "${collectionName}"`,
+    );
+    try {
+      return await this.client.delete(collectionName, { points: normalized });
+    } catch (error) {
+      this.logger.error(
+        `Error deleting from "${collectionName}": ${this.extractErrorDetails(
+          error,
+        )}`,
+      );
+      throw error;
+    }
+  }
+
+  private async retrievePoints(
+    collectionName: string,
+    ids: (string | number)[],
+    options: { withPayload?: boolean; withVector?: boolean } = {},
+  ) {
+    if (!ids.length) {
+      return [];
+    }
+    const normalized = ids.map((id) => this.normalizePointId(id));
+    try {
+      return await this.client.retrieve(collectionName, {
+        ids: normalized,
+        with_payload: options.withPayload ?? true,
+        with_vector: options.withVector ?? false,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error retrieving from "${collectionName}": ${this.extractErrorDetails(
+          error,
+        )}`,
+      );
+      throw error;
+    }
+  }
+
+  private assertVectorSize(vector: number[] | undefined, context: string) {
+    if (!Array.isArray(vector)) {
+      throw new Error(`Vector missing for ${context}`);
+    }
+    if (vector.length !== VECTOR_SIZE) {
+      throw new Error(
+        `Vector length mismatch for ${context}: expected ${VECTOR_SIZE}, got ${vector.length}`,
+      );
+    }
+  }
+
+  private extractErrorDetails(error: any) {
+    if (!error) {
+      return 'Unknown error';
+    }
+
+    const parts: string[] = [];
+    const name = error.name ?? error.constructor?.name;
+    const message = error.message ?? String(error);
+    const status = error.response?.status ?? error.status;
+    const responseData =
+      error.response?.data ?? error.body ?? error.data ?? error.details;
+
+    if (name) {
+      parts.push(`name=${name}`);
+    }
+    if (status) {
+      parts.push(`status=${status}`);
+    }
+    if (message) {
+      parts.push(`message=${message}`);
+    }
+
+    if (responseData) {
+      try {
+        parts.push(`response=${JSON.stringify(responseData)}`);
+      } catch {
+        parts.push(`response=${String(responseData)}`);
+      }
+    }
+
+    if (!parts.length) {
+      return String(error);
+    }
+
+    return parts.join(', ');
+  }
+
+  /** (Optional) Collection löschen/neu anlegen */
+  async recreateCollection(
+    collectionName:
+      | 'events'
+      | 'users'
+      | typeof EVENTS_COLLECTION
+      | typeof USERS_COLLECTION = EVENTS_COLLECTION,
+  ) {
+    const targetCollection =
+      collectionName === 'events' || collectionName === EVENTS_COLLECTION
+        ? EVENTS_COLLECTION
+        : USERS_COLLECTION;
+    try {
+      await this.client.deleteCollection(targetCollection);
+    } catch {}
+    await this.ensureCollection(
+      targetCollection,
+      targetCollection === EVENTS_COLLECTION
+        ? this.eventIndexes()
+        : this.userIndexes(),
+    );
   }
 }

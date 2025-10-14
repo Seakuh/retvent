@@ -7,6 +7,7 @@ import {
 import axios from 'axios';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { GeolocationService } from 'src/infrastructure/services/geolocation.service';
+import { QdrantService } from 'src/infrastructure/services/qdrant.service';
 import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event, EventWithHost } from '../../core/domain/event';
@@ -30,6 +31,7 @@ export class EventService {
     private readonly userService: UserService,
     private readonly feedService: FeedService,
     private readonly videoService: VideoService,
+    private readonly qdrantService: QdrantService,
   ) {}
   getEventsByTag(tag: string) {
     return this.eventRepository.getEventsByTag(tag);
@@ -54,11 +56,15 @@ export class EventService {
   }
 
   async findSimilarEvents(id: string, limit: number = 2) {
-    const event = await this.eventRepository.findById(id);
-    if (!event) {
+    const eventFromRepository = await this.eventRepository.findById(id);
+    if (!eventFromRepository) {
       throw new NotFoundException('Event not found');
     }
-    return '';
+    const events = await this.qdrantService.searchEventsSimilar({
+      vector: eventFromRepository.embedding,
+      limit,
+    });
+    return events;
   }
 
   async createEventsByText(text: string) {
