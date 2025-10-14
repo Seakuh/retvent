@@ -10,6 +10,7 @@ export class User implements IUser {
   password?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  category: string;
   solanaWalletAddress?: string;
   solanaWalletPrivateKey?: string; // ⚠️ Nur wenn du custodial arbeitest
   points?: number;

@@ -4,8 +4,14 @@ export interface IUser {
   username: string;
   password?: string;
   createdAt?: Date;
+  category?: string;
   updatedAt?: Date;
   points?: number;
+  solanaWalletAddress?: string;
+  solanaWalletPrivateKey?: string;
+  followedLocationIds?: string[];
+  likedEventIds?: string[];
+  createdEventIds?: string[];
   favoriteEventIds?: string[];
   followedProfiles?: string[];
 }

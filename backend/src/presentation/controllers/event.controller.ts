@@ -440,10 +440,24 @@ export class EventController {
     return { events };
   }
 
+  @Get('similar')
+  async getSimilarEvents(
+    @Query('id') id: string,
+    @Query('limit') limit: number = 2,
+  ) {
+    const events = await this.eventService.findSimilarEvents(id, limit);
+    return { events };
+  }
+
   @Get('advertisement/events')
   async getAdvertisementEvents(@Query('limit') limit: number = 10) {
     const events = await this.eventService.findAdvertisementEvents(limit);
     return { events };
+  }
+
+  @Post('create/event/text')
+  async createEventByText(@Body() body: { text: string }) {
+    return this.eventService.createEventsByText(body.text);
   }
 
   // @Post('advertisement/create')

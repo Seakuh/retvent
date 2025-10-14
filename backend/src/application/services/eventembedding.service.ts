@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Event, Profile } from 'src/core/domain';
 import { UserPreferences } from 'src/core/domain/profile';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
+import { QdrantService } from 'src/infrastructure/services/qdrant.service';
 import { EventService } from './event.service';
 import { ProfileService } from './profile.service';
 @Injectable()
@@ -13,9 +15,10 @@ export class EventEmbeddingService {
     private readonly eventService: EventService,
     private readonly profileService: ProfileService,
     private readonly chatgptService: ChatGPTService,
+    private readonly qdrantService: QdrantService,
   ) {}
 
-  //@Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_10_SECONDS)
   //@Cron('0 */15 * * * *') // alle 15 Minuten exakt
   async embedMissingEventsBatch() {
     this.logger.log('🔁 Embedding Cron gestartet…');
@@ -33,6 +36,18 @@ export class EventEmbeddingService {
         const embedding = await this.chatgptService.createEmbedding(text);
 
         await this.eventService.updateEmbedding(event.id, embedding);
+        await this.qdrantService.upsertEvents([
+          {
+            id: event.id,
+            vector: embedding,
+            payload: {
+              title: event.title,
+              category: event.category,
+              tags: event.tags,
+              city: event.city,
+            },
+          },
+        ]);
 
         this.logger.log(`✅ Event "${event.title}" eingebettet`);
       } catch (err) {
@@ -153,10 +168,10 @@ export class EventEmbeddingService {
   private buildEventText(event: Event): string {
     return [
       event.title ?? '',
-      event.description ?? '',
       event.category ?? '',
       event.tags?.join(', ') ?? '',
       event.lineup?.map((l) => l.name).join(', ') ?? '',
+      event.city ?? '',
     ]
       .filter(Boolean)
       .join(' | ');

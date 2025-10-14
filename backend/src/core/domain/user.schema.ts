@@ -11,6 +11,7 @@ export const UserSchema = new Schema(
     likedEventIds: [String],
     solanaWalletAddress: String,
     solanaWalletPrivateKey: String,
+    category: String,
     favoriteEventIds: [String],
     createdEventIds: [String],
     points: { type: Number, default: 0 },

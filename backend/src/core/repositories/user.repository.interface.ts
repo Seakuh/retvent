@@ -14,7 +14,7 @@ export interface IUserRepository {
     locationId: string,
   ): Promise<User | null>;
   findByEmailOrUsername(email: string, username: string): Promise<User | null>;
-  addFavorite(userId: string, id: string): Promise<User | null>;
-  removeFavorite(userId: string, id: string): Promise<User | null>;
+  addFavorite(userId: any, id: string): Promise<User | null>;
+  removeFavorite(userId: any, id: string): Promise<User | null>;
   getUserFavorites(id: string): Promise<string[] | undefined>;
 }

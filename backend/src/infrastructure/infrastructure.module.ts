@@ -60,6 +60,7 @@ import { ChatGPTService } from './services/chatgpt.service';
 import { GeolocationService } from './services/geolocation.service';
 import { GroovecastService } from './services/groovecast.service';
 import { ImageService } from './services/image.service';
+import { QdrantService } from './services/qdrant.service';
 import { VideoService } from './services/video.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 @Module({
@@ -164,6 +165,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     BcryptService,
     UserService,
     GroovecastService,
+    QdrantService,
     {
       provide: 'IEventRepository',
       useClass: MongoEventRepository,
@@ -242,6 +244,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     ProfileService,
     MessageService,
     TicketsService,
+    QdrantService,
   ],
 })
 export class InfrastructureModule {}

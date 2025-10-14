@@ -18,6 +18,9 @@ import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 @Injectable()
 export class EventService {
+  createEventByText(text: string) {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     private readonly eventRepository: MongoEventRepository,
     private readonly imageService: ImageService,
@@ -48,6 +51,22 @@ export class EventService {
       startDate,
       endDate,
     );
+  }
+
+  async findSimilarEvents(id: string, limit: number = 2) {
+    const event = await this.eventRepository.findById(id);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    return '';
+  }
+
+  async createEventsByText(text: string) {
+    const events = await this.chatGptService.generateEventsFromText(text);
+    for (const event of events) {
+      await this.eventRepository.create(event);
+    }
+    return events;
   }
 
   // createAdvertisementEvent(file: Express.Multer.File, eventData: any, id: any) {

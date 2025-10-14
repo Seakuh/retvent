@@ -38,17 +38,98 @@ export class ChatGPTService {
     return response.data[0].embedding;
   }
 
-  async generateEventFromText(text: string): Promise<Partial<Event>> {
-    // Mock-Event mit der neuen Struktur
-    const mockEvent: Partial<Event> = {
-      title: 'Event Name',
-      description: 'Event Description',
-      startDate: new Date(),
-      startTime: '18:00',
-      locationId: '1',
-    };
+  async generateEventsFromText(text: string): Promise<Partial<Event>[]> {
+    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
 
-    return mockEvent;
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: `Extract at least one event from the provided text and generate structured JSON objects based on the following rules:
+
+              ### **Current Date:**  
+Today's date is **${today}**. If the text does not mention a date, use this as the event start date in the format YYYY-MM-DD.
+
+### Image Assignment Rule:
+- If the text contains one or more image URLs, assign each image to the event it most likely belongs to.
+- If multiple events are mentioned:
+  - Use proximity (the image mentioned closest to an event’s description) to decide the match.
+  - If no clear association exists, leave imageUrl empty for that event.
+- Each event may have a different imageUrl.
+
+
+
+
+### Extraction Rules:
+- **Title (title)**: Extract the event name.
+- **Description (description)**: Summarize the event text concisely, capturing essential details.
+- **Start Date (startDate)**: If no date is provided, set it to today's date in YYYY-MM-DD format.
+- **Start Time (startTime)**: If no time is mentioned, default to "08:00" in HH:mm format.
+- **Image URL (imageUrl)**: Extract the main image URL if available; otherwise, leave it empty.
+- **City (city)**: Identify the event's location (city).
+- **Category (category)**: Assign one single category that best describes the event (e.g., "Concert", "Exhibition", "Workshop"). Avoid slashes (/) or multiple categories.
+- **Price (price)**: Extract the ticket price as a decimal number (e.g., "15.00") or a meaningful label if not found (e.g., "Free", "N/A").
+- **Ticket Link (ticketLink)**: Extract the URL for ticket purchases if available; otherwise, leave it empty.
+- **Line-Up (lineup)**: If performers or speakers are listed, extract their names, roles, and scheduled start times.
+- **Social Media Links (socialMediaLinks)**: Extract Instagram, Facebook, and Twitter links. If a platform-specific link is missing, use the general platform URL as a fallback.
+- **Fallbacks:**
+  - Instagram → "https://www.instagram.com"
+  - Facebook → "https://www.facebook.com"
+  - Twitter → "https://www.twitter.com"
+- **Tags (tags)**: Always include **five** relevant tags based on the event's theme.
+- **Email (email)**: Extract the email address from the event text.
+
+### Response Format (JSON):
+[{
+"title": "string",
+"description": "string", 
+"startDate": "YYYY-MM-DD",
+"startTime": "HH:mm",
+"imageUrl": "string",
+"city": "string",
+"category": "string",
+"price": "string",
+"ticketLink": "string",
+"address": {
+  "street": "string",
+  "houseNumber": "string", 
+  "city": "string"
+},
+"lineup": [
+  {
+    "name": "string",
+    "role": "string",
+    "startTime": "HH:mm"
+  }
+],
+"socialMediaLinks": {
+  "instagram": "string",
+  "facebook": "string",
+  "twitter": "string"
+},
+"tags": ["string", "string", "string", "string", "string"],
+"email": "string"
+}]
+
+Analyze the text carefully, ensuring accurate data extraction and logical fallback values. Return an array with at least one event. Ensure proper JSON formatting, and validate all fields before returning the result.`,
+            },
+
+            { type: 'text', text: text },
+          ],
+        },
+      ],
+      response_format: { type: 'json_object' },
+    });
+
+    const events = JSON.parse(response.choices[0].message.content);
+    if (!Array.isArray(events) || events.length === 0) {
+      throw new Error('Response must contain at least one event');
+    }
+    return events;
   }
 
   extractEventFromFlyer = async (

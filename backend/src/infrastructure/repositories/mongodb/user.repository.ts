@@ -158,13 +158,13 @@ export class MongoUserRepository implements IUserRepository {
     return user?.favoriteEventIds ?? [];
   }
 
-  removeFavorite(userId: string, id: string) {
+  async removeFavorite(userId: any, id: string): Promise<User | null> {
     return this.userModel.findByIdAndUpdate(userId, {
       $pull: { favoriteEventIds: id },
     });
   }
 
-  addFavorite(userId: any, id: string) {
+  async addFavorite(userId: any, id: string): Promise<User | null> {
     return this.userModel.findByIdAndUpdate(userId, {
       $addToSet: { favoriteEventIds: id },
     });
