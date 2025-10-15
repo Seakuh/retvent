@@ -21,7 +21,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
         working-directory: backend
-        
+
       - name: Build Backend
         run: npm run build
         working-directory: backend
@@ -63,6 +63,12 @@ jobs:
             echo 'HETZNER_ACCESS_KEY'=${{secrets.HETZNER_ACCESS_KEY}} >> .env
             echo 'HETZNER_SECRET_KEY'=${{secrets.HETZNER_SECRET_KEY}} >> .env
             echo 'HETZNER_BUCKET_NAME'=${{secrets.HETZNER_BUCKET_NAME}} >> .env
+            echo 'QDRANT_URL'=${{secrets.QDRANT_URL}} >> .env
+            echo 'QDRANT_API_KEY'=${{secrets.QDRANT_API_KEY}} >> .env
+            echo 'QDRANT_EVENTS_COLLECTION'=${{secrets.QDRANT_EVENTS_COLLECTION}} >> .env 
+            echo 'QDRANT_USERS_COLLECTION'=${{secrets.QDRANT_USERS_COLLECTION}} >> .env
+            echo 'EMBEDDING_DIM'=${{secrets.EMBEDDING_DIM}} >> .env
+            echo 'EMBEDDING_DIM'=${{secrets.EMBEDDING_DIM}} >> .env
             chmod 600 .env
             
             # Restart PM2 process
