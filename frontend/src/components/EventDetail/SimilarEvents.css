@@ -1,0 +1,17 @@
+.similar-events-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  width: 100%;
+  width: 80rem;
+  padding: 1rem;
+  background-color: black;
+  border-radius: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  max-width: 100%;
+  overflow-x: auto;
+}

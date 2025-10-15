@@ -138,3 +138,28 @@ export const createOrJoinGroupService = async (event: Event, group: string) => {
     console.error("Error creating or joining group:", error);
   }
 };
+
+export const findSimilarEvents = async (id: string, limit: number = 3) => {
+  try {
+    const response = await fetch(
+      `${API_URL}events/similar?id=${id}&limit=${limit}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.events;
+  } catch (error) {
+    console.error("Error fetching similar events:", error);
+    return [];
+  }
+};

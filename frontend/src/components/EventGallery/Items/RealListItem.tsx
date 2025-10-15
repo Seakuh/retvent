@@ -11,7 +11,7 @@ import {
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
-import { Event } from "../../../utils";
+import { Event, formatDate, getDaysUntilDate } from "../../../utils";
 import "./RealListItem.css";
 import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
 
@@ -214,10 +214,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           location={event?.city || "TBA"}
         />
         <div className="miniature-event-info">
-          {/* <h2 className="event-info-date"> */}
-          {/* {formatDate(event.startDate as string)} */}
-          {/* </h2> */}
-          {/* <span className="event-card-date">
+          <span className="event-card-date">
             {(() => {
               try {
                 if (!event.startDate) {
@@ -246,7 +243,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                 return <span>No date available</span>;
               }
             })()}
-          </span> */}
+          </span>
           <h1 className="event-info-title-headline">{event.title}</h1>
 
           <h2 className="event-description-real-list-item">

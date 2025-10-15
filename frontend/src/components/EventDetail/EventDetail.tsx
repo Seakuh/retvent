@@ -20,6 +20,8 @@ import { MetaBar } from "./components/MetaBar";
 import { HostView } from "./components/OwnerComponent/HostView";
 import "./EventDetail.css";
 import HelmetMeta from "./HelmMeta";
+import { SimilarEvents } from "./SimilarEvents";
+
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
   const { user } = useContext(UserContext);
@@ -214,6 +216,7 @@ export const EventDetail: React.FC = () => {
               ticketLink={event.ticketLink}
             />
           </div>
+          <SimilarEvents eventId={eventId || ""} />
 
           {((event.lineup && event.lineup.length > 0) ||
             (event.lineupPictureUrl && event.lineupPictureUrl.length > 0)) && (
