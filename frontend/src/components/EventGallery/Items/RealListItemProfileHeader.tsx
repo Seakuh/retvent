@@ -1,4 +1,3 @@
-import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ProfileBubble } from "../../ProfileBubble/ProfileBubble";
 import "./RealListItemProfileHeader.css";
@@ -47,10 +46,10 @@ export const RealListItemProfileHeader = ({
           >
             {name || "Public"}
           </h3>
-          <p className="real-list-item-profile-header-location">
+          {/* <p className="real-list-item-profile-header-location">
             <MapPin size={14} />
             {location}
-          </p>
+          </p> */}
         </div>
       </div>
       {/* <div className="real-list-item-profile-header-right">

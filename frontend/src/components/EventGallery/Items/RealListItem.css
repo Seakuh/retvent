@@ -41,6 +41,32 @@
   box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.1); /* gleichmäßig nach innen */
 }
 
+.real-list-item-location-date-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 1rem;
+  
+}
+
+.real-list-item-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--color-neon-blue);
+}
+
+.real-list-item-location {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--color-neon-blue);
+}
+
 
 .event-card-like-container {
   display: flex;
@@ -247,15 +273,6 @@
   margin-left: 0.5rem;
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
-}
-
-.real-list-item-location {
-  display: flex;
-  align-items: center;
-  margin-top: 0.5rem;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  color: var(--color-neon-blue);
 }
 
 .event-tags-real-list-item {

@@ -1,8 +1,10 @@
 import {
+  CalendarIcon,
   CalendarPlus,
   ExternalLink,
   Eye,
   Heart,
+  MapPin,
   MessageCircle,
   Send,
   Star,
@@ -213,8 +215,13 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           id={event?.hostId || ""}
           location={event?.city || "TBA"}
         />
-        <div className="miniature-event-info">
-          <span className="event-card-date">
+        <div className="real-list-item-location-date-container">
+          <span className="real-list-item-location">
+            <MapPin size={14} />
+            {event?.city || "TBA"}
+          </span>
+          <span className="real-list-item-date">
+            <CalendarIcon size={16} />
             {(() => {
               try {
                 if (!event.startDate) {
@@ -244,6 +251,8 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               }
             })()}
           </span>
+        </div>
+        <div className="miniature-event-info">
           <h1 className="event-info-title-headline">{event.title}</h1>
 
           <h2 className="event-description-real-list-item">
