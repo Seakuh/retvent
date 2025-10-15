@@ -21,6 +21,13 @@ async function bootstrap() {
   console.log('Environment variables loaded:', {
     JWT_SECRET: process.env.JWT_SECRET ? 'Set' : 'Not set',
     NODE_ENV: process.env.NODE_ENV,
+    MONGODB_URI: process.env.MONGODB_URI,
+    QDRANT_URL: process.env.QDRANT_URL,
+    QDRANT_API_KEY: process.env.QDRANT_API_KEY,
+    QDRANT_EVENTS_COLLECTION: process.env.QDRANT_EVENTS_COLLECTION,
+    QDRANT_USERS_COLLECTION: process.env.QDRANT_USERS_COLLECTION,
+    EMBEDDING_DIM: process.env.EMBEDDING_DIM,
+    HETZNER_ACCESS_KEY: process.env.HETZNER_ACCESS_KEY,
   });
 
   const app = await NestFactory.create(AppModule, {
