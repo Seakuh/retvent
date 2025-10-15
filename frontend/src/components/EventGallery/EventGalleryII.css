@@ -141,8 +141,8 @@
     display: flex;
     justify-content: space-between;
     font-size: 0.9rem;
-    color: #aaa;
     padding-top: 0.5rem;
+    color: white;
 }
 
 .event-meta-container span {

@@ -248,6 +248,8 @@
 
 .event-meta-container-left {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   font-size: 0.8rem;
   gap: 0.5rem;
   margin-left: 0.5rem !important;
@@ -267,6 +269,8 @@
 
 .event-meta-container {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 0.5rem;
   justify-content: space-between;
   color: white !important;
