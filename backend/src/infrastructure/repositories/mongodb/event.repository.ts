@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event } from '../../../core/domain/event';
@@ -364,6 +364,34 @@ export class MongoEventRepository implements IEventRepository {
       id: _id.toString(),
       city: event.city || event.location?.city, // Fallback to location.city
     };
+  }
+
+  async findByIds(ids: string[]): Promise<Event[]> {
+    if (!ids.length) {
+      return [];
+    }
+
+    const validIds = Array.from(
+      new Set(ids.filter((id) => Types.ObjectId.isValid(id))),
+    );
+
+    if (!validIds.length) {
+      return [];
+    }
+
+    const documents = await this.eventModel
+      .find({ _id: { $in: validIds } })
+      .select(
+        'id title imageUrl description startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username commentCount tags',
+      )
+      .exec();
+
+    const entities = documents.map((doc) => this.toEntity(doc));
+    const entityMap = new Map(entities.map((event) => [event.id, event]));
+
+    return ids
+      .map((id) => entityMap.get(id))
+      .filter((event): event is Event => Boolean(event));
   }
 
   async findById(id: string): Promise<Event | null> {

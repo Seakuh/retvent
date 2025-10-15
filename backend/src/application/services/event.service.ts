@@ -55,16 +55,74 @@ export class EventService {
     );
   }
 
-  async findSimilarEvents(id: string, limit: number = 2) {
+  async findSimilarEvents(id: string, limit: number | string = 2) {
     const eventFromRepository = await this.eventRepository.findById(id);
     if (!eventFromRepository) {
       throw new NotFoundException('Event not found');
     }
-    const events = await this.qdrantService.searchEventsSimilar({
+    if (
+      !Array.isArray(eventFromRepository.embedding) ||
+      !eventFromRepository.embedding.length
+    ) {
+      throw new BadRequestException(
+        'Das Event besitzt noch kein Embedding und kann nicht empfohlen werden.',
+      );
+    }
+
+    const parsedLimit = Number(limit ?? 2);
+    const safeLimit =
+      Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : 2;
+
+    const searchResults = await this.qdrantService.searchEventsSimilar({
       vector: eventFromRepository.embedding,
-      limit,
+      limit: safeLimit + 1, // extra slot in case the event matches itself
+      withPayload: true,
     });
-    return events;
+
+    const orderedIds = searchResults
+      .map((hit) => this.extractEventIdFromPayload(hit.payload))
+      .filter(
+        (eventId): eventId is string =>
+          Boolean(eventId) && eventId !== eventFromRepository.id,
+      );
+
+    if (!orderedIds.length) {
+      return [];
+    }
+
+    const uniqueIds = Array.from(new Set(orderedIds));
+    const relatedEvents = await this.eventRepository.findByIds(uniqueIds);
+    const relatedEventMap = new Map(
+      relatedEvents.map((event) => [event.id, event]),
+    );
+
+    const enriched = searchResults
+      .map((hit) => {
+        const eventId = this.extractEventIdFromPayload(hit.payload);
+        if (!eventId || eventId === eventFromRepository.id) {
+          return null;
+        }
+        const event = relatedEventMap.get(eventId);
+        if (!event) {
+          return null;
+        }
+        return {
+          event,
+          payload: (hit.payload ?? {}) as Record<string, any>,
+        };
+      })
+      .filter(
+        (
+          result,
+        ): result is {
+          event: Event;
+          score: number;
+          payload: Record<string, any>;
+        } => Boolean(result),
+      )
+      .slice(0, safeLimit);
+
+    return enriched;
   }
 
   async createEventsByText(text: string) {
@@ -269,6 +327,21 @@ export class EventService {
     throw new Error(
       `Bild konnte nicht heruntergeladen werden: ${lastError?.message || 'Unbekannter Fehler'}`,
     );
+  }
+
+  private extractEventIdFromPayload(payload: any): string | undefined {
+    if (!payload || typeof payload !== 'object') {
+      return undefined;
+    }
+
+    const candidate =
+      payload.eventId ?? payload.id ?? payload.sourceId ?? payload.originalId;
+
+    if (typeof candidate === 'string' && candidate.length) {
+      return candidate;
+    }
+
+    return undefined;
   }
 
   async findAll() {

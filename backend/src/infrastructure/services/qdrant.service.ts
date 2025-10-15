@@ -155,7 +155,7 @@ export class QdrantService implements OnModuleInit {
         points: points.map((p) => ({
           id: this.normalizePointId(p.id),
           vector: p.vector,
-          payload: p.payload,
+          payload: this.preparePayload(collectionName, p.id, p.payload),
         })),
       });
     } catch (error) {
@@ -206,6 +206,7 @@ export class QdrantService implements OnModuleInit {
     id: string | number,
     params: {
       limit?: number;
+
       filter?: any;
       scoreThreshold?: number;
       withPayload?: boolean;
@@ -546,6 +547,45 @@ export class QdrantService implements OnModuleInit {
         `Vector length mismatch for ${context}: expected ${VECTOR_SIZE}, got ${vector.length}`,
       );
     }
+  }
+
+  private preparePayload(
+    collectionName: string,
+    rawId: string | number,
+    payload: Record<string, any>,
+  ) {
+    const normalizedId = String(rawId);
+    const enriched: Record<string, any> = { ...payload };
+
+    if (enriched.id === undefined) {
+      enriched.id = normalizedId;
+    }
+
+    if (collectionName === EVENTS_COLLECTION) {
+      if (enriched.eventId === undefined) {
+        enriched.eventId = normalizedId;
+      }
+    } else if (collectionName === USERS_COLLECTION) {
+      if (enriched.userId === undefined) {
+        enriched.userId = normalizedId;
+      }
+    }
+
+    return this.cleanPayload(enriched);
+  }
+
+  private cleanPayload(payload: Record<string, any>) {
+    return Object.fromEntries(
+      Object.entries(payload).filter(([_, value]) => {
+        if (value === undefined || value === null) {
+          return false;
+        }
+        if (Array.isArray(value)) {
+          return value.length > 0;
+        }
+        return true;
+      }),
+    );
   }
 
   private extractErrorDetails(error: any) {

@@ -18,7 +18,7 @@ export class EventEmbeddingService {
     private readonly qdrantService: QdrantService,
   ) {}
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   //@Cron('0 */15 * * * *') // alle 15 Minuten exakt
   async embedMissingEventsBatch() {
     this.logger.log('🔁 Embedding Cron gestartet…');
@@ -40,12 +40,7 @@ export class EventEmbeddingService {
           {
             id: event.id,
             vector: embedding,
-            payload: {
-              title: event.title,
-              category: event.category,
-              tags: event.tags,
-              city: event.city,
-            },
+            payload: this.buildEventPayload(event),
           },
         ]);
 
@@ -175,5 +170,50 @@ export class EventEmbeddingService {
     ]
       .filter(Boolean)
       .join(' | ');
+  }
+
+  private buildEventPayload(event: Event) {
+    const startTimestamp = event.startDate
+      ? Math.floor(new Date(event.startDate).getTime() / 1000)
+      : undefined;
+
+    const payload: Record<string, any> = {
+      id: event.id,
+      eventId: event.id,
+      title: event.title,
+      category: event.category,
+      tags: event.tags,
+      city: event.city,
+    };
+
+    if (startTimestamp) {
+      payload.start_time = startTimestamp;
+    }
+
+    if (typeof event.views === 'number') {
+      payload.popularity = event.views;
+    }
+
+    if (event.lineup?.length) {
+      const roles = Array.from(
+        new Set(
+          event.lineup
+            .map((item) => item.role)
+            .filter((role): role is string => Boolean(role)),
+        ),
+      );
+      if (roles.length) {
+        payload.roles = roles;
+      }
+    }
+
+    return Object.fromEntries(
+      Object.entries(payload).filter(
+        ([, value]) =>
+          value !== undefined &&
+          value !== null &&
+          !(Array.isArray(value) && value.length === 0),
+      ),
+    );
   }
 }
