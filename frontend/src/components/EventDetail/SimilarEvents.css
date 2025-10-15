@@ -3,7 +3,7 @@
   flex-direction: row;
   gap: 1rem;
   justify-content: center;
-  align-items: center;
+  align-items: stretch; /* Changed to stretch to make all items same height */
   margin: 0 auto;
   width: 100%;
   width: 80rem;
@@ -15,6 +15,10 @@
   max-width: 100%;
   overflow-x: auto;
   max-width: 100%;
+}
+
+.similar-events-container > * {
+  height: 100%; /* Force all direct children to be same height */
 }
 
 .similar-events-container-wrapper {
@@ -35,9 +39,11 @@
     flex-direction: column;
     max-width: 100%;
   }
-
+  
   .similar-events-container {
     width: 100%;
+    display: flex;
+    flex-direction: column;
     max-width: 100%;
   }
 }
