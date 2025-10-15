@@ -55,16 +55,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
   gap: 0.5rem;
-  color: var(--color-neon-blue);
 }
 
 .real-list-item-location {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
   gap: 0.5rem;
-  color: var(--color-neon-blue);
 }
 
 
@@ -295,12 +295,14 @@
 
 .miniature-event-info {
   width: 100%;
+  text-align: center !important;
 }
 
 .event-info-title-headline {
   margin-top: 0;
   font-size: 1.1rem;
   font-weight: 600;
+  text-align: center !important;
 }
 
 .past-event {

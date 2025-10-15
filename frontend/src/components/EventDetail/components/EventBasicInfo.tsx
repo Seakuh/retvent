@@ -33,6 +33,9 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
         onClick={handleAddToCalendar}
       >
         <div className="info-text">
+          <div className="map-plus-calendar-container">
+            <Calendar className="navigation-info-icon h-5 w-5" />
+          </div>
           <div>
             {startDate && (
               <div onClick={() => handleAddToCalendar}>
@@ -46,9 +49,6 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
             )}
             {startTime && <div>{startTime}</div>}
           </div>
-        </div>
-        <div className="map-plus-calendar-container">
-          <Calendar className="navigation-info-icon h-5 w-5" />
         </div>
       </button>
 
@@ -77,6 +77,9 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
         }}
       >
         <div className="info-text">
+          <div className="map-plus-calendar-container">
+            <MapPin className="navigation-info-icon h-5 w-5" />
+          </div>
           <div>
             {city ? (
               <div className="text-lg font-semibold">{city}</div>
@@ -91,9 +94,6 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
               <div>TBA</div>
             )}
           </div>
-        </div>
-        <div className="map-plus-calendar-container">
-          <MapPin className="navigation-info-icon h-5 w-5" />
         </div>
       </button>
       {/* <hr className="border-gray-700" /> */}

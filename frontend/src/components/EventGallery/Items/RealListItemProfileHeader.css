@@ -2,12 +2,10 @@
   background-color: black;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0.5rem 0 0.5rem;
   color: white;
+  margin-bottom: 0.5rem;
 }
 
 .event-card-lineup {

@@ -16,3 +16,15 @@
   overflow-x: auto;
   max-width: 100%;
 }
+
+.similar-events-container-wrapper {
+  width: 80rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: black;
+  border-radius: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  max-width: 100%;
+}

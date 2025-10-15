@@ -8,7 +8,9 @@
   }
   
   .profile-feed-card-border {
-      position: relative;  /* Neu */
+      position: relative; 
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
   }
 
@@ -25,7 +27,7 @@
       right: 0;
       bottom: 0;
       border-radius: 50%;
-      padding: 3px;
+      padding: 2px; /* Reduced from 3px to 2px */
       background: linear-gradient(315deg,
                   rgba(var(--color-neon-blue-rgb), 0.8),
                   rgba(var(--color-neon-purple-rgb), 0.8));
@@ -44,7 +46,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden; /* Neu: Verhindert, dass das Bild über den Kreis hinausragt */
+      overflow: hidden;
   }
     
   .profile-feed-card-image {
@@ -52,12 +54,12 @@
       width: 100%;
       object-fit: cover;
       border-radius: 50%;
-      display: block; /* Neu: Verhindert unerwünschte Abstände */
+      display: block;
   }
 
   .profile-feed-card-image-large {
-    width: 100%; /* Geändert: Statt fester Pixelwerte */
-    height: 100%; /* Geändert: Statt fester Pixelwerte */
+    width: 100%;
+    height: 100%;
     object-fit: cover;
   }
     
@@ -80,4 +82,3 @@
     width: 4rem;
     max-width: 4rem;
   }
-  

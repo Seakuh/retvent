@@ -184,6 +184,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             decoding="async"
           />
         </div>
+
         <div className="event-meta-container">
           <div className="event-meta-container-left">
             <div
@@ -215,13 +216,14 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           id={event?.hostId || ""}
           location={event?.city || "TBA"}
         />
+        <h1 className="event-info-title-headline">{event.title}</h1>
         <div className="real-list-item-location-date-container">
           <span className="real-list-item-location">
-            <MapPin size={14} />
+            <MapPin size={14} color="white" />
             {event?.city || "TBA"}
           </span>
           <span className="real-list-item-date">
-            <CalendarIcon size={16} />
+            <CalendarIcon size={16} color="white" />
             {(() => {
               try {
                 if (!event.startDate) {
@@ -252,12 +254,12 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             })()}
           </span>
         </div>
-        <div className="miniature-event-info">
-          <h1 className="event-info-title-headline">{event.title}</h1>
 
+        <div className="miniature-event-info">
           <h2 className="event-description-real-list-item">
             {event.description}
           </h2>
+
           <div className="event-info-button-container">
             <button
               className="lineup-button"

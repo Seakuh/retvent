@@ -16,12 +16,17 @@ export const SimilarEvents = ({ eventId }: { eventId: string }) => {
   }, [eventId]);
 
   return (
-    <div>
-      <div className="similar-events-container">
-        {events.map((event) => (
-          <RealListItem key={event.event.id} event={event.event} />
-        ))}
+    <>
+      <div className="similar-events-container-wrapper">
+        <div className="section-title">
+          <h1>Similar Events</h1>
+        </div>
+        <div className="similar-events-container">
+          {events.map((event) => (
+            <RealListItem key={event.event.id} event={event.event} />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };

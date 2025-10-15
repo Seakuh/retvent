@@ -266,10 +266,11 @@
   
   .info-text {
     display: flex;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     margin-left: 1rem;
     gap: 1rem;
-    justify-content: space-between;
     text-align: left;
   }
 
