@@ -15,11 +15,8 @@ export class QdrantService implements OnModuleInit {
   private readonly client: QdrantClient;
 
   constructor() {
-    if (!process.env.QDRANT_URL) {
-      throw new Error('QDRANT_URL is required');
-    }
     this.client = new QdrantClient({
-      url: process.env.QDRANT_URL!,
+      url: 'https://be3bf75b-20bb-41e0-92e6-c7e9641e51ea.us-west-1-0.aws.cloud.qdrant.io',
       apiKey: process.env.QDRANT_API_KEY, // optional
     });
   }
