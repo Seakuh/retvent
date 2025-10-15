@@ -216,7 +216,6 @@ export const EventDetail: React.FC = () => {
               ticketLink={event.ticketLink}
             />
           </div>
-          <SimilarEvents eventId={eventId || ""} />
 
           {((event.lineup && event.lineup.length > 0) ||
             (event.lineupPictureUrl && event.lineupPictureUrl.length > 0)) && (
@@ -246,6 +245,7 @@ export const EventDetail: React.FC = () => {
           )}
           {host && <EventHost host={host} userId={event.hostId || ""} />}
         </div>
+        <SimilarEvents eventId={eventId || ""} />
 
         {showImageModal && (
           <ImageModal

@@ -35,7 +35,7 @@
 .real-list-item-profile-header-name {
   font-size: 1rem;
   font-weight: 400;
-  color: white;
+  color: white !important;
   cursor: pointer;
 }
 
