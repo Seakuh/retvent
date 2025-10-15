@@ -753,3 +753,101 @@ export interface Ticket {
   status: string;
   createdAt: Date;
 }
+
+// community.types.ts
+
+export type ID = string;
+export type ISODate = string;
+
+export enum Role {
+  USER = "user",
+  HOST = "host",
+  ADMIN = "admin",
+}
+
+export enum EventType {
+  VORTRAG = "vortrag",
+  WORKSHOP = "workshop",
+  OTHER = "other",
+}
+
+export enum RSVPStatus {
+  YES = "yes",
+  NO = "no",
+  MAYBE = "maybe",
+}
+
+export interface Member {
+  id: ID;
+  name: string;
+  avatarUrl?: string;
+  role: Role;
+  joinedAt: ISODate;
+}
+
+export interface Partner {
+  id: ID;
+  name: string;
+  logoUrl: string;
+  linkUrl: string;
+}
+
+export interface Event {
+  id: ID;
+  title: string;
+  description?: string;
+  type: EventType;
+  location?: string;
+  startAt: ISODate;
+  endAt?: ISODate;
+  hostId: ID;
+  attendees: ID[]; // list of member IDs
+}
+
+export interface NewsPost {
+  id: ID;
+  title: string;
+  content: string;
+  authorId: ID; // must be ADMIN or HOST
+  createdAt: ISODate;
+  updatedAt?: ISODate;
+  comments: Comment[];
+}
+
+export interface Comment {
+  id: ID;
+  authorId: ID;
+  content: string;
+  createdAt: ISODate;
+  parentCommentId?: ID;
+}
+
+/**
+ * COMMUNITY ROOT OBJECT
+ * enthält alles, was du für die Community-Seite brauchst
+ */
+export interface Community {
+  id: ID;
+  name: string;
+  slug: string; // e.g. "vi-poker"
+  description?: string;
+  coverImageUrl?: string;
+
+  /** --- CORE DATA --- */
+  members: Member[];
+  events: Event[];
+  news: NewsPost[];
+  partners: Partner[];
+
+  /** --- METADATA --- */
+  createdAt: ISODate;
+  updatedAt?: ISODate;
+}
+
+/** --- Hilfsfunktionen für Frontend-Guards --- */
+export const canPostNews = (member?: Member) =>
+  !!member && (member.role === Role.ADMIN || member.role === Role.HOST);
+
+export const canComment = (member?: Member) => !!member;
+
+export const canJoinEvent = (member?: Member) => !!member;
