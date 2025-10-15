@@ -1,30 +1,37 @@
 // src/qdrant/qdrant.service.ts
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { QdrantClient } from '@qdrant/js-client-rest';
 import { createHash } from 'crypto';
-
-const EVENTS_COLLECTION =
-  process.env.QDRANT_EVENTS_COLLECTION || 'event_embeddings';
-const USERS_COLLECTION =
-  process.env.QDRANT_USERS_COLLECTION || 'user_embeddings';
-const VECTOR_SIZE = Number(process.env.EMBEDDING_DIM || 1536);
 
 @Injectable()
 export class QdrantService implements OnModuleInit {
   private readonly logger = new Logger(QdrantService.name);
   private readonly client: QdrantClient;
+  private readonly EVENTS_COLLECTION: string;
+  private readonly USERS_COLLECTION: string;
+  private readonly VECTOR_SIZE: number;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
+    this.EVENTS_COLLECTION =
+      this.configService.get<string>('QDRANT_EVENTS_COLLECTION') ||
+      'event_embeddings';
+    this.USERS_COLLECTION =
+      this.configService.get<string>('QDRANT_USERS_COLLECTION') ||
+      'user_embeddings';
+    this.VECTOR_SIZE = Number(
+      this.configService.get<string>('EMBEDDING_DIM') || 1536,
+    );
     this.client = new QdrantClient({
-      url: 'https://be3bf75b-20bb-41e0-92e6-c7e9641e51ea.us-west-1-0.aws.cloud.qdrant.io',
-      apiKey: process.env.QDRANT_API_KEY, // optional
+      url: configService.get<string>('QDRANT_URL'),
+      apiKey: configService.get<string>('QDRANT_API_KEY'), // optional
     });
   }
 
   async onModuleInit() {
     await Promise.all([
-      this.ensureCollection(EVENTS_COLLECTION, this.eventIndexes()),
-      this.ensureCollection(USERS_COLLECTION, this.userIndexes()),
+      this.ensureCollection(this.EVENTS_COLLECTION, this.eventIndexes()),
+      this.ensureCollection(this.USERS_COLLECTION, this.userIndexes()),
     ]);
   }
 
@@ -39,7 +46,7 @@ export class QdrantService implements OnModuleInit {
     } catch {
       this.logger.log(`Creating collection "${collectionName}"…`);
       await this.client.createCollection(collectionName, {
-        vectors: { size: VECTOR_SIZE, distance: 'Cosine' },
+        vectors: { size: this.VECTOR_SIZE, distance: 'Cosine' },
         hnsw_config: { m: 16, ef_construct: 128 },
         optimizers_config: { default_segment_number: 2 },
       });
@@ -173,7 +180,7 @@ export class QdrantService implements OnModuleInit {
       payload: Record<string, any>;
     }>,
   ) {
-    return this.upsertPoints(EVENTS_COLLECTION, points);
+    return this.upsertPoints(this.EVENTS_COLLECTION, points);
   }
 
   /** User/Artists upserten (Vector + Payload) */
@@ -184,7 +191,7 @@ export class QdrantService implements OnModuleInit {
       payload: Record<string, any>;
     }>,
   ) {
-    return this.upsertPoints(USERS_COLLECTION, points);
+    return this.upsertPoints(this.USERS_COLLECTION, points);
   }
 
   /** Ähnliche Events suchen (KNN) */
@@ -196,7 +203,7 @@ export class QdrantService implements OnModuleInit {
     withPayload?: boolean;
     withVector?: boolean;
   }) {
-    return this.search(EVENTS_COLLECTION, params);
+    return this.search(this.EVENTS_COLLECTION, params);
   }
 
   async searchEventsSimilarById(
@@ -210,8 +217,8 @@ export class QdrantService implements OnModuleInit {
       withVector?: boolean;
     } = {},
   ) {
-    const vector = await this.loadVectorById(EVENTS_COLLECTION, id);
-    return this.search(EVENTS_COLLECTION, {
+    const vector = await this.loadVectorById(this.EVENTS_COLLECTION, id);
+    return this.search(this.EVENTS_COLLECTION, {
       vector,
       ...params,
     });
@@ -239,7 +246,7 @@ export class QdrantService implements OnModuleInit {
           ]
         : [],
     );
-    return this.search(USERS_COLLECTION, { ...rest, filter });
+    return this.search(this.USERS_COLLECTION, { ...rest, filter });
   }
 
   async searchUsersSimilarById(
@@ -253,7 +260,7 @@ export class QdrantService implements OnModuleInit {
       category?: string;
     } = {},
   ) {
-    const vector = await this.loadVectorById(USERS_COLLECTION, id);
+    const vector = await this.loadVectorById(this.USERS_COLLECTION, id);
     const { category, ...rest } = params;
     const filter = this.mergeFilters(
       rest.filter,
@@ -266,7 +273,7 @@ export class QdrantService implements OnModuleInit {
           ]
         : [],
     );
-    return this.search(USERS_COLLECTION, { ...rest, vector, filter });
+    return this.search(this.USERS_COLLECTION, { ...rest, vector, filter });
   }
 
   /** Freitext-Suche für Lineup-/Technik-Vorschläge */
@@ -306,7 +313,7 @@ export class QdrantService implements OnModuleInit {
     }
 
     const filter = this.mergeFilters(rest.filter, filterClauses);
-    return this.search(USERS_COLLECTION, { ...rest, filter });
+    return this.search(this.USERS_COLLECTION, { ...rest, filter });
   }
 
   private async search(
@@ -359,7 +366,7 @@ export class QdrantService implements OnModuleInit {
     withPayload?: boolean;
     withVector?: boolean;
   }) {
-    return this.recommend(EVENTS_COLLECTION, params);
+    return this.recommend(this.EVENTS_COLLECTION, params);
   }
 
   async recommendUsers(params: {
@@ -370,7 +377,7 @@ export class QdrantService implements OnModuleInit {
     withPayload?: boolean;
     withVector?: boolean;
   }) {
-    return this.recommend(USERS_COLLECTION, params);
+    return this.recommend(this.USERS_COLLECTION, params);
   }
 
   private async recommend(
@@ -404,25 +411,25 @@ export class QdrantService implements OnModuleInit {
   }
 
   async deleteEvents(ids: (string | number)[]) {
-    return this.deletePoints(EVENTS_COLLECTION, ids);
+    return this.deletePoints(this.EVENTS_COLLECTION, ids);
   }
 
   async deleteUsers(ids: (string | number)[]) {
-    return this.deletePoints(USERS_COLLECTION, ids);
+    return this.deletePoints(this.USERS_COLLECTION, ids);
   }
 
   async retrieveEvents(
     ids: (string | number)[],
     options: { withPayload?: boolean; withVector?: boolean } = {},
   ) {
-    return this.retrievePoints(EVENTS_COLLECTION, ids, options);
+    return this.retrievePoints(this.EVENTS_COLLECTION, ids, options);
   }
 
   async retrieveUsers(
     ids: (string | number)[],
     options: { withPayload?: boolean; withVector?: boolean } = {},
   ) {
-    return this.retrievePoints(USERS_COLLECTION, ids, options);
+    return this.retrievePoints(this.USERS_COLLECTION, ids, options);
   }
 
   private normalizePointId(id: string | number) {
@@ -539,9 +546,9 @@ export class QdrantService implements OnModuleInit {
     if (!Array.isArray(vector)) {
       throw new Error(`Vector missing for ${context}`);
     }
-    if (vector.length !== VECTOR_SIZE) {
+    if (vector.length !== this.VECTOR_SIZE) {
       throw new Error(
-        `Vector length mismatch for ${context}: expected ${VECTOR_SIZE}, got ${vector.length}`,
+        `Vector length mismatch for ${context}: expected ${this.VECTOR_SIZE}, got ${vector.length}`,
       );
     }
   }
@@ -558,11 +565,11 @@ export class QdrantService implements OnModuleInit {
       enriched.id = normalizedId;
     }
 
-    if (collectionName === EVENTS_COLLECTION) {
+    if (collectionName === this.EVENTS_COLLECTION) {
       if (enriched.eventId === undefined) {
         enriched.eventId = normalizedId;
       }
-    } else if (collectionName === USERS_COLLECTION) {
+    } else if (collectionName === this.USERS_COLLECTION) {
       if (enriched.userId === undefined) {
         enriched.userId = normalizedId;
       }
@@ -627,19 +634,19 @@ export class QdrantService implements OnModuleInit {
     collectionName:
       | 'events'
       | 'users'
-      | typeof EVENTS_COLLECTION
-      | typeof USERS_COLLECTION = EVENTS_COLLECTION,
+      | typeof this.EVENTS_COLLECTION
+      | typeof this.USERS_COLLECTION = this.EVENTS_COLLECTION,
   ) {
     const targetCollection =
-      collectionName === 'events' || collectionName === EVENTS_COLLECTION
-        ? EVENTS_COLLECTION
-        : USERS_COLLECTION;
+      collectionName === 'events' || collectionName === this.EVENTS_COLLECTION
+        ? this.EVENTS_COLLECTION
+        : this.USERS_COLLECTION;
     try {
       await this.client.deleteCollection(targetCollection);
     } catch {}
     await this.ensureCollection(
       targetCollection,
-      targetCollection === EVENTS_COLLECTION
+      targetCollection === this.EVENTS_COLLECTION
         ? this.eventIndexes()
         : this.userIndexes(),
     );
