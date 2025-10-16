@@ -11,7 +11,7 @@ export class QdrantService implements OnModuleInit {
   private readonly EVENTS_COLLECTION: string;
   private readonly USERS_COLLECTION: string;
   private readonly VECTOR_SIZE: number;
-
+  private readonly ASSESSMENTS_COLLECTION: string;
   constructor(private configService: ConfigService) {
     this.EVENTS_COLLECTION =
       this.configService.get<string>('QDRANT_EVENTS_COLLECTION') ||
@@ -22,6 +22,9 @@ export class QdrantService implements OnModuleInit {
     this.VECTOR_SIZE = Number(
       this.configService.get<string>('EMBEDDING_DIM') || 1536,
     );
+    this.ASSESSMENTS_COLLECTION =
+      this.configService.get<string>('QDRANT_ASSESSMENTS_COLLECTION') ||
+      'assessment_embeddings';
     this.client = new QdrantClient({
       url: configService.get<string>('QDRANT_URL'),
       apiKey: configService.get<string>('QDRANT_API_KEY'), // optional
@@ -32,6 +35,10 @@ export class QdrantService implements OnModuleInit {
     await Promise.all([
       this.ensureCollection(this.EVENTS_COLLECTION, this.eventIndexes()),
       this.ensureCollection(this.USERS_COLLECTION, this.userIndexes()),
+      this.ensureCollection(
+        this.ASSESSMENTS_COLLECTION,
+        this.assessmentIndexes(),
+      ),
     ]);
   }
 
@@ -85,6 +92,16 @@ export class QdrantService implements OnModuleInit {
       { field_name: 'dayRateMin', field_schema: 'float' },
       { field_name: 'dayRateMax', field_schema: 'float' },
       { field_name: 'travelRadiusKm', field_schema: 'integer' },
+    ];
+  }
+
+  private assessmentIndexes() {
+    return [
+      { field_name: 'playStyle', field_schema: 'keyword' },
+      { field_name: 'loose', field_schema: 'integer' },
+      { field_name: 'tight', field_schema: 'integer' },
+      { field_name: 'aggressive', field_schema: 'integer' },
+      { field_name: 'passive', field_schema: 'integer' },
     ];
   }
 
@@ -355,6 +372,27 @@ export class QdrantService implements OnModuleInit {
       );
       throw error;
     }
+  }
+
+  async searchAssessments(params: {
+    vector: number[];
+    limit?: number;
+    filter?: any;
+    scoreThreshold?: number;
+    withPayload?: boolean;
+    withVector?: boolean;
+  }) {
+    return this.search(this.ASSESSMENTS_COLLECTION, params);
+  }
+
+  async upsertAssessments(
+    points: Array<{
+      id: string | number;
+      vector: number[];
+      payload: Record<string, any>;
+    }>,
+  ) {
+    return this.upsertPoints(this.ASSESSMENTS_COLLECTION, points);
   }
 
   /** Empfehlungen basierend auf positiven/negativen IDs */

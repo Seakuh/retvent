@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { AssessmentService } from 'src/application/services/assessment.service';
 import { BotService } from 'src/application/services/bot.service';
 import { CommentService } from 'src/application/services/comment.service';
 import { EventEmbeddingService } from 'src/application/services/eventembedding.service';
@@ -30,6 +31,7 @@ import { LocationService } from '../application/services/location.service';
 import { UserService } from '../application/services/user.service';
 import { CoreModule } from '../core/core.module';
 import { BcryptService } from '../core/services/bcrypt.service';
+import { AssessmentController } from '../presentation/controllers/assessment.controller';
 import { AuthController } from '../presentation/controllers/auth.controller';
 import { EventController } from '../presentation/controllers/event.controller';
 import { GroupController } from '../presentation/controllers/group.controller';
@@ -127,6 +129,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     GroupController,
     MessageController,
     FeedController,
+    AssessmentController,
     ArtistController,
     TicketsController,
   ],
@@ -142,6 +145,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     FeedService,
     EventEmbeddingService,
     ImageService,
+    AssessmentService,
     VideoService,
     GeolocationService,
     LocationService,
@@ -206,11 +210,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   exports: [
     EventService,
     EventEmbeddingService,
+    ChatGPTService,
     FeedService,
     LocationService,
     AuthService,
     GroupService,
     ImageService,
+    AssessmentService,
     VideoService,
     ChatGPTService,
     JwtAuthGuard,

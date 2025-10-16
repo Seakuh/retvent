@@ -59,7 +59,10 @@ export class UserController {
     @UserDecorator() user: User,
     @Body() updateUserDto: UpdateUserProfileDto,
   ) {
-    const currentUser = await this.userService.findById(user.id);
+    console.log('user', user);
+    console.log('user.id', user.id);
+    console.log('user.sub', user.sub);
+    const currentUser = await this.userService.findById(user.sub);
     if (!currentUser) {
       throw new NotFoundException('Benutzer nicht gefunden');
     }
