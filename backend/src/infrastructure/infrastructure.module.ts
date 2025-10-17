@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AssessmentService } from 'src/application/services/assessment.service';
 import { BotService } from 'src/application/services/bot.service';
 import { CommentService } from 'src/application/services/comment.service';
+import { CommunityService } from 'src/application/services/community.service';
 import { EventEmbeddingService } from 'src/application/services/eventembedding.service';
 import { FeedService } from 'src/application/services/feed.service';
 import { GroupService } from 'src/application/services/group.service';
@@ -166,6 +167,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     OwnerGuard,
     EventMapper,
     ConfigService,
+    CommunityService,
     BcryptService,
     UserService,
     GroovecastService,
@@ -214,6 +216,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     FeedService,
     LocationService,
     AuthService,
+    CommunityService,
     GroupService,
     ImageService,
     AssessmentService,
@@ -251,6 +254,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MessageService,
     TicketsService,
     QdrantService,
+    CommunityService,
   ],
 })
 export class InfrastructureModule {}
