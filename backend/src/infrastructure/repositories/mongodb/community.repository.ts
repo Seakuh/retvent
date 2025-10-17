@@ -24,8 +24,16 @@ export class MongoCommunityRepository implements ICommunityRepository {
     return this.communityModel.find();
   }
 
-  async update(id: string, body: CreateCommunityDto) {
-    return this.communityModel.findByIdAndUpdate(id, body);
+  async update(id: string, body: Partial<Community>) {
+    return this.communityModel.findByIdAndUpdate(id, body, { new: true });
+  }
+
+  async joinCommunity(id: string, userId: string) {
+    return this.communityModel.findByIdAndUpdate(
+      id,
+      { $push: { members: userId } },
+      { new: true },
+    );
   }
 
   async delete(id: string) {

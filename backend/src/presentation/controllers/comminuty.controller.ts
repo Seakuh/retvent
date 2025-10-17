@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { CommunityService } from '../../application/services/community.service';
 import { CreateCommunityDto } from '../dtos/create-community.dto';
+import { JoinCommunityDto } from '../dtos/join-community.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('community')
 export class CommunityController {
@@ -12,7 +14,15 @@ export class CommunityController {
   }
 
   @Post('create-community')
-  async createCommunity(@Body() body: CreateCommunityDto) {
-    return this.communityService.createCommunity(body);
+  @UseGuards(JwtAuthGuard)
+  async createCommunity(@Body() body: CreateCommunityDto, @Req() req) {
+    console.log('Creating community named', body.name);
+    return this.communityService.createCommunity(body, req.user.sub);
+  }
+
+  @Post('join-community')
+  @UseGuards(JwtAuthGuard)
+  async joinCommunity(@Body() body: JoinCommunityDto, @Req() req) {
+    return this.communityService.joinCommunity(body, req.user.sub);
   }
 }
