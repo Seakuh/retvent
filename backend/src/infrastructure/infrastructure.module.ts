@@ -41,6 +41,7 @@ import { JwtAuthGuard } from '../presentation/guards/jwt-auth.guard';
 import { OwnerGuard } from '../presentation/guards/owner.guard';
 import { AuthModule } from './modules/auth.module';
 import { MongoCommentRepository } from './repositories/mongodb/comment.repository';
+import { MongoCommunityRepository } from './repositories/mongodb/community.repository';
 import { MongoEventRepository } from './repositories/mongodb/event.repository';
 import { MongoFeedRepository } from './repositories/mongodb/feed.repository';
 import { MongoGrooveCastRepository } from './repositories/mongodb/groovecast.repository';
@@ -51,6 +52,7 @@ import { MongoProfileRepository } from './repositories/mongodb/profile.repositor
 import { MongoTicketRepository } from './repositories/mongodb/ticket.repository';
 import { MongoUserRepository } from './repositories/mongodb/user.repository';
 import { CommentSchema } from './schemas/comment.schema';
+import { CommunitySchema } from './schemas/community.schema';
 import { EventSchema } from './schemas/event.schema';
 import { FeedSchema } from './schemas/feed.schame';
 import { GroovecastSchema } from './schemas/groovecast.schema';
@@ -117,6 +119,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       { name: 'Message', schema: MessageSchema },
       { name: 'Group', schema: GroupSchema },
       { name: 'Ticket', schema: TicketSchema },
+      { name: 'Community', schema: CommunitySchema },
     ]),
   ],
   controllers: [
@@ -152,12 +155,14 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     LocationService,
     AuthService,
     MongoEventRepository,
+    MongoCommunityRepository,
     MongoGroupRepository,
     MongoLocationRepository,
     BotService,
     MongoUserRepository,
     MongoGrooveCastRepository,
     MongoCommentRepository,
+    MongoCommunityRepository,
     MongoProfileRepository,
     MongoMessageRepository,
     MongoFeedRepository,
@@ -175,6 +180,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     {
       provide: 'IEventRepository',
       useClass: MongoEventRepository,
+    },
+    {
+      provide: 'ICommunityRepository',
+      useClass: MongoCommunityRepository,
     },
     {
       provide: 'ILocationRepository',
@@ -225,6 +234,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     JwtAuthGuard,
     OwnerGuard,
     'IEventRepository',
+    'ICommunityRepository',
     'ILocationRepository',
     'IUserRepository',
     'ICommentRepository',
@@ -235,6 +245,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     'ITicketRepository',
     JwtModule,
     MongoEventRepository,
+    MongoCommunityRepository,
     MongoProfileRepository,
     MongoLocationRepository,
     MongoGrooveCastRepository,
