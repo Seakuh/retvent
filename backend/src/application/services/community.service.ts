@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Community } from 'src/core/domain/community';
 import { MongoUserRepository } from 'src/infrastructure/repositories/mongodb/user.repository';
 import { CreateCommunityDto } from 'src/presentation/dtos/create-community.dto';
@@ -65,5 +69,16 @@ export class CommunityService {
 
   removeModerator(communityId: string, userId: string) {
     return this.communityRepository.removeModerator(communityId, userId);
+  }
+
+  async deleteCommunity(communityId: string, userId: string) {
+    const community = await this.communityRepository.findById(communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+    if (!community.admins.includes(userId)) {
+      throw new ForbiddenException('You are not the admin of this community');
+    }
+    return this.communityRepository.delete(communityId);
   }
 }

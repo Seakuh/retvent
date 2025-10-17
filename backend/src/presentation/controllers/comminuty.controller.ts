@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -59,5 +60,11 @@ export class CommunityController {
       throw new NotFoundException('Community not found');
     }
     return community.members;
+  }
+
+  @Delete(':communityId')
+  @UseGuards(CommunityHostGuard)
+  async deleteCommunity(@Param('communityId') communityId: string, @Req() req) {
+    return this.communityService.deleteCommunity(communityId, req.user.sub);
   }
 }
