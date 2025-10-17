@@ -1,7 +1,15 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CommunityService } from '../../application/services/community.service';
 import { CreateCommunityDto } from '../dtos/create-community.dto';
-import { JoinCommunityDto } from '../dtos/join-community.dto';
 import { UpdateCommunityDto } from '../dtos/update-community.dto';
 import { CommunityHostGuard } from '../guards/community-host.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -24,8 +32,17 @@ export class CommunityController {
 
   @Post('join-community')
   @UseGuards(JwtAuthGuard)
-  async joinCommunity(@Body() body: JoinCommunityDto, @Req() req) {
-    return this.communityService.joinCommunity(body, req.user.sub);
+  async joinCommunity(@Body() body: { communityId: string }, @Req() req) {
+    return this.communityService.joinCommunity(
+      { communityId: body.communityId },
+      req.user.sub,
+    );
+  }
+
+  @Post('add-moderator')
+  @UseGuards(CommunityHostGuard)
+  async addModerator(@Body() body: { communityId: string; userId: string }) {
+    return this.communityService.addModerator(body.communityId, body.userId);
   }
 
   @Post('update-community')
@@ -33,5 +50,14 @@ export class CommunityController {
   async updateCommunity(@Body() body: UpdateCommunityDto) {
     console.log('Updating community', body);
     return this.communityService.updateCommunity(body.communityId, body);
+  }
+
+  @Get('members/:communityId')
+  async getMembers(@Param('communityId') communityId: string) {
+    const community = await this.communityService.findById(communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+    return community.members;
   }
 }

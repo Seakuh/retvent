@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Community } from 'src/core/domain/community';
 import { MongoUserRepository } from 'src/infrastructure/repositories/mongodb/user.repository';
 import { CreateCommunityDto } from 'src/presentation/dtos/create-community.dto';
-import { JoinCommunityDto } from 'src/presentation/dtos/join-community.dto';
 import { UpdateCommunityDto } from 'src/presentation/dtos/update-community.dto';
 import { MongoCommunityRepository } from '../../infrastructure/repositories/mongodb/community.repository';
 
@@ -36,15 +36,18 @@ export class CommunityService {
     return this.communityRepository.createCommunity(communityData);
   }
 
-  async joinCommunity(body: JoinCommunityDto, userId: string) {
-    const community = await this.communityRepository.findById(body.communityId);
+  async joinCommunity(
+    { communityId }: { communityId: string },
+    userId: string,
+  ) {
+    const community = await this.communityRepository.findById(communityId);
     if (!community) {
       throw new NotFoundException('Community not found');
     }
-    return this.communityRepository.joinCommunity(body.communityId, userId);
+    return this.communityRepository.joinCommunity(communityId, userId);
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<Community | null> {
     const community = await this.communityRepository.findById(id);
     if (!community) {
       throw new NotFoundException('Community not found');
@@ -54,5 +57,13 @@ export class CommunityService {
 
   updateCommunity(communityId: string, body: UpdateCommunityDto) {
     return this.communityRepository.update(communityId, body);
+  }
+
+  addModerator(communityId: string, userId: string) {
+    return this.communityRepository.addModerator(communityId, userId);
+  }
+
+  removeModerator(communityId: string, userId: string) {
+    return this.communityRepository.removeModerator(communityId, userId);
   }
 }

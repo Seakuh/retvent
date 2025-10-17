@@ -40,4 +40,20 @@ export class MongoCommunityRepository implements ICommunityRepository {
     const result = await this.communityModel.findByIdAndDelete(id);
     return result !== null;
   }
+
+  async addModerator(communityId: string, userId: string) {
+    return this.communityModel.findByIdAndUpdate(
+      communityId,
+      { $push: { moderators: userId } },
+      { new: true },
+    );
+  }
+
+  removeModerator(communityId: string, userId: string) {
+    return this.communityModel.findByIdAndUpdate(
+      communityId,
+      { $pull: { moderators: userId } },
+      { new: true },
+    );
+  }
 }
