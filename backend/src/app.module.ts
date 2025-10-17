@@ -12,6 +12,7 @@ import { FeedController } from './presentation/controllers/feed.controller';
 import { GroovecastController } from './presentation/controllers/groovecast.controller';
 import { GroupController } from './presentation/controllers/group.controller';
 import { MessageController } from './presentation/controllers/message.controller';
+import { PostsController } from './presentation/controllers/posts.controller';
 import { ProfileController } from './presentation/controllers/profile.controller';
 import { SearchController } from './presentation/controllers/search.controller';
 import { TicketsController } from './presentation/controllers/tickets.controller';
@@ -37,6 +38,7 @@ const MONGODB_URI = 'mongodb://localhost:27017';
     FeedController,
     ArtistController,
     CommunityController,
+    PostsController,
   ],
 })
 export class AppModule {}

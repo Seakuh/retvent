@@ -23,6 +23,7 @@ import { CommentController } from 'src/presentation/controllers/comment.controll
 import { FeedController } from 'src/presentation/controllers/feed.controller';
 import { GroovecastController } from 'src/presentation/controllers/groovecast.controller';
 import { MessageController } from 'src/presentation/controllers/message.controller';
+import { PostsController } from 'src/presentation/controllers/posts.controller';
 import { SearchController } from 'src/presentation/controllers/search.controller';
 import { TicketsController } from 'src/presentation/controllers/tickets.controller';
 import { UserController } from 'src/presentation/controllers/user.controller';
@@ -48,6 +49,7 @@ import { MongoGrooveCastRepository } from './repositories/mongodb/groovecast.rep
 import { MongoGroupRepository } from './repositories/mongodb/group.repository';
 import { MongoLocationRepository } from './repositories/mongodb/location.repository';
 import { MongoMessageRepository } from './repositories/mongodb/message.repository';
+import { MongoPostRepository } from './repositories/mongodb/post.repository';
 import { MongoProfileRepository } from './repositories/mongodb/profile.repository';
 import { MongoTicketRepository } from './repositories/mongodb/ticket.repository';
 import { MongoUserRepository } from './repositories/mongodb/user.repository';
@@ -58,6 +60,7 @@ import { FeedSchema } from './schemas/feed.schame';
 import { GroovecastSchema } from './schemas/groovecast.schema';
 import { GroupSchema } from './schemas/group.schmema';
 import { LocationSchema } from './schemas/location.schema';
+import { PostSchema } from './schemas/post.schema';
 import { ProfileSchema } from './schemas/profile.schema';
 import { UserSchema } from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
@@ -65,6 +68,7 @@ import { ChatGPTService } from './services/chatgpt.service';
 import { GeolocationService } from './services/geolocation.service';
 import { GroovecastService } from './services/groovecast.service';
 import { ImageService } from './services/image.service';
+import { PostService } from './services/post.service';
 import { QdrantService } from './services/qdrant.service';
 import { VideoService } from './services/video.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -120,6 +124,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       { name: 'Group', schema: GroupSchema },
       { name: 'Ticket', schema: TicketSchema },
       { name: 'Community', schema: CommunitySchema },
+      { name: 'Post', schema: PostSchema },
     ]),
   ],
   controllers: [
@@ -128,6 +133,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     EventController,
     GroovecastController,
     CommentController,
+    PostsController,
     UserController,
     SearchController,
     GroupController,
@@ -145,6 +151,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MessageService,
     ChatGPTService,
     MailService,
+    PostService,
     TicketsService,
     FeedService,
     EventEmbeddingService,
@@ -165,6 +172,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MongoCommunityRepository,
     MongoProfileRepository,
     MongoMessageRepository,
+    MongoPostRepository,
     MongoFeedRepository,
     MongoTicketRepository,
     JwtStrategy,
@@ -217,6 +225,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       provide: 'ITicketRepository',
       useClass: MongoTicketRepository,
     },
+    {
+      provide: 'IPostRepository',
+      useClass: MongoPostRepository,
+    },
   ],
   exports: [
     EventService,
@@ -240,6 +252,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     'ICommentRepository',
     'IProfileRepository',
     'IGroupRepository',
+    'IPostRepository',
     'IMessageRepository',
     'IFeedRepository',
     'ITicketRepository',
@@ -248,6 +261,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     MongoCommunityRepository,
     MongoProfileRepository,
     MongoLocationRepository,
+    MongoPostRepository,
     MongoGrooveCastRepository,
     MongoCommentRepository,
     MongoMessageRepository,
@@ -260,6 +274,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     GroovecastService,
     BcryptService,
     UserService,
+    PostService,
     CommentService,
     ProfileService,
     MessageService,
