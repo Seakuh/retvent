@@ -6,15 +6,18 @@ export type PostDocument = Post & Document;
 @Schema()
 export class Post {
   @Prop({ required: true })
-  profileId: string;
+  userId: string;
 
   @Prop({ required: true })
+  communityId: string;
+
+  @Prop({ required: false })
   eventId: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   startDate: Date;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   type: string;
 
   @Prop({ default: Date.now })

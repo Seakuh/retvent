@@ -5,9 +5,6 @@ export class CreatePostDto {
   communityId: string;
 
   @IsString()
-  userId: string;
-
-  @IsString()
   @IsOptional()
   type: string;
 

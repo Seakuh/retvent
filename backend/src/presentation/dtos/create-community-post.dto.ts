@@ -5,9 +5,18 @@ export class CreateCommunityPostDto {
   communityId: string;
 
   @IsString()
-  userId: string;
+  @IsOptional()
+  type: string;
 
   @IsString()
   @IsOptional()
-  type: string;
+  title: string;
+
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @IsString()
+  @IsOptional()
+  image: string;
 }

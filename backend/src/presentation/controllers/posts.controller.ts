@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { PostService } from 'src/infrastructure/services/post.service';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -10,14 +18,12 @@ export class PostsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(
-    @Param('communityId') communityId: string,
-    @Body() body: CreatePostDto,
-  ) {
-    return this.postService.createCommunityPost({
-      ...body,
-      communityId,
-      userId: body.userId,
-    });
+  async create(@Body() body: CreatePostDto, @Req() req) {
+    return this.postService.createCommunityPost(body, req.user.sub);
+  }
+
+  @Get(':communityId')
+  async getCommunityPosts(@Param('communityId') communityId: string) {
+    return this.postService.getCommunityPosts(communityId);
   }
 }

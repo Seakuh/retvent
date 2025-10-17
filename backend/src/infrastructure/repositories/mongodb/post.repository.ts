@@ -2,13 +2,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IPostRepository } from 'src/core/repositories/post.repository.interface';
 import { PostDocument } from 'src/infrastructure/schemas/post.schema';
-import { CreateCommunityPostDto } from 'src/presentation/dtos/create-community-post.dto';
 
 export class MongoPostRepository implements IPostRepository {
   constructor(@InjectModel('Post') private postModel: Model<PostDocument>) {}
 
-  async createCommunityPost(createCommunityPostDto: CreateCommunityPostDto) {
-    return this.postModel.create(createCommunityPostDto);
+  async createCommunityPost(createCommunityPostDto: any) {
+    return this.postModel.create({
+      ...createCommunityPostDto,
+      startDate: new Date(),
+    });
   }
 
   async findCommunityPosts(communityId: string) {
@@ -31,5 +33,9 @@ export class MongoPostRepository implements IPostRepository {
 
   updateCommunityPost(postId: string, post: Partial<PostDocument>) {
     return this.postModel.findByIdAndUpdate(postId, post, { new: true });
+  }
+
+  async getCommunityPosts(communityId: string) {
+    return this.postModel.find({ communityId }).sort({ createdAt: -1 });
   }
 }
