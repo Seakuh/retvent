@@ -24,6 +24,12 @@ export class CommunityService {
     const communityData = {
       ...body,
       admins: [userId],
+      moderators: [userId],
+      members: [userId],
+      bannedUsers: [],
+      eventIds: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     return this.communityRepository.createCommunity(communityData);
@@ -35,5 +41,13 @@ export class CommunityService {
       throw new NotFoundException('Community not found');
     }
     return this.communityRepository.joinCommunity(body.communityId, userId);
+  }
+
+  async findById(id: string) {
+    const community = await this.communityRepository.findById(id);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+    return community;
   }
 }

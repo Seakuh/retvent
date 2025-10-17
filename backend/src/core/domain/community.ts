@@ -6,4 +6,11 @@ export class Community {
   creatorId: string;
   isPublic: boolean;
   imageUrl?: string;
+  moderators: string[];
+  members: string[];
+  admins: string[];
+  bannedUsers: string[];
+  eventIds: string[];
+  createdAt: Date;
+  updatedAt: Date;
 }
