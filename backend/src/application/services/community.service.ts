@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { MongoUserRepository } from 'src/infrastructure/repositories/mongodb/user.repository';
 import { CreateCommunityDto } from 'src/presentation/dtos/create-community.dto';
 import { JoinCommunityDto } from 'src/presentation/dtos/join-community.dto';
+import { UpdateCommunityDto } from 'src/presentation/dtos/update-community.dto';
 import { MongoCommunityRepository } from '../../infrastructure/repositories/mongodb/community.repository';
 
 @Injectable()
@@ -49,5 +50,9 @@ export class CommunityService {
       throw new NotFoundException('Community not found');
     }
     return community;
+  }
+
+  updateCommunity(communityId: string, body: UpdateCommunityDto) {
+    return this.communityRepository.update(communityId, body);
   }
 }
