@@ -789,11 +789,42 @@ export class MongoEventRepository implements IEventRepository {
     return { events: events.map((event) => this.toEntity(event)), total };
   }
 
+  async findAndCountByHostUsernameV2(
+    slug: string,
+    userId?: string,
+  ): Promise<{ events: Event[]; total: number }> {
+    const orConditions = [
+      { 'host.username': slug },
+      { 'lineup.name': slug },
+      ...(userId ? [{ hostId: userId }] : []),
+    ];
+    const filter = { $or: orConditions };
+    const [events, total] = await Promise.all([
+      this.eventModel
+        .find(filter)
+        .select(
+          'id title imageUrl startDate startTime endDate  city views commentCount',
+        )
+        .exec(),
+      this.eventModel.countDocuments(filter),
+    ]);
+
+    return { events: events.map((event) => this.toEntity(event)), total };
+  }
+
   async countByHostId(hostId: string): Promise<number> {
     return this.eventModel.countDocuments({ hostId }).exec();
   }
 
   async findByHostUsername(username: string): Promise<Event[]> {
+    const events = await this.eventModel
+      .find({ hostUsername: username })
+      .sort({ createdAt: -1 })
+      .exec();
+    return events.map((event) => this.toEntity(event));
+  }
+
+  async findByHostUsernameFullMeta(username: string): Promise<Event[]> {
     const events = await this.eventModel
       .find({ hostUsername: username })
       .sort({ createdAt: -1 })

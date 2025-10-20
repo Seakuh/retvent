@@ -605,6 +605,25 @@ export class EventController {
     };
   }
 
+  @Get('host/id/v2/:slug')
+  async getEventsByHostIdV2(
+    @Param('slug') slug: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 40,
+  ) {
+    const result = await this.eventService.findAndCountBySlugV2(slug);
+    const { events, total } = result;
+    return {
+      events,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    };
+  }
+
   // CREATE EVENT ------------------------------------------------------
   @Post('create')
   @UseGuards(JwtAuthGuard)

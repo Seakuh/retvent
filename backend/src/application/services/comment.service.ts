@@ -39,7 +39,18 @@ export class CommentService {
   }
 
   async findByPostId(postId: string) {
-    return this.commentRepository.findByPostId(postId);
+    const comments = await this.commentRepository.findByPostId(postId);
+    const commentsWithUser = await Promise.all(
+      comments.map(async (comment) => {
+        const user = await this.userService.getUserProfile(comment.userId);
+        return {
+          ...comment.toObject(),
+          username: user.username,
+          profileImageUrl: user.profileImageUrl,
+        };
+      }),
+    );
+    return commentsWithUser;
   }
 
   async getLatestComments(limit?: number) {

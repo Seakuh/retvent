@@ -21,8 +21,11 @@ export class PostsController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CommunityMemberGuard)
   async create(@Body() body: CreatePostDto, @Req() req) {
+    if (!req.user) {
+      throw new NotFoundException('User not found');
+    }
     return this.postService.createCommunityPost(body, req.user.sub);
   }
 
@@ -32,21 +35,17 @@ export class PostsController {
     @Query('offset') offset: number = 0,
     @Query('limit') limit: number = 20,
   ) {
-    console.log('communityId', communityId);
-    console.log('offset', offset);
-    console.log('limit', limit);
     return this.postService.getCommunityPosts(communityId, offset, limit);
   }
 
   @Post('comment/:communityId')
-  @UseGuards(CommunityMemberGuard)
+  @UseGuards(JwtAuthGuard)
   async createComment(
-    @Param() communityId: string,
-    @Body() body: { postId: string; text: string },
+    @Body() body: { communityId: string; postId: string; text: string },
     @Req() req,
   ) {
     return this.postService.createComment(
-      communityId,
+      body.communityId,
       body.postId,
       body.text,
       req.user.sub,
@@ -54,8 +53,11 @@ export class PostsController {
   }
 
   @Get('comments/:postId')
-  @UseGuards(CommunityMemberGuard)
-  async getComments(@Param('postId') postId: string) {
+  @UseGuards(JwtAuthGuard, CommunityMemberGuard)
+  async getComments(
+    @Param('postId') postId: string,
+    @Body() body: { communityId: string },
+  ) {
     const comments = await this.postService.getComments(postId);
     if (!comments) {
       throw new NotFoundException('Comments not found');
@@ -63,12 +65,16 @@ export class PostsController {
     return comments;
   }
   @Post('like/:postId')
-  @UseGuards(CommunityMemberGuard)
-  async addLike(@Param('postId') postId: string, @Req() req) {
+  @UseGuards(JwtAuthGuard, CommunityMemberGuard)
+  async addLike(
+    @Param('postId') postId: string,
+    @Body() body: { communityId: string },
+    @Req() req,
+  ) {
     return this.postService.addLike(postId, req.user.sub);
   }
   @Delete('like/:postId')
-  @UseGuards(CommunityMemberGuard)
+  @UseGuards(JwtAuthGuard, CommunityMemberGuard)
   async removeLike(@Param('postId') postId: string, @Req() req) {
     return this.postService.removeLike(postId, req.user.sub);
   }

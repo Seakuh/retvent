@@ -15,6 +15,7 @@ export class CreatePostDto {
   @IsString()
   @IsOptional()
   description: string;
+
   @IsOptional()
   image: Buffer;
 

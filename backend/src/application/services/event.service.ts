@@ -858,6 +858,10 @@ export class EventService {
     return this.eventRepository.findByHostUsername(username);
   }
 
+  async findEventsByHostV2(username: string): Promise<Event[]> {
+    return this.eventRepository.findByHostUsernameFullMeta(username);
+  }
+
   async findByCity(
     city: string,
     skip: number = 0,
@@ -912,6 +916,28 @@ export class EventService {
 
     const { events, total } =
       await this.eventRepository.findAndCountByHostUsername(userName, userId);
+
+    return { events, total };
+  }
+
+  async findAndCountBySlugV2(
+    slug: string,
+  ): Promise<{ events: Event[]; total: number }> {
+    const isObjectId = /^[a-f\d]{24}$/i.test(slug);
+
+    let userId = null;
+    let userName = null;
+
+    if (isObjectId) {
+      const user = await this.userService.findById(slug);
+      userId = slug;
+      userName = user.username;
+    } else {
+      userName = slug;
+    }
+
+    const { events, total } =
+      await this.eventRepository.findAndCountByHostUsernameV2(userName, userId);
 
     return { events, total };
   }
