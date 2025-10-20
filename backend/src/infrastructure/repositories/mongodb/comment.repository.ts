@@ -58,6 +58,19 @@ export class MongoCommentRepository implements ICommentRepository {
     return this.commentModel.create(comment);
   }
 
+  async findByPostId(postId: string) {
+    return this.commentModel.find({ postId }).sort({ createdAt: -1 });
+  }
+
+  async createCommentToPost(postId: string, text: string, userId: string) {
+    return this.commentModel.create({
+      postId,
+      text,
+      userId,
+      createdAt: new Date(),
+    });
+  }
+
   async findByEventId(eventId: string): Promise<DomainComment[]> {
     return this.commentModel.find({ eventId });
   }

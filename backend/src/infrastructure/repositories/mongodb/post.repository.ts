@@ -13,8 +13,28 @@ export class MongoPostRepository implements IPostRepository {
     });
   }
 
+  async getComments(postId: string) {
+    return this.postModel.find({ postId }).sort({ createdAt: -1 });
+  }
+
   async findCommunityPosts(communityId: string) {
     return this.postModel.find({ communityId });
+  }
+
+  async addLike(postId: string, userId: string) {
+    return this.postModel.findByIdAndUpdate(
+      postId,
+      { $addToSet: { likeIds: userId } },
+      { new: true },
+    );
+  }
+
+  async removeLike(postId: string, userId: string) {
+    return this.postModel.findByIdAndUpdate(
+      postId,
+      { $pull: { likeIds: userId } },
+      { new: true },
+    );
   }
 
   async findCommunityPostsByUserId(userId: string) {
@@ -35,7 +55,20 @@ export class MongoPostRepository implements IPostRepository {
     return this.postModel.findByIdAndUpdate(postId, post, { new: true });
   }
 
-  async getCommunityPosts(communityId: string) {
-    return this.postModel.find({ communityId }).sort({ createdAt: -1 });
+  async getCommunityPosts(communityId: string, offset: number, limit: number) {
+    return this.postModel
+      .find({ communityId })
+      .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(limit);
+  }
+
+  createComment(postId: string, text: string, userId: string) {
+    return this.postModel.create({
+      postId,
+      text,
+      userId,
+      createdAt: new Date(),
+    });
   }
 }

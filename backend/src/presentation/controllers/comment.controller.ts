@@ -26,14 +26,6 @@ export class CommentController {
     return this.commentService.findByEventId(eventId);
   }
 
-  //   export const createCommentToEvent = async (comment: Comment) => {
-  //     const response = await fetch(`${API_URL}comments`, {
-  //       method: "POST",
-  //       body: JSON.stringify(comment),
-  //     });
-  //     return response.json();
-  //   };
-
   @Post('/event/:eventId')
   @UseGuards(CommentGuard)
   async createCommentToEvent(

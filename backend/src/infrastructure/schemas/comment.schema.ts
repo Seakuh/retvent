@@ -13,6 +13,9 @@ export const CommentSchema = new Schema({
       message: 'userId muss entweder ein String oder eine ObjectId sein',
     },
   },
-  eventId: { type: Types.ObjectId, ref: 'Event', required: true },
+  isPublic: { type: Boolean, required: false },
+  eventId: { type: Types.ObjectId, ref: 'Event', required: false },
+  communityId: { type: Types.ObjectId, ref: 'Community', required: false },
+  postId: { type: Types.ObjectId, ref: 'Post', required: false },
   parentId: { type: Types.ObjectId, ref: 'Comment', default: null },
 });

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Comment } from 'src/core/domain/comment';
 
 export type PostDocument = Post & Document;
 
@@ -8,11 +9,20 @@ export class Post {
   @Prop({ required: true })
   userId: string;
 
+  @Prop({ required: false })
+  likeIds?: string[];
+
   @Prop({ required: true })
   communityId: string;
 
   @Prop({ required: false })
   eventId: string;
+
+  @Prop({ required: false })
+  description: string;
+
+  @Prop({ required: false })
+  title: string;
 
   @Prop({ required: false })
   startDate: Date;
@@ -34,6 +44,9 @@ export class Post {
 
   @Prop()
   feedGifUrl?: string;
+
+  @Prop()
+  comments?: Comment[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

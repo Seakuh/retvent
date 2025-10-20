@@ -4,7 +4,7 @@ export class Community {
   description?: string;
   codeOfConduct?: string;
   creatorId: string;
-  isPublic: boolean;
+  isPublic?: boolean;
   imageUrl?: string;
   moderators: string[];
   members: string[];

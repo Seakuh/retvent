@@ -20,7 +20,7 @@ export class CommunityService {
     return this.communityRepository.findAll();
   }
 
-  async createCommunity(body: CreateCommunityDto, userId: string) {
+  async createCommunity(body: CreateCommunityDto, userId?: string) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -30,6 +30,7 @@ export class CommunityService {
       ...body,
       admins: [userId],
       moderators: [userId],
+      creatorId: userId || null,
       members: [userId],
       bannedUsers: [],
       eventIds: [],

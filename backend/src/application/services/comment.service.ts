@@ -38,7 +38,15 @@ export class CommentService {
     return this.commentRepository.findByEventId(eventId);
   }
 
+  async findByPostId(postId: string) {
+    return this.commentRepository.findByPostId(postId);
+  }
+
   async getLatestComments(limit?: number) {
     return this.commentRepository.getLatestComments(limit || 10);
+  }
+
+  async createCommentToPost(postId: string, text: string, userId: string) {
+    return this.commentRepository.createCommentToPost(postId, text, userId);
   }
 }

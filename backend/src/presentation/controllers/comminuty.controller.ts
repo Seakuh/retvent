@@ -24,6 +24,15 @@ export class CommunityController {
     return this.communityService.getCommunities();
   }
 
+  @Get(':communityId')
+  async getCommunity(@Param('communityId') communityId: string) {
+    const community = await this.communityService.findById(communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+    return community;
+  }
+
   @Post('create-community')
   @UseGuards(JwtAuthGuard)
   async createCommunity(@Body() body: CreateCommunityDto, @Req() req) {
