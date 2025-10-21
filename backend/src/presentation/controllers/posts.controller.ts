@@ -2,14 +2,19 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
   Post,
   Query,
   Req,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { CommunityService } from 'src/application/services/community.service';
 import { PostService } from 'src/infrastructure/services/post.service';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { CommunityMemberGuard } from '../guards/community-member.guard';
@@ -18,15 +23,40 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 // posts.controller.ts
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly communityService: CommunityService,
+  ) {}
 
   @Post()
-  @UseGuards(CommunityMemberGuard)
-  async create(@Body() body: CreatePostDto, @Req() req) {
+  @UseInterceptors(FilesInterceptor('images', 10)) // Support up to 10 images
+  @UseGuards(JwtAuthGuard) // Use JwtAuthGuard instead of CommunityMemberGuard for multipart
+  async create(
+    @Body() body: CreatePostDto,
+    @Req() req,
+    @UploadedFiles() images?: Express.Multer.File[],
+  ) {
     if (!req.user) {
       throw new NotFoundException('User not found');
     }
-    return this.postService.createCommunityPost(body, req.user.sub);
+
+    // Manually check community membership (since Guard runs before Interceptor)
+    const community = await this.communityService.findById(body.communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+
+    if (!community.members.includes(req.user.sub)) {
+      throw new ForbiddenException('You are not a member of this community');
+    }
+
+    return this.postService.createCommunityPost(
+      {
+        ...body,
+      },
+      req.user.sub,
+      images,
+    );
   }
 
   @Get(':communityId')

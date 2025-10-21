@@ -6,6 +6,6 @@ export interface IPost {
   createdAt: Date;
   updatedAt: Date;
   userName?: string;
-  feedImageUrl?: string;
-  feedGifUrl?: string;
+  feedImageUrls?: string[];
+  feedGifUrls?: string[];
 }

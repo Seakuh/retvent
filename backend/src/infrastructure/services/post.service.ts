@@ -5,6 +5,7 @@ import { UserService } from 'src/application/services/user.service';
 import { MongoPostRepository } from 'src/infrastructure/repositories/mongodb/post.repository';
 import { CreatePostDto } from 'src/presentation/dtos/create-post.dto';
 import { Post } from '../schemas/post.schema';
+import { ImageService } from './image.service';
 
 @Injectable()
 export class PostService {
@@ -13,17 +14,31 @@ export class PostService {
     private readonly communityService: CommunityService,
     private readonly commentService: CommentService,
     private readonly userService: UserService,
+    private readonly imageService: ImageService,
   ) {}
 
   async createCommunityPost(
     createCommunityPostDto: CreatePostDto,
     userId: string,
+    images?: Express.Multer.File[],
   ): Promise<Post> {
     const community = await this.communityService.findById(
       createCommunityPostDto.communityId,
     );
     if (!community) {
       throw new NotFoundException('Community not found');
+    }
+
+    if (images && images.length > 0) {
+      const imageUrls = await Promise.all(
+        images.map((image) => this.imageService.uploadImage(image)),
+      );
+      console.log('imageUrls', imageUrls);
+      return this.postRepository.createCommunityPost({
+        ...createCommunityPostDto,
+        userId,
+        feedImageUrls: imageUrls,
+      });
     }
     return this.postRepository.createCommunityPost({
       ...createCommunityPostDto,

@@ -40,7 +40,7 @@ export class Post {
   userName?: string;
 
   @Prop()
-  feedImageUrl?: string;
+  feedImageUrls?: string[];
 
   @Prop()
   feedGifUrl?: string;
