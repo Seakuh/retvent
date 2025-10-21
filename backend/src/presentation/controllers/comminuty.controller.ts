@@ -71,6 +71,11 @@ export class CommunityController {
     return community.members;
   }
 
+  @Get('members/v2/:communityId')
+  async getMembersV2(@Param('communityId') communityId: string) {
+    return this.communityService.getMembers(communityId);
+  }
+
   @Delete(':communityId')
   @UseGuards(CommunityHostGuard)
   async deleteCommunity(@Param('communityId') communityId: string, @Req() req) {

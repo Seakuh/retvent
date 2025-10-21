@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Community } from 'src/core/domain/community';
+import { MongoProfileRepository } from 'src/infrastructure/repositories/mongodb/profile.repository';
 import { MongoUserRepository } from 'src/infrastructure/repositories/mongodb/user.repository';
 import { CreateCommunityDto } from 'src/presentation/dtos/create-community.dto';
 import { UpdateCommunityDto } from 'src/presentation/dtos/update-community.dto';
@@ -14,6 +15,7 @@ export class CommunityService {
   constructor(
     private readonly communityRepository: MongoCommunityRepository,
     private readonly userRepository: MongoUserRepository,
+    private readonly profileRepository: MongoProfileRepository,
   ) {}
 
   async getCommunities() {
@@ -50,6 +52,20 @@ export class CommunityService {
       throw new NotFoundException('Community not found');
     }
     return this.communityRepository.joinCommunity(communityId, userId);
+  }
+
+  async getMembers(communityId: string) {
+    const community = await this.communityRepository.findById(communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+
+    const members = await this.profileRepository.findByIds(community.members);
+
+    return members.map((member) => ({
+      username: member.username,
+      profileImageUrl: member.profileImageUrl,
+    }));
   }
 
   async findById(id: string): Promise<Community | null> {

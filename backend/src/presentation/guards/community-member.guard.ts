@@ -29,27 +29,16 @@ export class CommunityMemberGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException();
     }
-    console.log('=== COMMUNITY MEMBER GUARD DEBUG ===');
-    console.log('request.user', request.user);
-    console.log('request.body', request.body);
-    console.log('request.body.communityId', request.body?.communityId);
-    console.log('request.headers', request.headers);
-
     const communityId = request.body?.communityId;
 
     if (!communityId) {
-      console.log('ERROR: communityId is missing from request.body');
-      console.log('Full request.body:', JSON.stringify(request.body));
       return false;
     }
 
-    console.log('Looking for community with ID:', communityId);
     const community = await this.communityService.findById(communityId);
     if (!community) {
-      console.log('ERROR: Community not found with ID:', communityId);
       return false;
     }
-    console.log('Community found:', community.name);
     return community.members.includes(request.user.sub);
   }
 

@@ -33,7 +33,6 @@ export class PostService {
       const imageUrls = await Promise.all(
         images.map((image) => this.imageService.uploadImage(image)),
       );
-      console.log('imageUrls', imageUrls);
       return this.postRepository.createCommunityPost({
         ...createCommunityPostDto,
         userId,
@@ -73,7 +72,6 @@ export class PostService {
       }),
     );
 
-    console.log('postsWithUserAndComments', postsWithUserAndComments);
     return postsWithUserAndComments;
   }
 
@@ -83,7 +81,6 @@ export class PostService {
     text: string,
     userId: string,
   ) {
-    console.log(communityId);
     const community = await this.communityService.findById(communityId);
     if (!community) {
       throw new NotFoundException('Community not found');
