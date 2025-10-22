@@ -1,5 +1,6 @@
 export interface IMessage {
   groupId?: string;
+  recipientId?: string;
   senderId?: string;
   content?: string;
   type?: string;
@@ -7,4 +8,5 @@ export interface IMessage {
   fileUrl?: string;
   latitude?: number;
   longitude?: number;
+  isPrivate?: boolean;
 }

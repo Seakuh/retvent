@@ -18,4 +18,13 @@ export interface IMessageRepository {
     content: string,
     type: string,
   ): Promise<Message[]>;
+  findPrivateMessagesBetweenUsers(
+    userId1: string,
+    userId2: string,
+    limit?: number,
+  ): Promise<Message[]>;
+  findPrivateMessagesForUser(
+    userId: string,
+    limit?: number,
+  ): Promise<Message[]>;
 }

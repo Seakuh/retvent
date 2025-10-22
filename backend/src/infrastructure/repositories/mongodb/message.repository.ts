@@ -44,4 +44,34 @@ export class MongoMessageRepository implements IMessageRepository {
   ): Promise<Message[]> {
     return this.messageModel.find({ groupId, senderId, content, type });
   }
+
+  async findPrivateMessagesBetweenUsers(
+    userId1: string,
+    userId2: string,
+    limit = 50,
+  ): Promise<Message[]> {
+    return this.messageModel
+      .find({
+        isPrivate: true,
+        $or: [
+          { senderId: userId1, recipientId: userId2 },
+          { senderId: userId2, recipientId: userId1 },
+        ],
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit);
+  }
+
+  async findPrivateMessagesForUser(
+    userId: string,
+    limit = 50,
+  ): Promise<Message[]> {
+    return this.messageModel
+      .find({
+        isPrivate: true,
+        $or: [{ senderId: userId }, { recipientId: userId }],
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit);
+  }
 }

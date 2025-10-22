@@ -95,4 +95,41 @@ export class MessageService {
       content,
     );
   }
+
+  async sendPrivateMessage(
+    senderId: string,
+    recipientId: string,
+    content?: string,
+    fileUrl?: string,
+    latitude?: number,
+    longitude?: number,
+    type?: string,
+  ) {
+    return this.messageRepository.create({
+      senderId,
+      recipientId,
+      content: content || '',
+      fileUrl: fileUrl || '',
+      latitude: latitude || null,
+      longitude: longitude || null,
+      type: type || null,
+      isPrivate: true,
+    });
+  }
+
+  async getPrivateMessagesBetweenUsers(
+    userId1: string,
+    userId2: string,
+    limit = 50,
+  ) {
+    return this.messageRepository.findPrivateMessagesBetweenUsers(
+      userId1,
+      userId2,
+      limit,
+    );
+  }
+
+  async getPrivateMessagesForUser(userId: string, limit = 50) {
+    return this.messageRepository.findPrivateMessagesForUser(userId, limit);
+  }
 }
