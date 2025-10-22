@@ -63,7 +63,9 @@ export class CommunityService {
     const members = await this.profileRepository.findByIds(community.members);
 
     return members.map((member) => ({
+      id: member.userId,
       username: member.username,
+      email: member.email || '',
       profileImageUrl: member.profileImageUrl,
     }));
   }
