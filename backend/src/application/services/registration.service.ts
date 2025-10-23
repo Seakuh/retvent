@@ -34,7 +34,7 @@ export class RegistrationService {
     /// Send email to user
     try {
       this.mailService.sendMail({
-        to: 'danielenderle1996@gmail.com',
+        to: user.email,
         subject: `REGISTRIERUNG - ${event?.title || 'Event'} | 🎫 `,
         text: `Du hast dich für das Event ${event?.title || 'Event'} registriert`,
         html: `<p>Du hast dich für das Event ${event?.title || 'Event'} registriert</p>`,
