@@ -211,10 +211,14 @@ export class MongoUserRepository implements IUserRepository {
   }
 
   async getRegisteredEvents(userId: string) {
+    console.log('getRegisteredEvents', userId);
     return this.userModel
       .findById(userId)
-      .select(this.getRegisteredEventsSelection())
-      .lean();
+      .select('registeredEventIds')
+      .lean()
+      .then((user) => {
+        return user?.registeredEventIds ?? [];
+      });
   }
 
   getRegisteredEventsSelection() {

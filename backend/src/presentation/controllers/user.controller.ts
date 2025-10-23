@@ -210,6 +210,6 @@ export class UserController {
   @Get('registered/events')
   @UseGuards(JwtAuthGuard)
   async getRegisteredEvents(@Req() req) {
-    return this.userService.getRegisteredEvents(req.user.id);
+    return this.userService.getRegisteredEvents(req.user.sub);
   }
 }
