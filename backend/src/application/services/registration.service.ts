@@ -12,17 +12,12 @@ export class RegistrationService {
   ) {}
 
   async registerUserForEvent(eventId: string, userId: string) {
-    console.log('registerUserForEvent', eventId, userId);
-    console.log('userService', this.userService);
-
     const user = await this.userService.findByUserId(userId);
-    console.log('user', user.username);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     const event = await this.eventService.findByEventId(eventId);
-    console.log('event', event?.title);
     if (!event) {
       throw new NotFoundException('Event not found');
     }
