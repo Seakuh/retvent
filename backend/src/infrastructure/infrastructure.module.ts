@@ -30,6 +30,7 @@ import { UserController } from 'src/presentation/controllers/user.controller';
 import { EventMapper } from '../application/mappers/event.mapper';
 import { EventService } from '../application/services/event.service';
 import { LocationService } from '../application/services/location.service';
+import { RegistrationService } from '../application/services/registration.service';
 import { UserService } from '../application/services/user.service';
 import { CoreModule } from '../core/core.module';
 import { BcryptService } from '../core/services/bcrypt.service';
@@ -38,6 +39,7 @@ import { AuthController } from '../presentation/controllers/auth.controller';
 import { EventController } from '../presentation/controllers/event.controller';
 import { GroupController } from '../presentation/controllers/group.controller';
 import { LocationController } from '../presentation/controllers/location.controller';
+import { RegistrationController } from '../presentation/controllers/registration.controller';
 import { JwtAuthGuard } from '../presentation/guards/jwt-auth.guard';
 import { OwnerGuard } from '../presentation/guards/owner.guard';
 import { AuthModule } from './modules/auth.module';
@@ -136,6 +138,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PostsController,
     UserController,
     SearchController,
+    RegistrationController,
     GroupController,
     MessageController,
     FeedController,
@@ -144,6 +147,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     TicketsController,
   ],
   providers: [
+    RegistrationService,
     EventService,
     ProfileService,
     CommentService,
@@ -275,6 +279,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     BcryptService,
     UserService,
     PostService,
+    RegistrationService,
     CommentService,
     ProfileService,
     MessageService,

@@ -51,6 +51,10 @@ export class MongoUserRepository implements IUserRepository {
     return user ? this.toEntity(user) : null;
   }
 
+  async findByUserId(userId: string): Promise<User | null> {
+    return await this.userModel.findById(userId);
+  }
+
   async findByEmailOrUsername(
     email: string,
     username: string,

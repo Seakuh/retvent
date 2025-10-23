@@ -1,8 +1,9 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { EventService } from 'src/application/services/event.service';
-import { UserService } from 'src/application/services/user.service';
+import { UserService } from './user.service';
 
+@Injectable()
 export class RegistrationService {
   constructor(
     private readonly eventService: EventService,
@@ -10,13 +11,18 @@ export class RegistrationService {
     private readonly mailService: MailerService,
   ) {}
 
-  async registerEvent(eventId: string, userId: string) {
-    const user = await this.userService.findById(userId);
+  async registerUserForEvent(eventId: string, userId: string) {
+    console.log('registerUserForEvent', eventId, userId);
+    console.log('userService', this.userService);
+
+    const user = await this.userService.findByUserId(userId);
+    console.log('user', user.username);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const event = await this.eventService.findById(eventId);
+    const event = await this.eventService.findByEventId(eventId);
+    console.log('event', event?.title);
     if (!event) {
       throw new NotFoundException('Event not found');
     }
@@ -28,8 +34,8 @@ export class RegistrationService {
     /// Send email to user
     try {
       this.mailService.sendMail({
-        to: user.email,
-        subject: `🎫 Du hast dich für das Event ${event?.title || 'Event'} registriert`,
+        to: 'danielenderle1996@gmail.com',
+        subject: `REGISTRIERUNG - ${event?.title || 'Event'} | 🎫 `,
         text: `Du hast dich für das Event ${event?.title || 'Event'} registriert`,
         html: `<p>Du hast dich für das Event ${event?.title || 'Event'} registriert</p>`,
       });

@@ -14,6 +14,7 @@ import { GroupController } from './presentation/controllers/group.controller';
 import { MessageController } from './presentation/controllers/message.controller';
 import { PostsController } from './presentation/controllers/posts.controller';
 import { ProfileController } from './presentation/controllers/profile.controller';
+import { RegistrationController } from './presentation/controllers/registration.controller';
 import { SearchController } from './presentation/controllers/search.controller';
 import { TicketsController } from './presentation/controllers/tickets.controller';
 import { UserController } from './presentation/controllers/user.controller';
@@ -39,6 +40,7 @@ const MONGODB_URI = 'mongodb://localhost:27017';
     ArtistController,
     CommunityController,
     PostsController,
+    RegistrationController,
   ],
 })
 export class AppModule {}

@@ -30,6 +30,11 @@ export class UserService {
     return this.userRepository.findById(id);
   }
 
+  async findByUserId(userId: string) {
+    console.log('findByUserId', userId);
+    return this.userRepository.findByUserId(userId);
+  }
+
   async getUserProfile(userId: string) {
     const user = await this.findById(userId);
     const profile = await this.profileService.getProfileByUserId(userId);
