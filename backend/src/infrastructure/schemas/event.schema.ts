@@ -15,6 +15,8 @@ export const EventSchema = new Schema(
     locationId: { type: String },
     locationName: { type: String },
     registeredUserIds: { type: [String], default: [] },
+    registrations: { type: Number, default: 0 },
+    capacity: { type: Number, default: 0 },
     isSponsored: { type: Boolean, default: false },
     address: {
       street: { type: String },

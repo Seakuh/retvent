@@ -140,4 +140,7 @@ export class UserService {
   async registerForEvent(eventId: string, userId: string) {
     return this.userRepository.registerEvent(eventId, userId);
   }
+  async getRegisteredEvents(userId: string) {
+    return this.userRepository.getRegisteredEvents(userId);
+  }
 }

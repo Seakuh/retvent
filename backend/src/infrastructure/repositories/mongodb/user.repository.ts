@@ -205,4 +205,30 @@ export class MongoUserRepository implements IUserRepository {
       $addToSet: { registeredEventIds: eventId },
     });
   }
+
+  async getRegisteredEvents(userId: string) {
+    return this.userModel
+      .findById(userId)
+      .select(this.getRegisteredEventsSelection())
+      .lean();
+  }
+
+  getRegisteredEventsSelection() {
+    return this.getBasicEventInfoSelection().concat(['registeredEventIds']);
+  }
+
+  getBasicEventInfoSelection() {
+    return [
+      'title',
+      'description',
+      'imageUrl',
+      'startDate',
+      'startTime',
+      'endDate',
+      'endTime',
+      'hostId',
+      'city',
+      'locationId',
+    ];
+  }
 }

@@ -201,9 +201,15 @@ export class UserController {
   // ------------------------------------------------------------
   // Register Event
   // ------------------------------------------------------------
-  @Post('register/event')
+  @Post('registe/event')
   @UseGuards(JwtAuthGuard)
   async registerEvent(@Body() body: { eventId: string }, @Req() req) {
     return this.userService.registerForEvent(body.eventId, req.user.id);
+  }
+
+  @Get('registered/events')
+  @UseGuards(JwtAuthGuard)
+  async getRegisteredEvents(@Req() req) {
+    return this.userService.getRegisteredEvents(req.user.id);
   }
 }

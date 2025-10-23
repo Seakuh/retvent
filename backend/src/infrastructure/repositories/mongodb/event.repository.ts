@@ -1029,12 +1029,17 @@ export class MongoEventRepository implements IEventRepository {
     );
   }
 
+  // ------------------------------------------------------------
+  // Register Event
+  // ------------------------------------------------------------
+
   findRegisteredEvents(userId: string) {
     return this.eventModel.find({ registeredUserIds: userId }).exec();
   }
   unregisterEvent(eventId: string, userId: string) {
     return this.eventModel.findByIdAndUpdate(eventId, {
       $pull: { registeredUserIds: userId },
+      $inc: { registrations: -1 },
     });
   }
   registerEvent(eventId: string, userId: string) {
@@ -1042,6 +1047,7 @@ export class MongoEventRepository implements IEventRepository {
       eventId,
       {
         $addToSet: { registeredUserIds: userId },
+        $inc: { registrations: 1 },
       },
       { new: true },
     );

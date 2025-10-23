@@ -39,10 +39,11 @@ export class Event implements IEvent {
   tags?: string[];
   website?: string;
   likeIds?: string[];
+  capacity?: number;
   eventPictures?: string[];
   lineupPictureUrl?: string[];
   videoUrls?: string[];
-
+  regenstrations: number;
   registeredUserIds?: string[];
   email?: string;
 

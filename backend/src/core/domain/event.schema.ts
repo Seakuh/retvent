@@ -31,6 +31,8 @@ export interface IEvent extends Document {
     twitter?: string;
   };
   tags?: string[];
+  capacity?: number;
+  registrations?: number;
   registeredUserIds?: string[];
   website?: string;
   likeIds?: string[];

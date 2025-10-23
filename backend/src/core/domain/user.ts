@@ -11,6 +11,7 @@ export class User implements IUser {
   createdAt?: Date;
   updatedAt?: Date;
   category: string;
+  registeredEventIds?: string[];
   solanaWalletAddress?: string;
   solanaWalletPrivateKey?: string; // ⚠️ Nur wenn du custodial arbeitest
   points?: number;

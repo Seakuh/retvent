@@ -21,7 +21,7 @@ export const UserSchema = new Schema({
 });
 
 UserSchema.index({ favoriteEventIds: 1 });
-
+UserSchema.index({ registeredEventIds: 1 });
 UserSchema.pre('save', function (next) {
   this.updatedAt = new Date();
   next();
