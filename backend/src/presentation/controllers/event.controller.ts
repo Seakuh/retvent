@@ -11,6 +11,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Request,
   UnauthorizedException,
   UploadedFile,
@@ -898,4 +899,66 @@ export class EventController {
       },
     };
   }
+
+  // ------------------------------------------------------------
+  // Register Event
+  // ------------------------------------------------------------
+
+  @Post('register/event')
+  @UseGuards(JwtAuthGuard)
+  async registerEvent(@Body() body: { eventId: string }, @Req() req) {
+    console.log('registerEvent', body.eventId, req.user.sub);
+    return this.eventService.registerEvent(body.eventId, req.user.sub);
+  }
+
+  @Post('unregister/event')
+  @UseGuards(JwtAuthGuard)
+  async unregisterEvent(@Body() body: { eventId: string }, @Req() req) {
+    console.log('unregisterEvent', body.eventId, req.user.sub);
+    return this.eventService.unregisterEvent(body.eventId, req.user.sub);
+  }
+
+  @Get('registered/events')
+  @UseGuards(JwtAuthGuard)
+  async getRegisteredEvents(@Request() req) {
+    return this.eventService.getRegisteredEvents(req.user.id);
+  }
+
+  // ------------------------------------------------------------
+  // Invite 2 Event
+  // ------------------------------------------------------------
+
+  @Post('invite/event')
+  @UseGuards(JwtAuthGuard)
+  async inviteToEvent(
+    @Body() body: { eventId: string; userId: string },
+    @Request() req,
+  ) {
+    return this.eventService.inviteToEvent(
+      body.eventId,
+      body.userId,
+      req.user.id,
+    );
+  }
+
+  @Get('invites/events')
+  @UseGuards(JwtAuthGuard)
+  async getInvitesEvents(@Request() req) {
+    return this.eventService.getInvitesEvents(req.user.id);
+  }
+
+  @Post('accept/invite')
+  @UseGuards(JwtAuthGuard)
+  async acceptInvite(@Body() body: { eventId: string }, @Request() req) {
+    return this.eventService.acceptInvite(body.eventId, req.user.id);
+  }
+
+  // ------------------------------------------------------------
+  // Connect with Event Member
+  // ------------------------------------------------------------
+  // @Post('connect/event')
+  // @UseGuards(JwtAuthGuard)
+  // async connectWithEvent(@Body() body: { eventId: string }, @Request() req) {
+  //   return this.eventService.connectWithEvent(body.eventId, req.user.id);
+  // }
 }

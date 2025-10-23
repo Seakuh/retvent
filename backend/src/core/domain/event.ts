@@ -43,6 +43,7 @@ export class Event implements IEvent {
   lineupPictureUrl?: string[];
   videoUrls?: string[];
 
+  registeredUserIds?: string[];
   email?: string;
 
   // Timestamps

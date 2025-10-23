@@ -14,6 +14,7 @@ export interface IUser {
   createdEventIds?: string[];
   favoriteEventIds?: string[];
   followedProfiles?: string[];
+  registeredEventIds?: string[];
 }
 
 export type UserResponse = Omit<IUser, 'password'> & {

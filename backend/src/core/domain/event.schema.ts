@@ -31,6 +31,7 @@ export interface IEvent extends Document {
     twitter?: string;
   };
   tags?: string[];
+  registeredUserIds?: string[];
   website?: string;
   likeIds?: string[];
   location?: {
@@ -51,6 +52,7 @@ const EventSchema = new Schema<IEvent>(
     imageUrl: { type: String },
     startDate: { type: Date, required: true },
     startTime: { type: String, required: true },
+    registeredUserIds: { type: [String], default: [] },
     hostId: { type: String },
     host: {
       profileImageUrl: { type: String },

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Profile, UserPreferences } from '../../../core/domain/profile';
@@ -353,5 +353,20 @@ export class MongoProfileRepository implements IProfileRepository {
         ],
       })
       .exec();
+  }
+
+  // ------------------------------------------------------------
+  // Share Profile
+  // ------------------------------------------------------------
+  async getSharedProfile(profileId: string, userId: string) {
+    const profile = await this.profileModel
+      .findById(profileId)
+      .select(
+        'username email profileImageUrl category bio links createdAt socialMediaLinks pressImages',
+      );
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+    return profile;
   }
 }

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/dizzle/Dev/POKER_APP/hyper-dragon-events/**)",
+      "Bash(flutter run:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(dart format:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

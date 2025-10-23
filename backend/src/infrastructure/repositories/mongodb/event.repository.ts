@@ -1028,4 +1028,40 @@ export class MongoEventRepository implements IEventRepository {
       { new: true },
     );
   }
+
+  findRegisteredEvents(userId: string) {
+    return this.eventModel.find({ registeredUserIds: userId }).exec();
+  }
+  unregisterEvent(eventId: string, userId: string) {
+    return this.eventModel.findByIdAndUpdate(eventId, {
+      $pull: { registeredUserIds: userId },
+    });
+  }
+  registerEvent(eventId: string, userId: string) {
+    return this.eventModel.findByIdAndUpdate(
+      eventId,
+      {
+        $addToSet: { registeredUserIds: userId },
+      },
+      { new: true },
+    );
+  }
+
+  // ------------------------------------------------------------
+  // Invite 2 Event
+  // ------------------------------------------------------------
+
+  inviteToEvent(eventId: string, userId: string, id: any) {
+    return this.eventModel.findByIdAndUpdate(eventId, {
+      $push: { invitedUserIds: userId },
+    });
+  }
+  findInvitesEvents(userId: string) {
+    return this.eventModel.find({ invitedUserIds: userId }).exec();
+  }
+  acceptInvite(eventId: string, userId: string) {
+    return this.eventModel.findByIdAndUpdate(eventId, {
+      $pull: { invitedUserIds: userId },
+    });
+  }
 }

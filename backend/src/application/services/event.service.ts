@@ -1015,4 +1015,87 @@ export class EventService {
   // deleteLineupPicture(id: string, userId: string) {
   //   return this.eventRepository.deleteLineupPicture(id, userId);
   // }
+
+  // ------------------------------------------------------------
+  // Register Event
+  // ------------------------------------------------------------
+  async registerEvent(eventId: string, userId: string) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    const user = await this.userService.registerForEvent(eventId, userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const registeredEvent = await this.eventRepository.registerEvent(
+      eventId,
+      userId,
+    );
+
+    console.log('registeredEvent', registeredEvent);
+
+    return registeredEvent;
+  }
+  async unregisterEvent(eventId: string, userId: string) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    if (event.hostId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to unregister this event',
+      );
+    }
+    return this.eventRepository.unregisterEvent(eventId, userId);
+  }
+
+  async getRegisteredEvents(userId: string) {
+    const user = await this.userService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return this.eventRepository.findRegisteredEvents(userId);
+  }
+
+  // ------------------------------------------------------------
+  // Invite 2 Event
+  // ------------------------------------------------------------
+  async inviteToEvent(eventId: string, userId: string, id: any) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    return this.eventRepository.inviteToEvent(eventId, userId, id);
+  }
+  async getInvitesEvents(userId: string) {
+    const user = await this.userService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return this.eventRepository.findInvitesEvents(userId);
+  }
+
+  async acceptInvite(eventId: string, userId: string) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    return this.eventRepository.acceptInvite(eventId, userId);
+  }
+
+  // ------------------------------------------------------------
+  // Connect with Event Member
+  // ------------------------------------------------------------
+  // async connectWithEventMember(eventId: string, userId: string) {
+  //   const event = await this.eventRepository.findById(eventId);
+  //   if (!event) {
+  //     throw new NotFoundException('Event not found');
+  //   }
+  //   return this.eventRepository.connectWithEventMember(eventId, userId);
+  // }
 }

@@ -14,6 +14,7 @@ export class Event {
   isSponsored?: boolean;
   socialMediaLinks?: Record<string, string>;
   tags?: string[];
+  registeredUserIds?: string[];
   createdAt: Date;
   updatedAt: Date;
 }

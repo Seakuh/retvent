@@ -133,4 +133,11 @@ export class UserService {
   getUserEventPage(userId: string) {
     return this.userRepository.getUserEventPage(userId);
   }
+
+  // ------------------------------------------------------------
+  // Register Event
+  // ------------------------------------------------------------
+  async registerForEvent(eventId: string, userId: string) {
+    return this.userRepository.registerEvent(eventId, userId);
+  }
 }

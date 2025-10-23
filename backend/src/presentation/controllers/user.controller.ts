@@ -197,4 +197,13 @@ export class UserController {
   // async createComment(@UserDecorator() user: User, @Body() comment: Comment) {
   //   return this.userService.createComment(user.id, comment);
   // }
+
+  // ------------------------------------------------------------
+  // Register Event
+  // ------------------------------------------------------------
+  @Post('register/event')
+  @UseGuards(JwtAuthGuard)
+  async registerEvent(@Body() body: { eventId: string }, @Req() req) {
+    return this.userService.registerForEvent(body.eventId, req.user.id);
+  }
 }

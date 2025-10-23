@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, UploadedFile } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+  UploadedFile,
+} from '@nestjs/common';
 import {
   Profile,
   ProfileEventDetail,
@@ -284,5 +289,31 @@ export class ProfileService {
   }
   async searchProfilesByQuery(query: string): Promise<Profile[]> {
     return this.profileRepository.searchProfilesByQuery(query);
+  }
+
+  // ------------------------------------------------------------
+  // Share Profile
+  // ------------------------------------------------------------
+  async shareProfile(profileId: string, userId: string) {
+    const profile = await this.profileRepository.findByUserId(profileId);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+    if (profile.userId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to share this profile',
+      );
+    }
+    return this.profileRepository.getSharedProfile(profileId, userId);
+  }
+
+  // ------------------------------------------------------------
+  // Connect with Profile
+  // ------------------------------------------------------------
+  async connectWithProfile(profileId: string, userId: string) {
+    const profile = await this.profileRepository.findByUserId(profileId);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
   }
 }

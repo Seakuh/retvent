@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UploadedFile,
   UploadedFiles,
   UseGuards,
@@ -226,5 +227,14 @@ export class ProfileController {
     }
 
     return this.profileService.updateProfile(id, updateObject as Profile);
+  }
+
+  // ------------------------------------------------------------
+  // Share Profile
+  // ------------------------------------------------------------
+  @Post('share/profile')
+  @UseGuards(JwtAuthGuard)
+  async shareProfile(@Body() body: { profileId: string }, @Req() req) {
+    return this.profileService.shareProfile(body.profileId, req.user.id);
   }
 }

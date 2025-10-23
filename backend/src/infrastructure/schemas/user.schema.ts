@@ -17,6 +17,7 @@ export const UserSchema = new Schema({
   solanaWalletPrivateKey: { type: String, default: '' },
   followedProfiles: { type: [String], default: [] },
   favoriteEventIds: { type: [String], default: [] },
+  registeredEventIds: { type: [String], default: [] },
 });
 
 UserSchema.index({ favoriteEventIds: 1 });

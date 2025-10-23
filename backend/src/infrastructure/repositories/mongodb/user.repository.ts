@@ -196,4 +196,13 @@ export class MongoUserRepository implements IUserRepository {
       };
     });
   }
+
+  // ------------------------------------------------------------
+  // Register Event
+  // ------------------------------------------------------------
+  registerEvent(eventId: string, userId: string) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $addToSet: { registeredEventIds: eventId },
+    });
+  }
 }
