@@ -8,6 +8,7 @@ export const ProfileSchema = new Schema({
   category: { type: String },
   followerCount: { type: Number, default: 0 },
   headerImageUrl: { type: String },
+  telephoneNumber: { type: String },
   bio: { type: String },
   followedLocationIds: { type: [String] },
   gallery: { type: [String] },

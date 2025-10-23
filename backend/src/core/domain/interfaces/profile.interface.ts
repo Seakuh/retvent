@@ -9,6 +9,7 @@ export interface IProfile {
   category?: string;
   followerCount?: number;
   bio?: string;
+  telephoneNumber?: string;
   followedLocationIds?: string[];
   likedEventIds?: string[];
   createdEventIds?: string[];

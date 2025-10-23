@@ -362,7 +362,7 @@ export class MongoProfileRepository implements IProfileRepository {
     const profile = await this.profileModel
       .findById(profileId)
       .select(
-        'username email profileImageUrl category bio links createdAt socialMediaLinks pressImages',
+        'username email profileImageUrl category bio links createdAt socialMediaLinks pressImages telephoneNumber',
       );
     if (!profile) {
       throw new NotFoundException('Profile not found');

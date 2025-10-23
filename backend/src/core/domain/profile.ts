@@ -6,6 +6,7 @@ export class Profile implements IProfile {
   email: string;
   gallery?: string[];
   userId?: string;
+  telephoneNumber?: string;
   profileImageUrl?: string;
   headerImageUrl?: string;
   category?: string;
