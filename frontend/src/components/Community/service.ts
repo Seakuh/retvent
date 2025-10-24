@@ -1,6 +1,6 @@
 import { Community, EventType, Role } from "../../utils";
 
-export const getCommunity = async (communityId: string) => {
+export const getCommunity = async (communitySlug: string) => {
   //const response = await fetch(`${API_URL}communities/${communityId}`);
   // const data = await response.json();
   return exampleCommunity;
@@ -45,32 +45,14 @@ const exampleCommunity: Community = {
       hostId: "u1",
       attendees: ["u1", "u2"],
       host: {
-        id: "u1",
-        name: "Anna",
+        username: "Anna",
         profileImageUrl: "/images/anna.jpg",
       },
       imageUrl: "/images/poker-workshop.jpg",
-      createdAt: "2025-10-12T09:00:00Z",
-      updatedAt: "2025-10-12T09:00:00Z",
-      commentCount: 0,
-      likeCount: 0,
-      dislikeCount: 0,
-      viewCount: 0,
-      isSponsored: false,
-      isPublic: true,
-      isPrivate: false,
-      isArchived: false,
-      isDeleted: false,
-      isFeatured: false,
-      isFeaturedInNews: false,
-      isFeaturedInEvents: false,
-      isFeaturedInPartners: false,
-      isFeaturedInMembers: false,
-      isFeaturedInNews: false,
-      isFeaturedInEvents: false,
-      isFeaturedInPartners: false,
-      isFeaturedInMembers: false,
-
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ],
   news: [
     {
       id: "n1",

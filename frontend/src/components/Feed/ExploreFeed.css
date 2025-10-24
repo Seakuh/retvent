@@ -3,6 +3,7 @@
   max-width: 80rem;
   margin: 0 auto;
   width: 100%;
+  padding: 1rem;
 }
 
 .explore-feed-container {
@@ -54,6 +55,8 @@
   .explore-feed-container {
     padding: 0.5rem;
     gap: 0.5rem;
+  margin-bottom: 1rem;
+
   }
 }
 

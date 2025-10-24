@@ -1,0 +1,39 @@
+:root {
+  --feed-bg: rgba(255, 255, 255, 0.85);
+  --feed-border: color-mix(in srgb, #0b0f19 12%, transparent);
+  --feed-text: #101828;
+}
+
+.wrapper {
+  background: var(--feed-bg);
+  border-radius: 18px;
+  border: 1px solid var(--feed-border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 16px 42px -28px rgba(15, 23, 42, 0.55);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--feed-text);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.placeholder {
+  margin: 0;
+  color: rgba(71, 84, 103, 0.85);
+  font-size: 0.95rem;
+}
+

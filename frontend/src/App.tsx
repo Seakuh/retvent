@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import { About } from "./Footer/About";
 import { Imprint } from "./Footer/Imprint";
 import { Privacy } from "./Footer/Privacy";
@@ -24,6 +24,7 @@ import { PwaInstall } from "./components/PwaInstall/PwaInstall";
 import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
+import { CommunityPage } from "./pages/CommunityPage";
 import ReelPage from "./pages/ReelPage";
 import { SearchPage } from "./pages/SearchPage";
 import { ShoppingPage } from "./pages/ShoppingPage";
@@ -110,6 +111,14 @@ const App: React.FC = () => {
                   <Route path="/reel/:eventId" element={<ReelPage />} />
                   <Route path="/reel/" element={<ReelPage />} />
                   <Route path="/imprint" element={<Imprint />} />
+                  <Route
+                    path="/community/:communitySlug"
+                    element={
+                      <CommunityPage
+                        communitySlug={useParams().communitySlug as string}
+                      />
+                    }
+                  />
                   <Route
                     path="/group/invite/:userId/:tokenId"
                     element={<GroupInvite />}

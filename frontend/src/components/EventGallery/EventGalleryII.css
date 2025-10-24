@@ -5,15 +5,14 @@
 }
 
 .event-date-heading-container {
-    position: -webkit-sticky; /* Für Safari Support */
+    position: -webkit-sticky; 
     position: sticky;
     z-index: 10;
     top: 0;
     backdrop-filter: blur(10px);
     backdrop-filter: blur(3px);
     background-color: rgba(0, 0, 0, 0.2);
-  border-bottom: 0.5px solid var(--color-neon-blue-light);
-    /* Stelle sicher, dass der Container einen definierten Kontext hat */
+    border-bottom: 0.5px solid var(--color-neon-blue-light);
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
 }

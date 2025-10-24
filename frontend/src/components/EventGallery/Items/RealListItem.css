@@ -5,6 +5,7 @@
   margin: 0 auto;
   transition: transform 0.2s ease-out, border-color 0.2s ease-out;
   position: relative;
+  max-width: 100%;
 }
 
 @media (hover: hover) {
@@ -300,14 +301,29 @@
 .miniature-event-info {
   width: 100%;
   text-align: center !important;
+  padding: 1rem;
+
 }
 
 .event-info-title-headline {
   margin-top: 0;
-  font-size: 1.1rem;
   font-weight: 600;
   text-align: center !important;
+  
 }
+
+.event-info-title-headline {
+  flex-direction: row;
+  align-items: left;
+  justify-content: left;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  white-space: nowrap;
+  overflow: inherit;
+  color: white;
+  max-width: 100%;
+}
+
 
 .past-event {
   opacity: 0.5;

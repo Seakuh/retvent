@@ -1,0 +1,235 @@
+:root {
+  --composer-bg: rgba(255, 255, 255, 0.92);
+  --composer-border: color-mix(in srgb, #0b0f19 12%, transparent);
+  --composer-muted: #475467;
+  --composer-text: #101828;
+  --composer-primary: var(--retvent-primary, #7f56d9);
+  --composer-primary-hover: color-mix(in srgb, var(--composer-primary) 80%, #ffffff);
+  --composer-secondary: rgba(127, 86, 217, 0.12);
+  --composer-success: #027a48;
+  --composer-error: #b42318;
+}
+
+.wrapper {
+  background: var(--composer-bg);
+  border: 1px solid var(--composer-border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 20px 40px -32px rgba(15, 23, 42, 0.65);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--composer-text);
+}
+
+.tabs {
+  display: inline-flex;
+  background: rgba(127, 86, 217, 0.08);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.tab,
+.tabActive {
+  border-radius: 999px;
+  border: none;
+  padding: 8px 16px;
+  background: transparent;
+  color: var(--composer-text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.tab:hover {
+  background: rgba(127, 86, 217, 0.14);
+}
+
+.tabActive {
+  background: #fff;
+  color: var(--composer-primary);
+  box-shadow: 0 6px 16px -12px rgba(127, 86, 217, 1);
+}
+
+.tab:focus-visible,
+.tabActive:focus-visible {
+  outline: 3px solid rgba(127, 86, 217, 0.32);
+  outline-offset: 2px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 12px;
+  padding: 14px;
+  background: rgba(248, 248, 255, 0.7);
+}
+
+.label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--composer-text);
+  margin-bottom: 4px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.groupRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.input,
+.textarea,
+.select {
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  padding: 11px 14px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--composer-text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 132px;
+}
+
+.input:focus-visible,
+.textarea:focus-visible,
+.select:focus-visible {
+  outline: 3px solid rgba(127, 86, 217, 0.28);
+  outline-offset: 2px;
+  border-color: var(--composer-primary);
+}
+
+.helperText {
+  font-size: 0.8rem;
+  color: var(--composer-muted);
+  margin: 0;
+}
+
+.optionRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.removeButton {
+  border: none;
+  background: rgba(180, 35, 24, 0.1);
+  color: var(--composer-error);
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.removeButton:hover {
+  background: rgba(180, 35, 24, 0.18);
+}
+
+.secondaryButton {
+  border: 1px dashed rgba(127, 86, 217, 0.6);
+  background: rgba(127, 86, 217, 0.08);
+  color: var(--composer-primary);
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondaryButton:hover {
+  background: rgba(127, 86, 217, 0.16);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.primaryButton {
+  background: var(--composer-primary);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 160px;
+  box-shadow: 0 10px 24px -12px rgba(127, 86, 217, 0.9);
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.primaryButton:hover {
+  transform: translateY(-1px);
+  background: var(--composer-primary-hover);
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.error {
+  color: var(--composer-error);
+  background: rgba(180, 35, 24, 0.08);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
+.success {
+  color: var(--composer-success);
+  background: rgba(2, 122, 72, 0.08);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .wrapper {
+    padding: 24px;
+  }
+
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .groupRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+

@@ -13,7 +13,7 @@ import {
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
-import { Event, formatDate, getDaysUntilDate } from "../../../utils";
+import { Event, formatDate } from "../../../utils";
 import "./RealListItem.css";
 import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
 
@@ -224,13 +224,20 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           </span>
           <span className="real-list-item-date">
             <CalendarIcon size={16} color="white" />
-            {(() => {
+            {formatDate(event.startDate as string)}
+            {/* {(() => {
               try {
                 if (!event.startDate) {
                   throw new Error("No start date available");
                 }
 
-                const formattedDate = formatDate(event.startDate as string);
+                const formattedDate =
+                  formatDate(event.startDate as string)
+                    .charAt(0)
+                    .toUpperCase() +
+                  formatDate(event.startDate as string)
+                    .slice(1)
+                    .toLowerCase();
                 const days = getDaysUntilDate(formattedDate);
 
                 return (
@@ -251,7 +258,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                 console.error("Error while formatting date:", error);
                 return <span>No date available</span>;
               }
-            })()}
+            })()} */}
           </span>
         </div>
 
