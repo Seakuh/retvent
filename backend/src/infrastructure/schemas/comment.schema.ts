@@ -18,4 +18,10 @@ export const CommentSchema = new Schema({
   communityId: { type: Types.ObjectId, ref: 'Community', required: false },
   postId: { type: Types.ObjectId, ref: 'Post', required: false },
   parentId: { type: Types.ObjectId, ref: 'Comment', default: null },
+  likeIds: { type: [String], default: [] },
+});
+
+// virtueller Getter
+CommentSchema.virtual('likesCount').get(function () {
+  return this.likeIds?.length || 0;
 });

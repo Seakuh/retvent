@@ -23,6 +23,22 @@ export class MongoCommentRepository implements ICommentRepository {
     return { comments, count };
   }
 
+  async likeComment(commentId: string, userId: string) {
+    return this.commentModel.findByIdAndUpdate(
+      commentId,
+      { $addToSet: { likeIds: userId } },
+      { new: true },
+    );
+  }
+
+  async unlikeComment(commentId: string, userId: string) {
+    return this.commentModel.findByIdAndUpdate(
+      commentId,
+      { $pull: { likeIds: userId } },
+      { new: true },
+    );
+  }
+
   getCommentsCountByUserId(userId: string) {
     return this.commentModel.countDocuments({ userId });
   }

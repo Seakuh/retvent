@@ -26,6 +26,23 @@ export class CommentController {
     return this.commentService.findByEventId(eventId);
   }
 
+  @Get('/event/v2/:eventId')
+  async getCommentsByEventIdWithUser(@Param('eventId') eventId: string) {
+    return this.commentService.findByEventIdWithUser(eventId);
+  }
+
+  @Post('/:commentId/like')
+  @UseGuards(CommentGuard)
+  async likeComment(@Param('commentId') commentId: string, @Req() req: any) {
+    return this.commentService.likeComment(commentId, req.user.sub);
+  }
+
+  @Post('/:commentId/unlike')
+  @UseGuards(CommentGuard)
+  async unlikeComment(@Param('commentId') commentId: string, @Req() req: any) {
+    return this.commentService.unlikeComment(commentId, req.user.sub);
+  }
+
   @Post('/event/:eventId')
   @UseGuards(CommentGuard)
   async createCommentToEvent(
@@ -55,19 +72,6 @@ export class CommentController {
     return this.commentService.findByUserIdAndAmount(userId);
   }
 }
-
-// export const fetchComments = async (eventId: string) => {
-//   const response = await fetch(`${API_URL}/comments/${eventId}`);
-//   return response.json();
-// };
-
-// export const createCommentToEvent = async (comment: Comment) => {
-//   const response = await fetch(`${API_URL}/comments`, {
-//     method: 'POST',
-//     body: JSON.stringify(comment),
-//   });
-//   return response.json();
-// };
 
 // export const updateComment = async (comment: Comment) => {
 //   const response = await fetch(`${API_URL}/comments/${comment.id}`, {

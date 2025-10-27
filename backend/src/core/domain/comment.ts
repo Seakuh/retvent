@@ -8,7 +8,7 @@ export class Comment implements IComment {
   eventId: string;
   parentId: string;
   postId?: string;
-
+  likeIds: string[];
   constructor(data: Partial<IComment>) {
     Object.assign(this, data);
   }

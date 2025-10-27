@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { MongoCommentRepository } from 'src/infrastructure/repositories/mongodb/comment.repository';
 import { CreateCommentDto } from '../../presentation/dtos/create-comment.dto';
 import { UserService } from './user.service';
@@ -35,7 +35,55 @@ export class CommentService {
   }
 
   async findByEventId(eventId: string) {
-    return this.commentRepository.findByEventId(eventId);
+    const comments = await this.commentRepository.findByEventId(eventId);
+    if (!comments) {
+      throw new NotFoundException('Comment not found');
+    }
+    return comments;
+  }
+
+  async findByEventIdWithUser(eventId: string) {
+    const comments = await this.commentRepository.findByEventId(eventId);
+    if (!comments) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    return await Promise.all(
+      comments.map(async (comment) => {
+        const user = await this.userService.getUserProfile(comment.userId);
+
+        return {
+          id: comment.id,
+          text: comment.text,
+          createdAt: comment.createdAt,
+          userId: comment.userId,
+          eventId: comment.eventId,
+          parentId: comment.parentId,
+          likeIds: comment.likeIds || [],
+          username: user.username,
+          profileImageUrl: user.profileImageUrl,
+        };
+      }),
+    );
+  }
+
+  async likeComment(commentId: string, userId: string) {
+    const comment = await this.commentRepository.likeComment(commentId, userId);
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+    return comment;
+  }
+
+  async unlikeComment(commentId: string, userId: string) {
+    const comment = await this.commentRepository.unlikeComment(
+      commentId,
+      userId,
+    );
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+    return comment;
   }
 
   async findByPostId(postId: string) {

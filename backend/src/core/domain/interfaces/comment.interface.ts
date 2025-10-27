@@ -5,4 +5,5 @@ export interface IComment {
   userId: string;
   eventId: string;
   parentId: string;
+  likeIds: string[];
 }
