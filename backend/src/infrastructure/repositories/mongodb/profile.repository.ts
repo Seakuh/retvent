@@ -355,6 +355,11 @@ export class MongoProfileRepository implements IProfileRepository {
       .exec();
   }
 
+  findByUsernameAndProfilePicture(userId: string) {
+    return this.profileModel
+      .findOne({ userId })
+      .select('username profileImageUrl');
+  }
   // ------------------------------------------------------------
   // Share Profile
   // ------------------------------------------------------------

@@ -62,6 +62,14 @@ export class ProfileService {
     return profile;
   }
 
+  async getUsernameAndProfilePicture(userId: string) {
+    const profile =
+      await this.profileRepository.findByUsernameAndProfilePicture(userId);
+    return {
+      username: profile?.username ?? '',
+      profileImageUrl: profile?.profileImageUrl ?? '',
+    };
+  }
   // createArtistContact(createArtistDto: CreateArtistDto) {
   //   const artistContact = await this.profileRepository.createArtistContact(
   //     createArtistDto,

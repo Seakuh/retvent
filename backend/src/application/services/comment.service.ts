@@ -50,7 +50,8 @@ export class CommentService {
 
     return await Promise.all(
       comments.map(async (comment) => {
-        const user = await this.userService.getUserProfile(comment.userId);
+        const { username, profileImageUrl } =
+          await this.userService.getUsernameAndProfilePicture(comment.userId);
 
         return {
           id: comment.id,
@@ -60,8 +61,8 @@ export class CommentService {
           eventId: comment.eventId,
           parentId: comment.parentId,
           likeIds: comment.likeIds || [],
-          username: user.username,
-          profileImageUrl: user.profileImageUrl,
+          username: username ?? '',
+          profileImageUrl: profileImageUrl ?? '',
         };
       }),
     );

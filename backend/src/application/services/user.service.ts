@@ -139,6 +139,14 @@ export class UserService {
     return this.userRepository.getUserEventPage(userId);
   }
 
+  async getUsernameAndProfilePicture(userId: string) {
+    const user = await this.profileService.getUsernameAndProfilePicture(userId);
+    return {
+      username: user.username ?? '',
+      profileImageUrl: user.profileImageUrl ?? '',
+    };
+  }
+
   // ------------------------------------------------------------
   // Register Event
   // ------------------------------------------------------------
