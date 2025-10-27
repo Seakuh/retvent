@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Comment as CommentType } from "../../utils";
+import { Comment as CommentType, getImageProxyUrl } from "../../utils";
 import "./Comment.css";
 import CommentTextField from "./CommentTextField";
 interface CommentProps {
@@ -38,6 +38,8 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
     return `${diffYears} years ago`;
   };
 
+  console.log(comment);
+
   return (
     <div
       className="comment-component-container"
@@ -51,14 +53,24 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
           }}
         >
           <img
-            src={"/user_picture.png"}
+            src={
+              getImageProxyUrl(comment.profileImageUrl, 96, 96) ||
+              "/user_picture.png"
+            }
             alt="Profile"
             className="comment-user-image"
           />
         </a>
         <div className="comment-content">
+          <span
+            className="comment-username"
+            onClick={() => {
+              navigate(`/profile/${comment.userId}`);
+            }}
+          >
+            {comment.username}
+          </span>
           <div className="comment-meta">
-            {/* <span className="comment-user">{comment.userId}</span> */}
             {/* <span className="comment-separator">•</span> */}
             <span className="comment-date">
               {toLocaleString(comment.createdAt)}

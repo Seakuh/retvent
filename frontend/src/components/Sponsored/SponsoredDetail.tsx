@@ -16,6 +16,18 @@ export const SponsoredDetail = ({ size = "m" }: { size?: "s" | "m" | "l" }) => {
       video: "https://imagebucket.hel1.your-objectstorage.com/tmpdlv1tkdy.mp4",
       link: "https://www.instagram.com/sturmzx2/",
     },
+    {
+      id: 2,
+      title: "Lighter DIY",
+      video: "https://imagebucket.hel1.your-objectstorage.com/tmpdlv1tkdy.mp4",
+      link: "https://www.instagram.com/sturmzx2/",
+    },
+    {
+      id: 3,
+      title: "MIDI Controler DIY",
+      video: "https://imagebucket.hel1.your-objectstorage.com/tmpdlv1tkdy.mp4",
+      link: "https://bitchboy.lol/",
+    },
   ];
 
   const ad = ads[Math.floor(Math.random() * ads.length)];

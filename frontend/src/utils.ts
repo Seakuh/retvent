@@ -317,10 +317,13 @@ export interface Artist extends Profile {
 }
 
 export interface Comment {
+  id?: string;
   _id?: string;
   text: string;
   createdAt?: string;
   userId?: string;
+  profileImageUrl?: string;
+  username?: string;
   eventId: string;
   parentId?: string | null;
   replies?: Comment[];
@@ -362,6 +365,16 @@ export interface EventProfile {
   profileImageUrl?: string;
 }
 
+export const getImageProxyUrl = (
+  imageUrl?: string,
+  width: number = 96,
+  height: number = 96
+) => {
+  return imageUrl
+    ? `https://img.event-scanner.com/insecure/rs:fill:${width}:${height}/plain/${imageUrl}@webp`
+    : defaultProfileImage;
+};
+
 export const emptyEvent: Event = {
   id: "",
   title: "No events found",
@@ -383,8 +396,8 @@ export const buildCommentTree = (comments: Comment[]): CommentWithReplies[] => {
 
   // Initialisiere alle Kommentare mit einem leeren replies-Array
   comments.forEach((comment) => {
-    if (comment._id) {
-      commentMap.set(comment._id, { ...comment, replies: [] });
+    if (comment.id) {
+      commentMap.set(comment.id, { ...comment, replies: [] });
     }
   });
 
@@ -392,9 +405,9 @@ export const buildCommentTree = (comments: Comment[]): CommentWithReplies[] => {
 
   // Baue die Baumstruktur auf
   comments.forEach((comment) => {
-    if (!comment._id) return;
+    if (!comment.id) return;
 
-    const commentWithReplies = commentMap.get(comment._id)!;
+    const commentWithReplies = commentMap.get(comment.id)!;
 
     if (comment.parentId) {
       // Wenn es eine Antwort ist, füge sie zum parent-Kommentar hinzu

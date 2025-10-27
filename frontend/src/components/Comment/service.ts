@@ -57,7 +57,7 @@ export const deleteComment = async (commentId: string) => {
 
 export const getCommentsByEventId = async (eventId: string) => {
   try {
-    const response = await fetch(`${API_URL}comments/event/${eventId}`, {
+    const response = await fetch(`${API_URL}comments/event/v2/${eventId}`, {
       headers: getHeaders(),
     });
     return response.json();
