@@ -54,7 +54,7 @@ export const Comment = ({ comment, onReply, depth = 0 }: CommentProps) => {
         >
           <img
             src={
-              getImageProxyUrl(comment.profileImageUrl, 96, 96) ||
+              getImageProxyUrl(comment.profileImageUrl, 48, 48) ||
               "/user_picture.png"
             }
             alt="Profile"
