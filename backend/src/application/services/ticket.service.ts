@@ -6,6 +6,7 @@ import { Ticket } from 'src/core/domain/ticket';
 import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
 import { MongoTicketRepository } from 'src/infrastructure/repositories/mongodb/ticket.repository';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
+import { InviteTicketDto } from 'src/presentation/dtos/invite-guest.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 const SECRET = 'mySuperSecretKey';
@@ -35,6 +36,203 @@ export class TicketsService {
   generateTicketHash(ticketUid: string, email: string): string {
     const combined = `${ticketUid}:${email}:${SECRET}`;
     return this.simpleHash(combined);
+  }
+
+  private replaceTemplateVariables(template: string, data: any): string {
+    let result = template;
+
+    // Ersetze alle {{variable}} mit den entsprechenden Werten
+    Object.keys(data).forEach((key) => {
+      const regex = new RegExp(`{{${key}}}`, 'g');
+      result = result.replace(regex, data[key]);
+    });
+
+    // Ersetze verschachtelte Objekte wie {{event.title}}
+    if (data.event) {
+      Object.keys(data.event).forEach((key) => {
+        const regex = new RegExp(`{{event.${key}}}`, 'g');
+        result = result.replace(regex, data.event[key]);
+      });
+    }
+
+    if (data.ticket) {
+      Object.keys(data.ticket).forEach((key) => {
+        const regex = new RegExp(`{{ticket.${key}}}`, 'g');
+        result = result.replace(regex, data.ticket[key]);
+      });
+    }
+
+    return result;
+  }
+
+  async addGuest(dto: CreateTicketDto): Promise<Ticket> {
+    const ticketId = uuidv4();
+    const hash = this.generateTicketHash(ticketId, dto.email);
+    const ticket = await this.ticketRepository.create({
+      eventId: dto.eventId,
+      email: dto.email,
+      ticketId: ticketId,
+      status: 'pending',
+      createdAt: new Date(),
+      hash: hash,
+    });
+
+    try {
+      // Event-Daten abrufen
+      const event = await this.eventRepository.findById(dto.eventId);
+
+      // Template laden und Variablen ersetzen
+      const template = this.getTicketTemplate();
+      const htmlContent = this.replaceTemplateVariables(template, {
+        event: {
+          title: event?.title || 'Event',
+          startDate: event?.startDate
+            ? new Date(event.startDate).toLocaleDateString('de-DE')
+            : 'TBD',
+          startTime: event?.startTime || 'TBD',
+          imageUrl: event?.imageUrl || 'https://event-scanner.com/logo.png',
+          ticketLink: `${process.env.FRONTEND_URL || 'https://event-scanner.com'}/ticket/${ticket.ticketId}`,
+          city: event?.city || 'TBD',
+        },
+        ticket: {
+          ticketId: ticket.ticketId,
+          email: ticket.email,
+          status: ticket.status,
+          createdAt: ticket.createdAt.toLocaleDateString('de-DE'),
+          hash: ticket.hash,
+        },
+      });
+
+      await this.mailerService.sendMail({
+        to: dto.email,
+        subject: `🎫 Dein Ticket für ${event?.title || 'Event'} - ${ticket.ticketId}`,
+
+        text: `Deine Einladung wurde erstellt. Deine Einladung-ID ist: ${ticket.ticketId}`,
+        html: htmlContent,
+      });
+    } catch (error) {
+      console.error('Fehler beim Senden der E-Mail:', error);
+    }
+    return ticket;
+  }
+
+  async inviteGuest(dto: InviteTicketDto): Promise<Ticket> {
+    const inviteId = uuidv4();
+    const hash = this.generateTicketHash(inviteId, dto.email);
+    const ticket = await this.ticketRepository.create({
+      eventId: dto.eventId,
+      email: dto.email,
+      ticketId: inviteId,
+      status: 'pending',
+      createdAt: new Date(),
+      hash: hash,
+    });
+
+    try {
+      // Event-Daten abrufen
+      const event = await this.eventRepository.findById(dto.eventId);
+      console.log('event', event);
+
+      // Template laden und Variablen ersetzen
+      const template = this.getInviteTemplate();
+      const htmlContent = this.replaceTemplateVariables(template, {
+        event: {
+          title: event?.title || 'Event',
+          startDate: event?.startDate
+            ? new Date(event.startDate).toLocaleDateString('de-DE')
+            : 'TBD',
+          startTime: event?.startTime || 'TBD',
+          imageUrl: event?.imageUrl || 'https://event-scanner.com/logo.png',
+          ticketLink: `${process.env.FRONTEND_URL || 'https://event-scanner.com'}/ticket/${ticket.ticketId}`,
+          city: event?.city || 'TBD',
+        },
+        ticket: {
+          ticketId: ticket.ticketId,
+          email: ticket.email,
+          status: ticket.status,
+          createdAt: ticket.createdAt.toLocaleDateString('de-DE'),
+          hash: ticket.hash,
+        },
+      });
+
+      await this.mailerService.sendMail({
+        to: dto.email,
+        subject: `🎫 Deine Einladung für ${event?.title || 'Event'} - ${ticket.ticketId}`,
+        text: `Deine Einladung wurde erstellt. Deine Einladung-ID ist: ${ticket.ticketId}`,
+        html: htmlContent,
+      });
+    } catch (error) {
+      console.error('Fehler beim Senden der E-Mail:', error);
+    }
+    return ticket;
+  }
+
+  async validateTicket(
+    ticketId: string,
+    providedHash: string,
+  ): Promise<Ticket> {
+    const ticket = await this.ticketRepository.findTicketId(ticketId);
+    if (!ticket) {
+      throw new Error('Ticket nicht gefunden');
+    }
+
+    if (ticket.status === 'validated') {
+      throw new Error('Ticket bereits validiert');
+    }
+
+    const hash = this.generateTicketHash(ticket.ticketId, ticket.email);
+    if (hash !== providedHash) {
+      throw new Error('Ungültige Hash-Prüfung');
+    }
+
+    ticket.status = 'validated';
+    await this.ticketRepository.update(ticketId, ticket);
+    return ticket;
+  }
+
+  async getTicketByIds(ticketIds: string[]): Promise<any> {
+    console.log('ticketIds', ticketIds);
+    const tickets = await this.ticketRepository.findTicketsIds(ticketIds);
+    console.log('tickets', tickets);
+    const events = await this.eventRepository.getUserFavorites(
+      tickets.map((ticket) => ticket.eventId),
+    );
+    console.log('events', events);
+    const eventMap = new Map(events.map((event) => [event.id, event]));
+
+    return tickets.map((ticket) => ({
+      ticketId: ticket.ticketId,
+      email: ticket.email,
+      status: ticket.status,
+      createdAt: ticket.createdAt,
+      hash: ticket.hash,
+      event: eventMap.get(ticket.eventId),
+    }));
+  }
+
+  async getTicketsForEvent(eventId: string): Promise<Ticket[]> {
+    return this.ticketRepository.find({ eventId });
+  }
+
+  async getTicketById(ticketId: string): Promise<Ticket> {
+    return this.ticketRepository.findTicketId(ticketId);
+  }
+
+  async updateTicket(ticketId: string, ticket: Ticket): Promise<Ticket> {
+    return this.ticketRepository.update(ticketId, ticket);
+  }
+
+  async deleteTicket(ticketId: string): Promise<boolean> {
+    return this.ticketRepository.delete(ticketId);
+  }
+
+  async getTicketAndEvent(
+    ticketId: string,
+    eventId: string,
+  ): Promise<{ ticket: Ticket; event: Event }> {
+    const ticket = await this.ticketRepository.findTicketId(ticketId);
+    const event = await this.eventRepository.findById(eventId);
+    return { ticket, event };
   }
 
   private getTicketTemplate(): string {
@@ -277,147 +475,150 @@ export class TicketsService {
 </html>`;
   }
 
-  private replaceTemplateVariables(template: string, data: any): string {
-    let result = template;
+  private getInviteTemplate(): string {
+    return `<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>♥️♠️♦️♣️ Einladung zu {{event.title}}</title>
+    <style>
+      body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background-color: #f7f9fa;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 107, 128, 0.15);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #006b80;
+        color: #ffffff;
+        text-align: center;
+        padding: 30px 20px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: 0.5px;
+      }
+      .content {
+        padding: 30px 40px;
+      }
+      .content h2 {
+        color: #004d5c;
+        margin-top: 0;
+        font-size: 22px;
+      }
+      .content p {
+        line-height: 1.6;
+        font-size: 16px;
+        color: #333;
+      }
+      .event-details {
+        background-color: #f0fafa;
+        border-left: 4px solid #00a8c6;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
 
-    // Ersetze alle {{variable}} mit den entsprechenden Werten
-    Object.keys(data).forEach((key) => {
-      const regex = new RegExp(`{{${key}}}`, 'g');
-      result = result.replace(regex, data[key]);
-    });
+      .event-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 20px 20px 0 0;
+      }
+      .button {
+        display: inline-block;
+        background-color: #008da3;
+        color: #ffffff !important;
+        padding: 12px 28px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+      }
+      .button:hover {
+        background-color: #004d5c;
+      }
+      .footer {
+        background-color: #f7f9fa;
+        color: #999999;
+        font-size: 13px;
+        text-align: center;
+        padding: 20px;
+      }
+    </style>
+  </head>
 
-    // Ersetze verschachtelte Objekte wie {{event.title}}
-    if (data.event) {
-      Object.keys(data.event).forEach((key) => {
-        const regex = new RegExp(`{{event.${key}}}`, 'g');
-        result = result.replace(regex, data.event[key]);
+  <body>
+    <div class="container">
+    <img class="event-image" src="{{event.imageUrl}}" alt="{{event.title}}" />
+      <div class="header">
+        <h1>Einladung zu {{event.title}}</h1>
+      </div>
+      <div class="content">
+        <h2>Liebe/r {{ticket.email}},</h2>
+        <p>
+          wir freuen uns sehr, dich herzlich zu unserem Event
+          <strong>{{event.title}}</strong> einzuladen!
+        </p>
+        <div class="event-details">
+          <p><strong>Datum:</strong> {{event.startDate}}</p>
+          <p><strong>Uhrzeit:</strong> {{event.startTime}}</p>
+          <p><strong>Ort:</strong> {{event.city}}</p>
+        </div>
+        <p>
+          Bitte bestätige deine Teilnahme, damit wir dich auf der Gästeliste
+          vermerken können.
+        </p>
+        <a href="{{event.ticketLink}}" class="button">Jetzt Teilnahme bestätigen</a>
+        <p style="margin-top: 25px">
+          Wir freuen uns darauf, dich bald zu sehen und gemeinsam einen
+          unvergesslichen Abend zu erleben!
+        </p>
+      </div>
+      <div class="footer">
+        <p>
+          Diese Nachricht wurde automatisch gesendet – bitte antworte nicht
+          direkt auf diese E-Mail.
+        </p>
+      </div>
+              <!-- QR Code -->
+        <div class="qr-section">
+          <div class="qr-code">
+            <canvas id="qr"></canvas>
+          </div>
+          <a class="view-ticket-btn" href="{{event.ticketLink}}">
+            Ticket anzeigen
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- QRious for QR Code Generation -->
+    <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
+    <script>
+      const ticketHash = '{{ticket.hash}}';
+      const qr = new QRious({
+        element: document.getElementById('qr'),
+        value: ticketHash,
+        size: 120,
+        background: '#fff',
+        foreground: '#1d1d1f',
       });
-    }
-
-    if (data.ticket) {
-      Object.keys(data.ticket).forEach((key) => {
-        const regex = new RegExp(`{{ticket.${key}}}`, 'g');
-        result = result.replace(regex, data.ticket[key]);
-      });
-    }
-
-    return result;
-  }
-
-  async addGuest(dto: CreateTicketDto): Promise<Ticket> {
-    const ticketId = uuidv4();
-    const hash = this.generateTicketHash(ticketId, dto.email);
-    const ticket = await this.ticketRepository.create({
-      eventId: dto.eventId,
-      email: dto.email,
-      ticketId: ticketId,
-      status: 'pending',
-      createdAt: new Date(),
-      hash: hash,
-    });
-
-    try {
-      // Event-Daten abrufen
-      const event = await this.eventRepository.findById(dto.eventId);
-
-      // Template laden und Variablen ersetzen
-      const template = this.getTicketTemplate();
-      const htmlContent = this.replaceTemplateVariables(template, {
-        event: {
-          title: event?.title || 'Event',
-          startDate: event?.startDate
-            ? new Date(event.startDate).toLocaleDateString('de-DE')
-            : 'TBD',
-          startTime: event?.startTime || 'TBD',
-          imageUrl: event?.imageUrl || 'https://event-scanner.com/logo.png',
-          ticketLink: `${process.env.FRONTEND_URL || 'https://event-scanner.com'}/ticket/${ticket.ticketId}`,
-        },
-        ticket: {
-          ticketId: ticket.ticketId,
-          email: ticket.email,
-          status: ticket.status,
-          createdAt: ticket.createdAt.toLocaleDateString('de-DE'),
-          hash: ticket.hash,
-        },
-      });
-
-      await this.mailerService.sendMail({
-        to: dto.email,
-        subject: `🎫 Dein Ticket für ${event?.title || 'Event'} - ${ticket.ticketId}`,
-        text: `Ihr Ticket wurde erstellt. Ihre Ticket-ID ist: ${ticket.ticketId}`,
-        html: htmlContent,
-      });
-    } catch (error) {
-      console.error('Fehler beim Senden der E-Mail:', error);
-    }
-    return ticket;
-  }
-
-  async validateTicket(
-    ticketId: string,
-    providedHash: string,
-  ): Promise<Ticket> {
-    const ticket = await this.ticketRepository.findTicketId(ticketId);
-    if (!ticket) {
-      throw new Error('Ticket nicht gefunden');
-    }
-
-    if (ticket.status === 'validated') {
-      throw new Error('Ticket bereits validiert');
-    }
-
-    const hash = this.generateTicketHash(ticket.ticketId, ticket.email);
-    if (hash !== providedHash) {
-      throw new Error('Ungültige Hash-Prüfung');
-    }
-
-    ticket.status = 'validated';
-    await this.ticketRepository.update(ticketId, ticket);
-    return ticket;
-  }
-
-  async getTicketByIds(ticketIds: string[]): Promise<any> {
-    console.log('ticketIds', ticketIds);
-    const tickets = await this.ticketRepository.findTicketsIds(ticketIds);
-    console.log('tickets', tickets);
-    const events = await this.eventRepository.getUserFavorites(
-      tickets.map((ticket) => ticket.eventId),
-    );
-    console.log('events', events);
-    const eventMap = new Map(events.map((event) => [event.id, event]));
-
-    return tickets.map((ticket) => ({
-      ticketId: ticket.ticketId,
-      email: ticket.email,
-      status: ticket.status,
-      createdAt: ticket.createdAt,
-      hash: ticket.hash,
-      event: eventMap.get(ticket.eventId),
-    }));
-  }
-
-  async getTicketsForEvent(eventId: string): Promise<Ticket[]> {
-    return this.ticketRepository.find({ eventId });
-  }
-
-  async getTicketById(ticketId: string): Promise<Ticket> {
-    return this.ticketRepository.findTicketId(ticketId);
-  }
-
-  async updateTicket(ticketId: string, ticket: Ticket): Promise<Ticket> {
-    return this.ticketRepository.update(ticketId, ticket);
-  }
-
-  async deleteTicket(ticketId: string): Promise<boolean> {
-    return this.ticketRepository.delete(ticketId);
-  }
-
-  async getTicketAndEvent(
-    ticketId: string,
-    eventId: string,
-  ): Promise<{ ticket: Ticket; event: Event }> {
-    const ticket = await this.ticketRepository.findTicketId(ticketId);
-    const event = await this.eventRepository.findById(eventId);
-    return { ticket, event };
+    </script>
+  </body>
+</html>
+`;
   }
 }

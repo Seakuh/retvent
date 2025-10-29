@@ -13,6 +13,7 @@ import { TicketsService } from 'src/application/services/ticket.service';
 import { Event } from 'src/core/domain/event';
 import { Ticket } from 'src/core/domain/ticket';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
+import { InviteTicketDto } from '../dtos/invite-guest.dto';
 
 @Controller('tickets')
 export class TicketsController {
@@ -21,6 +22,12 @@ export class TicketsController {
   @Post()
   async createTicket(@Body() dto: CreateTicketDto) {
     return this.ticketsService.addGuest(dto);
+  }
+
+  @Post('invite-guest')
+  // @UseGuards(CommunityAdminGuard)
+  async inviteGuest(@Body() dto: InviteTicketDto) {
+    return this.ticketsService.inviteGuest(dto);
   }
 
   @Get('validate/:ticketId')
