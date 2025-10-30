@@ -29,6 +29,13 @@ export class MongoTicketRepository implements ITicketRepository {
     return this.ticketModel.findById(id).exec();
   }
 
+  async findByEmailAndEventId(
+    email: string,
+    eventId: string,
+  ): Promise<Ticket | null> {
+    return this.ticketModel.findOne({ email, eventId }).exec();
+  }
+
   async findTicketId(ticketId: string): Promise<Ticket | null> {
     return this.ticketModel.findOne({ ticketId }).exec();
   }
@@ -39,5 +46,9 @@ export class MongoTicketRepository implements ITicketRepository {
 
   async findTicketsIds(ticketIds: string[]): Promise<Ticket[]> {
     return this.ticketModel.find({ ticketId: { $in: ticketIds } }).exec();
+  }
+
+  async getInviteGuestsByEventId(eventId: string): Promise<Ticket[]> {
+    return this.ticketModel.find({ eventId }).exec();
   }
 }

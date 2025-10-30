@@ -1,6 +1,6 @@
 // tickets.service.ts
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Event } from 'src/core/domain/event';
 import { Ticket } from 'src/core/domain/ticket';
 import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
@@ -117,6 +117,11 @@ export class TicketsService {
   }
 
   async inviteGuest(dto: InviteTicketDto): Promise<Ticket> {
+    if (
+      await this.ticketRepository.findByEmailAndEventId(dto.email, dto.eventId)
+    ) {
+      throw new BadRequestException('Ticket already exists');
+    }
     const inviteId = uuidv4();
     const hash = this.generateTicketHash(inviteId, dto.email);
     const ticket = await this.ticketRepository.create({
@@ -224,6 +229,9 @@ export class TicketsService {
 
   async deleteTicket(ticketId: string): Promise<boolean> {
     return this.ticketRepository.delete(ticketId);
+  }
+  async getInviteGuestsByEventId(eventId: string): Promise<Ticket[]> {
+    return this.ticketRepository.getInviteGuestsByEventId(eventId);
   }
 
   async getTicketAndEvent(

@@ -30,6 +30,12 @@ export class TicketsController {
     return this.ticketsService.inviteGuest(dto);
   }
 
+  @Get('invited-guest/:eventId')
+  async getInvitedGuest(@Param('eventId') eventId: string) {
+    // Corrected curl: curl -X GET http://localhost:4000/tickets/invited-guest/68ffa70c5a542490965029eb
+    return this.ticketsService.getInviteGuestsByEventId(eventId);
+  }
+
   @Get('validate/:ticketId')
   @UseGuards(AuthGuard('jwt'))
   async validateTicket(
