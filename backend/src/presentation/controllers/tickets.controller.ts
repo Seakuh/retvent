@@ -84,7 +84,7 @@ export class TicketsController {
   }
 
   // =====================================================
-  // NEW ENDPOINTS: Ticket Activation & QR Code Scanning
+  // Ticket Activation & QR Code Scanning
   // =====================================================
 
   /**

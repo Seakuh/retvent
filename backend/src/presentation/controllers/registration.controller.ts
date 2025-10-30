@@ -14,4 +14,17 @@ export class RegistrationController {
       req.user.sub,
     );
   }
+
+  @Post('/event/unregister')
+  @UseGuards(JwtAuthGuard)
+  async unregisterEvent(
+    @Body() body: { eventId: string; reason?: string },
+    @Req() req,
+  ) {
+    return this.registrationService.unregisterEvent(
+      body.eventId,
+      req.user.sub,
+      body.reason,
+    );
+  }
 }

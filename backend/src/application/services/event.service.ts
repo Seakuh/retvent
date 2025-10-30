@@ -1049,11 +1049,6 @@ export class EventService {
       throw new NotFoundException('Event not found');
     }
 
-    if (event.hostId !== userId) {
-      throw new UnauthorizedException(
-        'You are not authorized to unregister this event',
-      );
-    }
     return this.eventRepository.unregisterEvent(eventId, userId);
   }
 

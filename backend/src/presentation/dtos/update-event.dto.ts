@@ -163,4 +163,9 @@ export class UpdateEventDto {
 
     twitter?: string;
   };
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  validators?: string[];
 }

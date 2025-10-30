@@ -45,6 +45,38 @@ export class RegistrationService {
     };
   }
 
+  async unregisterEvent(eventId: string, userId: string, reason?: string) {
+    const user = await this.userService.findByUserId(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const event = await this.eventService.findByEventId(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    this.eventService.unregisterEvent(eventId, userId);
+
+    if (reason && reason.length > 0) {
+      const host = await this.userService.findByUsername(event.hostUsername);
+      console.log('host', host);
+      if (!host) {
+        throw new NotFoundException('Host not found');
+      }
+      this.mailService.sendMail({
+        to: host.email || 'noreply@eventscanner.com',
+        subject: `🎫 REGISTRIERUNG STORNIEREN - ${event?.title || 'Event'}`,
+        text: `Die Registrierung für das Event ${event?.title || 'Event'} wurde storniert. Grund: ${reason}`,
+        html: `<p>Die Registrierung für das Event ${event?.title || 'Event'} wurde storniert. Grund: ${reason}</p>`,
+      });
+    }
+
+    return {
+      message: 'Event unregistered successfully',
+    };
+  }
+
   private getRegistrationTemplate(event: any, user: any): string {
     // Lade das HTML-Template
     const templatePath = path.join(__dirname, '../templates/registration.html');
