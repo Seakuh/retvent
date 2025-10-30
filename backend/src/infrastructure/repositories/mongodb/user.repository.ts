@@ -210,6 +210,12 @@ export class MongoUserRepository implements IUserRepository {
     });
   }
 
+  unregisterFromEvent(eventId: string, userId: string) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $pull: { registeredEventIds: eventId },
+    });
+  }
+
   async getRegisteredEvents(userId: string) {
     console.log('getRegisteredEvents', userId);
     return this.userModel

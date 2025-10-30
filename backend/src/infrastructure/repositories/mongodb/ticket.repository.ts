@@ -14,7 +14,9 @@ export class MongoTicketRepository implements ITicketRepository {
     return this.ticketModel.create(ticket);
   }
   update(id: string, ticket: Ticket): Promise<Ticket | null> {
-    return this.ticketModel.findByIdAndUpdate(id, ticket, { new: true }).exec();
+    return this.ticketModel
+      .findOneAndUpdate({ ticketId: id }, ticket, { new: true })
+      .exec();
   }
   async delete(ticketId: string): Promise<boolean> {
     const result = await this.ticketModel.findOneAndDelete({ ticketId });

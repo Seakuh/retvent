@@ -156,7 +156,7 @@ export class TicketsService {
 
     if (existingTicket) {
       throw new BadRequestException(
-        'A ticket for this email and event already exists',
+        `Ein Ticket für ${email} und dieses Event existiert bereits. Status: ${existingTicket.status}`,
       );
     }
   }

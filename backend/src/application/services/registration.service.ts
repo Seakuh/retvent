@@ -1,5 +1,9 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { EventService } from 'src/application/services/event.service';
@@ -24,6 +28,13 @@ export class RegistrationService {
       throw new NotFoundException('Event not found');
     }
 
+    // Check if user is already registered
+    if (user.registeredEventIds && user.registeredEventIds.includes(eventId)) {
+      throw new BadRequestException(
+        'Du bist bereits für dieses Event registriert',
+      );
+    }
+
     // Register Event
     this.eventService.registerEvent(eventId, userId);
     /// Add event to user registered events
@@ -34,7 +45,7 @@ export class RegistrationService {
         to: user.email,
         subject: `🎫 REGISTRIERUNG ERFOLGREICH - ${event?.title || 'Event'}`,
         text: `Du hast dich für das Event ${event?.title || 'Event'} registriert`,
-        html: `<p>Du hast dich für das Event ${event?.title || 'Event'} registriert</p>`,
+        html: this.getRegistrationTemplate(event, user),
       });
     } catch (error) {
       console.error('Error sending email:', error);
@@ -57,6 +68,7 @@ export class RegistrationService {
     }
 
     this.eventService.unregisterEvent(eventId, userId);
+    this.userService.unregisterFromEvent(eventId, userId);
 
     if (reason && reason.length > 0) {
       const host = await this.userService.findByUsername(event.hostUsername);
@@ -79,7 +91,10 @@ export class RegistrationService {
           html: emailHtml,
         });
       } catch (error) {
-        console.error('Error sending unregistration notification email:', error);
+        console.error(
+          'Error sending unregistration notification email:',
+          error,
+        );
       }
     }
 

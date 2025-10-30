@@ -156,4 +156,8 @@ export class UserService {
   async getRegisteredEvents(userId: string) {
     return this.userRepository.getRegisteredEvents(userId);
   }
+
+  async unregisterFromEvent(eventId: string, userId: string) {
+    return this.userRepository.unregisterFromEvent(eventId, userId);
+  }
 }
