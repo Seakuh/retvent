@@ -5,9 +5,11 @@ import { Event } from 'src/core/domain/event';
 import { Ticket } from 'src/core/domain/ticket';
 import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
 import { MongoTicketRepository } from 'src/infrastructure/repositories/mongodb/ticket.repository';
+import { AuthService } from 'src/infrastructure/services/auth.service';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
 import { InviteTicketDto } from 'src/presentation/dtos/invite-guest.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { UserService } from './user.service';
 
 const SECRET = 'mySuperSecretKey';
 
@@ -17,6 +19,8 @@ export class TicketsService {
     private readonly ticketRepository: MongoTicketRepository,
     private readonly eventRepository: MongoEventRepository,
     private readonly mailerService: MailerService,
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
   ) {}
 
   private simpleHash(input: string): string {
@@ -41,26 +45,28 @@ export class TicketsService {
   private replaceTemplateVariables(template: string, data: any): string {
     let result = template;
 
-    // Ersetze alle {{variable}} mit den entsprechenden Werten
-    Object.keys(data).forEach((key) => {
-      const regex = new RegExp(`{{${key}}}`, 'g');
-      result = result.replace(regex, data[key]);
-    });
+    // Helper function to replace nested object properties
+    const replaceNestedProperties = (obj: any, prefix: string = '') => {
+      Object.keys(obj).forEach((key) => {
+        const value = obj[key];
+        const fullKey = prefix ? `${prefix}.${key}` : key;
 
-    // Ersetze verschachtelte Objekte wie {{event.title}}
-    if (data.event) {
-      Object.keys(data.event).forEach((key) => {
-        const regex = new RegExp(`{{event.${key}}}`, 'g');
-        result = result.replace(regex, data.event[key]);
+        if (
+          typeof value === 'object' &&
+          value !== null &&
+          !Array.isArray(value)
+        ) {
+          // Recursively handle nested objects
+          replaceNestedProperties(value, fullKey);
+        } else {
+          // Replace the template variable with the value
+          const regex = new RegExp(`{{${fullKey}}}`, 'g');
+          result = result.replace(regex, String(value));
+        }
       });
-    }
+    };
 
-    if (data.ticket) {
-      Object.keys(data.ticket).forEach((key) => {
-        const regex = new RegExp(`{{ticket.${key}}}`, 'g');
-        result = result.replace(regex, data.ticket[key]);
-      });
-    }
+    replaceNestedProperties(data);
 
     return result;
   }
@@ -116,60 +122,232 @@ export class TicketsService {
     return ticket;
   }
 
+  /**
+   * Invites a guest to an event by creating a ticket and sending an invitation email.
+   * If the user doesn't exist, creates a new account with a generated password.
+   */
   async inviteGuest(dto: InviteTicketDto): Promise<Ticket> {
-    if (
-      await this.ticketRepository.findByEmailAndEventId(dto.email, dto.eventId)
-    ) {
-      throw new BadRequestException('Ticket already exists');
+    // Validate ticket doesn't already exist
+    await this.validateUniqueTicket(dto.email, dto.eventId);
+
+    // Get event details
+    const event = await this.getEventOrThrow(dto.eventId);
+
+    // Check if user exists, create if not
+    const generatedPassword = await this.ensureUserExists(dto.email);
+
+    // Create ticket
+    const ticket = await this.createTicket(dto.eventId, dto.email);
+
+    // Send invitation email (with password if user was just created)
+    await this.sendInvitationEmail(ticket, event, generatedPassword);
+
+    return ticket;
+  }
+
+  private async validateUniqueTicket(
+    email: string,
+    eventId: string,
+  ): Promise<void> {
+    const existingTicket = await this.ticketRepository.findByEmailAndEventId(
+      email,
+      eventId,
+    );
+
+    if (existingTicket) {
+      throw new BadRequestException(
+        'A ticket for this email and event already exists',
+      );
     }
-    const inviteId = uuidv4();
-    const hash = this.generateTicketHash(inviteId, dto.email);
-    const ticket = await this.ticketRepository.create({
-      eventId: dto.eventId,
-      email: dto.email,
-      ticketId: inviteId,
-      status: 'pending',
-      createdAt: new Date(),
-      hash: hash,
-    });
+  }
+
+  private async getEventOrThrow(eventId: string): Promise<Event> {
+    // Validate ObjectId format before querying
+    if (!this.isValidObjectId(eventId)) {
+      throw new BadRequestException(
+        `Invalid event ID format: ${eventId}. Event ID must be a valid MongoDB ObjectId.`,
+      );
+    }
 
     try {
-      // Event-Daten abrufen
-      const event = await this.eventRepository.findById(dto.eventId);
-      console.log('event', event);
+      const event = await this.eventRepository.findById(eventId);
 
-      // Template laden und Variablen ersetzen
-      const template = this.getInviteTemplate();
-      const htmlContent = this.replaceTemplateVariables(template, {
-        event: {
-          title: event?.title || 'Event',
-          startDate: event?.startDate
-            ? new Date(event.startDate).toLocaleDateString('de-DE')
-            : 'TBD',
-          startTime: event?.startTime || 'TBD',
-          imageUrl: event?.imageUrl || 'https://event-scanner.com/logo.png',
-          ticketLink: `${process.env.FRONTEND_URL || 'https://event-scanner.com'}/ticket/${ticket.ticketId}`,
-          city: event?.city || 'TBD',
-        },
-        ticket: {
-          ticketId: ticket.ticketId,
-          email: ticket.email,
-          status: ticket.status,
-          createdAt: ticket.createdAt.toLocaleDateString('de-DE'),
-          hash: ticket.hash,
-        },
+      if (!event) {
+        throw new BadRequestException(`Event with ID ${eventId} not found`);
+      }
+
+      return event;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException(
+        `Failed to retrieve event: ${error.message}`,
+      );
+    }
+  }
+
+  private isValidObjectId(id: string): boolean {
+    // MongoDB ObjectId is a 24-character hex string
+    return /^[0-9a-fA-F]{24}$/.test(id);
+  }
+
+  /**
+   * Ensures a user exists for the given email.
+   * If user doesn't exist, creates a new one with a generated password.
+   * @returns The generated password if a new user was created, null otherwise
+   */
+  private async ensureUserExists(email: string): Promise<string | null> {
+    try {
+      const existingUser = await this.userService.findByEmail(email);
+
+      if (existingUser) {
+        return null; // User already exists, no password to send
+      }
+
+      const generatedPassword = this.generateSecurePassword();
+      const username = this.generateUsernameFromEmail(email);
+
+      await this.authService.registerWithProfile({
+        email,
+        password: generatedPassword,
+        username,
       });
 
+      return generatedPassword;
+    } catch (error) {
+      // If user creation fails (e.g., duplicate username), handle gracefully
+      if (error.message?.includes('already exists')) {
+        // User was created between our check and registration attempt
+        return null;
+      }
+      throw new BadRequestException(
+        `Failed to create user account: ${error.message}`,
+      );
+    }
+  }
+
+  private generateSecurePassword(): string {
+    const length = 12;
+    const charset =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    let password = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      password += charset[randomIndex];
+    }
+
+    return password;
+  }
+
+  private generateUsernameFromEmail(email: string): string {
+    const baseUsername = email.split('@')[0];
+    // Add random suffix to ensure uniqueness
+    const randomSuffix = Math.floor(Math.random() * 9999)
+      .toString()
+      .padStart(4, '0');
+    return `${baseUsername}_${randomSuffix}`;
+  }
+
+  private async createTicket(eventId: string, email: string): Promise<Ticket> {
+    const ticketId = uuidv4();
+    const hash = this.generateTicketHash(ticketId, email);
+
+    return this.ticketRepository.create({
+      eventId,
+      email,
+      ticketId,
+      status: 'pending',
+      createdAt: new Date(),
+      hash,
+    });
+  }
+
+  private async sendInvitationEmail(
+    ticket: Ticket,
+    event: Event,
+    generatedPassword: string | null,
+  ): Promise<void> {
+    const frontendUrl = process.env.FRONTEND_URL || 'https://event-scanner.com';
+
+    const templateData = {
+      event: {
+        title: event.title || 'Event',
+        startDate: event.startDate
+          ? new Date(event.startDate).toLocaleDateString('de-DE')
+          : 'TBD',
+        startTime: event.startTime || 'TBD',
+        imageUrl: event.imageUrl || 'https://event-scanner.com/logo.png',
+        ticketLink: `${frontendUrl}/ticket/${ticket.ticketId}`,
+        city: event.city || 'TBD',
+      },
+      ticket: {
+        ticketId: ticket.ticketId,
+        email: ticket.email,
+        status: ticket.status,
+        createdAt: ticket.createdAt.toLocaleDateString('de-DE'),
+        hash: ticket.hash,
+      },
+      credentials: {
+        section: generatedPassword
+          ? this.buildCredentialsSection(ticket.email, generatedPassword)
+          : '',
+      },
+    };
+
+    const template = this.getInviteTemplate();
+    const htmlContent = this.replaceTemplateVariables(template, templateData);
+
+    try {
       await this.mailerService.sendMail({
-        to: dto.email,
-        subject: `🎫 Deine Einladung für ${event?.title || 'Event'} - ${ticket.ticketId}`,
-        text: `Deine Einladung wurde erstellt. Deine Einladung-ID ist: ${ticket.ticketId}`,
+        to: ticket.email,
+        subject: `🎫 Deine Einladung für ${event.title}`,
+        text: this.buildPlainTextInvitation(ticket, event, generatedPassword),
         html: htmlContent,
       });
     } catch (error) {
-      console.error('Fehler beim Senden der E-Mail:', error);
+      throw new BadRequestException(
+        `Failed to send invitation email: ${error.message}`,
+      );
     }
-    return ticket;
+  }
+
+  private buildCredentialsSection(email: string, password: string): string {
+    return `
+      <div class="credentials-section">
+        <h3 style="color: #004d5c; font-size: 18px; margin-top: 25px; margin-bottom: 15px;">
+          🔐 Deine Zugangsdaten
+        </h3>
+        <div style="background-color: #fff4e6; border-left: 4px solid #ff9800; padding: 15px 20px; border-radius: 8px; margin: 15px 0;">
+          <p style="margin: 8px 0; font-size: 15px;"><strong>E-Mail:</strong> ${email}</p>
+          <p style="margin: 8px 0; font-size: 15px;"><strong>Passwort:</strong> <code style="background-color: #f5f5f5; padding: 4px 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 14px;">${password}</code></p>
+        </div>
+        <p style="margin-top: 15px; font-size: 14px; color: #d32f2f; font-weight: 500;">
+          ⚠️ Wichtig: Bitte ändere dein Passwort nach dem ersten Login!
+        </p>
+      </div>
+    `;
+  }
+
+  private buildPlainTextInvitation(
+    ticket: Ticket,
+    event: Event,
+    generatedPassword: string | null,
+  ): string {
+    let text = `Deine Einladung für ${event.title} wurde erstellt.\n\n`;
+    text += `Einladungs-ID: ${ticket.ticketId}\n\n`;
+
+    if (generatedPassword) {
+      text += `Ein Konto wurde für dich erstellt:\n`;
+      text += `Email: ${ticket.email}\n`;
+      text += `Passwort: ${generatedPassword}\n\n`;
+      text += `Bitte ändere dein Passwort nach dem ersten Login.\n\n`;
+    }
+
+    text += `Bitte bestätige deine Teilnahme über den Link in der Email.\n`;
+
+    return text;
   }
 
   async validateTicket(
@@ -585,6 +763,9 @@ export class TicketsService {
           <p><strong>Uhrzeit:</strong> {{event.startTime}}</p>
           <p><strong>Ort:</strong> {{event.city}}</p>
         </div>
+
+        {{credentials.section}}
+
         <p>
           Bitte bestätige deine Teilnahme, damit wir dich auf der Gästeliste
           vermerken können.
