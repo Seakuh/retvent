@@ -757,6 +757,48 @@ export class EventController {
     }
   }
 
+  /**
+   * Update event validators (users who can scan tickets)
+   * PUT /events/:id/validators
+   */
+  @Put(':id/validators')
+  @UseGuards(JwtAuthGuard)
+  async updateEventValidators(
+    @Param('id') id: string,
+    @Body() body: { validators: string[] },
+    @Request() req,
+  ) {
+    try {
+      const event = await this.eventService.findByIdForUpdate(id);
+
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      // Only event organizer can update validators
+      if (event.hostId !== req.user.sub) {
+        throw new ForbiddenException(
+          'Only the event organizer can manage validators',
+        );
+      }
+
+      // Update validators using the event service
+      const updatedEvent = await this.eventService.update(id, {
+        validators: body.validators,
+      });
+
+      return {
+        message: 'Validators updated successfully',
+        validators: updatedEvent.validators || [],
+      };
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
+  }
+
   @Post('lineup/upload')
   @UseGuards(UploadGuard)
   @UseInterceptors(FileInterceptor('image'))
