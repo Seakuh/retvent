@@ -496,15 +496,18 @@ export class TicketsService {
    * Changes status from 'active' to 'validated'.
    *
    * This endpoint is typically used by event staff with a QR code scanner.
+   * Only event organizers and designated validators can scan tickets.
    *
    * @param ticketId - The unique ticket identifier (from QR code)
    * @param providedHash - The hash from the QR code (for verification)
+   * @param scannerId - The user ID of the person scanning (organizer or validator)
    * @returns The validated ticket with event details
-   * @throws BadRequestException if validation fails
+   * @throws BadRequestException if validation fails or user is not authorized
    */
   async scanTicketAtEntrance(
     ticketId: string,
     providedHash: string,
+    scannerId?: string,
   ): Promise<{
     ticket: Ticket;
     event: Event;
@@ -528,10 +531,29 @@ export class TicketsService {
       );
     }
 
+    // Get event details first to check permissions
+    const event = await this.eventRepository.findById(ticket.eventId);
+
+    if (!event) {
+      throw new BadRequestException(
+        `Event with ID ${ticket.eventId} not found`,
+      );
+    }
+
+    // Check scanner permissions (must be event organizer or validator)
+    if (scannerId) {
+      const isOrganizer = event.hostId === scannerId;
+      const isValidator = event.validators?.includes(scannerId) ?? false;
+
+      if (!isOrganizer && !isValidator) {
+        throw new BadRequestException(
+          'You are not authorized to scan tickets for this event',
+        );
+      }
+    }
+
     // Check if ticket is already validated
     if (ticket.status === 'validated') {
-      // Get event details even for already validated tickets
-      const event = await this.eventRepository.findById(ticket.eventId);
       return {
         ticket,
         event,
@@ -552,21 +574,222 @@ export class TicketsService {
     ticket.validatedAt = new Date();
     const updatedTicket = await this.ticketRepository.update(ticketId, ticket);
 
-    // Get event details
-    const event = await this.eventRepository.findById(ticket.eventId);
-
-    if (!event) {
-      throw new BadRequestException(
-        `Event with ID ${ticket.eventId} not found`,
-      );
-    }
-
     return {
       ticket: updatedTicket,
       event,
       message: 'Ticket successfully validated. Guest may enter.',
       guestName: ticket.email,
     };
+  }
+
+  /**
+   * Approves a pending registration and sends confirmation email.
+   * Changes status from 'pending' to 'active'.
+   *
+   * @param ticketId - The ticket ID to approve
+   * @returns The approved ticket with success message
+   * @throws BadRequestException if ticket not found or not pending
+   */
+  async approveRegistration(ticketId: string): Promise<{
+    ticket: Ticket;
+    message: string;
+  }> {
+    const ticket = await this.ticketRepository.findTicketId(ticketId);
+
+    if (!ticket) {
+      throw new BadRequestException(`Ticket with ID ${ticketId} not found`);
+    }
+
+    if (ticket.status !== 'pending') {
+      throw new BadRequestException(
+        `Ticket is not pending. Current status: ${ticket.status}`,
+      );
+    }
+
+    // Update ticket status
+    ticket.status = 'active';
+    const updatedTicket = await this.ticketRepository.update(ticketId, ticket);
+
+    // Get event details for email
+    const event = await this.eventRepository.findById(ticket.eventId);
+
+    if (event) {
+      // Send approval email
+      await this.sendApprovalEmail(ticket, event);
+    }
+
+    return {
+      ticket: updatedTicket,
+      message: 'Registration approved successfully',
+    };
+  }
+
+  /**
+   * Rejects a pending registration and sends rejection email.
+   * Deletes the ticket from the database.
+   *
+   * @param ticketId - The ticket ID to reject
+   * @returns Success message
+   * @throws BadRequestException if ticket not found or not pending
+   */
+  async rejectRegistration(ticketId: string): Promise<{
+    message: string;
+  }> {
+    const ticket = await this.ticketRepository.findTicketId(ticketId);
+
+    if (!ticket) {
+      throw new BadRequestException(`Ticket with ID ${ticketId} not found`);
+    }
+
+    if (ticket.status !== 'pending') {
+      throw new BadRequestException(
+        `Ticket is not pending. Current status: ${ticket.status}`,
+      );
+    }
+
+    // Get event details for email
+    const event = await this.eventRepository.findById(ticket.eventId);
+
+    if (event) {
+      // Send rejection email
+      await this.sendRejectionEmail(ticket, event);
+    }
+
+    // Delete the ticket
+    await this.ticketRepository.delete(ticketId);
+
+    return {
+      message: 'Registration rejected successfully',
+    };
+  }
+
+  private async sendApprovalEmail(ticket: Ticket, event: Event): Promise<void> {
+    const frontendUrl = process.env.FRONTEND_URL || 'https://event-scanner.com';
+
+    const templateData = {
+      event: {
+        title: event.title || 'Event',
+        startDate: event.startDate
+          ? new Date(event.startDate).toLocaleDateString('de-DE')
+          : 'TBD',
+        startTime: event.startTime || 'TBD',
+        imageUrl: event.imageUrl || 'https://event-scanner.com/logo.png',
+        ticketLink: `${frontendUrl}/ticket/${ticket.ticketId}`,
+        city: event.city || 'TBD',
+      },
+      ticket: {
+        ticketId: ticket.ticketId,
+        email: ticket.email,
+        hash: ticket.hash,
+      },
+    };
+
+    const htmlContent = `
+      <!doctype html>
+      <html lang="de">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Registrierung genehmigt</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+            <tr>
+              <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                  <tr>
+                    <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center;">
+                      <h1 style="color: #ffffff; margin: 0; font-size: 28px;">✅ Registrierung genehmigt!</h1>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 40px;">
+                      <h2 style="color: #004d5c; font-size: 22px; margin-top: 0;">${templateData.event.title}</h2>
+                      <p style="color: #333; font-size: 16px; line-height: 1.6;">
+                        Deine Registrierung wurde genehmigt! Du kannst nun am Event teilnehmen.
+                      </p>
+                      <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <p style="margin: 8px 0;"><strong>📅 Datum:</strong> ${templateData.event.startDate}</p>
+                        <p style="margin: 8px 0;"><strong>🕐 Uhrzeit:</strong> ${templateData.event.startTime}</p>
+                        <p style="margin: 8px 0;"><strong>📍 Ort:</strong> ${templateData.event.city}</p>
+                      </div>
+                      <div style="background-color: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <p style="margin: 0; color: #1976D2;"><strong>Dein Bestätigungscode:</strong></p>
+                        <p style="margin: 10px 0; font-size: 18px; font-family: monospace; color: #1976D2; font-weight: bold;">${templateData.ticket.hash}</p>
+                      </div>
+                      <a href="${templateData.event.ticketLink}" style="display: inline-block; background-color: #4CAF50; color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: bold; font-size: 16px; margin: 20px 0;">
+                        Ticket anzeigen
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    `;
+
+    try {
+      await this.mailerService.sendMail({
+        to: ticket.email,
+        subject: `✅ Registrierung genehmigt - ${event.title}`,
+        text: `Deine Registrierung für ${event.title} wurde genehmigt. Bestätigungscode: ${ticket.hash}`,
+        html: htmlContent,
+      });
+    } catch (error) {
+      console.error('Failed to send approval email:', error);
+    }
+  }
+
+  private async sendRejectionEmail(ticket: Ticket, event: Event): Promise<void> {
+    const htmlContent = `
+      <!doctype html>
+      <html lang="de">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Registrierung abgelehnt</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+            <tr>
+              <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                  <tr>
+                    <td style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); padding: 40px; text-align: center;">
+                      <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Registrierung abgelehnt</h1>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 40px;">
+                      <h2 style="color: #004d5c; font-size: 22px; margin-top: 0;">${event.title || 'Event'}</h2>
+                      <p style="color: #333; font-size: 16px; line-height: 1.6;">
+                        Leider wurde deine Registrierung für dieses Event nicht genehmigt.
+                      </p>
+                      <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                        Bei Fragen wende dich bitte an den Event-Organisator.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    `;
+
+    try {
+      await this.mailerService.sendMail({
+        to: ticket.email,
+        subject: `Registrierung abgelehnt - ${event.title || 'Event'}`,
+        text: `Deine Registrierung für ${event.title || 'Event'} wurde leider abgelehnt.`,
+        html: htmlContent,
+      });
+    } catch (error) {
+      console.error('Failed to send rejection email:', error);
+    }
   }
 
   private getTicketTemplate(): string {

@@ -36,6 +36,7 @@ export class Event implements IEvent {
     twitter?: string;
   };
   isPrivate?: boolean;
+  validators?: string[];
   tags?: string[];
   website?: string;
   likeIds?: string[];

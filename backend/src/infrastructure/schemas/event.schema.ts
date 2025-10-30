@@ -17,6 +17,7 @@ export const EventSchema = new Schema(
     registeredUserIds: { type: [String], default: [] },
     registrations: { type: Number, default: 0 },
     capacity: { type: Number, default: 0 },
+    validators: { type: [String], default: [] },
     isSponsored: { type: Boolean, default: false },
     address: {
       street: { type: String },

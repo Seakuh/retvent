@@ -36,6 +36,7 @@ export interface IEvent extends Document {
   registeredUserIds?: string[];
   website?: string;
   likeIds?: string[];
+  validators?: string[]; // User IDs who can scan tickets at event entrance
   location?: {
     city?: string;
     address?: string;
@@ -82,6 +83,7 @@ const EventSchema = new Schema<IEvent>(
     tags: [{ type: String }],
     website: { type: String },
     likeIds: [{ type: String }],
+    validators: [{ type: String }], // User IDs who can scan tickets
   },
   {
     timestamps: true,

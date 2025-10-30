@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -113,6 +114,7 @@ export class TicketsController {
    *
    * This endpoint is typically used by event staff with a QR code scanner app.
    * The QR code contains both the ticketId and hash for verification.
+   * Only event organizers and designated validators can scan tickets.
    *
    * Example request:
    * POST /tickets/scan
@@ -128,12 +130,46 @@ export class TicketsController {
    * - guestName: The guest's email/name for verification
    *
    * @param dto - The scan data from QR code (ticketId, hash)
+   * @param req - Request object containing authenticated user
    * @returns Validated ticket with event details and guest information
    */
   @Post('scan')
   @UseGuards(AuthGuard('jwt'))
-  async scanTicket(@Body() dto: ScanTicketDto) {
+  async scanTicket(@Body() dto: ScanTicketDto, @Req() req: any) {
     const { ticketId, hash } = dto;
-    return this.ticketsService.scanTicketAtEntrance(ticketId, hash);
+    const scannerId = req.user?.id || req.user?.sub;
+    return this.ticketsService.scanTicketAtEntrance(ticketId, hash, scannerId);
+  }
+
+  /**
+   * Approves a pending registration.
+   * Changes ticket status from 'pending' to 'active' and sends confirmation email.
+   *
+   * Example request:
+   * POST /tickets/:ticketId/approve
+   *
+   * @param ticketId - The ticket ID to approve
+   * @returns The approved ticket with success message
+   */
+  @Post(':ticketId/approve')
+  @UseGuards(AuthGuard('jwt'))
+  async approveRegistration(@Param('ticketId') ticketId: string) {
+    return this.ticketsService.approveRegistration(ticketId);
+  }
+
+  /**
+   * Rejects a pending registration.
+   * Deletes the ticket and sends rejection email.
+   *
+   * Example request:
+   * POST /tickets/:ticketId/reject
+   *
+   * @param ticketId - The ticket ID to reject
+   * @returns Success message
+   */
+  @Post(':ticketId/reject')
+  @UseGuards(AuthGuard('jwt'))
+  async rejectRegistration(@Param('ticketId') ticketId: string) {
+    return this.ticketsService.rejectRegistration(ticketId);
   }
 }
