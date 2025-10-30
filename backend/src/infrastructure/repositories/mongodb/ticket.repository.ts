@@ -49,6 +49,9 @@ export class MongoTicketRepository implements ITicketRepository {
   }
 
   async getInviteGuestsByEventId(eventId: string): Promise<Ticket[]> {
-    return this.ticketModel.find({ eventId }).exec();
+    return this.ticketModel
+      .find({ eventId })
+      .select('email _id ticketId userId status')
+      .exec();
   }
 }
