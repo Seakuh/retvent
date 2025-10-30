@@ -64,12 +64,23 @@ export class RegistrationService {
       if (!host) {
         throw new NotFoundException('Host not found');
       }
-      this.mailService.sendMail({
-        to: host.email || 'noreply@eventscanner.com',
-        subject: `🎫 REGISTRIERUNG STORNIEREN - ${event?.title || 'Event'}`,
-        text: `Die Registrierung für das Event ${event?.title || 'Event'} wurde storniert. Grund: ${reason}`,
-        html: `<p>Die Registrierung für das Event ${event?.title || 'Event'} wurde storniert. Grund: ${reason}</p>`,
-      });
+
+      const emailHtml = this.getUnregistrationNotificationTemplate(
+        event,
+        user,
+        reason,
+      );
+
+      try {
+        await this.mailService.sendMail({
+          to: host.email || 'noreply@eventscanner.com',
+          subject: `🚫 Abmeldung für ${event?.title || 'Event'}`,
+          text: `${user.email} hat sich von deinem Event "${event?.title || 'Event'}" abgemeldet. Grund: ${reason}`,
+          html: emailHtml,
+        });
+      } catch (error) {
+        console.error('Error sending unregistration notification email:', error);
+      }
     }
 
     return {
@@ -146,5 +157,98 @@ export class RegistrationService {
     // Hier könntest du einen QR-Code generieren
     // Für jetzt geben wir eine Platzhalter-URL zurück
     return `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://event-scanner.com/event/${eventId}?user=${userId}`;
+  }
+
+  private getUnregistrationNotificationTemplate(
+    event: any,
+    user: any,
+    reason: string,
+  ): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Abmeldung von Event</title>
+      </head>
+      <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
+        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 40px 0; text-align: center;">
+              <table role="presentation" style="width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <!-- Header -->
+                <tr>
+                  <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center;">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">
+                      🚫 Event-Abmeldung
+                    </h1>
+                  </td>
+                </tr>
+
+                <!-- Content -->
+                <tr>
+                  <td style="padding: 40px;">
+                    <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                      Hallo,
+                    </p>
+
+                    <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                      Ein Teilnehmer hat sich von deinem Event abgemeldet:
+                    </p>
+
+                    <!-- Event Info Box -->
+                    <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 20px 0; background-color: #f8f9fa; border-radius: 8px; overflow: hidden;">
+                      <tr>
+                        <td style="padding: 20px;">
+                          <p style="color: #666666; font-size: 14px; margin: 0 0 8px 0;">Event:</p>
+                          <p style="color: #333333; font-size: 18px; font-weight: 600; margin: 0 0 16px 0;">
+                            ${event?.title || 'Event'}
+                          </p>
+
+                          <p style="color: #666666; font-size: 14px; margin: 0 0 8px 0;">Teilnehmer:</p>
+                          <p style="color: #333333; font-size: 16px; margin: 0;">
+                            ${user.email || 'Unbekannt'}
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Reason Box -->
+                    <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 20px 0; background-color: #fff3cd; border-radius: 8px; overflow: hidden; border-left: 4px solid #ffc107;">
+                      <tr>
+                        <td style="padding: 20px;">
+                          <p style="color: #856404; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">Abmeldegrund:</p>
+                          <p style="color: #856404; font-size: 16px; margin: 0; line-height: 1.5;">
+                            ${reason}
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="color: #666666; font-size: 14px; line-height: 1.6; margin: 20px 0 0 0;">
+                      Diese Nachricht wurde automatisch generiert, da der Teilnehmer einen Abmeldegrund angegeben hat.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e9ecef;">
+                    <p style="color: #6c757d; font-size: 14px; margin: 0 0 10px 0;">
+                      Event Scanner - Deine Event-Management-Plattform
+                    </p>
+                    <p style="color: #adb5bd; font-size: 12px; margin: 0;">
+                      © ${new Date().getFullYear()} Event Scanner. Alle Rechte vorbehalten.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `;
   }
 }
