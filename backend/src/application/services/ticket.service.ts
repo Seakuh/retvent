@@ -421,6 +421,154 @@ export class TicketsService {
     return { ticket, event };
   }
 
+  // =====================================================
+  // NEW ENDPOINTS: Ticket Activation & QR Code Scanning
+  // =====================================================
+
+  /**
+   * Activates a ticket after a guest accepts their invitation.
+   * Changes status from 'pending' to 'active'.
+   *
+   * @param ticketId - The unique ticket identifier
+   * @param email - The guest's email address
+   * @param providedHash - The hash from the invitation (for verification)
+   * @returns The activated ticket
+   * @throws BadRequestException if validation fails
+   */
+  async activateTicket(
+    ticketId: string,
+    email: string,
+    providedHash: string,
+  ): Promise<{
+    ticket: Ticket;
+    message: string;
+  }> {
+    // Find the ticket
+    const ticket = await this.ticketRepository.findTicketId(ticketId);
+
+    if (!ticket) {
+      throw new BadRequestException(
+        `Ticket with ID ${ticketId} not found`,
+      );
+    }
+
+    // Verify the email matches
+    if (ticket.email !== email) {
+      throw new BadRequestException(
+        'Email does not match the ticket email',
+      );
+    }
+
+    // Verify the hash
+    const expectedHash = this.generateTicketHash(ticket.ticketId, ticket.email);
+    if (expectedHash !== providedHash) {
+      throw new BadRequestException(
+        'Invalid ticket hash. The ticket could not be verified.',
+      );
+    }
+
+    // Check current status
+    if (ticket.status === 'active') {
+      return {
+        ticket,
+        message: 'Ticket is already active',
+      };
+    }
+
+    if (ticket.status === 'validated') {
+      throw new BadRequestException(
+        'Ticket has already been used and cannot be activated again',
+      );
+    }
+
+    // Activate the ticket
+    ticket.status = 'active';
+    const updatedTicket = await this.ticketRepository.update(ticketId, ticket);
+
+    return {
+      ticket: updatedTicket,
+      message: 'Ticket successfully activated',
+    };
+  }
+
+  /**
+   * Scans and validates a ticket at the event entrance using QR code.
+   * Changes status from 'active' to 'validated'.
+   *
+   * This endpoint is typically used by event staff with a QR code scanner.
+   *
+   * @param ticketId - The unique ticket identifier (from QR code)
+   * @param providedHash - The hash from the QR code (for verification)
+   * @returns The validated ticket with event details
+   * @throws BadRequestException if validation fails
+   */
+  async scanTicketAtEntrance(
+    ticketId: string,
+    providedHash: string,
+  ): Promise<{
+    ticket: Ticket;
+    event: Event;
+    message: string;
+    guestName: string;
+  }> {
+    // Find the ticket
+    const ticket = await this.ticketRepository.findTicketId(ticketId);
+
+    if (!ticket) {
+      throw new BadRequestException(
+        `Ticket with ID ${ticketId} not found`,
+      );
+    }
+
+    // Verify the hash
+    const expectedHash = this.generateTicketHash(ticket.ticketId, ticket.email);
+    if (expectedHash !== providedHash) {
+      throw new BadRequestException(
+        'Invalid QR code. The ticket could not be verified.',
+      );
+    }
+
+    // Check if ticket is already validated
+    if (ticket.status === 'validated') {
+      // Get event details even for already validated tickets
+      const event = await this.eventRepository.findById(ticket.eventId);
+      return {
+        ticket,
+        event,
+        message: 'Ticket has already been scanned and validated',
+        guestName: ticket.email,
+      };
+    }
+
+    // Check if ticket is not yet activated
+    if (ticket.status === 'pending') {
+      throw new BadRequestException(
+        'Ticket has not been activated yet. Guest must accept the invitation first.',
+      );
+    }
+
+    // Validate the ticket
+    ticket.status = 'validated';
+    ticket.validatedAt = new Date();
+    const updatedTicket = await this.ticketRepository.update(ticketId, ticket);
+
+    // Get event details
+    const event = await this.eventRepository.findById(ticket.eventId);
+
+    if (!event) {
+      throw new BadRequestException(
+        `Event with ID ${ticket.eventId} not found`,
+      );
+    }
+
+    return {
+      ticket: updatedTicket,
+      event,
+      message: 'Ticket successfully validated. Guest may enter.',
+      guestName: ticket.email,
+    };
+  }
+
   private getTicketTemplate(): string {
     return `<!doctype html>
 <html lang="de">

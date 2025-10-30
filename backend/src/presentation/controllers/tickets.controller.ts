@@ -12,7 +12,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { TicketsService } from 'src/application/services/ticket.service';
 import { Event } from 'src/core/domain/event';
 import { Ticket } from 'src/core/domain/ticket';
+import { ActivateTicketDto } from 'src/presentation/dtos/activate-ticket.dto';
 import { CreateTicketDto } from 'src/presentation/dtos/create-ticket.dto';
+import { ScanTicketDto } from 'src/presentation/dtos/scan-ticket.dto';
 import { InviteTicketDto } from '../dtos/invite-guest.dto';
 
 @Controller('tickets')
@@ -78,5 +80,60 @@ export class TicketsController {
   @Delete('/ticket/:ticketId')
   async deleteTicket(@Param('ticketId') ticketId: string) {
     return this.ticketsService.deleteTicket(ticketId);
+  }
+
+  // =====================================================
+  // NEW ENDPOINTS: Ticket Activation & QR Code Scanning
+  // =====================================================
+
+  /**
+   * Activates a ticket after a guest accepts their invitation.
+   * Changes the ticket status from 'pending' to 'active'.
+   *
+   * Example request:
+   * POST /tickets/activate
+   * Body: {
+   *   "ticketId": "abc-123-def",
+   *   "email": "guest@example.com",
+   *   "hash": "a1b2c3d4"
+   * }
+   *
+   * @param dto - The activation data (ticketId, email, hash)
+   * @returns The activated ticket with success message
+   */
+  @Post('activate')
+  async activateTicket(@Body() dto: ActivateTicketDto) {
+    const { ticketId, email, hash } = dto;
+    return this.ticketsService.activateTicket(ticketId, email, hash);
+  }
+
+  /**
+   * Scans and validates a ticket at the event entrance using QR code.
+   * Changes the ticket status from 'active' to 'validated'.
+   *
+   * This endpoint is typically used by event staff with a QR code scanner app.
+   * The QR code contains both the ticketId and hash for verification.
+   *
+   * Example request:
+   * POST /tickets/scan
+   * Body: {
+   *   "ticketId": "abc-123-def",
+   *   "hash": "a1b2c3d4"
+   * }
+   *
+   * Response includes:
+   * - ticket: The validated ticket details
+   * - event: Full event information (for display on scanner app)
+   * - message: Success/status message
+   * - guestName: The guest's email/name for verification
+   *
+   * @param dto - The scan data from QR code (ticketId, hash)
+   * @returns Validated ticket with event details and guest information
+   */
+  @Post('scan')
+  @UseGuards(AuthGuard('jwt'))
+  async scanTicket(@Body() dto: ScanTicketDto) {
+    const { ticketId, hash } = dto;
+    return this.ticketsService.scanTicketAtEntrance(ticketId, hash);
   }
 }
