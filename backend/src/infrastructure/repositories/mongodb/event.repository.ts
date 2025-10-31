@@ -1070,4 +1070,24 @@ export class MongoEventRepository implements IEventRepository {
       $pull: { invitedUserIds: userId },
     });
   }
+
+  // ------------------------------------------------------------
+  // Validators
+  // ------------------------------------------------------------
+
+  removeValidatorFromEvent(id: string, sub: any) {
+    return this.eventModel.findByIdAndUpdate(id, {
+      $pull: { validators: sub },
+    });
+  }
+
+  addValidatorToEvent(id: string, sub: any) {
+    return this.eventModel.findByIdAndUpdate(id, {
+      $addToSet: { validators: sub },
+    });
+  }
+
+  getEventValidators(id: string) {
+    return this.eventModel.findById(id).select('validators hostId').exec();
+  }
 }

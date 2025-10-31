@@ -5,9 +5,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
 import { EventService } from 'src/application/services/event.service';
+import { GroupService } from './group.service';
 import { ProfileService } from './profile.service';
 import { TicketsService } from './ticket.service';
 import { UserService } from './user.service';
@@ -20,6 +19,7 @@ export class RegistrationService {
     private readonly mailService: MailerService,
     private readonly profileService: ProfileService,
     private readonly ticketsService: TicketsService,
+    private readonly groupService: GroupService,
   ) {}
 
   async registerUserForEvent(eventId: string, userId: string) {
@@ -44,6 +44,14 @@ export class RegistrationService {
     this.eventService.registerEvent(eventId, userId);
     /// Add event to user registered events
     this.userService.registerForEvent(eventId, userId);
+    // Add user to event group
+    this.groupService.createOrJoinGroup(userId, {
+      name: event.title,
+      description: event.description,
+      imageUrl: event.imageUrl,
+      eventId: event.id,
+      isPublic: false,
+    });
     /// Send email to user
     try {
       this.mailService.sendMail({
@@ -345,9 +353,7 @@ export class RegistrationService {
   }
 
   private getRegistrationTemplate(event: any, user: any): string {
-    // Lade das HTML-Template
-    const templatePath = path.join(__dirname, '../templates/registration.html');
-    let template = fs.readFileSync(templatePath, 'utf8');
+    let template = this.registrationTemplate(event, user);
 
     // Ersetze die Platzhalter mit den tatsächlichen Werten
     template = template.replace(
@@ -507,4 +513,306 @@ export class RegistrationService {
       </html>
     `;
   }
+
+  private registrationTemplate = (event: any, user: any): string => {
+    return `
+  <!doctype html>
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Registrierungsbestätigung</title>
+    <!-- Für Clients mit Dark Mode -->
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+  </head>
+  <body style="margin: 0; padding: 0; background: #f4f5f7">
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background: #f4f5f7"
+    >
+      <tr>
+        <td align="center" style="padding: 24px">
+          <!-- Card -->
+          <table
+            role="presentation"
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            style="
+              max-width: 640px;
+              background: #ffffff;
+              border-radius: 16px;
+              overflow: hidden;
+              border: 1px solid #e6e8eb;
+            "
+          >
+            <!-- Header -->
+            <tr>
+              <td style="padding: 24px 24px 8px 24px; text-align: left">
+                <div
+                  style="
+                    font-family:
+                      Inter,
+                      Segoe UI,
+                      Arial,
+                      sans-serif;
+                    font-size: 14px;
+                    letter-spacing: 0.4px;
+                    color: #6b7280;
+                    text-transform: uppercase;
+                  "
+                >
+                  Registrierungsbestätigung
+                </div>
+                <h1
+                  style="
+                    margin: 8px 0 0 0;
+                    font-family:
+                      Inter,
+                      Segoe UI,
+                      Arial,
+                      sans-serif;
+                    font-weight: 650;
+                    font-size: 22px;
+                    line-height: 1.3;
+                    color: #111827;
+                  "
+                >
+                  🎫 {{event.title}}
+                </h1>
+              </td>
+            </tr>
+
+            <!-- Divider -->
+            <tr>
+              <td style="height: 1px; background: #eef0f3"></td>
+            </tr>
+
+            <!-- Details -->
+            <tr>
+              <td style="padding: 20px 24px 8px 24px">
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                >
+                  <tr>
+                    <td
+                      style="
+                        font-family:
+                          Inter,
+                          Segoe UI,
+                          Arial,
+                          sans-serif;
+                        font-size: 15px;
+                        color: #374151;
+                        padding: 4px 0;
+                      "
+                    >
+                      <strong style="color: #111827">Startdatum:</strong>
+                      <span style="margin-left: 6px; color: #374151"
+                        >{{event.startDate}}</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style="
+                        font-family:
+                          Inter,
+                          Segoe UI,
+                          Arial,
+                          sans-serif;
+                        font-size: 15px;
+                        color: #374151;
+                        padding: 4px 0;
+                      "
+                    >
+                      <strong style="color: #111827">Startzeit:</strong>
+                      <span style="margin-left: 6px; color: #374151"
+                        >{{event.startTime}}</span
+                      >
+                    </td>
+                  </tr>
+
+                  <!-- Website (optional: nur einfügen, wenn vorhanden) -->
+                  <!-- {{event.#if website}}
+                <tr>
+                  <td style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:15px;color:#374151;padding:4px 0;">
+                    <strong style="color:#111827;">Website:</strong>
+                    <a href="{{event.website}}" style="margin-left:6px;color:#2563eb;text-decoration:none;">{{event.website}}</a>
+                  </td>
+                </tr>
+                {{event.if website}} -->
+                </table>
+              </td>
+            </tr>
+
+            <!-- QR Code + Link -->
+            <tr>
+              <td style="padding: 8px 24px 24px 24px">
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="border: 1px dashed #e5e7eb; border-radius: 12px"
+                >
+                  <tr>
+                    <td style="padding: 18px 16px; text-align: center">
+                      <div
+                        style="
+                          font-family:
+                            Inter,
+                            Segoe UI,
+                            Arial,
+                            sans-serif;
+                          font-size: 14px;
+                          color: #374151;
+                          margin-bottom: 10px;
+                        "
+                      >
+                        Dein QR-Code für den Check-in
+                      </div>
+                      <!-- Variante A: Backend generiert QR und liefert als URL oder Base64 -->
+                      <img
+                        src="{{event.qrCodeSrc}}"
+                        alt="QR Code zum Ticket"
+                        width="160"
+                        height="160"
+                        style="
+                          display: block;
+                          margin: 0 auto;
+                          border-radius: 8px;
+                          border: 1px solid #eef0f3;
+                          outline: none;
+                          text-decoration: none;
+                        "
+                      />
+                      <div
+                        style="
+                          font-family:
+                            Inter,
+                            Segoe UI,
+                            Arial,
+                            sans-serif;
+                          font-size: 12px;
+                          color: #6b7280;
+                          margin-top: 10px;
+                          word-break: break-all;
+                        "
+                      >
+                        <a
+                          href="https://event-scanner.com/event/{{event.id}}"
+                          style="color: #2563eb; text-decoration: none"
+                        >
+                          https://event-scanner.com/event/{{event.id}}
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Textblock -->
+            <tr>
+              <td style="padding: 0 24px 20px 24px">
+                <p
+                  style="
+                    margin: 0;
+                    font-family:
+                      Inter,
+                      Segoe UI,
+                      Arial,
+                      sans-serif;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    color: #374151;
+                  "
+                >
+                  Du hast dich erfolgreich für
+                  <strong style="color: #111827">{{event.title}}</strong>
+                  registriert. Bitte bringe diesen QR-Code (digital oder
+                  ausgedruckt) zum Check-in mit.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer / Rechtliches -->
+            <tr>
+              <td style="height: 1px; background: #eef0f3"></td>
+            </tr>
+            <tr>
+              <td style="padding: 16px 24px 24px 24px">
+                <p
+                  style="
+                    margin: 0;
+                    font-family:
+                      Inter,
+                      Segoe UI,
+                      Arial,
+                      sans-serif;
+                    font-size: 12px;
+                    line-height: 1.6;
+                    color: #6b7280;
+                  "
+                >
+                  Rechtlicher Hinweis: Diese E-Mail ist eine Bestätigung deiner
+                  Registrierung. Mit der Registrierung akzeptierst du die
+                  <a
+                    href="{{event.termsUrl}}"
+                    style="color: #2563eb; text-decoration: none"
+                    >AGB</a
+                  >
+                  und unsere
+                  <a
+                    href="{{event.privacyUrl}}"
+                    style="color: #2563eb; text-decoration: none"
+                    >Datenschutzhinweise</a
+                  >
+                  des Veranstalters. Solltest du diese Registrierung nicht
+                  vorgenommen haben, wende dich bitte umgehend an
+                  <a
+                    href="mailto:{{event.supportEmail}}"
+                    style="color: #2563eb; text-decoration: none"
+                    >{{event.supportEmail}}</a
+                  >.
+                </p>
+              </td>
+            </tr>
+          </table>
+          <!-- /Card -->
+
+          <!-- Fallback Footer -->
+          <div
+            style="
+              font-family:
+                Inter,
+                Segoe UI,
+                Arial,
+                sans-serif;
+              font-size: 11px;
+              color: #9ca3af;
+              margin-top: 16px;
+              text-align: center;
+            "
+          >
+            © {{event.year}} {{event.organizerName}}
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+  `;
+  };
 }

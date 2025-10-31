@@ -757,6 +757,16 @@ export class EventController {
     }
   }
 
+  // ------------------------------------------------------------
+  // Validators
+  // ------------------------------------------------------------
+
+  @Get(':id/validators')
+  @UseGuards(JwtAuthGuard)
+  async getEventValidators(@Param('id') id: string, @Request() req) {
+    return this.eventService.getEventValidators(id, req.user.sub);
+  }
+
   /**
    * Update event validators (users who can scan tickets)
    * PUT /events/:id/validators
@@ -797,6 +807,12 @@ export class EventController {
       }
       throw error;
     }
+  }
+
+  @Delete(':id/validators/:validatorId')
+  @UseGuards(JwtAuthGuard)
+  async removeValidatorFromEvent(@Param('id') id: string, @Request() req) {
+    return this.eventService.removeValidatorFromEvent(id, req.user.sub);
   }
 
   @Post('lineup/upload')

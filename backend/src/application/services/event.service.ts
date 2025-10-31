@@ -1088,6 +1088,62 @@ export class EventService {
   }
 
   // ------------------------------------------------------------
+  // Validators
+  // ------------------------------------------------------------
+
+  async addValidatorToEvent(id: string, sub: any) {
+    const event = await this.eventRepository.findById(id);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== sub) {
+      throw new UnauthorizedException(
+        'You are not authorized to add a validator to this event',
+      );
+    }
+    return this.eventRepository.addValidatorToEvent(id, sub);
+  }
+
+  async removeValidatorFromEvent(id: string, sub: any) {
+    const event = await this.eventRepository.findById(id);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== sub) {
+      throw new UnauthorizedException(
+        'You are not authorized to remove a validator from this event',
+      );
+    }
+    return this.eventRepository.removeValidatorFromEvent(id, sub);
+  }
+
+  async getEventValidators(id: string, sub: any) {
+    const { validators, hostId } =
+      await this.eventRepository.getEventValidators(id);
+    if (!validators) {
+      throw new NotFoundException('Validators not found');
+    }
+    if (hostId !== sub) {
+      throw new UnauthorizedException(
+        'You are not authorized to get the validators of this event',
+      );
+    }
+    // get Profile Image and Username for each validator
+    const validatorsProfiles = await Promise.all(
+      validators.map(async (validator: any) => {
+        const { username, profileImageUrl } =
+          await this.userService.getUsernameAndProfilePicture(validator);
+        return {
+          id: validator,
+          username: username,
+          imageUrl: profileImageUrl,
+        };
+      }),
+    );
+    return validatorsProfiles;
+  }
+
+  // ------------------------------------------------------------
   // Connect with Event Member
   // ------------------------------------------------------------
   // async connectWithEventMember(eventId: string, userId: string) {

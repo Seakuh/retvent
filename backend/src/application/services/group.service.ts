@@ -50,7 +50,7 @@ export class GroupService {
     if (group) {
       return group;
     }
-    return this.createGroup(null, dto);
+    return this.createGroup(userId, dto);
   }
 
   async createGroupWithEvent(userId: string, dto: CreateGroupDto) {
