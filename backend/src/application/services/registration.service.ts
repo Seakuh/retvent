@@ -1,12 +1,15 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { EventService } from 'src/application/services/event.service';
+import { ProfileService } from './profile.service';
+import { TicketsService } from './ticket.service';
 import { UserService } from './user.service';
 
 @Injectable()
@@ -15,6 +18,8 @@ export class RegistrationService {
     private readonly eventService: EventService,
     private readonly userService: UserService,
     private readonly mailService: MailerService,
+    private readonly profileService: ProfileService,
+    private readonly ticketsService: TicketsService,
   ) {}
 
   async registerUserForEvent(eventId: string, userId: string) {
@@ -100,6 +105,70 @@ export class RegistrationService {
 
     return {
       message: 'Event unregistered successfully',
+    };
+  }
+
+  async getRegisteredUsersForEvent(eventId: string, userId: string) {
+    const event = await this.eventService.findByEventId(eventId);
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    // Check if user is host or validator/moderator
+    const user = await this.userService.findByUserId(userId);
+    const isHost =
+      event.hostUsername === user?.username || event.hostId === userId;
+    const isValidator =
+      event.validators?.includes(userId) ||
+      event.validators?.includes(user?.username);
+
+    if (!isHost && !isValidator) {
+      throw new ForbiddenException(
+        'You are not authorized to view registered users for this event',
+      );
+    }
+
+    // Get registered user IDs
+    const registeredUserIds = event.registeredUserIds || [];
+
+    // Fetch all tickets for this event
+    const tickets = await this.ticketsService.getTicketsByEventId(event.id);
+
+    // Create a map of userId -> ticket status
+    const ticketStatusMap = new Map<string, string>();
+    for (const ticket of tickets) {
+      // Find user by email from ticket
+      const ticketUser = await this.userService.findByEmail(ticket.email);
+      if (ticketUser) {
+        ticketStatusMap.set(ticketUser.id, ticket.status);
+      }
+    }
+
+    // Fetch profiles for all registered users
+    const registeredUsers = await Promise.all(
+      registeredUserIds.map(async (uid) => {
+        const profile = await this.profileService.findByUserId(uid);
+        const ticketStatus = ticketStatusMap.get(uid) || 'pending';
+
+        return {
+          id: uid,
+          username: profile?.username || null,
+          imageUrl: profile?.profileImageUrl || null,
+          status: ticketStatus,
+          isApproved: ticketStatus === 'active' || ticketStatus === 'validated',
+        };
+      }),
+    );
+
+    return {
+      eventId: event.id,
+      eventTitle: event.title,
+      registeredCount: registeredUsers.length,
+      approvedCount: registeredUsers.filter((u) => u.isApproved).length,
+      pendingCount: registeredUsers.filter((u) => u.status === 'pending')
+        .length,
+      users: registeredUsers,
     };
   }
 

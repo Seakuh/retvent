@@ -4,7 +4,8 @@
       "Read(//home/dizzle/Dev/POKER_APP/hyper-dragon-events/**)",
       "Bash(flutter run:*)",
       "Bash(flutter analyze:*)",
-      "Bash(dart format:*)"
+      "Bash(dart format:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

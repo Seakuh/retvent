@@ -1181,4 +1181,8 @@ export class TicketsService {
 </html>
 `;
   }
+
+  async getTicketsByEventId(eventId: string): Promise<Ticket[]> {
+    return this.ticketRepository.getInviteGuestsByEventId(eventId);
+  }
 }

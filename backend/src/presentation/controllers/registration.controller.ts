@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { RegistrationService } from 'src/application/services/registration.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
@@ -11,6 +11,16 @@ export class RegistrationController {
   async registerEvent(@Body() body: { eventId: string }, @Req() req) {
     return this.registrationService.registerUserForEvent(
       body.eventId,
+      req.user.sub,
+    );
+  }
+
+  @Get('/event/users')
+  @UseGuards(JwtAuthGuard)
+  async getRegisteredUsersForEvent(@Req() req) {
+    const eventId = req.query.eventId;
+    return this.registrationService.getRegisteredUsersForEvent(
+      eventId,
       req.user.sub,
     );
   }
