@@ -108,6 +108,132 @@ export class RegistrationService {
     };
   }
 
+  async getEventAdminData(eventId: string, userId: string) {
+    const event = await this.eventService.findByEventId(eventId);
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    // Check if user is host or validator
+    const user = await this.userService.findByUserId(userId);
+    const isHost =
+      event.hostUsername === user?.username || event.hostId === userId;
+    const isValidator =
+      event.validators?.includes(userId) ||
+      event.validators?.includes(user?.username);
+
+    if (!isHost && !isValidator) {
+      throw new ForbiddenException(
+        'You are not authorized to view admin data for this event',
+      );
+    }
+
+    // Get validators (only for host)
+    let validators = [];
+    if (isHost) {
+      const validatorIds = event.validators || [];
+      validators = await Promise.all(
+        validatorIds.map(async (validatorId) => {
+          let profile = await this.profileService.findByUserId(validatorId);
+          if (!profile) {
+            profile = await this.profileService.findByUsername(validatorId);
+          }
+          return {
+            id: validatorId,
+            username: profile?.username || validatorId,
+            imageUrl: profile?.profileImageUrl || null,
+          };
+        }),
+      );
+    }
+
+    // Get registered users
+    const registeredUserIds = event.registeredUserIds || [];
+
+    // Fetch all tickets for this event
+    const tickets = await this.ticketsService.getTicketsByEventId(event.id);
+
+    // Create a map of userId -> ticket
+    const ticketMap = new Map<string, any>();
+    for (const ticket of tickets) {
+      const ticketUser = await this.userService.findByEmail(ticket.email);
+      if (ticketUser) {
+        ticketMap.set(ticketUser.id, {
+          ticketId: ticket.ticketId,
+          status: ticket.status,
+          createdAt: ticket.createdAt,
+          validatedAt: ticket.validatedAt,
+        });
+      }
+    }
+
+    // Fetch profiles for all registered users
+    const registeredUsers = await Promise.all(
+      registeredUserIds.map(async (uid) => {
+        const profile = await this.profileService.findByUserId(uid);
+        const ticket = ticketMap.get(uid);
+        const ticketStatus = ticket?.status || 'pending';
+
+        return {
+          id: uid,
+          username: profile?.username || null,
+          imageUrl: profile?.profileImageUrl || null,
+          email: profile?.email || null,
+          status: ticketStatus,
+          isApproved: ticketStatus === 'active' || ticketStatus === 'validated',
+          ticketId: ticket?.ticketId || null,
+          registeredAt: ticket?.createdAt || null,
+          validatedAt: ticket?.validatedAt || null,
+        };
+      }),
+    );
+
+    // Calculate statistics
+    const approvedUsers = registeredUsers.filter((u) => u.isApproved);
+    const pendingUsers = registeredUsers.filter((u) => u.status === 'pending');
+    const validatedUsers = registeredUsers.filter(
+      (u) => u.status === 'validated',
+    );
+
+    return {
+      eventId: event.id,
+      eventTitle: event.title,
+      eventStartDate: event.startDate,
+      eventCapacity: event.capacity || null,
+      isHost: isHost,
+      isValidator: isValidator,
+
+      // Statistics
+      statistics: {
+        totalRegistrations: registeredUsers.length,
+        approvedCount: approvedUsers.length,
+        pendingCount: pendingUsers.length,
+        validatedCount: validatedUsers.length,
+        capacityUsage:
+          event.capacity && event.capacity > 0
+            ? Math.round((registeredUsers.length / event.capacity) * 100)
+            : null,
+      },
+
+      // Validators (only for host)
+      validators: isHost
+        ? {
+            count: validators.length,
+            list: validators,
+          }
+        : null,
+
+      // Registered users
+      registeredUsers: {
+        approved: approvedUsers,
+        pending: pendingUsers,
+        validated: validatedUsers,
+        all: registeredUsers,
+      },
+    };
+  }
+
   async getEventValidators(eventId: string, userId: string) {
     const event = await this.eventService.findByEventId(eventId);
 

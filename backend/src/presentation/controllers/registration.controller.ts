@@ -29,10 +29,14 @@ export class RegistrationController {
   @UseGuards(JwtAuthGuard)
   async getEventValidators(@Req() req) {
     const eventId = req.query.eventId;
-    return this.registrationService.getEventValidators(
-      eventId,
-      req.user.sub,
-    );
+    return this.registrationService.getEventValidators(eventId, req.user.sub);
+  }
+
+  @Get('/event/admin-data')
+  @UseGuards(JwtAuthGuard)
+  async getEventAdminData(@Req() req) {
+    const eventId = req.query.eventId;
+    return this.registrationService.getEventAdminData(eventId, req.user.sub);
   }
 
   @Post('/event/unregister')
