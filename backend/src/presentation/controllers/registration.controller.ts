@@ -25,6 +25,16 @@ export class RegistrationController {
     );
   }
 
+  @Get('/event/validators')
+  @UseGuards(JwtAuthGuard)
+  async getEventValidators(@Req() req) {
+    const eventId = req.query.eventId;
+    return this.registrationService.getEventValidators(
+      eventId,
+      req.user.sub,
+    );
+  }
+
   @Post('/event/unregister')
   @UseGuards(JwtAuthGuard)
   async unregisterEvent(

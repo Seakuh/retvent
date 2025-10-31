@@ -108,6 +108,52 @@ export class RegistrationService {
     };
   }
 
+  async getEventValidators(eventId: string, userId: string) {
+    const event = await this.eventService.findByEventId(eventId);
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    // Only host can view validators
+    const user = await this.userService.findByUserId(userId);
+    const isHost =
+      event.hostUsername === user?.username || event.hostId === userId;
+
+    if (!isHost) {
+      throw new ForbiddenException('Only the event host can view validators');
+    }
+
+    // Get validators
+    const validatorIds = event.validators || [];
+
+    // Fetch profiles for all validators
+    const validators = await Promise.all(
+      validatorIds.map(async (validatorId) => {
+        // Try to find by userId first, then by username
+        let profile = await this.profileService.findByUserId(validatorId);
+
+        if (!profile) {
+          // Try finding by username
+          profile = await this.profileService.findByUsername(validatorId);
+        }
+
+        return {
+          id: validatorId,
+          username: profile?.username || validatorId,
+          imageUrl: profile?.profileImageUrl || null,
+        };
+      }),
+    );
+
+    return {
+      eventId: event.id,
+      eventTitle: event.title,
+      validatorCount: validators.length,
+      validators: validators,
+    };
+  }
+
   async getRegisteredUsersForEvent(eventId: string, userId: string) {
     const event = await this.eventService.findByEventId(eventId);
 
