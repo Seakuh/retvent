@@ -16,6 +16,7 @@ import { MailService } from 'src/application/services/mail.service';
 import { MessageService } from 'src/application/services/message.service';
 import { ProfileService } from 'src/application/services/profile.service';
 import { TicketsService } from 'src/application/services/ticket.service';
+import { VoiceChatService } from 'src/application/services/voice-chat/voice-chat.service';
 import { MessageSchema } from 'src/core/domain/message.schema';
 import { TicketSchema } from 'src/core/domain/ticket.schema';
 import { ArtistController } from 'src/presentation/controllers/artist.controller';
@@ -27,6 +28,8 @@ import { PostsController } from 'src/presentation/controllers/posts.controller';
 import { SearchController } from 'src/presentation/controllers/search.controller';
 import { TicketsController } from 'src/presentation/controllers/tickets.controller';
 import { UserController } from 'src/presentation/controllers/user.controller';
+import { VoiceChatController } from 'src/presentation/controllers/voice-chat.controller';
+import { VoiceChatGateway } from 'src/presentation/gateways/voice-chat.gateway';
 import { EventMapper } from '../application/mappers/event.mapper';
 import { EventService } from '../application/services/event.service';
 import { LocationService } from '../application/services/location.service';
@@ -140,6 +143,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     SearchController,
     RegistrationController,
     GroupController,
+    VoiceChatController,
     MessageController,
     FeedController,
     AssessmentController,
@@ -158,6 +162,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PostService,
     TicketsService,
     FeedService,
+    VoiceChatService,
+    VoiceChatGateway,
     EventEmbeddingService,
     ImageService,
     AssessmentService,
@@ -243,6 +249,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     AuthService,
     CommunityService,
     GroupService,
+    VoiceChatService,
     ImageService,
     AssessmentService,
     VideoService,
