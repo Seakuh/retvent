@@ -51,11 +51,12 @@ export class VoiceChatGateway
       try {
         const decoded = this.jwtService.verify(token);
         socket.user = {
-          userId: decoded.userId,
+          userId: decoded.sub, // JWT uses 'sub' field for user ID
           username: decoded.username,
         };
         next();
       } catch (err) {
+        console.error('Voice Chat JWT verification failed:', err);
         next(new UnauthorizedException('Invalid token'));
       }
     });
