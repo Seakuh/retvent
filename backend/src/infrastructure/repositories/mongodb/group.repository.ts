@@ -20,6 +20,18 @@ export class MongoGroupRepository implements IGroupRepository {
     return this.groupModel.findByIdAndDelete(id);
   }
 
+  leaveGroup(groupId: string, userId: string): Promise<Group | null> {
+    return this.groupModel
+      .findByIdAndUpdate(
+        groupId,
+        {
+          $pull: { memberIds: userId },
+        },
+        { new: true },
+      )
+      .then((group: any) => group || null);
+  }
+
   findByGroupName(name: string): Promise<Group | null> {
     return this.groupModel.findOne({ name });
   }
@@ -77,5 +89,12 @@ export class MongoGroupRepository implements IGroupRepository {
       updatedAt: new Date(),
     });
     return newGroup.save();
+  }
+  getMembersOfGroup(groupId: string): Promise<string[]> {
+    return this.groupModel
+      .findById(groupId)
+      .select('memberIds')
+      .lean()
+      .then((group: any) => group?.memberIds || []);
   }
 }

@@ -85,4 +85,14 @@ export class GroupController {
   //   ) {
   //     return this.groupService.updateGroup(groupId, dto);
   //   }
+
+  // -----------------------------
+  // Member Management
+  // -----------------------------
+
+  @Get('/:groupId/members')
+  @UseGuards(GroupGuard)
+  async getMembersOfGroup(@Req() req, @Param('groupId') groupId: string) {
+    return await this.groupService.getMembersOfGroup(groupId);
+  }
 }

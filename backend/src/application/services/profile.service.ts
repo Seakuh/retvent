@@ -324,4 +324,8 @@ export class ProfileService {
       throw new NotFoundException('Profile not found');
     }
   }
+
+  async findByIds(memberIds: string[]) {
+    return this.profileRepository.findByIds(memberIds);
+  }
 }

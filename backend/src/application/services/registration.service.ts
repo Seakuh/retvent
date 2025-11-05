@@ -82,6 +82,7 @@ export class RegistrationService {
 
     this.eventService.unregisterEvent(eventId, userId);
     this.userService.unregisterFromEvent(eventId, userId);
+    console.log('reason', reason);
 
     if (reason && reason.length > 0) {
       const host = await this.userService.findByUsername(event.hostUsername);

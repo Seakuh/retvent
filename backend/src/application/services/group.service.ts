@@ -8,12 +8,14 @@ import { CreateGroupDto } from 'src/presentation/dtos/create-group.dto';
 import { UpdateGroupDto } from 'src/presentation/dtos/update-group.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { MongoGroupRepository } from '../../infrastructure/repositories/mongodb/group.repository';
+import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 @Injectable()
 export class GroupService {
   constructor(
     private readonly groupRepository: MongoGroupRepository,
     private readonly userService: UserService,
+    private readonly profileService: ProfileService,
   ) {}
 
   async createGroup(userId: string, dto: CreateGroupDto) {
@@ -104,7 +106,11 @@ export class GroupService {
     if (!group) throw new NotFoundException('Group not found');
 
     group.memberIds = group.memberIds.filter((id) => id !== userId);
-    return this.groupRepository.update(groupId, group);
+    const result = await this.groupRepository.leaveGroup(groupId, userId);
+    if (result) {
+      return result;
+    }
+    return { message: 'Group leaved' };
   }
 
   async getGroupById(groupId: string) {
@@ -124,5 +130,19 @@ export class GroupService {
   async deleteGroup(groupId: string) {
     const result = await this.groupRepository.delete(groupId);
     return result !== null;
+  }
+
+  // -----------------------------
+  // Member Management
+  // -----------------------------
+  async getMembersOfGroup(groupId: string) {
+    const group = await this.groupRepository.findById(groupId);
+    if (!group) throw new NotFoundException('Group not found');
+    const members = await this.profileService.findByIds(group.memberIds);
+    return members.map((member) => ({
+      id: member.userId,
+      username: member.username,
+      profileImageUrl: member.profileImageUrl,
+    }));
   }
 }
