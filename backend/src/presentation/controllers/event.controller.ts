@@ -1031,10 +1031,6 @@ export class EventController {
     @Req() req,
     @UploadedFile() image?: Express.Multer.File,
   ) {
-    console.log('createEventFull body:', body);
-    console.log('createEventFull body.data:', body.data);
-    console.log('createEventFull image:', image);
-
     // Parse the data field if it's a string (from FormData)
     let eventData = body.data;
     if (typeof eventData === 'string') {
