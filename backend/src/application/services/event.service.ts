@@ -8,6 +8,7 @@ import axios from 'axios';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { GeolocationService } from 'src/infrastructure/services/geolocation.service';
 import { QdrantService } from 'src/infrastructure/services/qdrant.service';
+import { CreateFullEventDto } from 'src/presentation/dtos/create-full-event.dto';
 import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event, EventWithHost } from '../../core/domain/event';
@@ -19,9 +20,6 @@ import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 @Injectable()
 export class EventService {
-  createEventByText(text: string) {
-    throw new Error('Method not implemented.');
-  }
   constructor(
     private readonly eventRepository: MongoEventRepository,
     private readonly imageService: ImageService,
@@ -1153,4 +1151,36 @@ export class EventService {
   //   }
   //   return this.eventRepository.connectWithEventMember(eventId, userId);
   // }
+
+  // ------------------------------------------------------------
+  // CREATE EVENT FULL
+  // ------------------------------------------------------------
+  async createEventFull(body: CreateFullEventDto, userId: string) {
+    console.log('createEventFull', body, userId);
+    const profile = await this.profileService.getProfileByUserId(userId);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    let imageUrl: string | undefined;
+
+    // Wenn ein Bild vorhanden ist → hochladen
+    if (body.image) {
+      try {
+        // Hier erwartest du, dass dein ImageService z. B. die Datei in S3, Cloudinary, etc. hochlädt
+        imageUrl = await this.imageService.uploadImage(body.image);
+      } catch (error) {
+        console.error('Failed to upload image:', error);
+      }
+    }
+
+    // Eventdaten vorbereiten
+    const eventData = {
+      ...body,
+      hostId: userId,
+      ...(imageUrl && { imageUrl }), // oder image: imageUrl, falls du das Feld gleich halten willst
+    };
+
+    return this.eventRepository.createEventFull(eventData, userId);
+  }
 }

@@ -32,7 +32,10 @@ export interface IEvent extends Document {
   };
   tags?: string[];
   capacity?: number;
+  language?: string;
+  difficulty?: string;
   registrations?: number;
+  remoteUrl?: string;
   registeredUserIds?: string[];
   website?: string;
   likeIds?: string[];

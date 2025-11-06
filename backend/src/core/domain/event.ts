@@ -47,7 +47,9 @@ export class Event implements IEvent {
   regenstrations: number;
   registeredUserIds?: string[];
   email?: string;
-
+  language?: string;
+  difficulty?: string;
+  remoteUrl?: string;
   // Timestamps
   createdAt: Date;
   updatedAt: Date;

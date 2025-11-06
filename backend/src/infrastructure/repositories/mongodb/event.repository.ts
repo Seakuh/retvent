@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { CreateFullEventDto } from 'src/presentation/dtos/create-full-event.dto';
 import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event } from '../../../core/domain/event';
@@ -1089,5 +1090,15 @@ export class MongoEventRepository implements IEventRepository {
 
   getEventValidators(id: string) {
     return this.eventModel.findById(id).select('validators hostId').exec();
+  }
+
+  // ------------------------------------------------------------
+  // CREATE EVENT FULL
+  // ------------------------------------------------------------
+  async createEventFull(body: CreateFullEventDto, userId: string) {
+    return this.eventModel.create({
+      ...body,
+      hostId: userId,
+    });
   }
 }

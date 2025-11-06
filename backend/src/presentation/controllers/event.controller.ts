@@ -23,6 +23,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
+import { CreateFullEventDto } from '../dtos/create-full-event.dto';
 import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -1019,4 +1020,13 @@ export class EventController {
   // async connectWithEvent(@Body() body: { eventId: string }, @Request() req) {
   //   return this.eventService.connectWithEvent(body.eventId, req.user.id);
   // }
+
+  // ------------------------------------------------------------
+  // CREATE EVENT FULL
+  // ------------------------------------------------------------
+  @Post('create-full/')
+  @UseGuards(JwtAuthGuard)
+  async createEventFull(@Body() body: CreateFullEventDto, @Req() req) {
+    return this.eventService.createEventFull(body, req.user.sub);
+  }
 }
