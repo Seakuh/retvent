@@ -1160,7 +1160,6 @@ export class EventService {
     userId: string,
     image?: Express.Multer.File,
   ) {
-    console.log('createEventFull', body, image, userId);
     const profile = await this.profileService.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundException('Profile not found');
