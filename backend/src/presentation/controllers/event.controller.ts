@@ -23,7 +23,6 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
-import { CreateFullEventDto } from '../dtos/create-full-event.dto';
 import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -1026,7 +1025,22 @@ export class EventController {
   // ------------------------------------------------------------
   @Post('create-full/')
   @UseGuards(JwtAuthGuard)
-  async createEventFull(@Body() body: CreateFullEventDto, @Req() req) {
-    return this.eventService.createEventFull(body, req.user.sub);
+  @UseInterceptors(FileInterceptor('image')) // <-- DIESE ZEILE HINZUFÜGEN!
+  async createEventFull(
+    @Body() body: any, // <-- 'any' statt typed, weil FormData anders kommt
+    @Req() req,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
+    console.log('createEventFull body:', body);
+    console.log('createEventFull body.data:', body.data);
+    console.log('createEventFull image:', image);
+
+    // Parse the data field if it's a string (from FormData)
+    let eventData = body.data;
+    if (typeof eventData === 'string') {
+      eventData = JSON.parse(eventData);
+    }
+
+    return this.eventService.createEventFull(eventData, req.user.sub, image);
   }
 }

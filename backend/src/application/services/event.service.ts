@@ -1155,8 +1155,12 @@ export class EventService {
   // ------------------------------------------------------------
   // CREATE EVENT FULL
   // ------------------------------------------------------------
-  async createEventFull(body: CreateFullEventDto, userId: string) {
-    console.log('createEventFull', body, userId);
+  async createEventFull(
+    body: CreateFullEventDto,
+    userId: string,
+    image?: Express.Multer.File,
+  ) {
+    console.log('createEventFull', body, image, userId);
     const profile = await this.profileService.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundException('Profile not found');
@@ -1165,10 +1169,10 @@ export class EventService {
     let imageUrl: string | undefined;
 
     // Wenn ein Bild vorhanden ist → hochladen
-    if (body.image) {
+    if (image) {
       try {
         // Hier erwartest du, dass dein ImageService z. B. die Datei in S3, Cloudinary, etc. hochlädt
-        imageUrl = await this.imageService.uploadImage(body.image);
+        imageUrl = await this.imageService.uploadImage(image);
       } catch (error) {
         console.error('Failed to upload image:', error);
       }
