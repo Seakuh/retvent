@@ -44,11 +44,14 @@ export class MongoUserRepository implements IUserRepository {
 
   async findById(id: string): Promise<User | null> {
     const user = await this.userModel.findById(id);
+    if (!user) {
+      return null;
+    }
     if (user.points === undefined) {
       user.points = 0;
       await user.save();
     }
-    return user ? this.toEntity(user) : null;
+    return this.toEntity(user);
   }
 
   async findByUserId(userId: string): Promise<User | null> {

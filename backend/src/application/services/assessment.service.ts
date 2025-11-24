@@ -12,6 +12,7 @@ import { QdrantService } from '../../infrastructure/services/qdrant.service';
 import { IPeerAssessment } from 'src/core/domain/peer-assessment.schema';
 import { CreatePeerAssessmentDto } from 'src/presentation/dtos/create-peer-assessment.dto';
 import { GroupService } from './group.service';
+import { ProfileService } from './profile.service';
 import {
   AssessmentMatrixDto,
   AssessmentDataPoint,
@@ -23,6 +24,7 @@ export class AssessmentService {
     private readonly chatgptService: ChatGPTService,
     private readonly qdrantService: QdrantService,
     private readonly groupService: GroupService,
+    private readonly profileService: ProfileService,
     @InjectModel('PeerAssessment')
     private readonly peerAssessmentModel: Model<IPeerAssessment>,
   ) {}
@@ -82,8 +84,8 @@ export class AssessmentService {
 
     // 3. Prüfen ob bereits eine Bewertung existiert
     const existingAssessment = await this.peerAssessmentModel.findOne({
-      assessorId,
-      assessedId: dto.assessedUserId,
+      assessorUserId: assessorId,
+      assessedUserId: dto.assessedUserId,
     });
 
     if (existingAssessment) {
@@ -94,8 +96,8 @@ export class AssessmentService {
 
     // 4. Peer-Bewertung speichern
     const peerAssessment = new this.peerAssessmentModel({
-      assessorId,
-      assessedId: dto.assessedUserId,
+      assessorUserId: assessorId,
+      assessedUserId: dto.assessedUserId,
       groupId: dto.groupId,
       loose: dto.loose,
       tight: dto.tight,
@@ -139,11 +141,11 @@ export class AssessmentService {
 
     // 2. Peer-Bewertungen aus MongoDB abrufen
     const peerAssessments = await this.peerAssessmentModel
-      .find({ assessedId: userId })
+      .find({ assessedUserId: userId })
       .lean();
 
     const peerAssessmentsData = peerAssessments.map((assessment) => ({
-      assessorId: assessment.assessorId,
+      assessorId: assessment.assessorUserId,
       loose: assessment.loose,
       tight: assessment.tight,
       aggressive: assessment.aggressive,
@@ -332,7 +334,7 @@ export class AssessmentService {
       });
 
       // 4. Formatiere Matches mit allen Details
-      const matches = similarPlayers
+      const matchesWithoutProfiles = similarPlayers
         .filter((player) => player.id !== userId)
         .slice(0, limit)
         .map((player) => {
@@ -355,6 +357,48 @@ export class AssessmentService {
             },
           };
         });
+
+      // 4.5. Lade Profile-Daten für alle Matches
+      const matchesWithProfiles = await Promise.all(
+        matchesWithoutProfiles.map(async (match) => {
+          try {
+            console.log(
+              `[MATCHING] Searching profile for userId: ${match.userId}`,
+            );
+            const profile = await this.profileService.getProfileByUserId(
+              String(match.userId),
+            );
+            console.log(
+              `[MATCHING] Profile found: ${profile ? 'Yes' : 'No'} - Username: ${profile?.username || 'N/A'}`,
+            );
+            return {
+              ...match,
+              profile: profile
+                ? {
+                    id: profile.id,
+                    username: profile.username,
+                    profileImageUrl: profile.profileImageUrl,
+                  }
+                : null,
+            };
+          } catch (error) {
+            console.error(
+              `[MATCHING] Error loading profile for user ${match.userId}:`,
+              error.message,
+            );
+            return {
+              ...match,
+              profile: null,
+            };
+          }
+        }),
+      );
+
+      // Filtere Matches ohne Profile heraus
+      const matches = matchesWithProfiles.filter((match) => match.profile !== null);
+      console.log(
+        `[MATCHING] Filtered matches: ${matchesWithProfiles.length} -> ${matches.length} (removed ${matchesWithProfiles.length - matches.length} without profiles)`,
+      );
 
       // 5. Berechne eigene Koordinaten
       const myCoordinates = {
