@@ -350,8 +350,8 @@ export class AssessmentService {
             },
             // Berechne Koordinaten für Matrix (loose-tight vs aggressive-passive)
             coordinates: {
-              x: (assessment?.loose || 5) - (assessment?.tight || 5), // -9 bis +9
-              y: (assessment?.aggressive || 5) - (assessment?.passive || 5), // -9 bis +9
+              x: Number(assessment?.loose || 5) - Number(assessment?.tight || 5), // -9 bis +9
+              y: Number(assessment?.aggressive || 5) - Number(assessment?.passive || 5), // -9 bis +9
             },
           };
         });
