@@ -38,6 +38,7 @@ export class ProfileController {
       : this.profileService.getProfileByUsername(slug);
   }
 
+
   @Get('page/:slug')
   async getProfilePage(@Param('slug') slug: string): Promise<Profile> {
     const isObjectId = /^[a-f\d]{24}$/i.test(slug); // z. B. MongoDB ID

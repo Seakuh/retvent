@@ -48,6 +48,7 @@ export class UserService {
       points: user.points,
       email: user.email,
       username: user.username,
+      badges: profile.badges || [],
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       gallery: profile.gallery || [],

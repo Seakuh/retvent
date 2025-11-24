@@ -10,6 +10,7 @@ export const ProfileSchema = new Schema({
   headerImageUrl: { type: String },
   telephoneNumber: { type: String },
   bio: { type: String },
+  badges: { type: [String] },
   followedLocationIds: { type: [String] },
   gallery: { type: [String] },
   likedEventIds: { type: [String] },
