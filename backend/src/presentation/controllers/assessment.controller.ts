@@ -71,4 +71,14 @@ export class AssessmentController {
     const limitNum = limit ? parseInt(limit, 10) : 20;
     return this.assessmentService.findSimilarPlayers(user.sub, limitNum);
   }
+
+  @Get('find-matches')
+  @UseGuards(JwtAuthGuard)
+  async findMatches(
+    @UserDecorator() user: User,
+    @Query('limit') limit?: string,
+  ) {
+    const limitNum = limit ? parseInt(limit, 10) : 20;
+    return this.assessmentService.findMatches(user.sub, limitNum);
+  }
 }

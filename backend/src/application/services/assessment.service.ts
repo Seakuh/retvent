@@ -302,4 +302,89 @@ export class AssessmentService {
       return [];
     }
   }
+
+  async findMatches(userId: string, limit: number = 20): Promise<any> {
+    try {
+      // 1. Hole eigenes Assessment & Matrix
+      const myMatrix = await this.getAssessmentMatrix(userId);
+
+      // 2. Falls kein Assessment vorhanden
+      if (!myMatrix.selfAssessment) {
+        return {
+          hasAssessment: false,
+          myAssessment: null,
+          myMatrix: null,
+          matches: [],
+        };
+      }
+
+      // 3. Lade Vector und finde ähnliche Spieler
+      const userVector = await this.qdrantService.loadVectorById(
+        'assessment_embeddings',
+        userId,
+      );
+
+      const similarPlayers = await this.qdrantService.searchAssessments({
+        vector: userVector,
+        limit: limit + 1,
+        withPayload: true,
+        scoreThreshold: 0.5, // Niedrigerer Threshold für mehr Matches
+      });
+
+      // 4. Formatiere Matches mit allen Details
+      const matches = similarPlayers
+        .filter((player) => player.id !== userId)
+        .slice(0, limit)
+        .map((player) => {
+          const assessment = player.payload;
+          return {
+            userId: player.id,
+            matchScore: Math.round(player.score * 100),
+            similarity: player.score,
+            assessment: {
+              loose: assessment?.loose || 5,
+              tight: assessment?.tight || 5,
+              aggressive: assessment?.aggressive || 5,
+              passive: assessment?.passive || 5,
+              playStyle: assessment?.playStyle || 'Unbekannt',
+            },
+            // Berechne Koordinaten für Matrix (loose-tight vs aggressive-passive)
+            coordinates: {
+              x: (assessment?.loose || 5) - (assessment?.tight || 5), // -9 bis +9
+              y: (assessment?.aggressive || 5) - (assessment?.passive || 5), // -9 bis +9
+            },
+          };
+        });
+
+      // 5. Berechne eigene Koordinaten
+      const myCoordinates = {
+        x:
+          myMatrix.selfAssessment.loose - myMatrix.selfAssessment.tight,
+        y:
+          myMatrix.selfAssessment.aggressive -
+          myMatrix.selfAssessment.passive,
+      };
+
+      return {
+        hasAssessment: true,
+        myAssessment: myMatrix.selfAssessment,
+        myMatrix: {
+          selfAssessment: myMatrix.selfAssessment,
+          averagePeerAssessment: myMatrix.averagePeerAssessment,
+          peerAssessments: myMatrix.peerAssessments,
+          coordinates: myCoordinates,
+        },
+        matches,
+        totalMatches: matches.length,
+      };
+    } catch (error) {
+      console.error('Error finding matches:', error);
+      return {
+        hasAssessment: false,
+        myAssessment: null,
+        myMatrix: null,
+        matches: [],
+      };
+    }
+  }
 }
