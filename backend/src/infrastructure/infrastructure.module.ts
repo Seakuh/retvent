@@ -19,6 +19,7 @@ import { TicketsService } from 'src/application/services/ticket.service';
 import { VoiceChatService } from 'src/application/services/voice-chat/voice-chat.service';
 import { MessageSchema } from 'src/core/domain/message.schema';
 import { TicketSchema } from 'src/core/domain/ticket.schema';
+import { PeerAssessmentSchema } from 'src/core/domain/peer-assessment.schema';
 import { ArtistController } from 'src/presentation/controllers/artist.controller';
 import { CommentController } from 'src/presentation/controllers/comment.controller';
 import { FeedController } from 'src/presentation/controllers/feed.controller';
@@ -130,6 +131,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       { name: 'Ticket', schema: TicketSchema },
       { name: 'Community', schema: CommunitySchema },
       { name: 'Post', schema: PostSchema },
+      { name: 'PeerAssessment', schema: PeerAssessmentSchema },
     ]),
   ],
   controllers: [

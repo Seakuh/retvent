@@ -508,7 +508,7 @@ export class QdrantService implements OnModuleInit {
     return `${timeLow}-${timeMid}-${timeHi}-${clockSeq}-${node}`;
   }
 
-  private async loadVectorById(collectionName: string, id: string | number) {
+  async loadVectorById(collectionName: string, id: string | number) {
     const normalizedId = this.normalizePointId(id);
     let point;
     try {
@@ -555,7 +555,7 @@ export class QdrantService implements OnModuleInit {
     }
   }
 
-  private async retrievePoints(
+  async retrievePoints(
     collectionName: string,
     ids: (string | number)[],
     options: { withPayload?: boolean; withVector?: boolean } = {},
