@@ -20,6 +20,7 @@ import { VoiceChatService } from 'src/application/services/voice-chat/voice-chat
 import { MessageSchema } from 'src/core/domain/message.schema';
 import { TicketSchema } from 'src/core/domain/ticket.schema';
 import { PeerAssessmentSchema } from 'src/core/domain/peer-assessment.schema';
+import { SelfAssessmentSchema } from 'src/core/domain/self-assessment.schema';
 import { ArtistController } from 'src/presentation/controllers/artist.controller';
 import { CommentController } from 'src/presentation/controllers/comment.controller';
 import { FeedController } from 'src/presentation/controllers/feed.controller';
@@ -132,6 +133,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       { name: 'Community', schema: CommunitySchema },
       { name: 'Post', schema: PostSchema },
       { name: 'PeerAssessment', schema: PeerAssessmentSchema },
+      { name: 'SelfAssessment', schema: SelfAssessmentSchema },
     ]),
   ],
   controllers: [

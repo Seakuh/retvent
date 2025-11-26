@@ -1,8 +1,6 @@
 export interface AssessmentDataPoint {
-  loose: number;
-  tight: number;
-  aggressive: number;
-  passive: number;
+  passiveAggressive: number; // 0 = passiv, 10 = aggressiv (X-Achse)
+  tightLoose: number; // 0 = tight, 10 = loose (Y-Achse)
   playStyle: string;
 }
 

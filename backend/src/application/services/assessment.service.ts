@@ -6,10 +6,9 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { CreateAssessmentDto } from 'src/presentation/dtos/create-assessment.dto';
-import { QdrantService } from '../../infrastructure/services/qdrant.service';
 import { IPeerAssessment } from 'src/core/domain/peer-assessment.schema';
+import { ISelfAssessment } from 'src/core/domain/self-assessment.schema';
 import { CreatePeerAssessmentDto } from 'src/presentation/dtos/create-peer-assessment.dto';
 import { GroupService } from './group.service';
 import { ProfileService } from './profile.service';
@@ -21,35 +20,53 @@ import {
 @Injectable()
 export class AssessmentService {
   constructor(
-    private readonly chatgptService: ChatGPTService,
-    private readonly qdrantService: QdrantService,
     private readonly groupService: GroupService,
     private readonly profileService: ProfileService,
     @InjectModel('PeerAssessment')
     private readonly peerAssessmentModel: Model<IPeerAssessment>,
+    @InjectModel('SelfAssessment')
+    private readonly selfAssessmentModel: Model<ISelfAssessment>,
   ) {}
 
   async createAssessment(
     createAssessmentDto: CreateAssessmentDto,
     userId: string,
   ) {
-    const text = JSON.stringify(createAssessmentDto);
+    // Überprüfe ob bereits eine Selbsteinschätzung existiert
+    const existingAssessment = await this.selfAssessmentModel.findOne({
+      userId,
+    });
 
-    const embedding = await this.chatgptService.createEmbedding(text);
-    if (!embedding) {
-      throw new Error(
-        'Failed to create embedding - ChatGPT service not initialized',
-      );
+    if (existingAssessment) {
+      // Update existing assessment
+      existingAssessment.passiveAggressive =
+        createAssessmentDto.passiveAggressive;
+      existingAssessment.tightLoose = createAssessmentDto.tightLoose;
+      existingAssessment.playStyle = createAssessmentDto.playStyle;
+      existingAssessment.submittedAt = createAssessmentDto.submittedAt;
+      await existingAssessment.save();
+
+      return {
+        message: 'Self-assessment updated successfully',
+        assessment: existingAssessment,
+      };
     }
-    console.log('embedding', embedding);
-    const assessment = await this.qdrantService.upsertAssessments([
-      {
-        id: userId,
-        vector: embedding,
-        payload: createAssessmentDto,
-      },
-    ]);
-    return assessment;
+
+    // Create new assessment
+    const assessment = new this.selfAssessmentModel({
+      userId,
+      passiveAggressive: createAssessmentDto.passiveAggressive,
+      tightLoose: createAssessmentDto.tightLoose,
+      playStyle: createAssessmentDto.playStyle,
+      submittedAt: createAssessmentDto.submittedAt,
+    });
+
+    await assessment.save();
+
+    return {
+      message: 'Self-assessment created successfully',
+      assessment,
+    };
   }
 
   async createPeerAssessment(
@@ -99,10 +116,8 @@ export class AssessmentService {
       assessorUserId: assessorId,
       assessedUserId: dto.assessedUserId,
       groupId: dto.groupId,
-      loose: dto.loose,
-      tight: dto.tight,
-      aggressive: dto.aggressive,
-      passive: dto.passive,
+      passiveAggressive: dto.passiveAggressive,
+      tightLoose: dto.tightLoose,
       playStyle: dto.playStyle,
       submittedAt: dto.submittedAt,
     });
@@ -116,23 +131,18 @@ export class AssessmentService {
   }
 
   async getAssessmentMatrix(userId: string): Promise<AssessmentMatrixDto> {
-    // 1. Selbsteinschätzung aus Qdrant abrufen
+    // 1. Selbsteinschätzung aus MongoDB abrufen
     let selfAssessment: AssessmentDataPoint | undefined;
     try {
-      const selfAssessmentResult = await this.qdrantService.retrievePoints(
-        'assessment_embeddings',
-        [userId],
-        { withPayload: true, withVector: false },
-      );
+      const selfAssessmentResult = await this.selfAssessmentModel
+        .findOne({ userId })
+        .lean();
 
-      if (selfAssessmentResult && selfAssessmentResult.length > 0) {
-        const payload = selfAssessmentResult[0].payload as any;
+      if (selfAssessmentResult) {
         selfAssessment = {
-          loose: payload.loose,
-          tight: payload.tight,
-          aggressive: payload.aggressive,
-          passive: payload.passive,
-          playStyle: payload.playStyle,
+          passiveAggressive: selfAssessmentResult.passiveAggressive,
+          tightLoose: selfAssessmentResult.tightLoose,
+          playStyle: selfAssessmentResult.playStyle,
         };
       }
     } catch (error) {
@@ -144,45 +154,40 @@ export class AssessmentService {
       .find({ assessedUserId: userId })
       .lean();
 
-    const peerAssessmentsData = peerAssessments.map((assessment) => ({
-      assessorId: assessment.assessorUserId,
-      loose: assessment.loose,
-      tight: assessment.tight,
-      aggressive: assessment.aggressive,
-      passive: assessment.passive,
-      playStyle: assessment.playStyle,
-      submittedAt: assessment.submittedAt,
-    }));
+    const peerAssessmentsData = peerAssessments
+      .map((assessment) => ({
+        assessorId: assessment.assessorUserId,
+        passiveAggressive: assessment.passiveAggressive,
+        tightLoose: assessment.tightLoose,
+        playStyle: assessment.playStyle,
+        submittedAt: assessment.submittedAt,
+      }))
+      .filter((assessment) =>
+        assessment.passiveAggressive != null &&
+        assessment.tightLoose != null
+      ); // Filter alte Assessments ohne neue Felder
 
     // 3. Durchschnitt der Peer-Bewertungen berechnen
     let averagePeerAssessment: AssessmentDataPoint | undefined;
     if (peerAssessmentsData.length > 0) {
       const sum = peerAssessmentsData.reduce(
         (acc, curr) => ({
-          loose: acc.loose + curr.loose,
-          tight: acc.tight + curr.tight,
-          aggressive: acc.aggressive + curr.aggressive,
-          passive: acc.passive + curr.passive,
+          passiveAggressive: acc.passiveAggressive + curr.passiveAggressive,
+          tightLoose: acc.tightLoose + curr.tightLoose,
         }),
-        { loose: 0, tight: 0, aggressive: 0, passive: 0 },
+        { passiveAggressive: 0, tightLoose: 0 },
       );
 
       const count = peerAssessmentsData.length;
-      const avgLoose = sum.loose / count;
-      const avgTight = sum.tight / count;
-      const avgAggressive = sum.aggressive / count;
-      const avgPassive = sum.passive / count;
+      const avgPassiveAggressive = sum.passiveAggressive / count;
+      const avgTightLoose = sum.tightLoose / count;
 
       averagePeerAssessment = {
-        loose: Math.round(avgLoose * 10) / 10,
-        tight: Math.round(avgTight * 10) / 10,
-        aggressive: Math.round(avgAggressive * 10) / 10,
-        passive: Math.round(avgPassive * 10) / 10,
+        passiveAggressive: Math.round(avgPassiveAggressive * 10) / 10,
+        tightLoose: Math.round(avgTightLoose * 10) / 10,
         playStyle: this.determinePlayStyle(
-          avgLoose,
-          avgTight,
-          avgAggressive,
-          avgPassive,
+          avgPassiveAggressive,
+          avgTightLoose,
         ),
       };
     }
@@ -196,22 +201,45 @@ export class AssessmentService {
   }
 
   private determinePlayStyle(
-    loose: number,
-    tight: number,
-    aggressive: number,
-    passive: number,
+    passiveAggressive: number,
+    tightLoose: number,
   ): string {
-    if (loose > tight && aggressive > passive) {
+    // passiveAggressive: 0-10 (0 = passiv, 10 = aggressiv)
+    // tightLoose: 0-10 (0 = tight, 10 = loose)
+
+    const isAggressive = passiveAggressive > 5;
+    const isLoose = tightLoose > 5;
+
+    if (isLoose && isAggressive) {
       return 'Loose-Aggressive (LAG)';
-    } else if (loose > tight && passive > aggressive) {
+    } else if (isLoose && !isAggressive) {
       return 'Loose-Passive';
-    } else if (tight > loose && aggressive > passive) {
+    } else if (!isLoose && isAggressive) {
       return 'Tight-Aggressive (TAG)';
-    } else if (tight > loose && passive > aggressive) {
+    } else if (!isLoose && !isAggressive) {
       return 'Tight-Passive';
     } else {
       return 'Ausgeglichen';
     }
+  }
+
+  // Berechne euklidische Distanz zwischen zwei Assessments
+  private calculateDistance(
+    a: { passiveAggressive: number; tightLoose: number },
+    b: { passiveAggressive: number; tightLoose: number },
+  ): number {
+    const dx = a.passiveAggressive - b.passiveAggressive;
+    const dy = a.tightLoose - b.tightLoose;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  // Berechne Similarity Score (0-100, höher = ähnlicher)
+  private calculateSimilarity(distance: number): number {
+    // Maximale Distanz in 2D-Raum (0-10, 0-10) ist sqrt(10^2 + 10^2) ≈ 14.14
+    const maxDistance = Math.sqrt(10 * 10 + 10 * 10);
+    // Invertiere die Distanz zu einem Similarity-Score
+    const similarity = 1 - distance / maxDistance;
+    return Math.round(similarity * 100);
   }
 
   async findSimilarPlayers(
@@ -219,34 +247,44 @@ export class AssessmentService {
     limit: number = 20,
   ): Promise<any[]> {
     try {
-      // 1. Lade Vector des Users aus Qdrant
-      const userVector = await this.qdrantService.loadVectorById(
-        'assessment_embeddings',
-        userId,
-      );
+      // 1. Lade eigenes Assessment
+      const myAssessment = await this.selfAssessmentModel
+        .findOne({ userId })
+        .lean();
 
-      // 2. Suche ähnliche Spieler basierend auf Assessment-Vector
-      const similarPlayers = await this.qdrantService.searchAssessments({
-        vector: userVector,
-        limit: limit + 1, // +1 weil wir den User selbst filtern
-        withPayload: true,
-        scoreThreshold: 0.7, // Mindest-Ähnlichkeit
-      });
+      if (!myAssessment) {
+        return [];
+      }
 
-      // 3. Filtere den User selbst aus und formatiere Ergebnisse
-      const matches = similarPlayers
-        .filter((player) => player.id !== userId)
-        .slice(0, limit)
-        .map((player) => ({
-          userId: player.id,
-          similarity: player.score,
-          assessment: player.payload,
-        }));
+      // 2. Lade alle anderen Assessments
+      const allAssessments = await this.selfAssessmentModel
+        .find({ userId: { $ne: userId } })
+        .lean();
+
+      // 3. Berechne Distanzen und sortiere
+      const matches = allAssessments
+        .map((assessment) => {
+          const distance = this.calculateDistance(myAssessment, assessment);
+          const similarity = this.calculateSimilarity(distance);
+
+          return {
+            userId: assessment.userId,
+            similarity: similarity / 100, // 0-1 für Kompatibilität
+            matchScore: similarity,
+            assessment: {
+              passiveAggressive: assessment.passiveAggressive,
+              tightLoose: assessment.tightLoose,
+              playStyle: assessment.playStyle,
+            },
+            distance,
+          };
+        })
+        .sort((a, b) => a.distance - b.distance) // Sortiere nach Distanz (kleinste zuerst)
+        .slice(0, limit);
 
       return matches;
     } catch (error) {
       console.error('Error finding similar players:', error);
-      // Falls User noch kein Assessment hat, gib leeres Array zurück
       return [];
     }
   }
@@ -257,46 +295,42 @@ export class AssessmentService {
     limit: number = 20,
   ): Promise<any[]> {
     try {
-      // 1. Lade Vector des Users aus Qdrant
-      const userVector = await this.qdrantService.loadVectorById(
-        'assessment_embeddings',
-        userId,
-      );
+      // 1. Lade eigenes Assessment
+      const myAssessment = await this.selfAssessmentModel
+        .findOne({ userId })
+        .lean();
 
-      // 2. Optional: Filter nach Spielstil
-      const filter = targetPlayStyle
-        ? {
-            must: [
-              {
-                key: 'playStyle',
-                match: { value: targetPlayStyle },
-              },
-            ],
-          }
-        : undefined;
+      if (!myAssessment) {
+        return [];
+      }
 
-      // 3. Suche ähnliche Spieler
-      const similarPlayers = await this.qdrantService.searchAssessments({
-        vector: userVector,
-        limit: limit + 1,
-        filter,
-        withPayload: true,
-        scoreThreshold: 0.6,
-      });
+      // 2. Lade alle anderen Assessments (optional mit PlayStyle-Filter)
+      const query: any = { userId: { $ne: userId } };
+      if (targetPlayStyle) {
+        query.playStyle = targetPlayStyle;
+      }
 
-      // 4. Filtere und formatiere
-      const matches = similarPlayers
-        .filter((player) => player.id !== userId)
-        .slice(0, limit)
-        .map((player) => ({
-          userId: player.id,
-          matchScore: Math.round(player.score * 100),
-          playStyle: player.payload?.playStyle,
-          loose: player.payload?.loose,
-          tight: player.payload?.tight,
-          aggressive: player.payload?.aggressive,
-          passive: player.payload?.passive,
-        }));
+      const allAssessments = await this.selfAssessmentModel
+        .find(query)
+        .lean();
+
+      // 3. Berechne Distanzen und sortiere
+      const matches = allAssessments
+        .map((assessment) => {
+          const distance = this.calculateDistance(myAssessment, assessment);
+          const matchScore = this.calculateSimilarity(distance);
+
+          return {
+            userId: assessment.userId,
+            matchScore,
+            playStyle: assessment.playStyle,
+            passiveAggressive: assessment.passiveAggressive,
+            tightLoose: assessment.tightLoose,
+            distance,
+          };
+        })
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, limit);
 
       return matches;
     } catch (error) {
@@ -320,45 +354,41 @@ export class AssessmentService {
         };
       }
 
-      // 3. Lade Vector und finde ähnliche Spieler
-      const userVector = await this.qdrantService.loadVectorById(
-        'assessment_embeddings',
-        userId,
-      );
+      // 3. Lade alle anderen Assessments
+      const allAssessments = await this.selfAssessmentModel
+        .find({ userId: { $ne: userId } })
+        .lean();
 
-      const similarPlayers = await this.qdrantService.searchAssessments({
-        vector: userVector,
-        limit: limit + 1,
-        withPayload: true,
-        scoreThreshold: 0.5, // Niedrigerer Threshold für mehr Matches
-      });
+      // 4. Berechne Distanzen und sortiere
+      const matchesWithoutProfiles = allAssessments
+        .map((assessment) => {
+          const distance = this.calculateDistance(
+            myMatrix.selfAssessment!,
+            assessment,
+          );
+          const matchScore = this.calculateSimilarity(distance);
 
-      // 4. Formatiere Matches mit allen Details
-      const matchesWithoutProfiles = similarPlayers
-        .filter((player) => player.id !== userId)
-        .slice(0, limit)
-        .map((player) => {
-          const assessment = player.payload;
           return {
-            userId: player.id,
-            matchScore: Math.round(player.score * 100),
-            similarity: player.score,
+            userId: assessment.userId,
+            matchScore,
+            similarity: matchScore / 100,
             assessment: {
-              loose: assessment?.loose || 5,
-              tight: assessment?.tight || 5,
-              aggressive: assessment?.aggressive || 5,
-              passive: assessment?.passive || 5,
-              playStyle: assessment?.playStyle || 'Unbekannt',
+              passiveAggressive: assessment.passiveAggressive,
+              tightLoose: assessment.tightLoose,
+              playStyle: assessment.playStyle,
             },
-            // Berechne Koordinaten für Matrix (loose-tight vs aggressive-passive)
+            // Matrix-Koordinaten (für Frontend)
             coordinates: {
-              x: Number(assessment?.loose || 5) - Number(assessment?.tight || 5), // -9 bis +9
-              y: Number(assessment?.aggressive || 5) - Number(assessment?.passive || 5), // -9 bis +9
+              x: assessment.passiveAggressive, // 0-10 (passiv-aggressiv)
+              y: assessment.tightLoose, // 0-10 (tight-loose)
             },
+            distance,
           };
-        });
+        })
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, limit);
 
-      // 4.5. Lade Profile-Daten für alle Matches
+      // 5. Lade Profile-Daten für alle Matches
       const matchesWithProfiles = await Promise.all(
         matchesWithoutProfiles.map(async (match) => {
           try {
@@ -395,18 +425,17 @@ export class AssessmentService {
       );
 
       // Filtere Matches ohne Profile heraus
-      const matches = matchesWithProfiles.filter((match) => match.profile !== null);
+      const matches = matchesWithProfiles.filter(
+        (match) => match.profile !== null,
+      );
       console.log(
         `[MATCHING] Filtered matches: ${matchesWithProfiles.length} -> ${matches.length} (removed ${matchesWithProfiles.length - matches.length} without profiles)`,
       );
 
-      // 5. Berechne eigene Koordinaten
+      // 6. Berechne eigene Koordinaten
       const myCoordinates = {
-        x:
-          myMatrix.selfAssessment.loose - myMatrix.selfAssessment.tight,
-        y:
-          myMatrix.selfAssessment.aggressive -
-          myMatrix.selfAssessment.passive,
+        x: myMatrix.selfAssessment.passiveAggressive, // 0-10
+        y: myMatrix.selfAssessment.tightLoose, // 0-10
       };
 
       return {

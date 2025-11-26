@@ -8,24 +8,14 @@ export class CreatePeerAssessmentDto {
   groupId: string; // Gruppe in der sie zusammen sind
 
   @IsNumber()
-  @Min(1)
+  @Min(0)
   @Max(10)
-  loose: number;
+  passiveAggressive: number; // 0 = passiv, 10 = aggressiv
 
   @IsNumber()
-  @Min(1)
+  @Min(0)
   @Max(10)
-  tight: number;
-
-  @IsNumber()
-  @Min(1)
-  @Max(10)
-  aggressive: number;
-
-  @IsNumber()
-  @Min(1)
-  @Max(10)
-  passive: number;
+  tightLoose: number; // 0 = tight, 10 = loose
 
   @IsString()
   playStyle: string;
