@@ -2,6 +2,7 @@ import { Heart } from "lucide-react";
 import { lazy, useMemo } from "react";
 import { AdBanner } from "../../Advertisement/AdBanner/AdBanner";
 import { Event, FeedResponse } from "../../utils";
+import { CommunityList } from "../Community/CommunityList";
 import { EventSection } from "../EventPage/EventSection";
 import "./Trending.css";
 
@@ -103,6 +104,7 @@ export const Trending = ({
   return (
     <div className="event-page-container">
       <AdBanner />
+      <CommunityList />
       {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}
       {favoriteEvents.length === 0 && (
         <div className="no-liked-events">

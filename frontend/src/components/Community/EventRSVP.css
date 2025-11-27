@@ -1,0 +1,100 @@
+.event-rsvp {
+  background: #111;
+  border: 1px solid #222;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.event-rsvp-image {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.event-rsvp-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-rsvp-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.event-rsvp-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.event-rsvp-date {
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0;
+}
+
+.event-rsvp-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.event-rsvp-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid #333;
+  color: white;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.event-rsvp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.event-rsvp-btn.yes:hover:not(:disabled) {
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.event-rsvp-btn.yes.active {
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.event-rsvp-btn.no:hover:not(:disabled) {
+  border-color: #f44336;
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.event-rsvp-btn.no.active {
+  border-color: #f44336;
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+}
+
+@media (max-width: 768px) {
+  .event-rsvp {
+    flex-direction: column;
+  }
+
+  .event-rsvp-image {
+    width: 100%;
+    height: 200px;
+  }
+}
