@@ -7,6 +7,12 @@ interface EventGridItemProps {
   isPast?: boolean;
 }
 
+/**
+ * EventGridItem Component
+ *
+ * Displays a single event in a grid layout
+ * Optimized for performance with lazy loading and responsive images
+ */
 export const EventGridItem: React.FC<EventGridItemProps> = ({
   event,
   handleEventClick,
@@ -22,9 +28,8 @@ export const EventGridItem: React.FC<EventGridItemProps> = ({
         <img
           src={`https://img.event-scanner.com/insecure/rs:fill:400:400/q:70/plain/${event.imageUrl}@webp`}
           alt={event.title}
-          loading="eager"
+          loading="lazy"
           decoding="async"
-          fetchPriority="high"
           onLoad={(e) => e.currentTarget.classList.add("loaded")}
         />
       </div>

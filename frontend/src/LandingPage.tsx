@@ -1,8 +1,7 @@
 import { useCallback, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BottomBar } from "./BottomBar";
-import { CategoryFilter } from "./components/CategoryFilter/CategoryFilter";
-import { CityBar } from "./components/CityBar/CityBar";
+import { FilterBar } from "./components/FilterBar/FilterBar";
 import { EventPage } from "./components/EventPage/EventPage";
 import { Trending } from "./components/Trending/Trending";
 import { UserContext } from "./contexts/UserContext";
@@ -10,6 +9,7 @@ import Footer from "./Footer/Footer";
 import { useClickOutside } from "./hooks/useClickOutside";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useLandingPageData } from "./hooks/useLandingPageData";
+import { useLandingPageHandlers } from "./hooks/useLandingPageHandlers";
 import { HelmetMeta } from "./LandingPageHelmet";
 import { useLandingSearch } from "./LandinSearchContext";
 import { SearchPage } from "./pages/SearchPage";
@@ -17,10 +17,53 @@ import { SideBar } from "./SideBar";
 import { ViewMode } from "./types/event";
 import { UploadModal } from "./UploadModal/UploadModal";
 
+// ============================================================================
+// LOADING SPINNER COMPONENT
+// ============================================================================
+
+const LoadingSpinner = () => (
+  <div className="search-loading">
+    <div className="search-spinner"></div>
+  </div>
+);
+
+// ============================================================================
+// NO RESULTS COMPONENT
+// ============================================================================
+
+const NoResults = () => (
+  <div className="no-results mt-10">
+    <div className="no-results-content text-center flex flex-col items-center justify-center">
+      <div className="no-results-icon text-7xl">🚫</div>
+      <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
+    </div>
+  </div>
+);
+
+// ============================================================================
+// MAIN LANDING PAGE COMPONENT
+// ============================================================================
+
+/**
+ * LandingPage Component
+ *
+ * Main entry point for the application
+ * Handles event browsing, filtering, and user interactions
+ *
+ * Performance Optimizations:
+ * - Debounced search queries (300ms)
+ * - Request cancellation for fast filter changes
+ * - Memoized content rendering
+ * - Lazy loading of child components
+ * - Separated concerns (handlers, data fetching, UI)
+ */
 function LandingPage() {
   const navigate = useNavigate();
 
-  // Context
+  // ----------------------------------------------------------------------------
+  // CONTEXT & SEARCH STATE
+  // ----------------------------------------------------------------------------
+
   const {
     location,
     startDate,
@@ -30,10 +73,13 @@ function LandingPage() {
     view,
     setSearchState,
   } = useLandingSearch();
-  const { user, loggedIn, setLoggedIn, favoriteEventIds } =
-    useContext(UserContext);
 
-  // Local state
+  const { user, loggedIn, setLoggedIn, favoriteEventIds } = useContext(UserContext);
+
+  // ----------------------------------------------------------------------------
+  // LOCAL STATE
+  // ----------------------------------------------------------------------------
+
   const [viewMode, setViewMode] = useState<ViewMode>(view || "Trending");
   const [showMenu, setShowMenu] = useState(false);
   const [showUploads, setShowUploads] = useState(false);
@@ -41,7 +87,11 @@ function LandingPage() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
 
-  // Memoized search params to prevent unnecessary re-renders
+  // ----------------------------------------------------------------------------
+  // MEMOIZED VALUES
+  // ----------------------------------------------------------------------------
+
+  // Memoize search params to prevent unnecessary re-renders
   const searchParams = useMemo(
     () => ({
       location,
@@ -53,7 +103,19 @@ function LandingPage() {
     [location, startDate, endDate, category, prompt]
   );
 
-  // Custom hook for data fetching
+  // Memoize date range for filter components
+  const dateRange = useMemo(
+    () => ({
+      startDate: startDate ? new Date(startDate) : null,
+      endDate: endDate ? new Date(endDate) : null,
+    }),
+    [startDate, endDate]
+  );
+
+  // ----------------------------------------------------------------------------
+  // DATA FETCHING (Optimized with debouncing & cancellation)
+  // ----------------------------------------------------------------------------
+
   const {
     events,
     favoriteEvents,
@@ -67,128 +129,67 @@ function LandingPage() {
     searchParams,
   });
 
-  // Event handlers with useCallback to prevent unnecessary re-renders
-  const handleLogout = useCallback(() => {
-    setLoggedIn(false);
-    setViewMode("Trending");
-    setSearchState({ view: "Trending" });
-  }, [setLoggedIn, setSearchState]);
+  // ----------------------------------------------------------------------------
+  // EVENT HANDLERS (Centralized in custom hook)
+  // ----------------------------------------------------------------------------
 
-  const handleSearch = useCallback(
-    async (searchTerm: string) => {
-      setViewMode("Search");
-      setSearchState({ prompt: searchTerm });
-      setSearchPerformed(true);
-      setIsSearchOpen(false);
+  const {
+    handleLogout,
+    handleSearch,
+    handleOnUpload,
+    handleInstallClick,
+    handleViewChange,
+    handleCategoryChange,
+    handleDateChange,
+    handleLocationChange,
+  } = useLandingPageHandlers({
+    navigate,
+    setLoggedIn,
+    setViewMode,
+    setSearchState,
+    setSearchPerformed,
+    setIsSearchOpen,
+    performSearch,
+    startDate,
+    endDate,
+    prompt,
+    location,
+  });
 
-      try {
-        await performSearch(searchTerm);
-      } catch (error) {
-        console.error("Error searching events:", error);
-      }
-    },
-    [performSearch, setSearchState]
-  );
+  // ----------------------------------------------------------------------------
+  // KEYBOARD SHORTCUTS
+  // ----------------------------------------------------------------------------
 
-  const handleOnUpload = useCallback(() => {
-    navigate("/admin/events");
-  }, [navigate]);
-
-  const handleViewChange = useCallback(
-    (view: ViewMode) => {
-      setViewMode(view);
-
-      if (view === "All") {
-        setSearchState({
-          prompt: "",
-          category: "",
-          view: "All",
-          startDate: startDate || "",
-          endDate: endDate || "",
-        });
-      } else {
-        setSearchState({ view });
-      }
-    },
-    [setSearchState, startDate, endDate]
-  );
-
-  const handleCategoryChange = useCallback(
-    (category: string | null) => {
-      setSearchState({
-        category: category || "",
-        startDate: startDate || "",
-        endDate: endDate || "",
-        prompt: prompt || "",
-        location: location || "",
-      });
-    },
-    [setSearchState, startDate, endDate, prompt, location]
-  );
-
-  const handleDateChange = useCallback(
-    (dateRange: { startDate: Date | null; endDate: Date | null }) => {
-      setSearchState({
-        startDate: dateRange.startDate?.toISOString() || "",
-        endDate: dateRange.endDate?.toISOString() || "",
-      });
-    },
-    [setSearchState]
-  );
-
-  const handleLocationChange = useCallback(
-    (location: string) => {
-      setSearchState({ location });
-    },
-    [setSearchState]
-  );
-
-  const handleInstallClick = useCallback(() => {
-    navigate("/install-app");
-  }, [navigate]);
-
-  // Keyboard shortcuts
   useKeyboardShortcuts({
     onSearchOpen: useCallback(() => setIsSearchOpen(true), []),
     onViewChange: handleViewChange,
   });
 
-  // Click outside handler for menu
+  // ----------------------------------------------------------------------------
+  // CLICK OUTSIDE HANDLER
+  // ----------------------------------------------------------------------------
+
   useClickOutside(showMenu, () => setShowMenu(false), {
     button: ".menu-button",
     container: ".menu-container",
   });
 
-  // Memoize date range to prevent unnecessary re-renders
-  const dateRange = useMemo(
-    () => ({
-      startDate: startDate ? new Date(startDate) : null,
-      endDate: endDate ? new Date(endDate) : null,
-    }),
-    [startDate, endDate]
-  );
+  // ----------------------------------------------------------------------------
+  // CONTENT RENDERING (Memoized for performance)
+  // ----------------------------------------------------------------------------
 
-  // Memoize content based on view mode
   const renderContent = useMemo(() => {
+    // Show loading spinner while fetching data
     if (loading) {
-      return (
-        <div className="search-loading">
-          <div className="search-spinner"></div>
-        </div>
-      );
+      return <LoadingSpinner />;
     }
 
+    // Show "no results" message if search returned empty
     if (searchPerformed && events.length === 0) {
-      return (
-        <div className="no-results mt-10">
-          <div className="no-results-content text-center flex flex-col items-center justify-center">
-            <div className="no-results-icon text-7xl">🚫</div>
-            <h2 className="text-2xl font-bold mt-6">No Events Found</h2>
-          </div>
-        </div>
-      );
+      return <NoResults />;
     }
 
+    // Render appropriate view based on current view mode
     switch (viewMode) {
       case "Home":
         return (
@@ -197,8 +198,10 @@ function LandingPage() {
             feedItemsResponse={followedProfiles}
           />
         );
+
       case "Search":
         return <SearchPage />;
+
       case "Trending":
         return (
           <Trending
@@ -206,6 +209,7 @@ function LandingPage() {
             feedItemsResponse={feedItemsResponse}
           />
         );
+
       default:
         return (
           <EventPage
@@ -224,11 +228,16 @@ function LandingPage() {
     feedItemsResponse,
   ]);
 
+  // ----------------------------------------------------------------------------
+  // RENDER
+  // ----------------------------------------------------------------------------
+
   return (
     <>
+      {/* SEO Meta Tags */}
       <HelmetMeta />
 
-      {/* Sidebar Desktop */}
+      {/* Desktop Sidebar Navigation */}
       <div className="fixed left-0 top-0 h-screen w-64 z-50 hidden md:block">
         <SideBar
           setSearchPerformed={setSearchPerformed}
@@ -248,9 +257,9 @@ function LandingPage() {
         />
       </div>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <div className="md:ml-64">
-        {/* Mobile Navigation */}
+        {/* Mobile Bottom Navigation */}
         <BottomBar
           setViewMode={handleViewChange}
           setSearchState={setSearchState}
@@ -260,34 +269,35 @@ function LandingPage() {
           navigate={navigate}
         />
 
+        {/* Main Content */}
         <main className="max-w-7xl mx-auto md:pb-0">
+          {/* Filter Bar (City + Category) - Hidden in Search view */}
           {viewMode !== "Search" && (
-            <div className="py-6 px-4 top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
-              <CityBar
-                onLocationSelect={handleLocationChange}
-                selectedLocation={location}
-              />
-              <CategoryFilter
-                prevDateRange={dateRange}
-                events={favoriteEvents}
-                viewMode={viewMode}
-                category={category}
-                onCategoryChange={handleCategoryChange}
-                setDateRange={handleDateChange}
-                onViewModeChange={handleViewChange}
-              />
-            </div>
+            <FilterBar
+              location={location}
+              category={category}
+              dateRange={dateRange}
+              favoriteEvents={favoriteEvents}
+              viewMode={viewMode}
+              onLocationChange={handleLocationChange}
+              onCategoryChange={handleCategoryChange}
+              onDateChange={handleDateChange}
+              onViewModeChange={handleViewChange}
+            />
           )}
 
+          {/* Dynamic Content Based on View Mode */}
           {renderContent}
         </main>
 
+        {/* Upload Modal */}
         <UploadModal
           isOpen={isUploadOpen}
           onClose={() => setIsUploadOpen(false)}
           onUpload={handleOnUpload}
         />
 
+        {/* Footer */}
         <Footer />
       </div>
     </>

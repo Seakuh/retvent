@@ -1,0 +1,47 @@
+/* ============================================================================
+   OPTIMIZED IMAGE COMPONENT STYLES
+   ============================================================================ */
+
+/**
+ * Base image styles
+ * Ensures smooth transitions and proper display
+ */
+.optimized-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  background-color: var(--color-neon-blue-dark-2, #1a1a2e);
+}
+
+/**
+ * Loaded state - fade in image
+ */
+.optimized-image.loaded {
+  opacity: 1;
+}
+
+/**
+ * Error state - show subtle error indicator
+ */
+.optimized-image.error {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+/**
+ * Loading animation (optional - shown before image loads)
+ */
+.optimized-image:not(.loaded):not(.error) {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
