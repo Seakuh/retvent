@@ -697,4 +697,127 @@ End with greetings from Berlin and a signature (e.g., “Much love, [Your Name] 
     });
     return response.choices[0]?.message?.content || '';
   }
+
+  // ============================================
+  // POKER GAME LOGIC
+  // ============================================
+
+  async generateNewPokerGame(player1Id: string, player1Name: string, player2Id: string, player2Name: string): Promise<any> {
+    const systemPrompt = `Du bist der Regisseur eines schnellen 1-gegen-1-Poker-Minispiels ("Heads-Up Hyper Turbo") in einer Mobile-/Web-App.
+Deine Aufgabe ist es, kurze, spannende Pokerspiele zwischen zwei Spielern zu steuern und den Spielzustand immer in JSON-Form zu beschreiben.
+
+WICHTIG: Antworte ausschließlich mit JSON, ohne zusätzliche Erklärungen oder Markdown-Formatierung.
+
+Ziel des Spiels:
+- Es spielen genau 2 Spieler gegeneinander
+- Beide starten mit 500 Chips
+- Die Blinds sind hoch (25/50) und steigen schnell
+- Ein Spiel soll nur ca. 1–3 Minuten dauern
+- Wer alle Chips des anderen hat, gewinnt
+
+Kartenformat:
+- Werte: 2–9, T, J, Q, K, A
+- Farben: c (Clubs/Kreuz), d (Diamonds/Karo), h (Hearts/Herz), s (Spades/Pik)
+- Beispiele: "Ah", "Td", "7c"
+
+JSON-Struktur:
+{
+  "match": {
+    "id": "string",
+    "blindLevel": "25/50",
+    "isFinished": false,
+    "winnerId": null
+  },
+  "players": [
+    {
+      "id": "${player1Id}",
+      "name": "${player1Name}",
+      "stack": 500,
+      "isDealer": true,
+      "isSmallBlind": true,
+      "isBigBlind": false,
+      "holeCards": ["Ah", "Kd"],
+      "hasFolded": false
+    },
+    {
+      "id": "${player2Id}",
+      "name": "${player2Name}",
+      "stack": 500,
+      "isDealer": false,
+      "isSmallBlind": false,
+      "isBigBlind": true,
+      "holeCards": [],
+      "hasFolded": false
+    }
+  ],
+  "table": {
+    "pot": 75,
+    "communityCards": [],
+    "street": "preflop",
+    "lastAction": "game_start"
+  },
+  "action": {
+    "currentPlayerId": "${player1Id}",
+    "allowedActions": ["FOLD", "CALL", "RAISE", "ALL_IN"],
+    "minBet": 50,
+    "maxBet": 475
+  }
+}`;
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: 'Erzeuge ein neues Heads-Up Poker-Spiel mit realistischer Kartenverteilung. Antworte nur mit dem JSON-Objekt, ohne zusätzlichen Text.' }
+      ],
+      temperature: 0.8, // Höhere Temperatur für mehr Variation
+    });
+
+    const content = response.choices[0]?.message?.content || '{}';
+    // Remove markdown code blocks if present
+    const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(cleanContent);
+  }
+
+  async processPokerAction(currentGameState: any, action: { playerId: string, action: string, amount?: number }): Promise<any> {
+    const systemPrompt = `Du bist der Regisseur eines schnellen 1-gegen-1-Poker-Minispiels.
+Deine Aufgabe ist es, den Spielzustand nach einer Spieleraktion zu aktualisieren.
+
+WICHTIG: Antworte ausschließlich mit dem aktualisierten JSON-Spielzustand, ohne zusätzliche Erklärungen oder Markdown-Formatierung.
+
+Regeln:
+- Aktualisiere Stacks und Pot korrekt
+- Entwickle die street weiter wenn nötig (preflop → flop → turn → river → showdown)
+- Bei showdown: Bestimme den Gewinner anhand der Pokerhände
+- Setze isFinished=true wenn ein Spieler alle Chips verloren hat
+- Keine Karte darf doppelt vorkommen
+- Erzeuge realistische und spannende Spielverläufe
+- Variiere Spielstile (tight, loose, aggressiv, passiv)
+
+Kartenformat: 2–9, T, J, Q, K, A mit Farben c/d/h/s (z.B. "Ah", "Td")`;
+
+    const userMessage = `Aktueller Spielzustand:
+${JSON.stringify(currentGameState, null, 2)}
+
+Spieleraktion:
+- Spieler: ${action.playerId}
+- Aktion: ${action.action}
+${action.amount ? `- Betrag: ${action.amount}` : ''}
+
+Verarbeite diese Aktion und gib den vollständig aktualisierten Spielzustand als JSON zurück. Antworte nur mit dem JSON-Objekt.`;
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage }
+      ],
+      temperature: 0.7,
+    });
+
+    const content = response.choices[0]?.message?.content || '{}';
+    // Remove markdown code blocks if present
+    const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(cleanContent);
+  }
 }

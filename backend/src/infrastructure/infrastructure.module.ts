@@ -79,6 +79,12 @@ import { PostService } from './services/post.service';
 import { QdrantService } from './services/qdrant.service';
 import { VideoService } from './services/video.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { PokerGameService } from 'src/application/services/poker-game.service';
+import { PokerGameSchema } from 'src/core/domain/poker-game.schema';
+import { PokerStatsService } from 'src/application/services/poker-stats.service';
+import { PokerInvitationService } from 'src/application/services/poker-invitation.service';
+import { PokerStatsSchema } from 'src/core/domain/poker-stats.schema';
+import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
 @Module({
   imports: [
     CoreModule,
@@ -124,10 +130,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       { name: 'Location', schema: LocationSchema },
       { name: 'User', schema: UserSchema },
       { name: 'GrooveCast', schema: GroovecastSchema },
+      { name: 'PokerGame', schema: PokerGameSchema },
       { name: 'Comment', schema: CommentSchema },
       { name: 'Profile', schema: ProfileSchema },
       { name: 'Feed', schema: FeedSchema },
       { name: 'Message', schema: MessageSchema },
+      { name: 'PokerStats', schema: PokerStatsSchema },
+      { name: 'PokerInvitation', schema: PokerInvitationSchema },
       { name: 'Group', schema: GroupSchema },
       { name: 'Ticket', schema: TicketSchema },
       { name: 'Community', schema: CommunitySchema },
@@ -175,6 +184,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     GeolocationService,
     LocationService,
     AuthService,
+    PokerGameService,
+    PokerStatsService,
+    PokerInvitationService,
     MongoEventRepository,
     MongoCommunityRepository,
     MongoGroupRepository,
@@ -294,6 +306,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     CommentService,
     ProfileService,
     MessageService,
+    PokerGameService,
+    PokerStatsService,
+    PokerInvitationService,
     TicketsService,
     QdrantService,
     CommunityService,
