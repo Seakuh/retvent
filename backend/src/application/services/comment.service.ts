@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { MongoCommentRepository } from 'src/infrastructure/repositories/mongodb/comment.repository';
 import { CreateCommentDto } from '../../presentation/dtos/create-comment.dto';
 import { UserService } from './user.service';
@@ -108,5 +108,16 @@ export class CommentService {
 
   async createCommentToPost(postId: string, text: string, userId: string) {
     return this.commentRepository.createCommentToPost(postId, text, userId);
+  }
+
+  async deleteComment(commentId: string, userId: string) {
+    const comment = await this.commentRepository.findCommentById(commentId);
+    if (!comment) { 
+      throw new NotFoundException('Comment not found');
+    }
+    if (comment.userId !== userId) {
+      throw new ForbiddenException('You are not the owner of this comment');
+    }
+    return this.commentRepository.delete(commentId);
   }
 }

@@ -19,15 +19,15 @@ export class MongoCommentRepository implements ICommentRepository {
       .find({ userId })
       .sort({ createdAt: -1 })
       .limit(5);
-    const count = await this.commentModel.countDocuments({ userId });
-    return { comments, count };
-  }
-
-  async likeComment(commentId: string, userId: string) {
-    return this.commentModel.findByIdAndUpdate(
-      commentId,
-      { $addToSet: { likeIds: userId } },
-      { new: true },
+      const count = await this.commentModel.countDocuments({ userId });
+      return { comments, count };
+    }
+    
+    async likeComment(commentId: string, userId: string) {
+      return this.commentModel.findByIdAndUpdate(
+        commentId,
+        { $addToSet: { likeIds: userId } },
+        { new: true },
     );
   }
 
@@ -38,7 +38,7 @@ export class MongoCommentRepository implements ICommentRepository {
       { new: true },
     );
   }
-
+  
   getCommentsCountByUserId(userId: string) {
     return this.commentModel.countDocuments({ userId });
   }
@@ -57,27 +57,27 @@ export class MongoCommentRepository implements ICommentRepository {
   async findById(id: string): Promise<DomainComment | null> {
     return this.commentModel.findById(id);
   }
-
+  
   async update(
     id: string,
     comment: Partial<DomainComment>,
   ): Promise<DomainComment | null> {
     return this.commentModel.findByIdAndUpdate(id, comment, { new: true });
   }
-
+  
   async delete(id: string): Promise<boolean> {
     const result = await this.commentModel.findByIdAndDelete(id);
     return result !== null;
   }
-
+  
   async create(comment: Partial<DomainComment>): Promise<DomainComment> {
     return this.commentModel.create(comment);
   }
-
+  
   async findByPostId(postId: string) {
     return this.commentModel.find({ postId }).sort({ createdAt: -1 });
   }
-
+  
   async createCommentToPost(postId: string, text: string, userId: string) {
     return this.commentModel.create({
       postId,
@@ -86,15 +86,15 @@ export class MongoCommentRepository implements ICommentRepository {
       createdAt: new Date(),
     });
   }
-
+  
   async findByEventId(eventId: string): Promise<DomainComment[]> {
     return this.commentModel.find({ eventId });
   }
-
+  
   async countCommentsByEventId(eventId: string): Promise<number> {
     return this.commentModel.countDocuments({ eventId });
   }
-
+  
   async findByUserId(userId: string) {
     return this.commentModel.find({ userId });
   }
@@ -104,13 +104,13 @@ export class MongoCommentRepository implements ICommentRepository {
       this.commentModel.find({ eventId }).sort({ createdAt: -1 }).lean(),
       this.commentModel.countDocuments({ eventId }),
     ]);
-
+    
     return {
       comments,
       total,
     };
   }
-
+  
   async findByUsernameAndAmount(username: string) {
     const [comments, total] = await Promise.all([
       this.commentModel.find({ username }).sort({ createdAt: -1 }).lean(),
@@ -118,11 +118,14 @@ export class MongoCommentRepository implements ICommentRepository {
     ]);
     return { comments, total };
   }
-
+  
   async getLatestComments(limit?: number) {
     return this.commentModel
-      .find()
-      .sort({ createdAt: -1 })
-      .limit(limit || 10);
+    .find()
+    .sort({ createdAt: -1 })
+    .limit(limit || 10);
+  }
+  findCommentById(commentId: string) {
+    return this.commentModel.findById(commentId);
   }
 }

@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { IPostRepository } from 'src/core/repositories/post.repository.interface';
 import { PostDocument } from 'src/infrastructure/schemas/post.schema';
 
-export class MongoPostRepository implements IPostRepository {
+export class MongoPostRepository implements IPostRepository { 
   constructor(@InjectModel('Post') private postModel: Model<PostDocument>) {}
 
   async createCommunityPost(createCommunityPostDto: any) {
@@ -70,5 +70,13 @@ export class MongoPostRepository implements IPostRepository {
       userId,
       createdAt: new Date(),
     });
+  }
+
+  async deletePost(postId: string, userId: string) {
+    return this.postModel.findByIdAndDelete(postId);
+  }
+
+  async findPostById(postId: string) {
+    return this.postModel.findById(postId);
   }
 }

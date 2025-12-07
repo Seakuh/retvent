@@ -305,4 +305,34 @@ export class AssessmentController {
   async getPokerStatsSummary(@UserDecorator() user: User) {
     return this.pokerStatsService.getStatsSummary(user.sub);
   }
+
+  // ============================================
+  // MINIGAME ENDPOINTS
+  // ============================================
+
+  @Get('mini-game/stats')
+  @UseGuards(JwtAuthGuard)
+  async getMiniGameStats(@UserDecorator() user: User) {
+    return {
+      stats: {
+        gamesToday: 0,
+        gamesThisWeek: 0,
+        averageGamesPerDay: 0,
+        winRate: 0,
+      },
+    };
+  }
+
+  @Get('mini-game/stats/summary')
+  @UseGuards(JwtAuthGuard)
+  async getMiniGameStatsSummary(@UserDecorator() user: User) {
+    return {
+      stats: {
+        gamesToday: 0,
+        gamesThisWeek: 0,
+        averageGamesPerDay: 0,
+        winRate: 0,
+      },
+    };
+  }
 }

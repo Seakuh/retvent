@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CommentService } from 'src/application/services/comment.service';
 import { CommunityService } from 'src/application/services/community.service';
 import { UserService } from 'src/application/services/user.service';
@@ -94,5 +94,20 @@ export class PostService {
 
   async removeLike(postId: string, userId: string) {
     return this.postRepository.removeLike(postId, userId);
+  }
+
+  async findPostById(postId: string) {
+    return this.postRepository.findPostById(postId);
+  }
+
+  async deletePost(postId: string, userId: string) {
+    const post = await this.postRepository.findPostById(postId);
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+    if (post.userId !== userId) {
+      throw new ForbiddenException('You are not the owner of this post');
+    }
+    return this.postRepository.deletePost(postId, userId);
   }
 }

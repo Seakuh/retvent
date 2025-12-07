@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -11,6 +12,7 @@ import {
 import { CommentService } from 'src/application/services/comment.service';
 import { CreateCommentDto } from '../dtos/create-comment.dto';
 import { CommentGuard } from '../guards/comment.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('comments')
 export class CommentController {
@@ -70,6 +72,12 @@ export class CommentController {
   @Get('/:userId')
   async getCommentsByUserId(@Param('userId') userId: string) {
     return this.commentService.findByUserIdAndAmount(userId);
+  }
+
+  @Delete('/:commentId')
+  @UseGuards(JwtAuthGuard)
+  async deleteComment(@Param('commentId') commentId: string, @Req() req: any) {
+    return this.commentService.deleteComment(commentId, req.user.sub);
   }
 }
 

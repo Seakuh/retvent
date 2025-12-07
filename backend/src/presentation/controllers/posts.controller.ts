@@ -59,6 +59,13 @@ export class PostsController {
     );
   }
 
+  @Delete(':postId')
+  @UseGuards(JwtAuthGuard)
+  async deletePost(@Param('postId') postId: string, @Req() req) {
+    console.log(req.user);
+    return this.postService.deletePost(postId, req.user.sub);
+  }
+
   @Get(':communityId')
   async getCommunityPosts(
     @Param('communityId') communityId: string,
