@@ -83,7 +83,7 @@ export class PostsController {
   }
 
   @Get('comments/:postId')
-  @UseGuards(JwtAuthGuard, CommunityMemberGuard)
+  @UseGuards(JwtAuthGuard)
   async getComments(
     @Param('postId') postId: string,
     @Body() body: { communityId: string },
@@ -95,7 +95,7 @@ export class PostsController {
     return comments;
   }
   @Post('like/:postId')
-  @UseGuards(JwtAuthGuard, CommunityMemberGuard)
+  @UseGuards(JwtAuthGuard)
   async addLike(
     @Param('postId') postId: string,
     @Body() body: { communityId: string },

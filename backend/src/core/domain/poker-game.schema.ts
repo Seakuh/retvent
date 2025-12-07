@@ -26,6 +26,9 @@ export class PokerGame {
   @Prop({ type: Date })
   lastActionAt: Date;
 
+  @Prop({ type: Date })
+  actionDeadline: Date;
+
   @Prop({ type: [String], default: [] })
   actionHistory: string[];
 }

@@ -12,6 +12,7 @@ import { AssessmentService } from 'src/application/services/assessment.service';
 import { PokerGameService } from 'src/application/services/poker-game.service';
 import { PokerStatsService } from 'src/application/services/poker-stats.service';
 import { PokerInvitationService } from 'src/application/services/poker-invitation.service';
+import { UserService } from 'src/application/services/user.service';
 import { User } from 'src/core/domain/user';
 import { User as UserDecorator } from '../decorators/user.decorator';
 import { CreateAssessmentDto } from '../dtos/create-assessment.dto';
@@ -26,6 +27,7 @@ export class AssessmentController {
     private readonly pokerGameService: PokerGameService,
     private readonly pokerStatsService: PokerStatsService,
     private readonly pokerInvitationService: PokerInvitationService,
+    private readonly userService: UserService,
   ) {}
 
   @Post('self')
@@ -103,15 +105,24 @@ export class AssessmentController {
     @Body() createInvitationDto: CreateInvitationDto,
     @UserDecorator() user: User,
   ) {
-    const invitation = await this.pokerInvitationService.createInvitation(
+    // Instead of creating invitation, directly create game
+    const player1Name = user.username || 'Player';
+
+    // Get player2 name from user profile
+    const player2 = await this.userService.findById(createInvitationDto.receiverId);
+    const player2Name = player2?.username || 'Opponent';
+
+    const game = await this.pokerGameService.createGame(
       user.sub,
+      player1Name,
       createInvitationDto.receiverId,
+      player2Name,
     );
 
-    // TODO: Send push notification to receiver
-    // await this.notificationService.sendPokerInvitation(invitation);
+    // TODO: Send push notification to opponent
+    // await this.notificationService.sendPokerGameStarted(game);
 
-    return invitation;
+    return { matchId: game.matchId, game };
   }
 
   @Post('poker/invitation/accept')
@@ -154,6 +165,12 @@ export class AssessmentController {
     return { success: true };
   }
 
+  @Get('poker/invitations')
+  @UseGuards(JwtAuthGuard)
+  async getAllInvitations(@UserDecorator() user: User) {
+    return this.pokerInvitationService.getPendingInvitationsForUser(user.sub);
+  }
+
   @Get('poker/invitations/pending')
   @UseGuards(JwtAuthGuard)
   async getPendingInvitations(@UserDecorator() user: User) {
@@ -164,6 +181,24 @@ export class AssessmentController {
   @UseGuards(JwtAuthGuard)
   async getSentInvitations(@UserDecorator() user: User) {
     return this.pokerInvitationService.getSentInvitations(user.sub);
+  }
+
+  @Post('poker/random')
+  @UseGuards(JwtAuthGuard)
+  async findRandomGame(@UserDecorator() user: User) {
+    // Create a game against a random opponent
+    // For now, we'll create a game with AI opponent
+    const player1Name = user.username || 'Player';
+    const player2Name = 'AI Opponent';
+
+    const game = await this.pokerGameService.createGame(
+      user.sub,
+      'ai-opponent',
+      player1Name,
+      player2Name,
+    );
+
+    return { matchId: game._id };
   }
 
   @Get('poker/game/:matchId')
@@ -199,7 +234,25 @@ export class AssessmentController {
     @Query('limit') limit?: string,
   ) {
     const limitNum = limit ? parseInt(limit, 10) : 10;
-    return this.pokerGameService.getGameHistory(user.sub, limitNum);
+    const games = await this.pokerGameService.getGameHistory(user.sub, limitNum);
+
+    // Enrich games with opponent data
+    const enrichedGames = await Promise.all(
+      games.map(async (game) => {
+        const opponentId = game.player1Id === user.sub ? game.player2Id : game.player1Id;
+        const opponent = await this.userService.getUserProfile(opponentId);
+
+        return {
+          ...game.toObject(),
+          opponent: {
+            username: opponent.username,
+            profileImageUrl: opponent.profileImageUrl,
+          },
+        };
+      })
+    );
+
+    return enrichedGames;
   }
 
   @Post('poker/action')

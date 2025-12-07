@@ -26,13 +26,17 @@ export class PokerGameService {
     // Set match ID
     initialGameState.match.id = matchId;
 
+    const now = new Date();
+    const deadline = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+
     const pokerGame = new this.pokerGameModel({
       matchId,
       player1Id,
       player2Id,
       gameState: initialGameState,
       isFinished: false,
-      lastActionAt: new Date(),
+      lastActionAt: now,
+      actionDeadline: deadline,
       actionHistory: ['game_start'],
     });
 
@@ -74,7 +78,9 @@ export class PokerGameService {
 
     // Update game
     game.gameState = updatedGameState;
-    game.lastActionAt = new Date();
+    const now = new Date();
+    game.lastActionAt = now;
+    game.actionDeadline = new Date(now.getTime() + 24 * 60 * 60 * 1000); // Reset to 24 hours
     game.actionHistory.push(`${action.playerId}_${action.action}${action.amount ? `_${action.amount}` : ''}`);
 
     // Check if game is finished
