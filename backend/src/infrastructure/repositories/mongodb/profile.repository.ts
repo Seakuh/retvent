@@ -159,6 +159,10 @@ export class MongoProfileRepository implements IProfileRepository {
     return this.profileModel.findOne({ userId });
   }
 
+  async findByUserIdWithStatus(userId: string): Promise<Profile | null> {
+    return this.profileModel.findOne({ userId }).select('username profileImageUrl');
+  }
+
   async findByUsernameOrEmail(
     username: string,
     email: string,

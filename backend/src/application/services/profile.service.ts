@@ -532,4 +532,12 @@ export class ProfileService {
     }
     ;
   }
+
+  async getProfileStatus(userId: string) {
+    const profile = await this.profileRepository.findByUserIdWithStatus(userId);
+    if (!profile) {
+      return 'not_found';
+    }
+    return profile;
+  }
 }

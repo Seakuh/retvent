@@ -74,6 +74,15 @@ export class ProfileController {
   @Post('poker/onboarding')
   @UseGuards(JwtAuthGuard)
   async setPokerOnboarding(@Body() onboarding: any, @Req() req): Promise<any> {
+    // If onboarding is empty (null, undefined, or an empty object), return "ok"
+    if (
+      !onboarding ||
+      (typeof onboarding === 'object' &&
+        Object.keys(onboarding).length === 0 &&
+        onboarding.constructor === Object)
+    ) {
+      return 'ok';
+    }
     return this.profileService.setPokerOnboarding(onboarding, req.user.sub);
   }
 
@@ -91,6 +100,11 @@ export class ProfileController {
   @Post()
   async createProfile(@Body() profile: Profile): Promise<Profile> {
     return this.profileService.createProfile(profile);
+  }
+
+  @Get("status/:userId")
+  async getProfileStatus(@Param('userId') userId: string): Promise<any> {
+    return this.profileService.getProfileStatus(userId);
   }
 
   @Put(':id')
