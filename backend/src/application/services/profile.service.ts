@@ -13,12 +13,14 @@ import { MongoProfileRepository } from 'src/infrastructure/repositories/mongodb/
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { ImageService } from 'src/infrastructure/services/image.service';
 import { CreateArtistDto } from 'src/presentation/dtos/create-artist.dto';
+import { QdrantService } from 'src/infrastructure/services/qdrant.service';
 @Injectable()
 export class ProfileService {
   constructor(
     private readonly profileRepository: MongoProfileRepository,
     private readonly imageService: ImageService,
     private readonly chatGptService: ChatGPTService,
+    private readonly qdrantService: QdrantService,
   ) {}
 
   getAllProfiles(limit: number, offset: number): Promise<Profile[]> {
@@ -327,5 +329,182 @@ export class ProfileService {
 
   async findByIds(memberIds: string[]) {
     return this.profileRepository.findByIds(memberIds);
+  }
+
+
+  // ------------------------------------------------------------
+  // Poker Onboarding
+  // ------------------------------------------------------------
+
+  async setPokerOnboarding(onboarding: any, userId: string) {
+    const profile = await this.profileRepository.findByUserId(userId);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+    const vector = await this.chatGptService.createEmbedding(onboarding);
+
+    return this.qdrantService.upsertUsers([{
+      id: userId,
+      vector: onboarding.vector,
+      payload: onboarding,
+    }]);
+  }
+
+  async getPokerOnboarding() {
+    return {
+      "general": {
+        "language": [
+          "English",
+          "German",
+          "Spanish",
+          "French",
+          "Other"
+        ],
+        "time_zone": [
+          "UTC-8",
+          "UTC-5",
+          "UTC",
+          "UTC+1",
+          "UTC+2",
+          "UTC+3",
+          "UTC+8"
+        ],
+        "poker_experience_level": [
+          "Complete Beginner",
+          "Beginner",
+          "Intermediate",
+          "Advanced",
+          "Professional"
+        ],
+        "years_of_experience": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6+"
+        ],
+        "game_type_preference": [
+          "Cash Games",
+          "Tournaments (MTT)",
+          "Sit & Go",
+          "Online Poker",
+          "Live Poker"
+        ]
+      },
+    
+      "coachee_profile": {
+        "goals": [
+          "Improve Fundamentals",
+          "Fix Leaks",
+          "Move Up Stakes",
+          "Improve MTT Performance",
+          "Improve Live Poker Skills",
+          "Strengthen Mental Game",
+          "Learn GTO",
+          "Become Professional",
+          "Improve Content Creation"
+        ],
+        "learning_preferences": [
+          "Visual (Videos)",
+          "Theory Focused",
+          "Hands-on / Drills",
+          "Session Review Based",
+          "Data Analysis"
+        ],
+        "commitment_level": [
+          "Casual",
+          "Ambitious",
+          "Serious",
+          "Professional Track"
+        ]
+      },
+    
+      "coach_profile": {
+        "specialization": [
+          "No-Limit Hold'em",
+          "Pot-Limit Omaha",
+          "MTT Strategy",
+          "Cash Game Strategy",
+          "Short Deck",
+          "Mixed Games",
+          "GTO / Solver Training",
+          "Exploitative Strategy",
+          "Live Poker Strategy",
+          "ICM / Tournament Endgame",
+          "Mental Game Coaching",
+          "Bankroll Management"
+        ],
+        "coaching_format": [
+          "1-on-1 Coaching",
+          "Group Coaching",
+          "Hand Review",
+          "Session Review (Live)",
+          "Session Review (Video)",
+          "Range/Preflop Coaching",
+          "Long-term Mentorship Program"
+        ],
+        "coaching_level": [
+          "Beginner",
+          "Intermediate",
+          "Advanced",
+          "High Stakes",
+          "Professional"
+        ],
+        "price_model": [
+          "Hourly Rate",
+          "Package Deals",
+          "Revenue Share",
+          "Stake / Backing Deal",
+          "Subscription Model",
+          "Affiliate/Commission Based"
+        ],
+        "verification": [
+          "HendonMob Results",
+          "Online Results Verified",
+          "Sample Content",
+          "Coaching Certificate",
+          "Reputation Score"
+        ]
+      },
+    
+      "business_context": {
+        "role": [
+          "Player",
+          "Coach",
+          "Backer",
+          "Content Creator",
+          "Poker Analyst",
+          "Academy Owner",
+          "Brand / Casino Representative"
+        ],
+        "deal_types": [
+          "One-time Project",
+          "Long-term Partnership",
+          "Percentage Deal",
+          "Fixed Contract",
+          "Flexible Agreement"
+        ],
+        "reputation_metrics": [
+          "Community Rating",
+          "Verified Identity",
+          "Track Record",
+          "Professional References"
+        ]
+      },
+    
+      "business_interests": [
+        "Offering Coaching",
+        "Seeking Coaching",
+        "Seeking Backing",
+        "Offering Backing",
+        "Looking for Sponsoring",
+        "Offering Sponsoring",
+        "Content Collaboration",
+        "Marketing Partnerships"
+      ]
+    }
+    ;
   }
 }

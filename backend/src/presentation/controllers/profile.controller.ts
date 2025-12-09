@@ -62,6 +62,21 @@ export class ProfileController {
     return this.profileService.searchProfiles(query);
   }
 
+
+  // ------------------------------------------------------------
+  // Poker Onboarding
+  // ------------------------------------------------------------
+  @Get('poker/onboarding')
+  async getPokerOnboarding(): Promise<any> {
+    return this.profileService.getPokerOnboarding();
+  }
+
+  @Post('poker/onboarding')
+  @UseGuards(JwtAuthGuard)
+  async setPokerOnboarding(@Body() onboarding: any, @Req() req): Promise<any> {
+    return this.profileService.setPokerOnboarding(onboarding, req.user.id);
+  }
+
   // @Post('new-artist')
   // async createNewArtist(
   //   @UploadedFile() image: Express.Multer.File,
