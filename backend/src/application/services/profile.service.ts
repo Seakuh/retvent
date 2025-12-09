@@ -336,16 +336,97 @@ export class ProfileService {
   // Poker Onboarding
   // ------------------------------------------------------------
 
+  /**
+   * Konvertiert ein Onboarding-Objekt dynamisch in Textformat für Embeddings
+   * Passt sich automatisch an Änderungen im JSON-Schema an
+   */
+  private onboardingToText(onboarding: any): string {
+    if (!onboarding || typeof onboarding !== 'object') {
+      return '';
+    }
+
+    const sections: string[] = [];
+
+    // Hilfsfunktion: Konvertiert Feldnamen in lesbare Labels
+    const toLabel = (key: string): string => {
+      return key
+        .replace(/_/g, ' ')
+        .replace(/([A-Z])/g, ' $1')
+        .trim()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    };
+
+    // Hilfsfunktion: Formatiert Arrays zu Strings
+    const formatArray = (arr: any[]): string => {
+      return arr
+        .filter(item => item !== null && item !== undefined && item !== '')
+        .join(', ');
+    };
+
+    // Rekursive Funktion zum Durchlaufen der Struktur
+    const processValue = (value: any, label: string, indent: number = 0): string => {
+      const indentStr = '  '.repeat(indent);
+      
+      if (Array.isArray(value)) {
+        const formatted = formatArray(value);
+        return formatted ? `${indentStr}${label}: ${formatted}` : '';
+      } else if (value && typeof value === 'object') {
+        const lines: string[] = [];
+        const hasContent = Object.keys(value).some(key => {
+          const val = value[key];
+          return val !== null && val !== undefined && 
+                 (Array.isArray(val) ? val.length > 0 : typeof val === 'object' ? Object.keys(val).length > 0 : val !== '');
+        });
+        
+        if (hasContent) {
+          lines.push(`${indentStr}${label}:`);
+          for (const [key, val] of Object.entries(value)) {
+            if (val !== null && val !== undefined) {
+              const subLabel = toLabel(key);
+              const subLine = processValue(val, subLabel, indent + 1);
+              if (subLine) {
+                lines.push(subLine);
+              }
+            }
+          }
+        }
+        return lines.join('\n');
+      } else if (value !== null && value !== undefined && value !== '') {
+        return `${indentStr}${label}: ${value}`;
+      }
+      return '';
+    };
+
+    // Hauptlogik: Durchlaufe alle Top-Level-Keys
+    for (const [key, value] of Object.entries(onboarding)) {
+      if (value !== null && value !== undefined) {
+        const sectionLabel = toLabel(key);
+        const sectionText = processValue(value, sectionLabel, 0);
+        if (sectionText) {
+          sections.push(sectionText);
+        }
+      }
+    }
+
+    return sections.join('\n\n').trim();
+  }
+
   async setPokerOnboarding(onboarding: any, userId: string) {
     const profile = await this.profileRepository.findByUserId(userId);
     if (!profile) {
       throw new NotFoundException('Profile not found');
     }
-    const vector = await this.chatGptService.createEmbedding(onboarding);
+    
+    // Konvertiere Onboarding zu Text und erstelle Embedding
+    const onboardingText = this.onboardingToText(onboarding);
+    console.log('OonboardingText', onboardingText);
+    const vector = await this.chatGptService.createEmbedding(onboardingText);
 
     return this.qdrantService.upsertUsers([{
       id: userId,
-      vector: onboarding.vector,
+      vector: vector,
       payload: onboarding,
     }]);
   }
@@ -359,15 +440,6 @@ export class ProfileService {
           "Spanish",
           "French",
           "Other"
-        ],
-        "time_zone": [
-          "UTC-8",
-          "UTC-5",
-          "UTC",
-          "UTC+1",
-          "UTC+2",
-          "UTC+3",
-          "UTC+8"
         ],
         "poker_experience_level": [
           "Complete Beginner",
@@ -385,17 +457,20 @@ export class ProfileService {
           "5",
           "6+"
         ],
-        "game_type_preference": [
-          "Cash Games",
-          "Tournaments (MTT)",
-          "Sit & Go",
-          "Online Poker",
-          "Live Poker"
-        ]
       },
-    
+      "business_context": {
+        "funktionen": [
+        "Inhaber / Gesellschafter",
+        "Geschäftsführer / Managing Director",
+        "Geschäftsleitungs-Level (Executive Management)",
+        "CEO / Vorstand",
+        "Bereichs- oder Abteilungsleitung",
+        "Operations / Standortleitung",
+        "Partner / Co-Partner"
+      ]
+      },
       "coachee_profile": {
-        "goals": [
+      "goals": [
           "Improve Fundamentals",
           "Fix Leaks",
           "Move Up Stakes",
@@ -406,94 +481,7 @@ export class ProfileService {
           "Become Professional",
           "Improve Content Creation"
         ],
-        "learning_preferences": [
-          "Visual (Videos)",
-          "Theory Focused",
-          "Hands-on / Drills",
-          "Session Review Based",
-          "Data Analysis"
-        ],
-        "commitment_level": [
-          "Casual",
-          "Ambitious",
-          "Serious",
-          "Professional Track"
-        ]
-      },
-    
-      "coach_profile": {
-        "specialization": [
-          "No-Limit Hold'em",
-          "Pot-Limit Omaha",
-          "MTT Strategy",
-          "Cash Game Strategy",
-          "Short Deck",
-          "Mixed Games",
-          "GTO / Solver Training",
-          "Exploitative Strategy",
-          "Live Poker Strategy",
-          "ICM / Tournament Endgame",
-          "Mental Game Coaching",
-          "Bankroll Management"
-        ],
-        "coaching_format": [
-          "1-on-1 Coaching",
-          "Group Coaching",
-          "Hand Review",
-          "Session Review (Live)",
-          "Session Review (Video)",
-          "Range/Preflop Coaching",
-          "Long-term Mentorship Program"
-        ],
-        "coaching_level": [
-          "Beginner",
-          "Intermediate",
-          "Advanced",
-          "High Stakes",
-          "Professional"
-        ],
-        "price_model": [
-          "Hourly Rate",
-          "Package Deals",
-          "Revenue Share",
-          "Stake / Backing Deal",
-          "Subscription Model",
-          "Affiliate/Commission Based"
-        ],
-        "verification": [
-          "HendonMob Results",
-          "Online Results Verified",
-          "Sample Content",
-          "Coaching Certificate",
-          "Reputation Score"
-        ]
-      },
-    
-      "business_context": {
-        "role": [
-          "Player",
-          "Coach",
-          "Backer",
-          "Content Creator",
-          "Poker Analyst",
-          "Academy Owner",
-          "Brand / Casino Representative"
-        ],
-        "deal_types": [
-          "One-time Project",
-          "Long-term Partnership",
-          "Percentage Deal",
-          "Fixed Contract",
-          "Flexible Agreement"
-        ],
-        "reputation_metrics": [
-          "Community Rating",
-          "Verified Identity",
-          "Track Record",
-          "Professional References"
-        ]
-      },
-    
+      },       
       "business_interests": [
         "Offering Coaching",
         "Seeking Coaching",
