@@ -36,6 +36,20 @@ export class ChatGPTService {
     });
     return response.data[0].embedding;
   }
+  async createEmbeddingV2(text: string) {
+    // Sicherstellen, dass text immer ein gültiger String ist
+    const inputText = typeof text === 'string' ? text.trim() : String(text || '').trim();
+    
+    if (!inputText) {
+      throw new Error('Cannot create embedding from empty text');
+    }
+    
+    const response = await this.openai.embeddings.create({
+      model: 'text-embedding-ada-002',
+      input: inputText,
+    });
+    return response.data[0].embedding;
+  }
 
   async generateEventsFromText(text: string): Promise<Partial<Event>[]> {
     const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"

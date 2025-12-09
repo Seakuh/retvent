@@ -74,7 +74,7 @@ export class ProfileController {
   @Post('poker/onboarding')
   @UseGuards(JwtAuthGuard)
   async setPokerOnboarding(@Body() onboarding: any, @Req() req): Promise<any> {
-    return this.profileService.setPokerOnboarding(onboarding, req.user.id);
+    return this.profileService.setPokerOnboarding(onboarding, req.user.sub);
   }
 
   // @Post('new-artist')

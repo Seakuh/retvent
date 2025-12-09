@@ -340,7 +340,7 @@ export class ProfileService {
    * Konvertiert ein Onboarding-Objekt dynamisch in Textformat für Embeddings
    * Passt sich automatisch an Änderungen im JSON-Schema an
    */
-  private onboardingToText(onboarding: any): string {
+  private onboardingToText(onboarding: any, userId: string): string {
     if (!onboarding || typeof onboarding !== 'object') {
       return '';
     }
@@ -348,31 +348,43 @@ export class ProfileService {
     const sections: string[] = [];
 
     // Hilfsfunktion: Konvertiert Feldnamen in lesbare Labels
-    const toLabel = (key: string): string => {
+    const toLabel = (key: string | undefined | null): string => {
+      if (!key || typeof key !== 'string') {
+        return '';
+      }
       return key
         .replace(/_/g, ' ')
         .replace(/([A-Z])/g, ' $1')
         .trim()
         .split(' ')
+        .filter(word => word.length > 0)
         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join(' ');
     };
 
     // Hilfsfunktion: Formatiert Arrays zu Strings
     const formatArray = (arr: any[]): string => {
+      if (!Array.isArray(arr)) {
+        return '';
+      }
       return arr
         .filter(item => item !== null && item !== undefined && item !== '')
+        .map(item => String(item))
         .join(', ');
     };
 
     // Rekursive Funktion zum Durchlaufen der Struktur
     const processValue = (value: any, label: string, indent: number = 0): string => {
+      if (!label || label.trim() === '') {
+        return '';
+      }
+      
       const indentStr = '  '.repeat(indent);
       
       if (Array.isArray(value)) {
         const formatted = formatArray(value);
         return formatted ? `${indentStr}${label}: ${formatted}` : '';
-      } else if (value && typeof value === 'object') {
+      } else if (value && typeof value === 'object' && !Array.isArray(value)) {
         const lines: string[] = [];
         const hasContent = Object.keys(value).some(key => {
           const val = value[key];
@@ -385,16 +397,18 @@ export class ProfileService {
           for (const [key, val] of Object.entries(value)) {
             if (val !== null && val !== undefined) {
               const subLabel = toLabel(key);
-              const subLine = processValue(val, subLabel, indent + 1);
-              if (subLine) {
-                lines.push(subLine);
+              if (subLabel) {
+                const subLine = processValue(val, subLabel, indent + 1);
+                if (subLine && subLine.trim()) {
+                  lines.push(subLine);
+                }
               }
             }
           }
         }
         return lines.join('\n');
       } else if (value !== null && value !== undefined && value !== '') {
-        return `${indentStr}${label}: ${value}`;
+        return `${indentStr}${label}: ${String(value)}`;
       }
       return '';
     };
@@ -403,29 +417,52 @@ export class ProfileService {
     for (const [key, value] of Object.entries(onboarding)) {
       if (value !== null && value !== undefined) {
         const sectionLabel = toLabel(key);
-        const sectionText = processValue(value, sectionLabel, 0);
-        if (sectionText) {
-          sections.push(sectionText);
+        if (sectionLabel) {
+          const sectionText = processValue(value, sectionLabel, 0);
+          if (sectionText && sectionText.trim()) {
+            sections.push(sectionText);
+          }
         }
       }
     }
 
-    return sections.join('\n\n').trim();
+    const result = sections.join('\n\n').trim();
+    return result || '';
   }
 
   async setPokerOnboarding(onboarding: any, userId: string) {
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+      throw new Error('userId is required and must be a non-empty string');
+    }
+
     const profile = await this.profileRepository.findByUserId(userId);
     if (!profile) {
       throw new NotFoundException('Profile not found');
     }
     
     // Konvertiere Onboarding zu Text und erstelle Embedding
-    const onboardingText = this.onboardingToText(onboarding);
-    console.log('OonboardingText', onboardingText);
-    const vector = await this.chatGptService.createEmbedding(onboardingText);
+    const onboardingText = this.onboardingToText(onboarding, userId) || '';
+    
+    if (!onboardingText || typeof onboardingText !== 'string') {
+      throw new Error('Failed to convert onboarding to text');
+    }
+    
+    // Sicherstellen, dass der Text nicht undefined ist
+    const textForEmbedding = String(onboardingText).trim();
+    if (!textForEmbedding) {
+      throw new Error('Onboarding text is empty after conversion');
+    }
+    
+    const vector = await this.chatGptService.createEmbeddingV2(textForEmbedding);
+
+    // Sicherstellen, dass userId gültig ist, bevor es an upsertUsers übergeben wird
+    const validUserId = userId.trim();
+    if (!validUserId) {
+      throw new Error('userId cannot be empty after trimming');
+    }
 
     return this.qdrantService.upsertUsers([{
-      id: userId,
+      id: validUserId,
       vector: vector,
       payload: onboarding,
     }]);
