@@ -16,14 +16,17 @@ import {
   RegisterUserDto,
   RegisterUserDtoV2,
 } from '../../presentation/dtos/register-user.dto';
+import { CommunityService } from 'src/application/services/community.service';
+
+const POKER_COMMUNITY_ID = '68f61d3fedb3df5cdb0677f6';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel('User') private userModel: Model<User>,
     @InjectModel('Profile') private profileModel: Model<Profile>,
-
     private jwtService: JwtService,
+    private readonly communityService: CommunityService,
     private readonly bcryptService: BcryptService,
   ) {}
 
@@ -72,6 +75,55 @@ export class AuthService {
       },
     };
   }
+
+  async registerWithProfilePoker(registerDto: RegisterUserDto) {
+    const { email, password, username } = registerDto;
+
+    const existingUser = await this.userModel.findOne({
+      $or: [{ email }, { username }],
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('User already exists');
+    }
+
+    const hashedPassword = await this.bcryptService.hash(password);
+
+    const user = await this.userModel.create({
+      email,
+      username,
+      password: hashedPassword,
+      points: 0,
+    });
+
+    await this.profileModel.create({
+      userId: user._id,
+      username,
+      email,
+      followerCount: 0,
+      followingCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const payload = {
+      sub: user._id.toString(),
+      email: user.email,
+      username: user.username,
+    };
+
+    await this.communityService.addMember(POKER_COMMUNITY_ID, user._id.toString());
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        username: user.username,
+      },
+    };
+  }
+
 
   // WEB 3 ------------------------------------------------
   async registerWithProfileAndWallet(registerDto: RegisterUserDtoV2) {

@@ -86,6 +86,10 @@ export class CommunityService {
     return this.communityRepository.addModerator(communityId, userId);
   }
 
+  addMember(communityId: string, userId: string) {
+    return this.communityRepository.addMember(communityId, userId);
+  }
+
   removeModerator(communityId: string, userId: string) {
     return this.communityRepository.removeModerator(communityId, userId);
   }

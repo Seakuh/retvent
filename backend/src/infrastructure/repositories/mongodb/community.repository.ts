@@ -56,4 +56,12 @@ export class MongoCommunityRepository implements ICommunityRepository {
       { new: true },
     );
   }
+
+  async addMember(communityId: string, userId: string) {
+    return this.communityModel.findByIdAndUpdate(
+      communityId,
+      { $push: { members: userId } },
+      { new: true },
+    );
+  }
 }

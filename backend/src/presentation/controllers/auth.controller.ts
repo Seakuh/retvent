@@ -34,6 +34,15 @@ export class AuthController {
     }
   }
 
+  @Post('v2/register-poker')
+  async registerV2Poker(@Body() registerDto: RegisterUserDto) {
+    try {
+      return await this.authService.registerWithProfilePoker(registerDto);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   @Post('v3/register')
   async registerV3(@Body() registerDto: RegisterUserDtoV2) {
     try {
