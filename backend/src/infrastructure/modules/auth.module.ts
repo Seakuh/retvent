@@ -4,9 +4,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { MessageSchema } from 'src/core/domain/message.schema';
+import { CommunityService } from 'src/application/services/community.service';
 import { CoreModule } from '../../core/core.module';
 import { AuthController } from '../../presentation/controllers/auth.controller';
 import { UploadGuard } from '../../presentation/guards/upload.guard';
+import { MongoCommunityRepository } from '../repositories/mongodb/community.repository';
+import { MongoProfileRepository } from '../repositories/mongodb/profile.repository';
+import { MongoUserRepository } from '../repositories/mongodb/user.repository';
+import { CommunitySchema } from '../schemas/community.schema';
 import { GroupSchema } from '../schemas/group.schmema';
 import { ProfileSchema } from '../schemas/profile.schema';
 import { UserSchema } from '../schemas/user.schema';
@@ -39,6 +44,7 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
       { name: 'Profile', schema: ProfileSchema },
       { name: 'Message', schema: MessageSchema },
       { name: 'Group', schema: GroupSchema },
+      { name: 'Community', schema: CommunitySchema },
     ]),
   ],
   controllers: [AuthController],
@@ -50,6 +56,10 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
     AuthService,
     JwtStrategy,
     UploadGuard,
+    CommunityService,
+    MongoCommunityRepository,
+    MongoUserRepository,
+    MongoProfileRepository,
   ],
   exports: [AuthService, JwtModule, UploadGuard],
 })
