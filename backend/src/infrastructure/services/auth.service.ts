@@ -93,7 +93,7 @@ export class AuthService {
       email,
       username,
       password: hashedPassword,
-      points: 0,
+      points: 125,
     });
 
     await this.profileModel.create({
