@@ -22,6 +22,10 @@ export class UserService {
     return this.userRepository.getUserPoints(userId);
   }
 
+  updateUserPoints(userId: string, amount: number) {
+    return this.userRepository.addUserPoints(userId, amount);
+  }
+
   addUserPoints(userId: string, amount: number) {
     return this.userRepository.addUserPoints(userId, amount);
   }
@@ -46,6 +50,7 @@ export class UserService {
     return {
       id: user.id,
       points: user.points,
+      achievements: profile.achievements,
       email: user.email,
       username: user.username,
       badges: profile.badges || [],

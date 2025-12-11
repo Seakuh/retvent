@@ -11,4 +11,7 @@ export class UserProfileDto {
   category: string;
   createdAt: Date;
   updatedAt: Date;
+  achievements: string[];
+  badges: string[];
+  gallery: string[];
 }

@@ -8,6 +8,7 @@ import { Event } from '../../../core/domain/event';
 import { IEventRepository } from '../../../core/repositories/event.repository.interface';
 @Injectable()
 export class MongoEventRepository implements IEventRepository {
+
   constructor(@InjectModel('Event') private eventModel: Model<Event>) {}
 
   async searchEventsWithUserInput(
@@ -1100,5 +1101,10 @@ export class MongoEventRepository implements IEventRepository {
       ...body,
       hostId: userId,
     });
+  }
+
+  
+  getEventsByCommunityId(communityId: string) {
+    return this.eventModel.find({ communityId: communityId }).exec();
   }
 }

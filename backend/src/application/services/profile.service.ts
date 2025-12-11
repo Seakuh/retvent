@@ -44,6 +44,10 @@ export class ProfileService {
   getProfileByUserId(userId: string): Promise<Profile> {
     return this.profileRepository.findByUserId(userId);
   }
+
+  async updateProfileAchievements(id: string, achievements: string[]): Promise<Profile> {
+    return this.profileRepository.updateProfileAchievements(id, achievements);
+  }
   async getProfileById(id: string): Promise<Profile> {
     return this.profileRepository.findByUserId(id);
   }

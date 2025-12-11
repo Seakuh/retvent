@@ -9,6 +9,7 @@ export class Event implements IEvent {
   description?: string;
   // Bild URL
   imageUrl?: string;
+  communityId?: string;
   // Zeitliche Daten
   startDate: Date;
   startTime: string;

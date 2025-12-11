@@ -16,6 +16,7 @@ import {
   AssessmentMatrixDto,
   AssessmentDataPoint,
 } from 'src/presentation/dtos/assessment-matrix.dto';
+import { UserService } from './user.service';
 
 @Injectable()
 export class AssessmentService {
@@ -26,6 +27,7 @@ export class AssessmentService {
     private readonly peerAssessmentModel: Model<IPeerAssessment>,
     @InjectModel('SelfAssessment')
     private readonly selfAssessmentModel: Model<ISelfAssessment>,
+    private readonly userService: UserService,
   ) {}
 
   async createAssessment(
@@ -45,6 +47,16 @@ export class AssessmentService {
       existingAssessment.playStyle = createAssessmentDto.playStyle;
       existingAssessment.submittedAt = createAssessmentDto.submittedAt;
       await existingAssessment.save();
+
+      const user = await this.userService.findById(userId);
+      if (user) {
+        await this.userService.updateUserPoints(user.id, 10);
+      }
+
+      const profile = await this.profileService.getProfileByUserId(userId);
+      if (profile) {
+        await this.profileService.updateProfileAchievements(profile.id, ['self-assessment']);
+      }
 
       return {
         message: 'Self-assessment updated successfully',
@@ -83,6 +95,13 @@ export class AssessmentService {
         'You must be in the same group to assess this user',
       );
     }
+
+    const assessorProfile = await this.profileService.getProfileByUserId(assessorId);
+    if (assessorProfile) {
+      await this.profileService.updateProfileAchievements(assessorProfile.id, ['peer-assessment']);
+    }
+
+
 
     const isAssessedInGroup = await this.groupService.isUserInGroup(
       dto.groupId,

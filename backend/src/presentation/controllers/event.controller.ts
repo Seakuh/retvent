@@ -1039,4 +1039,8 @@ export class EventController {
 
     return this.eventService.createEventFull(eventData, req.user.sub, image);
   }
+  @Get('community/:communityId/events')
+  async getEventsByCommunityId(@Param('communityId') communityId: string) {
+    return this.eventService.getEventsByCommunityId(communityId);
+  }
 }

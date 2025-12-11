@@ -15,6 +15,7 @@ export interface IEvent extends Document {
   locationId?: string;
   category?: string;
   price?: string | number;
+  communityId?: string;
   isSponsored?: boolean;
   ticketLink?: string;
   lineup?: {
@@ -56,6 +57,7 @@ const EventSchema = new Schema<IEvent>(
     title: { type: String, required: true },
     description: { type: String },
     imageUrl: { type: String },
+    communityId: { type: String },
     startDate: { type: Date, required: true },
     startTime: { type: String, required: true },
     registeredUserIds: { type: [String], default: [] },

@@ -7,6 +7,7 @@ export class Profile implements IProfile {
   gallery?: string[];
   userId?: string;
   badges?: string[];
+  achievements?: string[];
   telephoneNumber?: string;
   profileImageUrl?: string;
   headerImageUrl?: string;

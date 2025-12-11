@@ -11,6 +11,7 @@ export const ProfileSchema = new Schema({
   telephoneNumber: { type: String },
   bio: { type: String },
   badges: { type: [String] },
+  achievements: { type: [String] },
   followedLocationIds: { type: [String] },
   gallery: { type: [String] },
   likedEventIds: { type: [String] },

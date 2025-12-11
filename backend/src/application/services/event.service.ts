@@ -18,6 +18,7 @@ import { VideoService } from '../../infrastructure/services/video.service';
 import { FeedService } from './feed.service';
 import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
+import { CommunityService } from './community.service';
 @Injectable()
 export class EventService {
   constructor(
@@ -30,6 +31,7 @@ export class EventService {
     private readonly feedService: FeedService,
     private readonly videoService: VideoService,
     private readonly qdrantService: QdrantService,
+    private readonly communityService: CommunityService,
   ) {}
   getEventsByTag(tag: string) {
     return this.eventRepository.getEventsByTag(tag);
@@ -272,6 +274,10 @@ export class EventService {
     }
 
     return createdEvents;
+  }
+
+  getEventsByCommunityId(communityId: string) {
+    return this.eventRepository.getEventsByCommunityId(communityId);
   }
 
   private async downloadImage(url: string): Promise<Buffer> {

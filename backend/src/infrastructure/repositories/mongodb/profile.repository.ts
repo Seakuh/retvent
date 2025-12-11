@@ -6,6 +6,7 @@ import { IProfileRepository } from '../../../core/repositories/profile.repositor
 
 @Injectable()
 export class MongoProfileRepository implements IProfileRepository {
+
   getProfileByName(name: string) {
     return this.profileModel.findOne({ username: name });
   }
@@ -45,6 +46,14 @@ export class MongoProfileRepository implements IProfileRepository {
 
   findByIds(ids: string[]) {
     return this.profileModel.find({ userId: { $in: ids } });
+  }
+
+  updateProfileAchievements(id: string, achievements: string[]): Promise<Profile> {
+    return this.profileModel.findByIdAndUpdate(
+      id,
+      { $push: { achievements: { $each: achievements } } },
+      { new: true }
+    );
   }
 
   getProfileFeed(
