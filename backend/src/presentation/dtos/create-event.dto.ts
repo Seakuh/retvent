@@ -106,4 +106,8 @@ export class CreateEventDto {
   @IsString()
   @IsOptional()
   website?: string;
+
+  @IsString()
+  @IsOptional()
+  communityId?: string;
 }

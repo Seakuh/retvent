@@ -194,4 +194,8 @@ export class CreateFullEventDto {
   @IsOptional()
   @IsString()
   difficulty?: string;
+
+  @IsOptional()
+  @IsString()
+  communityId?: string;
 }

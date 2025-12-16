@@ -64,4 +64,20 @@ export class MongoCommunityRepository implements ICommunityRepository {
       { new: true },
     );
   }
+
+  async addEventToCommunity(communityId: string, eventId: string) {
+    return this.communityModel.findByIdAndUpdate(
+      communityId,
+      { $addToSet: { eventIds: eventId } },
+      { new: true },
+    );
+  }
+
+  async removeEventFromCommunity(communityId: string, eventId: string) {
+    return this.communityModel.findByIdAndUpdate(
+      communityId,
+      { $pull: { eventIds: eventId } },
+      { new: true },
+    );
+  }
 }

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -562,8 +563,36 @@ export class EventService {
         updatedAt: new Date(),
       };
 
+      // Permission check for Community Events
+      if (eventWithImage.communityId) {
+        const hasPermission = await this.communityService.checkUserCanCreateEvent(
+          eventWithImage.communityId,
+          eventData.hostId,
+        );
+
+        if (!hasPermission) {
+          throw new ForbiddenException(
+            'Only moderators and admins can create community events',
+          );
+        }
+      }
+
       const newEvent =
         await this.eventRepository.createEventFromFormData(eventWithImage);
+
+      // Auto-Link to Community if communityId is present
+      if (newEvent.communityId) {
+        try {
+          await this.communityService.addEventToCommunity(newEvent.communityId, newEvent.id);
+        } catch (error) {
+          // Rollback: Delete event if community linking fails
+          await this.eventRepository.delete(newEvent.id);
+          throw new BadRequestException(
+            `Failed to link event to community: ${error.message}`,
+          );
+        }
+      }
+
       await this.feedService.pushFeedItemFromEvent(newEvent, 'event');
       return newEvent;
     } catch (error) {
@@ -584,6 +613,23 @@ export class EventService {
   }
 
   async delete(id: string): Promise<boolean> {
+    // Get event to check for communityId
+    const event = await this.eventRepository.findById(id);
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    // Remove event from community if linked
+    if (event.communityId) {
+      try {
+        await this.communityService.removeEventFromCommunity(event.communityId, id);
+      } catch (error) {
+        // Log error but continue with deletion
+        console.error('Failed to remove event from community:', error);
+      }
+    }
+
     return this.eventRepository.delete(id);
   }
 
@@ -1190,6 +1236,35 @@ export class EventService {
       ...(imageUrl && { imageUrl }), // oder image: imageUrl, falls du das Feld gleich halten willst
     };
 
-    return this.eventRepository.createEventFull(eventData, userId);
+    // Permission check for Community Events
+    if (eventData.communityId) {
+      const hasPermission = await this.communityService.checkUserCanCreateEvent(
+        eventData.communityId,
+        userId,
+      );
+
+      if (!hasPermission) {
+        throw new ForbiddenException(
+          'Only moderators and admins can create community events',
+        );
+      }
+    }
+
+    const newEvent = await this.eventRepository.createEventFull(eventData, userId);
+
+    // Auto-Link to Community if communityId is present
+    if (newEvent.communityId) {
+      try {
+        await this.communityService.addEventToCommunity(newEvent.communityId, newEvent.id);
+      } catch (error) {
+        // Rollback: Delete event if community linking fails
+        await this.eventRepository.delete(newEvent.id);
+        throw new BadRequestException(
+          `Failed to link event to community: ${error.message}`,
+        );
+      }
+    }
+
+    return newEvent;
   }
 }

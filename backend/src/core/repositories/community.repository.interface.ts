@@ -7,4 +7,6 @@ export interface ICommunityRepository {
   findAll(): Promise<Community[]>;
   update(id: string, body: CreateCommunityDto): Promise<Community | null>;
   delete(id: string): Promise<boolean>;
+  addEventToCommunity(communityId: string, eventId: string): Promise<Community | null>;
+  removeEventFromCommunity(communityId: string, eventId: string): Promise<Community | null>;
 }

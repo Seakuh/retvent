@@ -104,4 +104,21 @@ export class CommunityService {
     }
     return this.communityRepository.delete(communityId);
   }
+
+  async addEventToCommunity(communityId: string, eventId: string): Promise<Community | null> {
+    return this.communityRepository.addEventToCommunity(communityId, eventId);
+  }
+
+  async removeEventFromCommunity(communityId: string, eventId: string): Promise<Community | null> {
+    return this.communityRepository.removeEventFromCommunity(communityId, eventId);
+  }
+
+  async checkUserCanCreateEvent(communityId: string, userId: string): Promise<boolean> {
+    const community = await this.findById(communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+
+    return community.moderators.includes(userId) || community.admins.includes(userId);
+  }
 }

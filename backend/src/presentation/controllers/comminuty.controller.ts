@@ -7,17 +7,25 @@ import {
   Param,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CommunityService } from '../../application/services/community.service';
+import { EventService } from '../../application/services/event.service';
 import { CreateCommunityDto } from '../dtos/create-community.dto';
 import { UpdateCommunityDto } from '../dtos/update-community.dto';
 import { CommunityHostGuard } from '../guards/community-host.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CommunityEventGuard } from '../guards/community-event.guard';
 
 @Controller('community')
 export class CommunityController {
-  constructor(private readonly communityService: CommunityService) {}
+  constructor(
+    private readonly communityService: CommunityService,
+    private readonly eventService: EventService,
+  ) {}
 
   @Get('communities')
   async getCommunities() {
@@ -74,6 +82,27 @@ export class CommunityController {
   @Get('members/v2/:communityId')
   async getMembersV2(@Param('communityId') communityId: string) {
     return this.communityService.getMembers(communityId);
+  }
+
+  @Post(':communityId/events')
+  @UseGuards(JwtAuthGuard, CommunityEventGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async createCommunityEvent(
+    @Param('communityId') communityId: string,
+    @Body() body: any,
+    @UploadedFile() image?: Express.Multer.File,
+    @Req() req?,
+  ) {
+    // Parse data if passed as JSON string
+    let eventData = body.data || body;
+    if (typeof eventData === 'string') {
+      eventData = JSON.parse(eventData);
+    }
+
+    // Set communityId explicitly from URL parameter
+    eventData.communityId = communityId;
+
+    return this.eventService.createEventFull(eventData, req.user.sub, image);
   }
 
   @Delete(':communityId')

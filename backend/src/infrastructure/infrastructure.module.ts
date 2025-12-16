@@ -47,6 +47,7 @@ import { LocationController } from '../presentation/controllers/location.control
 import { RegistrationController } from '../presentation/controllers/registration.controller';
 import { JwtAuthGuard } from '../presentation/guards/jwt-auth.guard';
 import { OwnerGuard } from '../presentation/guards/owner.guard';
+import { CommunityEventGuard } from '../presentation/guards/community-event.guard';
 import { AuthModule } from './modules/auth.module';
 import { MongoCommentRepository } from './repositories/mongodb/comment.repository';
 import { MongoCommunityRepository } from './repositories/mongodb/community.repository';
@@ -204,6 +205,7 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     JwtStrategy,
     JwtAuthGuard,
     OwnerGuard,
+    CommunityEventGuard,
     EventMapper,
     ConfigService,
     CommunityService,
@@ -272,6 +274,7 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     ChatGPTService,
     JwtAuthGuard,
     OwnerGuard,
+    CommunityEventGuard,
     'IEventRepository',
     'ICommunityRepository',
     'ILocationRepository',
