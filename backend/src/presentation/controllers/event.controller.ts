@@ -27,6 +27,7 @@ import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UploadGuard } from '../guards/upload.guard';
+import { CommunityEventGuard } from '../guards/community-event.guard';
 
 @Controller('events')
 export class EventController {
@@ -627,7 +628,7 @@ export class EventController {
 
   // CREATE EVENT ------------------------------------------------------
   @Post('create')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CommunityEventGuard)
   @UseInterceptors(FileInterceptor('image'))
   async createEvent(
     @Request() req,
@@ -1024,7 +1025,7 @@ export class EventController {
   // CREATE EVENT FULL
   // ------------------------------------------------------------
   @Post('create-full/')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CommunityEventGuard)
   @UseInterceptors(FileInterceptor('image')) // <-- DIESE ZEILE HINZUFÜGEN!
   async createEventFull(
     @Body() body: any, // <-- 'any' statt typed, weil FormData anders kommt
