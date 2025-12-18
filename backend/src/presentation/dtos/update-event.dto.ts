@@ -67,6 +67,21 @@ export class UpdateEventDto {
   description?: string;
 
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  galleryUrls?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  subEventIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  documentUrls?: string[];
+
+  @IsOptional()
   @IsUrl()
   imageUrl?: string;
 

@@ -76,6 +76,7 @@ import { ChatGPTService } from './services/chatgpt.service';
 import { GeolocationService } from './services/geolocation.service';
 import { GroovecastService } from './services/groovecast.service';
 import { ImageService } from './services/image.service';
+import { DocumentService } from './services/document.service';
 import { PostService } from './services/post.service';
 import { QdrantService } from './services/qdrant.service';
 import { VideoService } from './services/video.service';
@@ -180,6 +181,7 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     VoiceChatGateway,
     EventEmbeddingService,
     ImageService,
+    DocumentService,
     AssessmentService,
     VideoService,
     GeolocationService,
@@ -269,6 +271,7 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     GroupService,
     VoiceChatService,
     ImageService,
+    DocumentService,
     AssessmentService,
     VideoService,
     ChatGPTService,

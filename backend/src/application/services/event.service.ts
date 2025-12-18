@@ -15,6 +15,7 @@ import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event, EventWithHost } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
 import { ImageService } from '../../infrastructure/services/image.service';
+import { DocumentService } from '../../infrastructure/services/document.service';
 import { VideoService } from '../../infrastructure/services/video.service';
 import { FeedService } from './feed.service';
 import { ProfileService } from './profile.service';
@@ -25,6 +26,7 @@ export class EventService {
   constructor(
     private readonly eventRepository: MongoEventRepository,
     private readonly imageService: ImageService,
+    private readonly documentService: DocumentService,
     private readonly chatGptService: ChatGPTService,
     private readonly geolocationService: GeolocationService,
     private readonly profileService: ProfileService,
@@ -1336,5 +1338,75 @@ export class EventService {
       parentEvent.subEventIds,
     );
     return subEvents;
+  }
+
+  // ------------------------------------------------------------
+  // GALLERY PICTURES
+  // ------------------------------------------------------------
+
+  async uploadGalleryPictures(
+    eventId: string,
+    images: Express.Multer.File[],
+    userId: string,
+  ): Promise<Event> {
+    // Check if event exists
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    // Check if user is the host
+    if (event.hostId !== userId) {
+      throw new ForbiddenException('Only the event host can upload gallery pictures');
+    }
+
+    // Upload images
+    const uploadPromises = images.map((image) =>
+      this.imageService.uploadImage(image),
+    );
+    const uploadedUrls = await Promise.all(uploadPromises);
+
+    // Update event with new gallery URLs
+    const updatedGalleryUrls = [...(event.galleryUrls || []), ...uploadedUrls];
+    const updatedEvent = await this.eventRepository.update(eventId, {
+      galleryUrls: updatedGalleryUrls,
+    });
+
+    return updatedEvent;
+  }
+
+  // ------------------------------------------------------------
+  // DOCUMENTS
+  // ------------------------------------------------------------
+
+  async uploadDocuments(
+    eventId: string,
+    documents: Express.Multer.File[],
+    userId: string,
+  ): Promise<Event> {
+    // Check if event exists
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    // Check if user is the host
+    if (event.hostId !== userId) {
+      throw new ForbiddenException('Only the event host can upload documents');
+    }
+
+    // Upload documents
+    const uploadedUrls = await this.documentService.uploadDocuments(documents);
+
+    // Update event with new document URLs
+    const updatedDocumentUrls = [
+      ...(event.documentUrls || []),
+      ...uploadedUrls,
+    ];
+    const updatedEvent = await this.eventRepository.update(eventId, {
+      documentUrls: updatedDocumentUrls,
+    });
+
+    return updatedEvent;
   }
 }

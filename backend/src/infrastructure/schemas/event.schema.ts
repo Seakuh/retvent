@@ -21,6 +21,8 @@ export const EventSchema = new Schema(
     subEventIds: { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }], default: [] },
     parentEventId: { type: Schema.Types.ObjectId, ref: 'Event', required: false, default: null },
     isSponsored: { type: Boolean, default: false },
+    galleryUrls: { type: [String], default: [] },
+    documentUrls: { type: [String], default: [] },
     address: {
       street: { type: String },
       houseNumber: { type: String },
@@ -84,17 +86,7 @@ export const EventSchema = new Schema(
       },
     },
     embedding: { type: [Number], default: undefined },
-    parentEventId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Event',
-      required: false,
-      default: null,
-    },
-    subEventIds: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
-      required: false,
-      default: [],
-    },
+
   },
   {
     timestamps: true,
