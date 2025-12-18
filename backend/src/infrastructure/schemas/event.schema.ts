@@ -18,6 +18,8 @@ export const EventSchema = new Schema(
     registrations: { type: Number, default: 0 },
     capacity: { type: Number, default: 0 },
     validators: { type: [String], default: [] },
+    subEventIds: { type: [{ type: Schema.Types.ObjectId, ref: 'Event' }], default: [] },
+    parentEventId: { type: Schema.Types.ObjectId, ref: 'Event', required: false, default: null },
     isSponsored: { type: Boolean, default: false },
     address: {
       street: { type: String },
@@ -82,6 +84,17 @@ export const EventSchema = new Schema(
       },
     },
     embedding: { type: [Number], default: undefined },
+    parentEventId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Event',
+      required: false,
+      default: null,
+    },
+    subEventIds: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
+      required: false,
+      default: [],
+    },
   },
   {
     timestamps: true,

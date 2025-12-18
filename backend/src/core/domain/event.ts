@@ -64,6 +64,10 @@ export class Event implements IEvent {
 
   embedding?: number[];
 
+  // SubEvent Support
+  parentEventId?: string;
+  subEventIds?: string[];
+
   constructor(data: Partial<IEvent>) {
     Object.assign(this, data);
   }

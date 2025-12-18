@@ -1267,4 +1267,74 @@ export class EventService {
 
     return newEvent;
   }
+
+  // ------------------------------------------------------------
+  // SUB EVENTS
+  // ------------------------------------------------------------
+
+  async createSubEvent(
+    parentEventId: string,
+    subEventData: Partial<Event>,
+    userId: string,
+    image?: Express.Multer.File,
+  ): Promise<Event> {
+    // Check if parent event exists
+    const parentEvent = await this.eventRepository.findById(parentEventId);
+    if (!parentEvent) {
+      throw new NotFoundException('Parent event not found');
+    }
+
+    // Check if user is the host of the parent event
+    if (parentEvent.hostId !== userId) {
+      throw new ForbiddenException(
+        'Only the parent event host can create sub-events',
+      );
+    }
+
+    // Create the sub-event
+    let imageUrl = undefined;
+    if (image) {
+      imageUrl = await this.imageService.uploadImage(image);
+    }
+
+    const subEventWithImage = {
+      ...subEventData,
+      parentEventId,
+      hostId: userId,
+      imageUrl,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const newSubEvent = await this.eventRepository.create(subEventWithImage);
+
+    // Update parent event's subEventIds
+    const updatedSubEventIds = [
+      ...(parentEvent.subEventIds || []),
+      newSubEvent.id,
+    ];
+    await this.eventRepository.update(parentEventId, {
+      subEventIds: updatedSubEventIds,
+    });
+
+    return newSubEvent;
+  }
+
+  async getSubEvents(parentEventId: string): Promise<Event[]> {
+    // Check if parent event exists
+    const parentEvent = await this.eventRepository.findById(parentEventId);
+    if (!parentEvent) {
+      throw new NotFoundException('Parent event not found');
+    }
+
+    // Get all sub-events
+    if (!parentEvent.subEventIds || parentEvent.subEventIds.length === 0) {
+      return [];
+    }
+
+    const subEvents = await this.eventRepository.findByIds(
+      parentEvent.subEventIds,
+    );
+    return subEvents;
+  }
 }

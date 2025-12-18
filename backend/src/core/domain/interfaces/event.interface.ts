@@ -33,4 +33,6 @@ export interface IEvent {
     };
   };
   embedding?: number[];
+  parentEventId?: string;
+  subEventIds?: string[];
 }

@@ -1044,4 +1044,41 @@ export class EventController {
   async getEventsByCommunityId(@Param('communityId') communityId: string) {
     return this.eventService.getEventsByCommunityId(communityId);
   }
+
+  // ------------------------------------------------------------
+  // SUB EVENTS
+  // ------------------------------------------------------------
+
+  @Post('sub-event/create')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async createSubEvent(
+    @Body() body: any,
+    @Request() req,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
+    // Parse the data field if it's a string (from FormData)
+    let subEventData = body.data;
+    if (typeof subEventData === 'string') {
+      subEventData = JSON.parse(subEventData);
+    }
+
+    const { parentEventId, ...eventData } = subEventData;
+
+    if (!parentEventId) {
+      throw new BadRequestException('parentEventId is required');
+    }
+
+    return this.eventService.createSubEvent(
+      parentEventId,
+      eventData,
+      req.user.sub,
+      image,
+    );
+  }
+
+  @Get('sub-events/:eventId')
+  async getSubEvents(@Param('eventId') eventId: string) {
+    return this.eventService.getSubEvents(eventId);
+  }
 }
