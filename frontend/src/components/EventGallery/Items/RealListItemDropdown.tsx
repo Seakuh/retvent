@@ -53,9 +53,9 @@ export const RealListItemDropdown: React.FC<RealListItemDropdownProps> = ({
           type="button"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <circle cx="4" cy="12" r="2" fill="#fff" />
+            <circle cx="12" cy="4" r="2" fill="#fff" />
             <circle cx="12" cy="12" r="2" fill="#fff" />
-            <circle cx="20" cy="12" r="2" fill="#fff" />
+            <circle cx="12" cy="20" r="2" fill="#fff" />
           </svg>
         </button>
 

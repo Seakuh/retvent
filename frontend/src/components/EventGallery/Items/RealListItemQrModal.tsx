@@ -12,51 +12,28 @@ export const RealListItemQrModal: React.FC<RealListItemQrModalProps> = ({
 }) => {
   const qrUrl = `https://event-scanner.com/event/${eventId}`;
 
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+  const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    onClose();
   };
 
   return (
     <div
       className="real-list-item-qr-modal-overlay"
-      onClick={handleOverlayClick}
+      onClick={onClose}
     >
       <div
         className="real-list-item-qr-modal-content"
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleContentClick}
       >
-        <button
-          className="real-list-item-qr-modal-close"
-          onClick={onClose}
-          aria-label="Schließen"
-        >
-          ×
-        </button>
-        <div className="real-list-item-qr-modal-header">
-          <h2>QR-Code für Event</h2>
-          <p className="real-list-item-qr-modal-url">{qrUrl}</p>
-        </div>
-        <div className="real-list-item-qr-code-container">
-          <QRCodeCanvas
-            value={qrUrl}
-            size={300}
-            level="H"
-            bgColor="#FFFFFF"
-            fgColor="#000000"
-            includeMargin={true}
-            style={{
-              borderRadius: "12px",
-              padding: "1rem",
-              backgroundColor: "white",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            }}
-          />
-        </div>
-        <p className="real-list-item-qr-modal-hint">
-          Scanne den QR-Code, um das Event zu öffnen
-        </p>
+        <QRCodeCanvas
+          value={qrUrl}
+          size={400}
+          level="H"
+          bgColor="#000000"
+          fgColor="#FFFFFF"
+          includeMargin={true}
+        />
       </div>
     </div>
   );

@@ -4,7 +4,7 @@
 }
 
 .real-list-item-dropdown-trigger {
-  background: rgba(30, 30, 30, 0.7);
+  margin: 0.5rem 0 0 0;
   border-radius: 50%;
   width: 36px;
   height: 36px;
@@ -14,12 +14,6 @@
   cursor: pointer;
   border: none;
   padding: 0;
-  transition: all 0.2s ease;
-}
-
-.real-list-item-dropdown-trigger:hover {
-  background: rgba(50, 50, 50, 0.9);
-  transform: scale(1.05);
 }
 
 .real-list-item-dropdown-overlay {
