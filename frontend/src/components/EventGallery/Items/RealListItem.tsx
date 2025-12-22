@@ -3,6 +3,7 @@ import {
   CalendarPlus,
   ExternalLink,
   Eye,
+  Globe,
   Heart,
   MapPin,
   MessageCircle,
@@ -290,15 +291,15 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                 e.preventDefault();
                 e.stopPropagation();
                 window.open(
-                  `https://google.com/search?q=${encodeURIComponent(
+                  `https://www.google.com/search?q=${encodeURIComponent(
                     event.title + " ticket"
                   )}`
                 );
               }}
               title="Lineup anzeigen"
             >
-              <TicketIcon size={24} />
-              <span>Tickets</span>
+              <Globe size={24} />
+              <span>Web</span>
             </button>
             {/* Lineup Button for Desktop */}
             {event.lineup && event.lineup.length > 0 && (
