@@ -275,6 +275,8 @@ export const EventDetail: React.FC = () => {
             onClose={() => setShowImageModal(false)}
           />
         )}
+                <SponsoredDetail />
+
         <div className="event-detail-footer">
           <p className="event-detail-text">
             This event was submitted by a user. The content does not originate
