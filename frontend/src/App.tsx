@@ -25,6 +25,7 @@ import { PwaInstall } from "./components/PwaInstall/PwaInstall";
 import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import ReelPage from "./pages/ReelPage";
 import { SearchPage } from "./pages/SearchPage";
 import { ShoppingPage } from "./pages/ShoppingPage";
@@ -81,12 +82,13 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <LandingPageProvider>
-      <FeedProvider>
-        <ChatProvider>
-          {/* <QueryClientProvider client={queryClient}> */}
-          <UserContextProvider>
-            <div className="app">
+    <ThemeProvider>
+      <LandingPageProvider>
+        <FeedProvider>
+          <ChatProvider>
+            {/* <QueryClientProvider client={queryClient}> */}
+            <UserContextProvider>
+              <div className="app">
               <main>
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
@@ -174,11 +176,12 @@ const App: React.FC = () => {
                 </Routes>
               </main>
             </div>
-          </UserContextProvider>
-          {/* </QueryClientProvider> */}
-        </ChatProvider>
-      </FeedProvider>
-    </LandingPageProvider>
+            </UserContextProvider>
+            {/* </QueryClientProvider> */}
+          </ChatProvider>
+        </FeedProvider>
+      </LandingPageProvider>
+    </ThemeProvider>
   );
 };
 

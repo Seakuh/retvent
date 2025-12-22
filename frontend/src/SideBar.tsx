@@ -19,6 +19,22 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "./contexts/ThemeContext";
 import "./SideBar.css";
 
+interface SideBarProps {
+  loggedIn: boolean;
+  user: any;
+  handleLogout: () => void;
+  showUploads: boolean;
+  setShowUploads: (show: boolean) => void;
+  handleOnUpload: () => void;
+  handleInstallClick: () => void;
+  setSearchPerformed: (performed: boolean) => void;
+  setSearchState: (state: any) => void;
+  setIsSearchOpen: (isOpen: boolean) => void;
+  isUploadOpen: boolean;
+  setIsUploadOpen: (isOpen: boolean) => void;
+  setViewMode: (mode: string) => void;
+}
+
 export const SideBar = ({
   loggedIn,
   user,
@@ -46,7 +62,18 @@ export const SideBar = ({
     <div className="side-bar">
       {/* Desktop Sidebar */}
       <aside className="hidden md:block fixed left-0 top-0 h-screen w-64 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-r-[1px] border-r-[color:var(--color-neon-blue-light)]">
-        <div className="p-4">
+        <div className="p-4 relative">
+          {/* Theme Switcher oben rechts */}
+          <div className="absolute top-4 right-4">
+            <button
+              onClick={toggleTheme}
+              className="theme-switcher-circle"
+              title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
+            >
+              <div className="theme-switcher-half theme-switcher-default"></div>
+              <div className="theme-switcher-half theme-switcher-classic"></div>
+            </button>
+          </div>
           <div className="flex items-center gap-3 cursor-pointer mb-8">
             <div className="logo-touch-container" onClick={goStart}>
               <img
@@ -136,16 +163,6 @@ onClick={() => setViewMode("Search")}
               <span className="hidden md:inline">Settings</span>
             </button>
 
-            <button
-              onClick={toggleTheme}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
-              title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
-            >
-              {theme === "classic" ? <Palette size={20} /> : <ScanLine size={20} />}
-              <span className="hidden md:inline">
-                {theme === "classic" ? "Default Theme" : "Event Scanner Classic"}
-              </span>
-            </button>
 
             {/* <button
               onClick={() => {
