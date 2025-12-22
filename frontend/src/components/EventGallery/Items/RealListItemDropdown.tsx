@@ -70,7 +70,7 @@ export const RealListItemDropdown: React.FC<RealListItemDropdownProps> = ({
                 className="real-list-item-dropdown-item"
                 onClick={handleShare}
               >
-                <Send size={18} style={{ marginRight: 8 }} /> Teilen (Share)
+                <Send size={18} style={{ marginRight: 8 }} />Share
               </div>
               <div
                 className="real-list-item-dropdown-item"

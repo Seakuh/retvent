@@ -6,6 +6,7 @@ import {
   Heart,
   MapPin,
   MessageCircle,
+  QrCodeIcon,
   Send,
   Star,
   TicketIcon,
@@ -17,6 +18,7 @@ import { Event, formatDate, getDaysUntilDate } from "../../../utils";
 import "./RealListItem.css";
 import { RealListItemDropdown } from "./RealListItemDropdown";
 import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
+import { RealListItemQrModal } from "./RealListItemQrModal";
 
 export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   event,
@@ -25,6 +27,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
   const [showLineup, setShowLineup] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
   const handleLike = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
@@ -223,8 +226,17 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               {event.commentCount}
             </span>
           </div>
+          <div className="event-meta-container-right">
+          <div onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowQrModal(true);
+          }}>
+            <QrCodeIcon size={20} color={"white"} />
+          </div>
           <div onClick={(e) => shareEventId(e, event.id!)}>
             <Send size={20} color={"white"} />
+          </div>
           </div>
         </div>
 
@@ -339,6 +351,12 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
         </div>
       </div>
       {showLineup && renderLineup(event)}
+      {showQrModal && event.id && (
+        <RealListItemQrModal
+          eventId={event.id}
+          onClose={() => setShowQrModal(false)}
+        />
+      )}
     </div>
   );
 };
