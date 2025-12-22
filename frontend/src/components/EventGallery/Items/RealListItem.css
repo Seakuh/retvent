@@ -305,10 +305,11 @@
 }
 
 .event-info-title-headline {
-  margin-top: 0;
   font-size: 1.5rem;
-  /* font-weight: 600; */
   text-align: center !important;
+  font-weight: bold;
+  color: white;
+  margin: 2rem;
 }
 
 .past-event {

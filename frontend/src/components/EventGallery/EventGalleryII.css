@@ -118,16 +118,7 @@
     color: white;
 }
 
-.event-info-title-headline {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    font-weight: bold;
-    color: white;
-}
+
 
 .event-info-date {
     font-size: 1rem;

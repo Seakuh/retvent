@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
 import { Event, formatDate, getDaysUntilDate } from "../../../utils";
 import "./RealListItem.css";
+import { RealListItemDropdown } from "./RealListItemDropdown";
 import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
 
 export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
@@ -176,6 +177,21 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
         className={`real-event-list-item ${isPast ? "past-event" : ""}`}
         onClick={() => navigate(`/event/${event.id || event._id}`)}
       >
+        <div className="real-list-item-profile-header-container" style={{ position: "relative" }}>
+          <RealListItemProfileHeader
+            profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
+            name={event?.host?.username || ""}
+            id={event?.hostId || ""}
+            location={event?.city || "TBA"}
+          />
+          <div style={{ position: "absolute", right: 12, top: 10, zIndex: 2 }}>
+            <RealListItemDropdown
+              eventId={event.id || event._id || ""}
+              onShare={shareEventId}
+            />
+          </div>
+        </div>
+      <h1 className="event-info-title-headline">{event.title}</h1>
         <div className="real-event-thumbnail">
           <img
             src={`https://img.event-scanner.com/insecure/rs:fit:935/q:70/plain/${event.imageUrl}@webp`}
@@ -184,6 +200,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             decoding="async"
           />
         </div>
+
 
         <div className="event-meta-container">
           <div className="event-meta-container-left">
@@ -210,13 +227,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             <Send size={20} color={"white"} />
           </div>
         </div>
-        <RealListItemProfileHeader
-          profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
-          name={event?.host?.username || ""}
-          id={event?.hostId || ""}
-          location={event?.city || "TBA"}
-        />
-        <h1 className="event-info-title-headline">{event.title}</h1>
+
         <div className="real-list-item-location-date-container">
           <span className="real-list-item-location">
             <MapPin size={14} color="white" />
@@ -313,6 +324,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               <span>Save</span>
             </button>
           </div>
+    
           {/* <div className="event-tags-real-list-item">
           {event.tags?.map((tag) => (
             <span key={tag} className="event-tag">
