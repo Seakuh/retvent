@@ -74,14 +74,14 @@ export const SideBar = ({
           </div>
           <nav className="space-y-2">
             <button
-className="flex items-center gap-2 px-4 py-2 w-full text-white bg-blue-600 rounded-lg overflow-hidden"
+className="flex items-center gap-2 px-4 py-2 w-full text-white bg-blue-600 rounded-full overflow-hidden"
 onClick={() => setViewMode("Search")}
             >
               <Search size={20} />
               <span className="hidden md:inline">Search</span>
             </button>
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
               onClick={goStart}
             >
               <Calendar size={20} />
@@ -89,7 +89,7 @@ onClick={() => setViewMode("Search")}
             </button>
 
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
               onClick={() => setViewMode("Trending")}
             >
               <TrendingUp size={20} />
@@ -97,7 +97,7 @@ onClick={() => setViewMode("Search")}
             </button>
 
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
               onClick={() => navigate("/reel")}
             >
               <Film size={20} />
@@ -105,7 +105,7 @@ onClick={() => setViewMode("Search")}
             </button>
 
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
               onClick={() => setIsUploadOpen(!isUploadOpen)}
             >
               <Upload size={20} />
@@ -113,7 +113,7 @@ onClick={() => setViewMode("Search")}
             </button>
 
             {/* <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
               onClick={() => navigate("/shopping")}
             >
               <ShoppingBag size={20} />
@@ -121,7 +121,7 @@ onClick={() => setViewMode("Search")}
             </button> */}
 
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
               onClick={() => navigate("/my-groups")}
             >
               <Send size={20} />
@@ -136,7 +136,7 @@ onClick={() => setViewMode("Search")}
                   navigate("/login");
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
             >
               <UserIcon size={20} />
               <span className="hidden md:inline">Profile</span>
@@ -146,7 +146,7 @@ onClick={() => setViewMode("Search")}
               onClick={() => {
                 navigate(`/me`);
               }}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
             >
               <Settings size={20} />
               <span className="hidden md:inline">Settings</span>
@@ -157,7 +157,7 @@ onClick={() => setViewMode("Search")}
               onClick={() => {
                 navigate("/admin/events/create");
               }}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
             >
               <Plus size={20} />
               <span className="hidden md:inline">Create Event</span>
@@ -168,7 +168,7 @@ onClick={() => setViewMode("Search")}
                 setShowUploads(!showUploads);
                 handleOnUpload();
               }}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <Grid3X3 size={20} />
               <span className="hidden md:inline">
@@ -176,19 +176,19 @@ onClick={() => setViewMode("Search")}
               </span>
             </button> */}
 
-            <button
+            {/* <button
               onClick={handleInstallClick}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <Smartphone size={20} />
               <span className="hidden md:inline">Install App</span>
-            </button>
+            </button> */}
 
             {/* <button
               onClick={() => {
                 navigate("/about");
               }}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <Info size={20} />
               <span className="hidden md:inline">About</span>
@@ -199,7 +199,7 @@ onClick={() => setViewMode("Search")}
                 onClick={() => {
                   navigate("/login");
                 }}
-                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-full"
               >
                 <LogIn size={20} />
                 <span className="hidden md:inline">Login</span>
@@ -207,7 +207,7 @@ onClick={() => setViewMode("Search")}
             ) : (
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+                className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-full"
               >
                 <LogOut size={20} />
                 <span className="hidden md:inline">Logout</span>
@@ -251,21 +251,21 @@ onClick={() => setViewMode("Search")}
 
           <nav className="space-y-2">
             <button
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
               onClick={() => setIsSearchOpen(true)}
             >
               <Search size={20} />
             </button>
 
             <button
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
               onClick={() => setIsUploadOpen(!isUploadOpen)}
             >
               <Upload size={20} />
             </button>
 
             <button
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
               onClick={() => navigate("/my-groups")}
             >
               <Send size={20} />
@@ -279,21 +279,21 @@ onClick={() => setViewMode("Search")}
                   navigate("/login");
                 }
               }}
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <UserIcon size={20} />
             </button>
 
             <button
               onClick={() => navigate(`/me`)}
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <Settings size={20} />
             </button>
 
             <button
               onClick={toggleTheme}
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
               title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
             >
               {theme === "classic" ? <Palette size={20} /> : <ScanLine size={20} />}
@@ -301,7 +301,7 @@ onClick={() => setViewMode("Search")}
 
             <button
               onClick={() => navigate("/admin/events/create")}
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <Plus size={20} />
             </button>
@@ -311,21 +311,21 @@ onClick={() => setViewMode("Search")}
                 setShowUploads(!showUploads);
                 handleOnUpload();
               }}
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <Upload size={20} />
             </button>
 
-            <button
+            {/* <button
               onClick={handleInstallClick}
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <Smartphone size={20} />
-            </button>
+            </button> */}
 
             <button
               onClick={() => navigate("/about")}
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <Info size={20} />
             </button>
@@ -333,14 +333,14 @@ onClick={() => setViewMode("Search")}
             {!loggedIn ? (
               <button
                 onClick={() => navigate("/login")}
-                className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+                className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
               >
                 <LogIn size={20} />
               </button>
             ) : (
               <button
                 onClick={handleLogout}
-                className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+                className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
               >
                 <LogOut size={20} />
               </button>
