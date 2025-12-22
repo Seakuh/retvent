@@ -833,5 +833,84 @@ Verarbeite diese Aktion und gib den vollständig aktualisierten Spielzustand als
     // Remove markdown code blocks if present
     const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     return JSON.parse(cleanContent);
+  } 
+
+  /**
+   * Generates a video prompt for event flyer video generation using kling-v2.1
+   * The prompt is optimized for image-to-video generation and describes visual scenes
+   * 
+   * Example usage:
+   * const event = await eventRepository.findById(eventId);
+   * const videoPrompt = await chatGptService.generateVideoPrompt(event);
+   * const video = await replicateService.createVideoFromImage({
+   *   image: eventFlyerImage,
+   *   prompt: videoPrompt,
+   *   duration: 5
+   * });
+   */
+  async generateVideoPrompt(event: Event): Promise<string> {
+    // Extract key event information for the prompt
+    const eventInfo = {
+      title: event.title,
+      description: event.description || '',
+      category: event.category || '',
+      city: event.city || '',
+      startDate: event.startDate ? new Date(event.startDate).toLocaleDateString('en-US', { 
+        month: 'long', 
+        day: 'numeric', 
+        year: 'numeric' 
+      }) : '',
+      startTime: event.startTime || '',
+      lineup: event.lineup?.map(l => l.name).join(', ') || '',
+      tags: event.tags?.join(', ') || '',
+    };
+
+    const systemPrompt = `You are creating a visual video prompt for an AI image-to-video generator (kling-v2.1) that will animate an event flyer image.
+
+Event Information:
+- Title: ${eventInfo.title}
+- Description: ${eventInfo.description}
+- Category: ${eventInfo.category}
+- Location: ${eventInfo.city}
+- Date: ${eventInfo.startDate}
+- Time: ${eventInfo.startTime}
+- Lineup: ${eventInfo.lineup}
+- Tags: ${eventInfo.tags}
+
+Create a concise, visually descriptive prompt (50-80 words) that:
+1. Describes dynamic visual movements and animations that would bring the event flyer to life
+2. Focuses on visual elements like camera movements, lighting effects, text animations, and scene transitions
+3. Captures the energy and atmosphere of the event type (e.g., music, sports, art, tech)
+4. Uses cinematic language (e.g., "smooth camera pan", "dynamic zoom", "glowing text", "particle effects")
+5. Avoids narrative text - focus on visual description only
+6. Matches the event's mood and category (energetic for concerts, elegant for galas, tech-forward for conferences)
+
+The prompt should be in English and optimized for video generation from a static event flyer image.
+
+Example format: "Dynamic camera movement revealing event details, animated text elements with glowing effects, vibrant colors transitioning smoothly, energetic particle effects matching the event theme, smooth zoom on key information, cinematic lighting that highlights the event's atmosphere"`;
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are an expert at creating visual prompts for AI video generation. Focus on describing visual movements, animations, and cinematic effects.',
+        },
+        { role: 'user', content: systemPrompt },
+      ],
+      temperature: 0.8,
+      max_tokens: 200,
+    });
+
+    const generatedPrompt = response.choices[0]?.message?.content || '';
+    
+    // Fallback prompt if generation fails
+    if (!generatedPrompt || generatedPrompt.trim().length < 20) {
+      return `Dynamic camera movement revealing ${eventInfo.title} event details, animated text with glowing effects, vibrant colors transitioning smoothly, energetic visual effects matching ${eventInfo.category || 'the event'} theme, smooth cinematic zoom on key information`;
+    }
+    console.log('generatedPrompt', generatedPrompt);
+
+    return generatedPrompt.trim();
   }
 }

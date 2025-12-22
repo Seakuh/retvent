@@ -15,6 +15,8 @@ import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event, EventWithHost } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
 import { ImageService } from '../../infrastructure/services/image.service';
+import { MuxService } from '../../infrastructure/services/mux.service';
+import { ReplicateService } from '../../infrastructure/services/replicate.service';
 import { VideoService } from '../../infrastructure/services/video.service';
 import { FeedService } from './feed.service';
 import { ProfileService } from './profile.service';
@@ -22,6 +24,7 @@ import { UserService } from './user.service';
 import { CommunityService } from './community.service';
 @Injectable()
 export class EventService {
+  
   constructor(
     private readonly eventRepository: MongoEventRepository,
     private readonly imageService: ImageService,
@@ -33,6 +36,8 @@ export class EventService {
     private readonly videoService: VideoService,
     private readonly qdrantService: QdrantService,
     private readonly communityService: CommunityService,
+    private readonly replicateService: ReplicateService,
+    private readonly muxService: MuxService,
   ) {}
   getEventsByTag(tag: string) {
     return this.eventRepository.getEventsByTag(tag);
@@ -640,6 +645,92 @@ export class EventService {
   async removeLike(eventId: string, userId: string): Promise<Event | null> {
     return this.eventRepository.removeLike(eventId, userId);
   }
+
+  // #########################################################
+  // AI Video Clip Generation from Image
+  // #########################################################
+  async createAIVideoClipFromImage(
+    file: Express.Multer.File,
+    prompt?: string,
+    userId?: string,
+  ) {
+
+    const event = await this.processEventImageUploadV5(file, 0, 0, userId);
+    if (!event) {
+      throw new BadRequestException('Failed to create event');
+    }
+
+
+    try {
+      // Erstelle Video mit Replicate (kling-v2.1)
+      const prediction = await this.replicateService.createVideoFromImage({
+        image: file,
+        prompt: await this.chatGptService.generateVideoPrompt(event),
+        duration: 5, // 5 Sekunden
+        guidance_scale: 0.5,
+        width: 720,
+        height: 720,
+        // width: 576 as 720 | 1080,     // Smartphone-gerechte Breite (9:16, z. B. 576x1024)
+        // height: 1024,  
+      });
+
+      // Warte auf das Ergebnis (optional, kann auch async sein)
+      const result = await this.replicateService.waitForPrediction(
+        prediction.id,
+        300000, // 5 Minuten max
+      );
+
+      if (result.status !== 'succeeded' || !result.output) {
+        throw new Error(
+          `Video generation failed: ${result.error || 'Unknown error'}`,
+        );
+      }
+
+      // Video-URL von Replicate
+      const videoUrl =
+        typeof result.output === 'string' ? result.output : result.output[0];
+
+      // Lade Video zu Mux hoch für bessere Darstellung und Analytics
+      const muxAsset = await this.muxService.createAssetFromUrl(
+        videoUrl,
+        'public',
+      );
+
+      // Warte bis Mux das Asset verarbeitet hat
+      let asset = muxAsset;
+      let attempts = 0;
+      while (asset.status !== 'ready' && attempts < 30) {
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 Sekunden warten
+        asset = await this.muxService.getAsset(asset.id);
+        attempts++;
+      }
+
+      // Erstelle Playback-URLs
+      const playbackUrl = this.muxService.getPlaybackUrl(asset);
+      const mp4Url = this.muxService.getMp4Url(asset);
+
+      const eventWithVideo = await this.eventRepository.uploadEventVideo(event.id, videoUrl);
+      console.log('eventWithVideo', eventWithVideo);
+
+      return {
+        predictionId: prediction.id,
+        muxAssetId: asset.id,
+        videoUrl: videoUrl, // Original von Replicate
+        playbackUrl: playbackUrl, // HLS-Stream von Mux
+        mp4Url: mp4Url, // MP4 von Mux (falls verfügbar)
+        muxDataEnvironmentKey: this.muxService.getDataEnvironmentKey(),
+        status: asset.status,
+        videoUrlEvent: event.videoUrls[0],
+      };
+    } catch (error) {
+      console.error('Failed to create AI video clip:', error);
+      throw new Error(
+        `Failed to create AI video clip: ${error.message || 'Unknown error'}`,
+      );
+    }
+  }
+
+  // #########################################################
 
   async processEventImageUpload(
     image: Express.Multer.File,
@@ -1267,4 +1358,6 @@ export class EventService {
 
     return newEvent;
   }
+
+  
 }

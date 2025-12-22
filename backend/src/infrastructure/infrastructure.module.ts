@@ -76,8 +76,10 @@ import { ChatGPTService } from './services/chatgpt.service';
 import { GeolocationService } from './services/geolocation.service';
 import { GroovecastService } from './services/groovecast.service';
 import { ImageService } from './services/image.service';
+import { MuxService } from './services/mux.service';
 import { PostService } from './services/post.service';
 import { QdrantService } from './services/qdrant.service';
+import { ReplicateService } from './services/replicate.service';
 import { VideoService } from './services/video.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PokerGameService } from 'src/application/services/poker-game.service';
@@ -182,6 +184,8 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     ImageService,
     AssessmentService,
     VideoService,
+    MuxService,
+    ReplicateService,
     GeolocationService,
     LocationService,
     AuthService,
@@ -271,6 +275,8 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     ImageService,
     AssessmentService,
     VideoService,
+    MuxService,
+    ReplicateService,
     ChatGPTService,
     JwtAuthGuard,
     OwnerGuard,
