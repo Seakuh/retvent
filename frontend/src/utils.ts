@@ -230,6 +230,7 @@ export interface Event {
   };
   hostUsername?: string;
   hostImageUrl?: string;
+  videoUrls?: string[];
 
   city?: string;
   locationId?: string;

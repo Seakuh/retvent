@@ -268,6 +268,12 @@ const ReelPage: React.FC = () => {
     return (
       <div className="lineup-container" onClick={handleLineupClick}>
         <div className="lineup-content">
+            {event.videoUrls && event.videoUrls.map((videoUrl, index) => (
+              <div key={index}>
+                <iframe src={videoUrl} />
+              </div>
+            ))}
+
           <h2 className="lineup-title">Lineup</h2>
           <div className="artists-list">
             {event.lineup.map((artist, index) => (
