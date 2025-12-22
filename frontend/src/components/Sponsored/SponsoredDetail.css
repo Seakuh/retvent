@@ -1,6 +1,7 @@
 .sponsored-detail {
-  margin: 0 auto;
+  margin: 5rem auto;
   max-width: 100%;
+  padding: 3rem;
   background-color: black;
   position: relative;
   border-radius: 8px;
