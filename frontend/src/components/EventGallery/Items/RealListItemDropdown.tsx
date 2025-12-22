@@ -145,7 +145,7 @@ export const RealListItemDropdown: React.FC<RealListItemDropdownProps> = ({
                     fill="#f00"
                   />
                 </svg>
-                Melden (Report)
+                Report
               </div>
             </div>
           </>
