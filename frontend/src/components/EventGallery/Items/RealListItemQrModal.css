@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999999 !important;
+  z-index: 2147483647 !important;
   padding: 1rem;
   cursor: pointer;
   isolation: isolate;
@@ -26,11 +26,11 @@
   width: 100%;
   max-width: 600px;
   cursor: pointer;
-  z-index: 999999 !important;
+  z-index: 2147483647 !important;
 }
 
 .real-list-item-qr-modal-content canvas {
-  z-index: 999999 !important;
+  z-index: 2147483647 !important;
   position: relative;
 }
 

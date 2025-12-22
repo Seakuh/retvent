@@ -1,4 +1,5 @@
 import { QRCodeCanvas } from "qrcode.react";
+import { createPortal } from "react-dom";
 import "./RealListItemQrModal.css";
 
 interface RealListItemQrModalProps {
@@ -17,7 +18,7 @@ export const RealListItemQrModal: React.FC<RealListItemQrModalProps> = ({
     onClose();
   };
 
-  return (
+  return createPortal(
     <div
       className="real-list-item-qr-modal-overlay"
       onClick={onClose}
@@ -35,7 +36,8 @@ export const RealListItemQrModal: React.FC<RealListItemQrModalProps> = ({
           includeMargin={true}
         />
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
