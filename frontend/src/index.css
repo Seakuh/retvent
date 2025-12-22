@@ -15,13 +15,61 @@
   --color-neon-blue-light-2: #01cbfea4;
   --color-neon-blue-dark: #007bff;
   --color-neon-blue-dark-2: #000033;
+}
 
+:root[data-theme="classic"] {
+  --color-neon-pink: #1a1a1a;
+  --color-neon-blue: white;
+  --color-neon-green: #1a1a1a;
+  --color-neon-purple: #1a1a1a;
+  --color-neon-yellow: #1a1a1a;
+  --color-neon-orange: #1a1a1a;
+  --color-neon-blue-light: #1a1a1a44;
+  --color-neon-pink-light: #1a1a1a44;
+  --color-neon-pink-light-2: #1a1a1a88;
+  --color-neon-blue-light-2: #1a1a1aa4;
+  --color-neon-blue-dark: #000000;
+  --color-neon-blue-dark-2: #000000;
 }
 
 body {
   background: linear-gradient(135deg, #000046 0%, #000000 100%);
-  /* background-color: black; */
   font-family: system-ui, -apple-system, sans-serif;
+  transition: background 0.3s ease;
+}
+
+body[data-theme="classic"],
+:root[data-theme="classic"] body {
+  background: #000000;
+}
+
+:root[data-theme="classic"] .side-bar,
+:root[data-theme="classic"] aside {
+  background: #000000 !important;
+  border-color: #1a1a1a !important;
+}
+
+:root[data-theme="classic"] .glass-effect {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+:root[data-theme="classic"] .app,
+:root[data-theme="classic"] main {
+  background: #000000 !important;
+}
+
+:root[data-theme="classic"] * {
+  color-scheme: dark;
+}
+
+:root[data-theme="classic"] button {
+  background-color: #1a1a1a;
+  border-color: #333333;
+}
+
+:root[data-theme="classic"] button:hover {
+  background-color: #2a2a2a;
 }
 
 .neon-shadow {

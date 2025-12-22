@@ -12,8 +12,11 @@ import {
   TrendingUp,
   Upload,
   UserIcon,
+  ScanLine,
+  Palette,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "./contexts/ThemeContext";
 import "./SideBar.css";
 
 export const SideBar = ({
@@ -27,12 +30,12 @@ export const SideBar = ({
   setSearchPerformed,
   setSearchState,
   setIsSearchOpen,
-  isSearchOpen,
   isUploadOpen,
   setIsUploadOpen,
   setViewMode,
-}) => {
+}: SideBarProps) => {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const goStart = () => {
     console.log("GO START");
@@ -55,14 +58,14 @@ export const SideBar = ({
           </div>
           <nav className="space-y-2">
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
-              onClick={() => setViewMode("Search")}
+className="flex items-center gap-2 px-4 py-2 w-full text-white bg-blue-600 rounded-lg overflow-hidden"
+onClick={() => setViewMode("Search")}
             >
               <Search size={20} />
               <span className="hidden md:inline">Search</span>
             </button>
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
               onClick={goStart}
             >
               <Calendar size={20} />
@@ -70,7 +73,7 @@ export const SideBar = ({
             </button>
 
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
               onClick={() => setViewMode("Trending")}
             >
               <TrendingUp size={20} />
@@ -78,7 +81,7 @@ export const SideBar = ({
             </button>
 
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
               onClick={() => navigate("/reel")}
             >
               <Film size={20} />
@@ -86,7 +89,7 @@ export const SideBar = ({
             </button>
 
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
               onClick={() => setIsUploadOpen(!isUploadOpen)}
             >
               <Upload size={20} />
@@ -94,7 +97,7 @@ export const SideBar = ({
             </button>
 
             {/* <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
               onClick={() => navigate("/shopping")}
             >
               <ShoppingBag size={20} />
@@ -102,7 +105,7 @@ export const SideBar = ({
             </button> */}
 
             <button
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
               onClick={() => navigate("/my-groups")}
             >
               <Send size={20} />
@@ -117,7 +120,7 @@ export const SideBar = ({
                   navigate("/login");
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
             >
               <UserIcon size={20} />
               <span className="hidden md:inline">Profile</span>
@@ -127,17 +130,28 @@ export const SideBar = ({
               onClick={() => {
                 navigate(`/me`);
               }}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
             >
               <Settings size={20} />
               <span className="hidden md:inline">Settings</span>
+            </button>
+
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
+              title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
+            >
+              {theme === "classic" ? <Palette size={20} /> : <ScanLine size={20} />}
+              <span className="hidden md:inline">
+                {theme === "classic" ? "Default Theme" : "Event Scanner Classic"}
+              </span>
             </button>
 
             {/* <button
               onClick={() => {
                 navigate("/admin/events/create");
               }}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-lg"
             >
               <Plus size={20} />
               <span className="hidden md:inline">Create Event</span>
@@ -258,6 +272,14 @@ export const SideBar = ({
               className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
             >
               <Settings size={20} />
+            </button>
+
+            <button
+              onClick={toggleTheme}
+              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-lg"
+              title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
+            >
+              {theme === "classic" ? <Palette size={20} /> : <ScanLine size={20} />}
             </button>
 
             <button
