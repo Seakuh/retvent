@@ -61,19 +61,8 @@ export const SideBar = ({
   return (
     <div className="side-bar">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:block fixed left-0 top-0 h-screen w-64 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-r-[1px] border-r-[color:var(--color-neon-blue-light)]">
-        <div className="p-4 relative">
-          {/* Theme Switcher oben rechts */}
-          <div className="absolute top-4 right-4">
-            <button
-              onClick={toggleTheme}
-              className="theme-switcher-circle"
-              title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
-            >
-              <div className="theme-switcher-half theme-switcher-default"></div>
-              <div className="theme-switcher-half theme-switcher-classic"></div>
-            </button>
-          </div>
+      <aside className="hidden md:block fixed left-0 top-0 h-screen w-64 backdrop-blur-[30px] bg-[color:var(--color-neon-blue-dark)/80] border-r-[1px] border-r-[color:var(--color-neon-blue-light)] flex flex-col">
+        <div className="p-4 flex-1">
           <div className="flex items-center gap-3 cursor-pointer mb-8">
             <div className="logo-touch-container" onClick={goStart}>
               <img
@@ -225,6 +214,17 @@ onClick={() => setViewMode("Search")}
               </button>
             )}
           </nav>
+        </div>
+        {/* Theme Switcher ganz unten in der Mitte */}
+        <div className="p-4 flex justify-center items-center">
+          <button
+            onClick={toggleTheme}
+            className="theme-switcher-circle"
+            title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
+          >
+            <div className="theme-switcher-half theme-switcher-default"></div>
+            <div className="theme-switcher-half theme-switcher-classic"></div>
+          </button>
         </div>
       </aside>
 
