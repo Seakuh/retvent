@@ -176,13 +176,12 @@ export const EventDetail: React.FC = () => {
           onImageClick={() => setShowImageModal(true)}
         />
         <MetaBar {...event} />
-        <SponsoredDetail />
+        {/* <SponsoredDetail /> */}
         {/* <CommunitySection
           views={event.views ?? 0}
           commentCount={event.commentCount ?? 0}
           city={event.city ?? ""}
         /> */}
-        {isOwner && <HostView eventId={eventId || ""} />}
         <button className="back-button" onClick={handleBack}>
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -245,6 +244,8 @@ export const EventDetail: React.FC = () => {
           )}
           {host && <EventHost host={host} userId={event.hostId || ""} />}
         </div>
+        {isOwner && <HostView eventId={eventId || ""} />}
+
         <SimilarEvents eventId={eventId || ""} />
 
         {showImageModal && (
