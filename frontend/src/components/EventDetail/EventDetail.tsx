@@ -244,7 +244,7 @@ export const EventDetail: React.FC = () => {
             <EventTags tags={event.tags} />
           )}
 
-          {eventId && (
+          {/* {eventId && (
             <div className="event-qr-code-container">
               <QRCodeCanvas
                 value={`https://event-scanner.com/event/${eventId}`}
@@ -262,7 +262,7 @@ export const EventDetail: React.FC = () => {
               />
             </div>
           )}
-          
+           */}
           {host && <EventHost host={host} userId={event.hostId || ""} />}
         </div>
         {isOwner && <HostView eventId={eventId || ""} />}
@@ -275,8 +275,6 @@ export const EventDetail: React.FC = () => {
             onClose={() => setShowImageModal(false)}
           />
         )}
-                <SponsoredDetail />
-
         <div className="event-detail-footer">
           <p className="event-detail-text">
             This event was submitted by a user. The content does not originate

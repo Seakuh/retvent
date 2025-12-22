@@ -22,11 +22,6 @@
 
 .comments-meta-bar-icon{
   cursor: pointer;
-  color: gray;
-}
-
-.views-meta-bar-icon{
-  color: var(--color-neon-pink);
 }
 
 .user-interaction {

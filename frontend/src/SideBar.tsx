@@ -12,11 +12,8 @@ import {
   TrendingUp,
   Upload,
   UserIcon,
-  ScanLine,
-  Palette,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "./contexts/ThemeContext";
 import "./SideBar.css";
 
 interface SideBarProps {
@@ -51,7 +48,6 @@ export const SideBar = ({
   setViewMode,
 }: SideBarProps) => {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
 
   const goStart = () => {
     console.log("GO START");
@@ -215,17 +211,6 @@ onClick={() => setViewMode("Search")}
             )}
           </nav>
         </div>
-        {/* Theme Switcher ganz unten in der Mitte */}
-        <div className="p-4 flex justify-center items-center">
-          <button
-            onClick={toggleTheme}
-            className="theme-switcher-circle"
-            title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
-          >
-            <div className="theme-switcher-half theme-switcher-default"></div>
-            <div className="theme-switcher-half theme-switcher-classic"></div>
-          </button>
-        </div>
       </aside>
 
       {/* Mobile Sidebar */}
@@ -289,14 +274,6 @@ onClick={() => setViewMode("Search")}
               className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <Settings size={20} />
-            </button>
-
-            <button
-              onClick={toggleTheme}
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
-              title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
-            >
-              {theme === "classic" ? <Palette size={20} /> : <ScanLine size={20} />}
             </button>
 
             <button

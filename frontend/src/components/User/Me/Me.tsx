@@ -2,6 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
+import { useTheme } from "../../../contexts/ThemeContext";
 import type { Profile, UserPreferences } from "../../../utils";
 import {
   calculateProgress,
@@ -13,10 +14,12 @@ import {
 } from "../../../utils";
 import { EmbeddingPreferences } from "../../EventDetail/components/EmbeddingPreferences/EmbeddingPreferences";
 import { LevelSection } from "../../LevelSection/LevelSection";
+import "../../../SideBar.css";
 import "./Me.css";
 import { meService } from "./service";
 export const Me: React.FC = () => {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   // Zustandsverwaltung
   const [me, setMe] = useState<Profile>();
@@ -299,6 +302,16 @@ export const Me: React.FC = () => {
           >
             View Profile
           </button>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "1rem", marginBottom: "1rem" }}>
+            <button
+              onClick={toggleTheme}
+              className="theme-switcher-circle"
+              title={theme === "classic" ? "Switch to Default Theme" : "Switch to Event Scanner Classic"}
+            >
+              <div className="theme-switcher-half theme-switcher-default"></div>
+              <div className="theme-switcher-half theme-switcher-classic"></div>
+            </button>
+          </div>
           <div className="profile-info">
             <div className="profile-info-item">
               <div className="info-label">Username</div>
