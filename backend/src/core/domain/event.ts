@@ -49,8 +49,11 @@ export class Event implements IEvent {
   registeredUserIds?: string[];
   email?: string;
   language?: string;
+  galleryUrls?: string[];
+  documentUrls?: string[];
   difficulty?: string;
   remoteUrl?: string;
+  subEvntIds?: string[];
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
@@ -63,6 +66,11 @@ export class Event implements IEvent {
   commentCount?: number;
 
   embedding?: number[];
+
+  // SubEvent Support
+  parentEventId?: string;
+  subEventIds?: string[];
+
 
   constructor(data: Partial<IEvent>) {
     Object.assign(this, data);

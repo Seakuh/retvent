@@ -33,4 +33,8 @@ export interface IEvent {
     };
   };
   embedding?: number[];
+  parentEventId?: string;
+  subEventIds?: string[];
+  galleryUrls?: string[];
+  documentUrls?: string[];
 }
