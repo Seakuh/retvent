@@ -1,4 +1,5 @@
 import { ChevronLeft } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -242,6 +243,26 @@ export const EventDetail: React.FC = () => {
           {event.tags && event.tags.length > 0 && (
             <EventTags tags={event.tags} />
           )}
+
+          {eventId && (
+            <div className="event-qr-code-container">
+              <QRCodeCanvas
+                value={`https://event-scanner.com/event/${eventId}`}
+                size={250}
+                level="H"
+                bgColor="#FFFFFF"
+                fgColor="#000000"
+                includeMargin={true}
+                style={{
+                  borderRadius: "12px",
+                  padding: "1rem",
+                  backgroundColor: "white",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                }}
+              />
+            </div>
+          )}
+          
           {host && <EventHost host={host} userId={event.hostId || ""} />}
         </div>
         {isOwner && <HostView eventId={eventId || ""} />}

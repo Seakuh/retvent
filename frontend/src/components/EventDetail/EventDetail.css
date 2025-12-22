@@ -811,3 +811,26 @@
     align-items: center;
     width: 100%;
   }
+
+  /* =============================================================
+     QR CODE SECTION
+     ============================================================= */
+  .event-qr-code-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background: black;
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .event-qr-code-container {
+      padding: 1.5rem;
+    }
+
+    .event-qr-code-container canvas {
+      max-width: 100%;
+      height: auto;
+    }
+  }
