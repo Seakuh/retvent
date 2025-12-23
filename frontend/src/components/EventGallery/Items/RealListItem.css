@@ -242,7 +242,7 @@
   object-fit: contain;
   object-position: center;
   background-color: black;
-  padding: 4rem; /* Padding nach innen und schwarz bleibt durch background */
+  padding: 3.5rem; /* Padding nach innen und schwarz bleibt durch background */
   box-sizing: border-box;
 }
 
