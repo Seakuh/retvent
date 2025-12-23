@@ -1084,10 +1084,21 @@ export class EventController {
   @UseInterceptors(FileInterceptor('image'))
   async createSubevent(
     @Param('parentId') parentId: string,
-    @Body() eventData: CreateEventDto,
+    @Body() body: any,
     @Request() req,
     @UploadedFile() image?: Express.Multer.File,
   ) {
+    // If data is wrapped in a 'data' field (from FormData), extract it
+    let eventData = body;
+    if (body.data && typeof body.data === 'string') {
+      try {
+        eventData = JSON.parse(body.data);
+      } catch (e) {
+        // If parsing fails, use body as is
+        eventData = body;
+      }
+    }
+
     const parsedData = this.eventMapper.toEntity(eventData, req.user.sub);
     const subevent = await this.eventService.createSubevent(
       parentId,
