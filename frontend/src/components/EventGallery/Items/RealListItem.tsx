@@ -88,14 +88,37 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
     window.open(googleCalendarUrl, "_blank");
   };
 
-  const shareEventId = (
+  const shareEvent = (
     e: React.MouseEvent<HTMLDivElement>,
-    eventId: string
+    event: Event
   ) => {
     e.preventDefault();
     e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
 
-    const shareUrl = `https://event-scanner.com/event/${eventId}`;
+    const shareUrl = `https://event-scanner.com/event/${event.id}`;
+    const title = event.title || "";
+    const date = event.startDate
+      ? new Date(event.startDate).toLocaleString("en-GB", {
+          year: "numeric",
+          month: "long",
+          day: "2-digit",
+        })
+      : "";
+    const lineup = event.lineup?.map((artist) => artist.name).join(", ") || "";
+
+    const shareText = [
+      `${title}`,
+      date ? `${date}` : undefined,
+      "-----------------------\n",
+      lineup ? `Lineup: \n${lineup}` : undefined,
+      shareUrl,
+    ].filter(Boolean).join("\n");
+
+    const shareData = {
+      title,
+      text: shareText,
+      url: shareUrl,
+    };
 
     if (navigator.share) {
       // For mobile devices that support Web Share API
@@ -107,8 +130,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
       navigator.clipboard
         .writeText(shareUrl)
         .then(() => {
-          // Could show a toast/notification here that URL was copied
-          alert("Link copied to clipboard!");
+          console.log("Link copied to clipboard!");
         })
         .catch((err) => {
           console.error("Failed to copy:", err);
@@ -273,19 +295,15 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           }}>
             <QrCodeIcon size={20} color={"white"} />
           </div>
-          <div onClick={(e) => shareEventId(e, event.id!)}>
+          <div onClick={(e) => shareEvent(e, event!)}>
             <Send size={20} color={"white"} />
           </div>
           </div>
         </div>
-
-  
-
         <div className="miniature-event-info">
           <h2 className="event-description-real-list-item">
             {event.description}
           </h2>
-
           <div className="event-info-button-container">
             <button
               className="real-action-button"
