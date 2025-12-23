@@ -110,6 +110,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
       `${title}`,
       date ? `📅 ${date}` : undefined,
       "\n",
+      location ? `📍 ${location}` : undefined,
       lineup ? `⭐ Lineup: \n${lineup}` : undefined,
       "\n",
     ].filter(Boolean).join("\n");
