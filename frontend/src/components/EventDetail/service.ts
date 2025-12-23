@@ -41,9 +41,9 @@ export const shareEvent = (
 
   const shareText = [
     `*${title}*`,
-    date ? `📅 ${date}` : undefined,
+    date ? `📅 ${date}` : "",
+    location ? `📍 ${event.city}` : "",
     "\n",
-    location ? `📍 ${location}` : undefined,
     lineup ? `⭐ Lineup: \n${lineup}` : undefined,
     "\n",
   ].filter(Boolean).join("\n");
