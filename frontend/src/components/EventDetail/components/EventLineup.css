@@ -36,3 +36,41 @@
 .social-icon-button svg {
   color: currentColor;
 }
+
+/* Tablet und kleinere Bildschirme */
+@media (max-width: 768px) {
+  .lineup-social-media-icons {
+    gap: 0.5rem;
+    margin-top: 0.375rem;
+  }
+
+  .social-icon-button {
+    padding: 0.375rem;
+  }
+
+  .social-icon-button svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+/* Smartphone */
+@media (max-width: 480px) {
+  .lineup-social-media-icons {
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .social-icon-button {
+    padding: 0.5rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    touch-action: manipulation;
+  }
+
+  .social-icon-button svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}

@@ -47,9 +47,7 @@ export const EventLineup: React.FC<{
       case "web":
         searchQuery = artistName;
         break;
-      case "google":
-        searchQuery = artistName;
-        break;
+      
     }
 
     const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
@@ -128,14 +126,7 @@ export const EventLineup: React.FC<{
                   >
                     <Globe className="h-5 w-5" />
                   </button>
-                  <button
-                    onClick={() => handleSocialMediaClick("google", artist.name)}
-                    className="social-icon-button"
-                    title={`${artist.name} auf Google suchen`}
-                    aria-label={`${artist.name} auf Google suchen`}
-                  >
-                    <ExternalLink className="h-5 w-5" />
-                  </button>
+            
                 </div>
               </div>
             </div>
