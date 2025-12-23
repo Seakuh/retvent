@@ -1072,9 +1072,13 @@ export class EventController {
   }
 
   // ------------------------------------------------------------
-  // SUBEVENTS
+  // SUBEVENTS - CRUD
   // ------------------------------------------------------------
 
+  /**
+   * Create a new subevent for a parent event
+   * POST /events/:parentId/subevents
+   */
   @Post(':parentId/subevents')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
@@ -1094,6 +1098,10 @@ export class EventController {
     return subevent;
   }
 
+  /**
+   * Get all subevents for a parent event
+   * GET /events/:eventId/subevents
+   */
   @Get(':eventId/subevents')
   async getSubevents(@Param('eventId') eventId: string) {
     const subevents = await this.eventService.getSubevents(eventId);
@@ -1104,6 +1112,26 @@ export class EventController {
     };
   }
 
+  /**
+   * Get a single subevent by ID
+   * GET /events/:parentId/subevents/:subeventId
+   */
+  @Get(':parentId/subevents/:subeventId')
+  async getSubevent(
+    @Param('parentId') parentId: string,
+    @Param('subeventId') subeventId: string,
+  ) {
+    const subevent = await this.eventService.getSubevent(parentId, subeventId);
+    if (!subevent) {
+      throw new NotFoundException('Subevent not found');
+    }
+    return subevent;
+  }
+
+  /**
+   * Update a subevent
+   * PUT /events/:parentId/subevents/:subeventId
+   */
   @Put(':parentId/subevents/:subeventId')
   @UseGuards(JwtAuthGuard)
   async updateSubevent(
@@ -1138,6 +1166,10 @@ export class EventController {
     }
   }
 
+  /**
+   * Delete a subevent
+   * DELETE /events/:parentId/subevents/:subeventId
+   */
   @Delete(':parentId/subevents/:subeventId')
   @UseGuards(JwtAuthGuard)
   async deleteSubevent(

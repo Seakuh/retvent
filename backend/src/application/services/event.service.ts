@@ -1398,5 +1398,28 @@ export class EventService {
     return subevents;
   }
 
+  async getSubevent(parentEventId: string, subeventId: string) {
+    // Verify parent event exists
+    const parentEvent = await this.eventRepository.findById(parentEventId);
+    if (!parentEvent) {
+      throw new NotFoundException('Parent event not found');
+    }
+
+    // Get the subevent
+    const subevent = await this.eventRepository.findById(subeventId);
+    if (!subevent) {
+      throw new NotFoundException('Subevent not found');
+    }
+
+    // Verify it's actually a subevent of the specified parent
+    if (subevent.parentEventId !== parentEventId) {
+      throw new BadRequestException(
+        'Subevent does not belong to the specified parent event',
+      );
+    }
+
+    return subevent;
+  }
+
 
 }
