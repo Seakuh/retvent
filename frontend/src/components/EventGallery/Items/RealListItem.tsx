@@ -108,9 +108,9 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
 
     const shareText = [
       `${title}`,
-      date ? `${date}` : undefined,
+      date ? `📅 ${date}` : undefined,
       "-----------------------\n",
-      lineup ? `Lineup: \n${lineup}` : undefined,
+      lineup ? `⭐ Lineup: \n${lineup}` : undefined,
       shareUrl,
     ].filter(Boolean).join("\n");
 
@@ -213,7 +213,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           <div style={{ position: "absolute", right: 12, top: 10, zIndex: 2 }}>
             <RealListItemDropdown
               eventId={event.id || event._id || ""}
-              onShare={shareEventId}
+              onShare={(e) => shareEvent(e, event!)}
             />
           </div>
         </div>

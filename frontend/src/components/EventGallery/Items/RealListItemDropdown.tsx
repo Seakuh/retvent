@@ -6,7 +6,7 @@ import { RealListItemQrModal } from "./RealListItemQrModal";
 
 interface RealListItemDropdownProps {
   eventId: string;
-  onShare: (e: React.MouseEvent<HTMLDivElement>, eventId: string) => void;
+  onShare: (e: React.MouseEvent<HTMLDivElement>, event: Event) => void;
 }
 
 export const RealListItemDropdown: React.FC<RealListItemDropdownProps> = ({
