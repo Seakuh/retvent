@@ -46,8 +46,11 @@ export const MetaBar = (event: Event) => {
       <div className="user-interaction">
         {/* share */}
         <div className="event-detail-meta-bar-item">
-          <div className="event-detail-meta-bar-item-icon">
-            <Send onClick={() => shareEvent(event)} />
+          <div
+            className="event-detail-meta-bar-item-icon"
+            onClick={(e) => shareEvent(e, event)}
+          >
+            <Send />
           </div>
         </div>
         {/* like */}
