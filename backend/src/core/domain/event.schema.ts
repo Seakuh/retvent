@@ -7,6 +7,8 @@ export interface IEvent extends Document {
   imageUrl?: string;
   startDate: Date;
   startTime: string;
+  endDate: Date;
+  endTime: string;
   hostId?: string;
   host?: {
     profileImageUrl: string;

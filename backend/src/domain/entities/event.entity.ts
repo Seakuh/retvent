@@ -7,6 +7,8 @@ export class Event {
   locationId?: string;
   category?: string;
   price?: string;
+  endDate?: Date;
+  endTime?: string;
   hostUsername: string;
   ticketLink?: string;
   imageUrl?: string;

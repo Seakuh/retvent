@@ -7,6 +7,8 @@ export const EventSchema = new Schema(
     imageUrl: { type: String },
     startDate: { type: Date, required: true },
     startTime: { type: String, required: false },
+    endDate: { type: Date, required: false },
+    endTime: { type: String, required: false },
     hostId: { type: String },
     host: {
       profileImageUrl: { type: String },
