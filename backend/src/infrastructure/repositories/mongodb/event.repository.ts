@@ -1103,8 +1103,18 @@ export class MongoEventRepository implements IEventRepository {
     });
   }
 
-  
+
   getEventsByCommunityId(communityId: string) {
     return this.eventModel.find({ communityId: communityId }).exec();
+  }
+
+  // ------------------------------------------------------------
+  // SUBEVENTS
+  // ------------------------------------------------------------
+  async findByParentEventId(parentEventId: string) {
+    return this.eventModel
+      .find({ parentEventId: parentEventId })
+      .sort({ startDate: 1 })
+      .exec();
   }
 }

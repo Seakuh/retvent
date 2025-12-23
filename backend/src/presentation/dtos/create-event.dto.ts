@@ -110,4 +110,8 @@ export class CreateEventDto {
   @IsString()
   @IsOptional()
   communityId?: string;
+
+  @IsString()
+  @IsOptional()
+  parentEventId?: string;
 }

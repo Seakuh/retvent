@@ -1359,5 +1359,44 @@ export class EventService {
     return newEvent;
   }
 
-  
+  async createSubevent(
+    parentEventId: string,
+    eventData: any,
+    userId: string,
+    image?: Express.Multer.File,
+  ) {
+    // Verify parent event exists
+    const parentEvent = await this.eventRepository.findById(parentEventId);
+    if (!parentEvent) {
+      throw new NotFoundException('Parent event not found');
+    }
+
+    // Verify user is the host of the parent event
+    if (parentEvent.hostId !== userId) {
+      throw new ForbiddenException('Only the event host can create subevents');
+    }
+
+    // Add parentEventId to event data
+    eventData.parentEventId = parentEventId;
+
+    // Create the subevent using existing createEvent method
+    const subevent = await this.createEvent(eventData, image);
+
+    return subevent;
+  }
+
+  async getSubevents(eventId: string) {
+    // Verify parent event exists
+    const parentEvent = await this.eventRepository.findById(eventId);
+    if (!parentEvent) {
+      throw new NotFoundException('Event not found');
+    }
+
+    // Find all events where parentEventId matches the given eventId
+    const subevents = await this.eventRepository.findByParentEventId(eventId);
+
+    return subevents;
+  }
+
+
 }

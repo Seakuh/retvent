@@ -58,6 +58,7 @@ export const EventSchema = new Schema(
     website: { type: String },
     likeIds: [{ type: String }],
     city: { type: String },
+    parentEventId: { type: Schema.Types.ObjectId, ref: 'Event', default: null },
     location: {
       type: {
         type: String,

@@ -1070,4 +1070,108 @@ export class EventController {
   async getEventsByCommunityId(@Param('communityId') communityId: string) {
     return this.eventService.getEventsByCommunityId(communityId);
   }
+
+  // ------------------------------------------------------------
+  // SUBEVENTS
+  // ------------------------------------------------------------
+
+  @Post(':parentId/subevents')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async createSubevent(
+    @Param('parentId') parentId: string,
+    @Body() eventData: CreateEventDto,
+    @Request() req,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
+    const parsedData = this.eventMapper.toEntity(eventData, req.user.sub);
+    const subevent = await this.eventService.createSubevent(
+      parentId,
+      parsedData,
+      req.user.sub,
+      image,
+    );
+    return subevent;
+  }
+
+  @Get(':eventId/subevents')
+  async getSubevents(@Param('eventId') eventId: string) {
+    const subevents = await this.eventService.getSubevents(eventId);
+    return {
+      parentEventId: eventId,
+      subevents,
+      count: subevents.length,
+    };
+  }
+
+  @Put(':parentId/subevents/:subeventId')
+  @UseGuards(JwtAuthGuard)
+  async updateSubevent(
+    @Param('parentId') parentId: string,
+    @Param('subeventId') subeventId: string,
+    @Body() updateEventDto: UpdateEventDto,
+    @Request() req,
+  ) {
+    try {
+      const subevent = await this.eventService.findByIdForUpdate(subeventId);
+
+      if (!subevent) {
+        throw new NotFoundException('Subevent not found');
+      }
+
+      if (subevent.parentEventId !== parentId) {
+        throw new BadRequestException(
+          'Subevent does not belong to the specified parent event',
+        );
+      }
+
+      if (subevent.hostId !== req.user.sub) {
+        throw new ForbiddenException('You can only edit your own subevents');
+      }
+
+      return this.eventService.update(subeventId, updateEventDto);
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Subevent not found');
+      }
+      throw error;
+    }
+  }
+
+  @Delete(':parentId/subevents/:subeventId')
+  @UseGuards(JwtAuthGuard)
+  async deleteSubevent(
+    @Param('parentId') parentId: string,
+    @Param('subeventId') subeventId: string,
+    @Request() req,
+  ) {
+    try {
+      const subevent = await this.eventService.findByIdToDelete(subeventId);
+
+      if (!subevent) {
+        throw new NotFoundException('Subevent not found');
+      }
+
+      if (subevent.parentEventId !== parentId) {
+        throw new BadRequestException(
+          'Subevent does not belong to the specified parent event',
+        );
+      }
+
+      if (subevent.hostId !== req.user.sub) {
+        throw new ForbiddenException('You can only delete your own subevents');
+      }
+
+      const deleted = await this.eventService.delete(subeventId);
+      if (deleted) {
+        return { message: 'Subevent deleted successfully' };
+      }
+      throw new InternalServerErrorException('Failed to delete subevent');
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Subevent not found');
+      }
+      throw error;
+    }
+  }
 }

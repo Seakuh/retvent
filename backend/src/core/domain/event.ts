@@ -51,6 +51,7 @@ export class Event implements IEvent {
   language?: string;
   difficulty?: string;
   remoteUrl?: string;
+  parentEventId?: string;
   // Timestamps
   createdAt: Date;
   updatedAt: Date;

@@ -24,6 +24,7 @@ export interface IEvent {
   createdAt: Date;
   updatedAt: Date;
   email?: string;
+  parentEventId?: string;
   location?: {
     city?: string;
     address?: string;

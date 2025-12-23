@@ -15,6 +15,7 @@ export class Event {
   socialMediaLinks?: Record<string, string>;
   tags?: string[];
   registeredUserIds?: string[];
+  parentEventId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
