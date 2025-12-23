@@ -64,7 +64,7 @@ body[data-theme="classic"],
 }
 
 :root[data-theme="classic"] button {
-  background-color: #1a1a1a;
+  background-color: black;
   border-color: #333333;
 }
 

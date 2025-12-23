@@ -6,6 +6,7 @@
 .real-list-item-dropdown-trigger {
   margin: 0.5rem 0 0 0;
   border-radius: 50%;
+  background: black;
   width: 36px;
   height: 36px;
   display: flex;
@@ -31,7 +32,7 @@
   top: calc(100% + 8px);
   right: 0;
   min-width: 200px;
-  background: rgba(20, 20, 20, 0.95);
+  background: black;
   backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 8px;
