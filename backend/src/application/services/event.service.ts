@@ -1379,6 +1379,11 @@ export class EventService {
     // Add parentEventId to event data
     eventData.parentEventId = parentEventId;
 
+    // If no image is provided, use parent event's image
+    if (!image && parentEvent.imageUrl) {
+      eventData.imageUrl = parentEvent.imageUrl;
+    }
+
     // Create the subevent using existing createEvent method
     const subevent = await this.createEvent(eventData, image);
 
