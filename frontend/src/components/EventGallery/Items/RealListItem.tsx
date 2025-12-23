@@ -104,14 +104,14 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           day: "2-digit",
         })
       : "";
-    const lineup = event.lineup?.map((artist) => artist.name).join(", ") || "";
+    const lineup = event.lineup?.map((artist) => artist.name).join("\n") || "";
 
     const shareText = [
       `${title}`,
       date ? `📅 ${date}` : undefined,
-      "-----------------------\n",
+      "\n",
       lineup ? `⭐ Lineup: \n${lineup}` : undefined,
-      shareUrl,
+      "\n",
     ].filter(Boolean).join("\n");
 
     const shareData = {
@@ -123,6 +123,8 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
     if (navigator.share) {
       // For mobile devices that support Web Share API
       navigator.share({
+        title,
+        text: shareText,
         url: shareUrl,
       });
     } else {
