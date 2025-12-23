@@ -110,14 +110,14 @@ export const EventLineup: React.FC<{
                   >
                     <Music className="h-5 w-5" />
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => handleSocialMediaClick("facebook", artist.name)}
                     className="social-icon-button"
                     title={`${artist.name} auf Facebook suchen`}
                     aria-label={`${artist.name} auf Facebook suchen`}
                   >
                     <Facebook className="h-5 w-5" />
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => handleSocialMediaClick("web", artist.name)}
                     className="social-icon-button"
