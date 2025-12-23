@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Instagram, Facebook, Globe, Music } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { defaultProfileImage } from "../../../utils";
@@ -26,6 +26,34 @@ export const EventLineup: React.FC<{
   const handleOnLineupClick = (lineupPictureUrl: string) => {
     setSelectedImageUrl(lineupPictureUrl);
     setShowImageModal(true);
+  };
+
+  const handleSocialMediaClick = (
+    platform: "instagram" | "soundcloud" | "facebook" | "web" | "google",
+    artistName: string
+  ) => {
+    let searchQuery = "";
+    
+    switch (platform) {
+      case "instagram":
+        searchQuery = `site:instagram.com ${artistName}`;
+        break;
+      case "soundcloud":
+        searchQuery = `site:soundcloud.com ${artistName}`;
+        break;
+      case "facebook":
+        searchQuery = `site:facebook.com ${artistName}`;
+        break;
+      case "web":
+        searchQuery = artistName;
+        break;
+      case "google":
+        searchQuery = artistName;
+        break;
+    }
+
+    const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+    window.open(googleSearchUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -67,16 +95,48 @@ export const EventLineup: React.FC<{
                     </div>
                   </div>
                 </div>
-                <a
-                  href={`https://www.google.com/search?q=${encodeURIComponent(
-                    artist.name + " " + artist.role || " DJ"
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="linup-search-link"
-                >
-                  <ExternalLink className="h-5 w-5" />
-                </a>
+                <div className="lineup-social-media-icons">
+                  <button
+                    onClick={() => handleSocialMediaClick("instagram", artist.name)}
+                    className="social-icon-button"
+                    title={`${artist.name} auf Instagram suchen`}
+                    aria-label={`${artist.name} auf Instagram suchen`}
+                  >
+                    <Instagram className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => handleSocialMediaClick("soundcloud", artist.name)}
+                    className="social-icon-button"
+                    title={`${artist.name} auf SoundCloud suchen`}
+                    aria-label={`${artist.name} auf SoundCloud suchen`}
+                  >
+                    <Music className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => handleSocialMediaClick("facebook", artist.name)}
+                    className="social-icon-button"
+                    title={`${artist.name} auf Facebook suchen`}
+                    aria-label={`${artist.name} auf Facebook suchen`}
+                  >
+                    <Facebook className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => handleSocialMediaClick("web", artist.name)}
+                    className="social-icon-button"
+                    title={`${artist.name} im Web suchen`}
+                    aria-label={`${artist.name} im Web suchen`}
+                  >
+                    <Globe className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => handleSocialMediaClick("google", artist.name)}
+                    className="social-icon-button"
+                    title={`${artist.name} auf Google suchen`}
+                    aria-label={`${artist.name} auf Google suchen`}
+                  >
+                    <ExternalLink className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
