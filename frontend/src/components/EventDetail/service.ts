@@ -40,7 +40,7 @@ export const shareEvent = (
   const lineup = event.lineup?.map((artist) => artist.name).join("\n") || "";
 
   const shareText = [
-    `**${title}**`,
+    `*${title}*`,
     date ? `📅 ${date}` : undefined,
     "\n",
     location ? `📍 ${location}` : undefined,
