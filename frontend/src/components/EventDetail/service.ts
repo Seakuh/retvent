@@ -21,44 +21,59 @@ export const shareEventId = async (eventId: string) => {
   }
 };
 
-export const shareEvent = async (eventToShare: Event) => {
-  if (!eventToShare) return;
+export const shareEvent = (
+  e: React.MouseEvent<HTMLDivElement>,
+  event: Event
+) => {
+  e.preventDefault();
+  e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
 
-  // const formattedDate = eventToShare.startDate
-  //   ? new Date(eventToShare.startDate).toLocaleDateString("de-DE", {
-  //       day: "2-digit",
-  //       month: "2-digit",
-  //       year: "numeric",
-  //     })
-  //   : "";
+  const shareUrl = `https://event-scanner.com/event/${event.id}`;
+  const title = event.title || "";
+  const date = event.startDate
+    ? new Date(event.startDate).toLocaleString("en-GB", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit",
+      })
+    : "";
+  const lineup = event.lineup?.map((artist) => artist.name).join("\n") || "";
+
+  const shareText = [
+    `**${title}**`,
+    date ? `📅 ${date}` : undefined,
+    "\n",
+    location ? `📍 ${location}` : undefined,
+    lineup ? `⭐ Lineup: \n${lineup}` : undefined,
+    "\n",
+  ].filter(Boolean).join("\n");
 
   const shareData = {
-    // title: eventToShare.title,
-    // text: `${eventToShare.title}\n\n📍 ${
-    //   eventToShare.city || "N/A"
-    // }\n📅 ${formattedDate}\n🕒 ${eventToShare.startTime || ""}\n\n`,
-    url: `https://event-scanner.com/event/${eventToShare.id}`,
+    title,
+    text: shareText,
+    url: shareUrl,
   };
 
-  try {
-    if (navigator.share) {
-      await navigator.share(shareData);
-    } else {
-      // Fallback für Browser, die die Web Share API nicht unterstützen
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
-        shareData.text + shareData.url
-      )}`;
-      window.open(whatsappUrl, "_blank");
-    }
-  } catch (error) {
-    console.error("Error sharing event:", error);
-    // Fallback auf WhatsApp
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
-      shareData.text + shareData.url
-    )}`;
-    window.open(whatsappUrl, "_blank");
+  if (navigator.share) {
+    // For mobile devices that support Web Share API
+    navigator.share({
+      title,
+      text: shareText,
+      url: shareUrl,
+    });
+  } else {
+    // Fallback for desktop browsers
+    navigator.clipboard
+      .writeText(shareUrl)
+      .then(() => {
+        console.log("Link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy:", err);
+      });
   }
 };
+
 
 export const handleAddToCalendar = (event: {
   startDate: string;

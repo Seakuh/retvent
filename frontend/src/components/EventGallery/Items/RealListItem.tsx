@@ -20,6 +20,7 @@ import "./RealListItem.css";
 import { RealListItemDropdown } from "./RealListItemDropdown";
 import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
 import { RealListItemQrModal } from "./RealListItemQrModal";
+import { shareEvent } from "../../EventDetail/service";
 
 export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   event,
@@ -88,58 +89,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
     window.open(googleCalendarUrl, "_blank");
   };
 
-  const shareEvent = (
-    e: React.MouseEvent<HTMLDivElement>,
-    event: Event
-  ) => {
-    e.preventDefault();
-    e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
-
-    const shareUrl = `https://event-scanner.com/event/${event.id}`;
-    const title = event.title || "";
-    const date = event.startDate
-      ? new Date(event.startDate).toLocaleString("en-GB", {
-          year: "numeric",
-          month: "long",
-          day: "2-digit",
-        })
-      : "";
-    const lineup = event.lineup?.map((artist) => artist.name).join("\n") || "";
-
-    const shareText = [
-      `${title}`,
-      date ? `📅 ${date}` : undefined,
-      "\n",
-      location ? `📍 ${location}` : undefined,
-      lineup ? `⭐ Lineup: \n${lineup}` : undefined,
-      "\n",
-    ].filter(Boolean).join("\n");
-
-    const shareData = {
-      title,
-      text: shareText,
-      url: shareUrl,
-    };
-
-    if (navigator.share) {
-      // For mobile devices that support Web Share API
-      navigator.share({
-        title,
-        text: shareText,
-        url: shareUrl,
-      });
-    } else {
-      // Fallback for desktop browsers
-      navigator.clipboard
-        .writeText(shareUrl)
-        .then(() => {
-          console.log("Link copied to clipboard!");
-        })
-        .catch((err) => {
-          console.error("Failed to copy:", err);
-        });
-    }
-  };
+  
 
   const handleLineupClick = () => {
     setShowLineup(!showLineup);

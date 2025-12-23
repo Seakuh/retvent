@@ -2,7 +2,7 @@ import { Eye, Heart, MessageCircle, Send } from "lucide-react";
 import { useContext, useRef, useState } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 import { Event } from "../../../utils";
-import { shareEventId } from "../service";
+import { shareEvent } from "../service";
 import "./MetaBar.css";
 export const MetaBar = (event: Event) => {
   const [isLiked, setIsLiked] = useState(false);
@@ -47,7 +47,7 @@ export const MetaBar = (event: Event) => {
         {/* share */}
         <div className="event-detail-meta-bar-item">
           <div className="event-detail-meta-bar-item-icon">
-            <Send onClick={() => shareEventId(event.id!)} />
+            <Send onClick={() => shareEvent(event)} />
           </div>
         </div>
         {/* like */}
