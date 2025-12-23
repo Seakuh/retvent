@@ -28,6 +28,8 @@ import { UpdateEventDto } from '../dtos/update-event.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UploadGuard } from '../guards/upload.guard';
 import { CommunityEventGuard } from '../guards/community-event.guard';
+import { ArtistGuard } from '../guards/artist.guard';
+import { CommunityAdminGuard } from '../guards/community-admin.guard';
 
 @Controller('events')
 export class EventController {
@@ -255,7 +257,7 @@ export class EventController {
   }
 
   @Post('ai/video/generate')
-  //@UseGuards(UploadGuard)
+  @UseGuards(UploadGuard, CommunityAdminGuard)
   @UseInterceptors(FileInterceptor('file'))
   async generateVideoFromImageWithAI(
     @UploadedFile() file: Express.Multer.File,
