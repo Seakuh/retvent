@@ -244,6 +244,10 @@ export const Me: React.FC = () => {
     [navigate]
   );
 
+  const openMyEvents = useCallback(() => {
+    navigate("/admin/events");
+  }, [navigate]);
+
   // Loading und Error States
   if (isLoading) {
     return <div className="me-container">Laden...</div>;
@@ -290,6 +294,12 @@ export const Me: React.FC = () => {
 
         <div className="content-section">
           <LevelSection points={points} />
+          <button
+            className="preferences-button"
+            onClick={() => openMyEvents()}
+          >
+            My Events
+          </button>
           <button
             className="preferences-button"
             onClick={() => setIsPreferencesOpen(!isPreferencesOpen)}
