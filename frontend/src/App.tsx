@@ -30,6 +30,7 @@ import ReelPage from "./pages/ReelPage";
 import { SearchPage } from "./pages/SearchPage";
 import { ShoppingPage } from "./pages/ShoppingPage";
 import { TicketPage } from "./pages/TicketPage";
+import { EventEmbedPage } from "./pages/EventEmbedPage";
 import { syncFavorites } from "./service";
 // const queryClient = new QueryClient({
 //   defaultOptions: {
@@ -113,6 +114,7 @@ const App: React.FC = () => {
                   <Route path="/search/:query?" element={<SearchPage />} />
                   <Route path="/reel/:eventId" element={<ReelPage />} />
                   <Route path="/reel/" element={<ReelPage />} />
+                  <Route path="/events/embed" element={<EventEmbedPage />} />
                   <Route path="/imprint" element={<Imprint />} />
                   <Route
                     path="/group/invite/:userId/:tokenId"
