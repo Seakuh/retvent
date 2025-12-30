@@ -17,9 +17,13 @@ export const EventEmbedPage: React.FC = () => {
   const hostId = searchParams.get("hostId");
 
   // Parse query parameters
-  const limit = parseInt(searchParams.get("limit") || "20");
-  const mainColor = searchParams.get("mainColor") || "#000000";
-  const secondaryColor = searchParams.get("secondaryColor") || "#1a1a1a";
+  const limit = parseInt(searchParams.get("limit") || "999");
+  const mainColorParam = searchParams.get("mainColor") || "000000";
+  const secondaryColorParam = searchParams.get("secondaryColor") || "1a1a1a";
+
+  // Ensure colors have # prefix
+  const mainColor = mainColorParam.startsWith("#") ? mainColorParam : `#${mainColorParam}`;
+  const secondaryColor = secondaryColorParam.startsWith("#") ? secondaryColorParam : `#${secondaryColorParam}`;
 
   // Event filter parameters
   const titleFilter = searchParams.get("title");
@@ -254,7 +258,7 @@ export const EventEmbedPage: React.FC = () => {
               key={event.id || event._id}
               className="event-embed-card"
               onClick={() => handleEventClick(event.id || event._id || "")}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", backgroundColor: secondaryColor }}
             >
               <div className="event-embed-card-image">
                 <img
