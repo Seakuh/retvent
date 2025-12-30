@@ -1,5 +1,5 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { SocialSearchButtons } from "./SocialSearchButtons";
 import "./EventDescription.css";
 
 interface EventDescriptionProps {
@@ -10,6 +10,7 @@ interface EventDescriptionProps {
 }
 
 export const EventDescription: React.FC<EventDescriptionProps> = ({
+  title,
   description,
 }) => {
   const [expanded, setExpanded] = useState(false);
@@ -51,6 +52,7 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
               <ChevronDown className="more-info-icon h-5 w-5" />
             </div>
           ))} */}
+      <SocialSearchButtons title={title} />
       </div>
     </div>
   );
