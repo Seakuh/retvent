@@ -16,6 +16,7 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
   const [expanded, setExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const textRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (textRef.current && description) {
@@ -36,11 +37,27 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
   if (!description) return null;
 
   const toggleExpanded = () => {
+    const wasExpanded = expanded;
     setExpanded(!expanded);
+    
+    // Wenn wir einklappen (von expanded zu collapsed), nach oben scrollen
+    if (wasExpanded && containerRef.current) {
+      setTimeout(() => {
+        containerRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }, 100);
+    }
   };
 
   return (
-    <div className="event-description-container">
+    <div 
+      ref={containerRef}
+      className="event-description-container"
+      onClick={isOverflowing ? toggleExpanded : undefined}
+      style={{ cursor: isOverflowing ? 'pointer' : 'default' }}
+    >
       <div
         className={`event-description-section ${expanded ? "expanded" : "collapsed"}`}
       >
@@ -52,13 +69,9 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
           ))}
         </div>
         {isOverflowing && (
-          <button
-          className="expand-toggle-button"
-          onClick={toggleExpanded}
-          aria-label={expanded ? "Weniger anzeigen" : "Mehr anzeigen"}
-          >
+          <div className="expand-toggle-button">
             {expanded ? "less..." : "more..."}
-          </button>
+          </div>
         )}
         <SocialSearchButtons title={title} />
       </div>

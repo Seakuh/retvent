@@ -8,25 +8,29 @@ interface SocialSearchButtonsProps {
 export const SocialSearchButtons: React.FC<SocialSearchButtonsProps> = ({
   title,
 }) => {
-  const handleGoogleSearch = () => {
+  const handleGoogleSearch = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const searchQuery = `site:google.com ${title}`;
     const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
     window.open(url, "_blank");
   };
 
-  const handleFacebookSearch = () => {
+  const handleFacebookSearch = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const searchQuery = `site:facebook.com ${title}`;
     const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
     window.open(url, "_blank");
   };
 
-  const handleInstagramSearch = () => {
+  const handleInstagramSearch = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const searchQuery = `site:instagram.com ${title}`;
     const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
     window.open(url, "_blank");
   };
 
-  const handleRASearch = () => {
+  const handleRASearch = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const searchQuery = `site:ra.co ${title}`;
     const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
     window.open(url, "_blank");

@@ -7,7 +7,7 @@
   padding: 1rem 1.5rem;
   border-radius: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(0, 0, 0, 0.4);
+  background-color: var(--color-grey-box);
   backdrop-filter: blur(10px);
   cursor: pointer;
   transition: all 0.3s ease;

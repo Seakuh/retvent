@@ -60,19 +60,23 @@
     color: var(--color-grey-box);
   }
 
+  .event-description-container {
+    cursor: pointer;
+  }
+
   .expand-toggle-button {
     margin-top: 1rem;
     background: transparent;
     border: none;
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
-    cursor: pointer;
     padding: 0.5rem 0;
     transition: color 0.3s ease;
     font-family: inherit;
+    pointer-events: none;
   }
 
-  .expand-toggle-button:hover {
+  .event-description-container:hover .expand-toggle-button {
     color: rgba(255, 255, 255, 1);
   }
 
