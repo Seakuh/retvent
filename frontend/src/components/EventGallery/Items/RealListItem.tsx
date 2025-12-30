@@ -258,7 +258,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             {event.description}
           </h2>
           <div className="event-info-button-container">
-            <button
+            {/* <button
               className="real-action-button"
               onClick={(e) => {
                 e.preventDefault();
@@ -273,7 +273,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             >
               <Globe size={24} />
               <span>Web</span>
-            </button>
+            </button> */}
             {/* Lineup Button for Desktop */}
             {event.lineup && event.lineup.length > 0 && (
               <button
@@ -289,7 +289,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                 <span>Artists</span>
               </button>
             )}
-            <button
+            {/* <button
               className="real-action-button"
               onClick={(e) => {
                 e.preventDefault();
@@ -308,7 +308,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                 }}
               />
               <span>Save</span>
-            </button>
+            </button> */}
           </div>
     
           {/* <div className="event-tags-real-list-item">
