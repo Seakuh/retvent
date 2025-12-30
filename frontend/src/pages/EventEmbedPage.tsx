@@ -46,19 +46,21 @@ export const EventEmbedPage: React.FC = () => {
     document.documentElement.style.setProperty("--embed-main-color", mainColor);
     document.documentElement.style.setProperty("--embed-secondary-color", secondaryColor);
 
-    // Set body and html to transparent if transparent mode
+    // ALWAYS set body/html to transparent in embed mode
+    document.body.style.setProperty("background", "transparent", "important");
+    document.body.style.setProperty("background-color", "transparent", "important");
+    document.documentElement.style.setProperty("background", "transparent", "important");
+    document.documentElement.style.setProperty("background-color", "transparent", "important");
+
     if (transparent) {
-      document.body.style.background = "transparent";
-      document.documentElement.style.background = "transparent";
+      document.documentElement.classList.add("embed-transparent");
     } else {
-      document.body.style.background = "";
-      document.documentElement.style.background = "";
+      document.documentElement.classList.remove("embed-transparent");
     }
 
     return () => {
       // Cleanup on unmount
-      document.body.style.background = "";
-      document.documentElement.style.background = "";
+      document.documentElement.classList.remove("embed-transparent");
     };
   }, [mainColor, secondaryColor, transparent]);
 
