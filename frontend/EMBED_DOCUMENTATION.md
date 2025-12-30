@@ -12,8 +12,8 @@ The embed route is configured with proper CSP (Content-Security-Policy) headers:
 
 ### Display Options
 - `limit` (number, default: 10) - Maximum number of events to display
-- `mainColor` (hex color, default: #000000) - Background color of the embed
-- `secondaryColor` (hex color, default: #1a1a1a) - Card background color
+- `mainColor` (hex color, default: #000000) - **Background color** of the entire embed page
+- `secondaryColor` (hex color, default: #1a1a1a) - **Card background color** for each event card
 
 ### Event Filters
 All filter parameters are optional. Events are fetched and then filtered based on provided parameters.

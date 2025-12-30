@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Event, getImageProxyUrl } from "../utils";
 import "./EventEmbedPage.css";
+import { ClockIcon } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -9,13 +10,14 @@ export const EventEmbedPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showHistory, setShowHistory] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Host Id
   const hostId = searchParams.get("hostId");
 
   // Parse query parameters
-  const limit = parseInt(searchParams.get("limit") || "10");
+  const limit = parseInt(searchParams.get("limit") || "20");
   const mainColor = searchParams.get("mainColor") || "#000000";
   const secondaryColor = searchParams.get("secondaryColor") || "#1a1a1a";
 
@@ -45,10 +47,11 @@ export const EventEmbedPage: React.FC = () => {
         // Use different endpoint based on whether hostId is provided
         const apiUrl = hostId
           ? `${API_URL}events/host/id/${hostId}`
-          : `${API_URL}events/latest?limit=${limit * 2}`;
+          : `${API_URL}events/latest`;
 
         const response = await fetch(apiUrl);
         const data = await response.json();
+        console.log(data);
         let fetchedEvents: Event[] = data.events || data || [];
 
         // Filter events based on query parameters
@@ -112,9 +115,7 @@ export const EventEmbedPage: React.FC = () => {
           );
         }
 
-        // Limit the results
-        fetchedEvents = fetchedEvents.slice(0, limit);
-
+        // Don't limit here - limit will be applied after date filtering
         setEvents(fetchedEvents);
       } catch (error) {
         console.error("Error fetching events for embed:", error);
@@ -199,6 +200,28 @@ export const EventEmbedPage: React.FC = () => {
     window.open(`${mainSiteUrl}event/${eventId}`, "_blank");
   };
 
+  // Filter and sort events by upcoming/past
+  const getFilteredEvents = () => {
+    const now = new Date();
+
+    const filteredEvents = events.filter((event) => {
+      const eventDate = new Date(event.startDate || new Date());
+      return showHistory ? eventDate < now : eventDate >= now;
+    });
+
+    // Sort: upcoming ascending, past descending
+    const sortedEvents = filteredEvents.sort((a, b) => {
+      const dateA = new Date(a.startDate || new Date()).getTime();
+      const dateB = new Date(b.startDate || new Date()).getTime();
+      return showHistory ? dateB - dateA : dateA - dateB;
+    });
+
+    // Apply limit AFTER filtering and sorting
+    return sortedEvents.slice(0, limit);
+  };
+
+  const displayedEvents = getFilteredEvents();
+
   if (loading) {
     return (
       <div className="embed-loading">
@@ -207,22 +230,26 @@ export const EventEmbedPage: React.FC = () => {
     );
   }
 
-  if (events.length === 0) {
-    return (
-      <div className="embed-no-events">
-        <p>No events found matching your criteria.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="event-embed-container">
       <div className="event-embed-header">
-        <h1>UPCOMING EVENTS</h1>
+        <h1>{showHistory ? "PAST EVENTS" : "NEXT EVENTS"}</h1>
+        <button
+          className="history-button"
+          onClick={() => setShowHistory(!showHistory)}
+          aria-label={showHistory ? "Show upcoming events" : "Show past events"}
+        >
+          <ClockIcon />
+        </button>
       </div>
-      <div ref={scrollContainerRef} className="event-embed-scroll">
-        <div className="event-embed-grid">
-          {events.map((event) => (
+      {displayedEvents.length === 0 ? (
+        <div className="embed-no-events">
+          <p>No {showHistory ? "past" : "upcoming"} events found.</p>
+        </div>
+      ) : (
+        <div ref={scrollContainerRef} className="event-embed-scroll">
+          <div className="event-embed-grid">
+            {displayedEvents.map((event) => (
             <a
               key={event.id || event._id}
               className="event-embed-card"
@@ -247,6 +274,7 @@ export const EventEmbedPage: React.FC = () => {
           ))}
         </div>
       </div>
+      )}
     </div>
   );
 };
