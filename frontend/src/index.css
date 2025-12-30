@@ -15,6 +15,7 @@
   --color-neon-blue-light-2: #01cbfea4;
   --color-neon-blue-dark: #007bff;
   --color-neon-blue-dark-2: #000033;
+  --color-grey-box: #000000;
 }
 
 :root[data-theme="classic"] {

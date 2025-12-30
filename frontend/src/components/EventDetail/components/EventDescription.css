@@ -7,7 +7,6 @@
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1rem;
-    cursor: pointer;
   }
   
   .event-detail-description-text {
@@ -16,6 +15,7 @@
     font-size: 1.1rem;
     line-height: 1.6rem;
     transition: all 0.3s ease;
+    overflow: hidden;
   }
 
   .description-paragraph {
@@ -28,20 +28,21 @@
     margin-bottom: 0;
   }
   
-  .collapsed .event-detail-description-text {
+  .event-description-section.collapsed .event-detail-description-text {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-height: calc(1.6rem * 5);
   }
 
   .more-info-icon{
     margin: 0 auto;
   }
   
-  .expanded .event-detail-description-text {
+  .event-description-section.expanded .event-detail-description-text {
     display: block !important;
     -webkit-box-orient: unset !important;
     -webkit-line-clamp: unset !important;
@@ -56,7 +57,23 @@
   .expand-hint {
     margin-top: 1rem;
     font-size: 0.9rem;
-    color: #aaa;
+    color: var(--color-grey-box);
+  }
+
+  .expand-toggle-button {
+    margin-top: 1rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    transition: color 0.3s ease;
+    font-family: inherit;
+  }
+
+  .expand-toggle-button:hover {
+    color: rgba(255, 255, 255, 1);
   }
 
   /* Mobile: Text immer vollständig anzeigen */
@@ -65,19 +82,16 @@
       font-size: 1rem;
       line-height: 1.4rem;
       text-align: left;
-      
     }
 
-    .collapsed .event-detail-description-text {
-      display: block !important;
-      -webkit-box-orient: unset !important;
-      -webkit-line-clamp: unset !important;
-      line-clamp: unset !important;
-      overflow: visible !important;
-      max-height: none !important;
-      height: auto !important;
-      text-overflow: clip !important;
-      -webkit-box: unset !important;
+    .event-description-section.collapsed .event-detail-description-text {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 5;
+      line-clamp: 5;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-height: calc(1.4rem * 5);
     }
   }
   

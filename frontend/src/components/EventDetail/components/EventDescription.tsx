@@ -18,22 +18,31 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
   const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (textRef.current) {
-      const lineHeight = parseInt(
-        window.getComputedStyle(textRef.current).lineHeight
-      );
-      const height = textRef.current.scrollHeight;
-      const maxHeight = lineHeight * 4;
-      setIsOverflowing(height > maxHeight);
+    if (textRef.current && description) {
+      // Warte kurz, damit das DOM gerendert ist
+      setTimeout(() => {
+        if (textRef.current) {
+          const fullHeight = textRef.current.scrollHeight;
+          const computedStyle = window.getComputedStyle(textRef.current);
+          const lineHeight = parseFloat(computedStyle.lineHeight) || 
+            parseFloat(computedStyle.fontSize) * 1.6;
+          const maxHeight = lineHeight * 5;
+          setIsOverflowing(fullHeight > maxHeight);
+        }
+      }, 0);
     }
   }, [description]);
 
   if (!description) return null;
 
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+  };
+
   return (
     <div className="event-description-container">
       <div
-        className="event-description-section"
+        className={`event-description-section ${expanded ? "expanded" : "collapsed"}`}
       >
         <div className="event-detail-description-text" ref={textRef}>
           {description.split('\n').map((paragraph, index) => (
@@ -42,17 +51,16 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
             </p>
           ))}
         </div>
-        {/* {isOverflowing &&
-          (expanded ? (
-            <div className="expand-hint">
-              <ChevronUp className="more-info-icon h-5 w-5" />
-            </div>
-          ) : (
-            <div className="expand-hint">
-              <ChevronDown className="more-info-icon h-5 w-5" />
-            </div>
-          ))} */}
-      <SocialSearchButtons title={title} />
+        {isOverflowing && (
+          <button
+          className="expand-toggle-button"
+          onClick={toggleExpanded}
+          aria-label={expanded ? "Weniger anzeigen" : "Mehr anzeigen"}
+          >
+            {expanded ? "less..." : "more..."}
+          </button>
+        )}
+        <SocialSearchButtons title={title} />
       </div>
     </div>
   );
