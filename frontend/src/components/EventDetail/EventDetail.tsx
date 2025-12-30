@@ -20,6 +20,7 @@ import { HostView } from "./components/OwnerComponent/HostView";
 import "./EventDetail.css";
 import HelmetMeta from "./HelmMeta";
 import { SimilarEvents } from "./SimilarEvents";
+import { TicketLinkButton } from "../TicketLink/TicketLinkButton";
 
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
@@ -207,6 +208,7 @@ export const EventDetail: React.FC = () => {
               address={event.address}
               handleAddToCalendar={handleAddToCalendar}
             />
+            {event.ticketLink && <TicketLinkButton href={event.ticketLink || ""} />}
             <EventDescription
               title={event.title}
               description={event.description}
