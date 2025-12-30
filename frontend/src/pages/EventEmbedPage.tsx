@@ -18,11 +18,14 @@ export const EventEmbedPage: React.FC = () => {
 
   // Parse query parameters
   const limit = parseInt(searchParams.get("limit") || "999");
+  const transparent = searchParams.get("transparent") === "true";
+
   const mainColorParam = searchParams.get("mainColor") || "000000";
-  const secondaryColorParam = searchParams.get("secondaryColor") || "1a1a1a";
+  const secondaryColorParam = searchParams.get("secondaryColor") || "000000";
 
   // Ensure colors have # prefix
-  const mainColor = mainColorParam.startsWith("#") ? mainColorParam : `#${mainColorParam}`;
+  // mainColor is transparent if transparent=true, secondaryColor keeps its value
+  const mainColor = transparent ? "transparent" : (mainColorParam.startsWith("#") ? mainColorParam : `#${mainColorParam}`);
   const secondaryColor = secondaryColorParam.startsWith("#") ? secondaryColorParam : `#${secondaryColorParam}`;
 
   // Event filter parameters
@@ -42,7 +45,22 @@ export const EventEmbedPage: React.FC = () => {
     // Set CSS variables for custom colors
     document.documentElement.style.setProperty("--embed-main-color", mainColor);
     document.documentElement.style.setProperty("--embed-secondary-color", secondaryColor);
-  }, [mainColor, secondaryColor]);
+
+    // Set body and html to transparent if transparent mode
+    if (transparent) {
+      document.body.style.background = "transparent";
+      document.documentElement.style.background = "transparent";
+    } else {
+      document.body.style.background = "";
+      document.documentElement.style.background = "";
+    }
+
+    return () => {
+      // Cleanup on unmount
+      document.body.style.background = "";
+      document.documentElement.style.background = "";
+    };
+  }, [mainColor, secondaryColor, transparent]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -235,7 +253,9 @@ export const EventEmbedPage: React.FC = () => {
   }
 
   return (
-    <div className="event-embed-container">
+    <div
+      className={`event-embed-container ${transparent ? "transparent-mode" : ""}`}
+    >
       <div className="event-embed-header">
         <h1>{showHistory ? "PAST EVENTS" : "NEXT EVENTS"}</h1>
         <button

@@ -19,6 +19,17 @@
   overflow: hidden;
 }
 
+/* Transparent mode */
+.event-embed-container.transparent-mode {
+  background: transparent !important;
+}
+
+/* Transparent mode - override body background */
+body:has(.transparent-mode),
+html:has(.transparent-mode) {
+  background: transparent !important;
+}
+
 /* Header */
 .event-embed-header {
   display: flex;
