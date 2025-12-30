@@ -43,6 +43,10 @@
   transform: scale(1.1);
 }
 
+.ra-button .social-search-icon {
+  filter: invert(1);
+}
+
 .social-search-text {
   color: white;
   font-size: 0.875rem;

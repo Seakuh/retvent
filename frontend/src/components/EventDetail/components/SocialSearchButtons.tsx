@@ -26,6 +26,12 @@ export const SocialSearchButtons: React.FC<SocialSearchButtonsProps> = ({
     window.open(url, "_blank");
   };
 
+  const handleRASearch = () => {
+    const searchQuery = `site:ra.co ${title}`;
+    const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <div className="social-search-buttons-container">
       <button
@@ -63,6 +69,18 @@ export const SocialSearchButtons: React.FC<SocialSearchButtonsProps> = ({
           className="social-search-icon"
         />
         <span className="social-search-text">INSTAGRAM</span>
+      </button>
+      <button
+        className="social-search-button ra-button"
+        onClick={handleRASearch}
+        aria-label="Suche auf RA"
+      >
+        <img
+          src="/ra_guide.png"
+          alt="RA"
+          className="social-search-icon"
+        />
+        <span className="social-search-text">RA</span>
       </button>
     </div>
   );
