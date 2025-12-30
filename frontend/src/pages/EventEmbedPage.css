@@ -138,7 +138,7 @@
   padding: 1.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   flex: 1;
   justify-content: flex-start;
   min-height: 120px;
@@ -151,6 +151,7 @@
   margin: 0;
   color: #ffffff;
   line-height: 1.4;
+  height: calc(1.125rem * 1.4 * 2); /* Fixed height for exactly 2 lines */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -160,8 +161,8 @@
 
 .event-embed-card-date {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 500;
+  color: white;
+  margin: 0;
 }
 
 /* Loading State */
@@ -225,18 +226,22 @@
   .event-embed-card {
     width: 280px;
     height: 420px;
+    flex-shrink: 0;
   }
 
   .event-embed-card-title {
     font-size: 1rem;
+    height: calc(1rem * 1.4 * 2); /* Fixed height for exactly 2 lines on mobile */
   }
 
   .event-embed-card-date {
     font-size: 0.8rem;
+    margin: 0;
   }
 
   .event-embed-card-content {
     padding: 1rem;
     min-height: 100px;
+    gap: 0.875rem;
   }
 }
