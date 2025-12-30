@@ -3,6 +3,18 @@
   --embed-secondary-color: #1a1a1a;
 }
 
+ /* Force transparent when in embed mode */
+html.embed-transparent,
+html.embed-transparent body,
+html.embed-transparent body * {
+  background: transparent !important;
+}
+
+html.embed-transparent body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 /* Container */
 .event-embed-container {
   position: relative;
