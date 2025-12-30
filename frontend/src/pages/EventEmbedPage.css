@@ -8,13 +8,14 @@
   position: relative;
   width: 100%;
   min-height: auto;
-  padding: 2rem;
+  padding: 2rem 2rem 0 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   background: var(--embed-main-color);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+  overflow: hidden;
 }
 
 /* Header */
@@ -75,6 +76,8 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .event-embed-scroll::-webkit-scrollbar {
@@ -88,6 +91,8 @@
   gap: 2rem;
   width: max-content;
   align-items: flex-start;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* Card */
@@ -200,7 +205,7 @@
 /* Responsive */
 @media (max-width: 768px) {
   .event-embed-container {
-    padding: 1rem;
+    padding: 1rem 1rem 0 1rem;
   }
 
   .event-embed-header h1 {
