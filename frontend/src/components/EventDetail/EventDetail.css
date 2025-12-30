@@ -251,7 +251,7 @@
     align-items: center;
     gap: 1rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(--color-grey-box) !important;
     backdrop-filter: blur(10px);
     transition: all 0.2s ease-in-out;
   }
@@ -280,9 +280,6 @@
     align-items: center;
     gap: 1rem;
     justify-content: space-between;
-  }
-
-  .calendar-text-container:hover {
   }
 
   .navigation-info-icon{
