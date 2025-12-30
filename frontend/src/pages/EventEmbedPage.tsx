@@ -216,7 +216,7 @@ export const EventEmbedPage: React.FC = () => {
 
   const handleEventClick = (eventId: string) => {
     // Open event in new tab on main site
-    const mainSiteUrl = import.meta.env.VITE_FRONTEND_URL || "https://event-scanner.com";
+    const mainSiteUrl = "https://event-scanner.com";
     window.open(`${mainSiteUrl}event/${eventId}`, "_blank");
   };
 
