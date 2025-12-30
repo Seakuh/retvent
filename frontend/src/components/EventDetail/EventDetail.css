@@ -292,7 +292,7 @@
      LINEUP SECTION
      ============================================================= */
   .lineup-grid {
-    padding: 2rem;
+    padding: 1rem;
     background: black;
     display: flex;
     flex-direction: column;
@@ -329,8 +329,10 @@
   }
   
   .lineup-artist {
-    background: black;
-    padding: .5rem;
+    background: var(--color-grey-box);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
   }
   
   /* =============================================================
