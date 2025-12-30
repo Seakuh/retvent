@@ -48,16 +48,21 @@ export const EventEmbedPage: React.FC = () => {
     document.documentElement.style.setProperty("--embed-main-color", mainColor);
     document.documentElement.style.setProperty("--embed-secondary-color", secondaryColor);
 
-    // ALWAYS set body/html to transparent in embed mode
+    // ALWAYS set embed-transparent class - we always want transparent background
+    document.documentElement.classList.add("embed-transparent");
+
+    // ALWAYS force transparent background
     document.body.style.setProperty("background", "transparent", "important");
     document.body.style.setProperty("background-color", "transparent", "important");
+    document.body.style.setProperty("background-image", "none", "important");
     document.documentElement.style.setProperty("background", "transparent", "important");
     document.documentElement.style.setProperty("background-color", "transparent", "important");
+    document.documentElement.style.setProperty("background-image", "none", "important");
 
-    if (transparent) {
-      document.documentElement.classList.add("embed-transparent");
-    } else {
-      document.documentElement.classList.remove("embed-transparent");
+    const root = document.getElementById("root");
+    if (root) {
+      root.style.setProperty("background", "transparent", "important");
+      root.style.setProperty("background-color", "transparent", "important");
     }
 
     return () => {
