@@ -81,7 +81,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
           <div className="real-event-list-item-container">
             {todayEvents.map((event) => (
               <div key={getEventId(event)}>
-                {Math.random() < 0.3 && <SponsoredDetail size="s" />}
+                {/* {Math.random() < 0.3 && <SponsoredDetail size="s" />} */}
                 <RealListItem key={getEventId(event)} event={event} />
               </div>
             ))}
@@ -108,7 +108,7 @@ export const EventGalleryII: React.FC<EventGalleryProps> = ({ events }) => {
                   <div className="real-event-list-item-container">
                     {eventsForDate.map((event) => (
                       <div key={getEventId(event)}>
-                        {Math.random() < 0.3 && <SponsoredDetail size="s" />}
+                        {/* {Math.random() < 0.3 && <SponsoredDetail size="s" />} */}
                         <RealListItem key={getEventId(event)} event={event} />
                       </div>
                     ))}

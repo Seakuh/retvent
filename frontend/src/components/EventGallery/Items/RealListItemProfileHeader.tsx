@@ -6,9 +6,11 @@ interface RealListItemProfileHeaderProps {
   name?: string;
   id?: string;
   location?: string;
+  title?: string;
 }
 
 export const RealListItemProfileHeader = ({
+  title,
   profileUrl,
   name,
   location,
@@ -45,6 +47,9 @@ export const RealListItemProfileHeader = ({
             onClick={name ? handleOnClick : undefined}
           >
             {name || "Public"}
+          </h3>
+          <h3 className="real-list-item-profile-header-title">
+            {title || ""}
           </h3>
           {/* <p className="real-list-item-profile-header-location">
             <MapPin size={14} />

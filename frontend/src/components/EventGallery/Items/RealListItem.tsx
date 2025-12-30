@@ -1,16 +1,13 @@
 import {
   CalendarIcon,
-  CalendarPlus,
   ExternalLink,
   Eye,
-  Globe,
   Heart,
   MapPin,
   MessageCircle,
   QrCodeIcon,
   Send,
   Star,
-  TicketIcon,
 } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -114,7 +111,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
         onClick={handleLineupClick}
       >
         <div className="lineup-content-real-list-item">
-          <h2 className="lineup-title">Lineup</h2>
+          <h2 className="lineup-title">{event.title}</h2>
           <div className="artists-list">
             {event.lineup.map((artist, index) => (
               <div key={index} className="artist-item">
@@ -160,6 +157,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           <RealListItemProfileHeader
             profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
             name={event?.host?.username || ""}
+            title={event?.title || ""}
             id={event?.hostId || ""}
             location={event?.city || "TBA"}
           />
@@ -170,7 +168,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             />
           </div>
         </div>
-      <h1 className="event-info-title-headline">{event.title}</h1>
+      {/* <h1 className="event-info-title-headline">{event.title}</h1> */}
       <div className="real-list-item-location-date-container">
           <span className="real-list-item-location">
             <MapPin size={14} color="white" />
