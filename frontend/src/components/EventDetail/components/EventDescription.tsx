@@ -32,15 +32,16 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
   return (
     <div className="event-description-container">
       <div
-        className={`event-description-section ${
-          expanded ? "expanded" : "collapsed"
-        }`}
-        onClick={() => isOverflowing && setExpanded(!expanded)}
+        className="event-description-section"
       >
-        <div className="event-description-text" ref={textRef}>
-          {description}
+        <div className="event-detail-description-text" ref={textRef}>
+          {description.split('\n').map((paragraph, index) => (
+            <p key={index} className="description-paragraph">
+              {paragraph || '\u00A0'}
+            </p>
+          ))}
         </div>
-        {isOverflowing &&
+        {/* {isOverflowing &&
           (expanded ? (
             <div className="expand-hint">
               <ChevronUp className="more-info-icon h-5 w-5" />
@@ -49,7 +50,7 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
             <div className="expand-hint">
               <ChevronDown className="more-info-icon h-5 w-5" />
             </div>
-          ))}
+          ))} */}
       </div>
     </div>
   );

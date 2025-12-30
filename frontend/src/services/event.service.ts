@@ -126,7 +126,7 @@ export class EventService {
   async updateEventPrompt(eventId: string, prompt: string): Promise<Event> {
     const accessToken = localStorage.getItem("access_token");
     try {
-      const response = await fetch(`${this.baseUrl}/${eventId}/prompt`, {
+      const response = await fetch(`${this.baseUrl}/${eventId}/v2/prompt`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

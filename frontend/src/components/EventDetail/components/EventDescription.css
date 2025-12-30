@@ -1,43 +1,83 @@
 /* EventDescription.css */
 
 .event-description-section {
-    padding: 2rem;
-    background: black;
+  margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.322);
     color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1rem;
-    backdrop-filter: blur(10px);
     cursor: pointer;
-    position: relative;
-    transition: all 0.3s ease-in-out;
   }
   
-  .event-description-text {
-    color: lightgray;
+  .event-detail-description-text {
+    color: white !important;
     text-align: left;
     font-size: 1.1rem;
     line-height: 1.6rem;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
     transition: all 0.3s ease;
   }
+
+  .description-paragraph {
+    margin: 0;
+    margin-bottom: 1rem;
+    color: white !important;
+  }
+
+  .description-paragraph:last-child {
+    margin-bottom: 0;
+  }
   
-  .collapsed .event-description-text {
+  .collapsed .event-detail-description-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
+    line-clamp: 4;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .more-info-icon{
     margin: 0 auto;
   }
   
-  .expanded .event-description-text {
-    -webkit-line-clamp: unset;
-    overflow: visible;
+  .expanded .event-detail-description-text {
+    display: block !important;
+    -webkit-box-orient: unset !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    text-overflow: clip !important;
+    -webkit-box: unset !important;
   }
   
   .expand-hint {
     margin-top: 1rem;
     font-size: 0.9rem;
     color: #aaa;
+  }
+
+  /* Mobile: Text immer vollständig anzeigen */
+  @media (max-width: 768px) {
+    .event-detail-description-text {
+      font-size: 1rem;
+      line-height: 1.4rem;
+      text-align: left;
+      
+    }
+
+    .collapsed .event-detail-description-text {
+      display: block !important;
+      -webkit-box-orient: unset !important;
+      -webkit-line-clamp: unset !important;
+      line-clamp: unset !important;
+      overflow: visible !important;
+      max-height: none !important;
+      height: auto !important;
+      text-overflow: clip !important;
+      -webkit-box: unset !important;
+    }
   }
   

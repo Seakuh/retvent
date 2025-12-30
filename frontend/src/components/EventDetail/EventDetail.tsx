@@ -1,5 +1,4 @@
 import { ChevronLeft } from "lucide-react";
-import { QRCodeCanvas } from "qrcode.react";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -7,7 +6,6 @@ import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetch
 import CommentSection from "../Comment/CommentSection";
 import { CommunityBar } from "../CommunityDetailBar/CommunityBar";
 import { ImageModal } from "../ImageModal/ImageModal";
-import { SponsoredDetail } from "../Sponsored/SponsoredDetail";
 import { EventBasicInfo } from "./components/EventBasicInfo";
 import { EventDescription } from "./components/EventDescription";
 import { EventDetailError } from "./components/EventDetailError";
