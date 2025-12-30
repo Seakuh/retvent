@@ -18,16 +18,13 @@ export const EventEmbedPage: React.FC = () => {
 
   // Parse query parameters
   const limit = parseInt(searchParams.get("limit") || "999");
-  const transparent = searchParams.get("transparent") === "true";
 
-  const mainColorParam = searchParams.get("mainColor") || "transparent";
+  // Support both mainColor and primaryColor (primaryColor takes precedence)
+  const mainColorParam = searchParams.get("primaryColor") || searchParams.get("mainColor") || "0D0E23";
   const secondaryColorParam = searchParams.get("secondaryColor") || "000000";
 
   // Ensure colors have # prefix
-  // mainColor is transparent if transparent=true OR if mainColorParam is "transparent"
-  const mainColor = transparent || mainColorParam === "transparent"
-    ? "transparent"
-    : (mainColorParam.startsWith("#") ? mainColorParam : `#${mainColorParam}`);
+  const mainColor = mainColorParam.startsWith("#") ? mainColorParam : `#${mainColorParam}`;
   const secondaryColor = secondaryColorParam.startsWith("#") ? secondaryColorParam : `#${secondaryColorParam}`;
 
   // Event filter parameters
@@ -48,28 +45,20 @@ export const EventEmbedPage: React.FC = () => {
     document.documentElement.style.setProperty("--embed-main-color", mainColor);
     document.documentElement.style.setProperty("--embed-secondary-color", secondaryColor);
 
-    // ALWAYS set embed-transparent class - we always want transparent background
-    document.documentElement.classList.add("embed-transparent");
-
-    // ALWAYS force transparent background
-    document.body.style.setProperty("background", "transparent", "important");
-    document.body.style.setProperty("background-color", "transparent", "important");
+    // Set background to mainColor
+    document.body.style.setProperty("background", mainColor, "important");
+    document.body.style.setProperty("background-color", mainColor, "important");
     document.body.style.setProperty("background-image", "none", "important");
-    document.documentElement.style.setProperty("background", "transparent", "important");
-    document.documentElement.style.setProperty("background-color", "transparent", "important");
+    document.documentElement.style.setProperty("background", mainColor, "important");
+    document.documentElement.style.setProperty("background-color", mainColor, "important");
     document.documentElement.style.setProperty("background-image", "none", "important");
 
     const root = document.getElementById("root");
     if (root) {
-      root.style.setProperty("background", "transparent", "important");
-      root.style.setProperty("background-color", "transparent", "important");
+      root.style.setProperty("background", mainColor, "important");
+      root.style.setProperty("background-color", mainColor, "important");
     }
-
-    return () => {
-      // Cleanup on unmount
-      document.documentElement.classList.remove("embed-transparent");
-    };
-  }, [mainColor, secondaryColor, transparent]);
+  }, [mainColor, secondaryColor]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -263,7 +252,7 @@ export const EventEmbedPage: React.FC = () => {
 
   return (
     <div
-      className={`event-embed-container ${transparent ? "transparent-mode" : ""}`}
+      className={`event-embed-container`}
     >
       <div className="event-embed-header">
         <h1>{showHistory ? "PAST EVENTS" : "NEXT EVENTS"}</h1>
