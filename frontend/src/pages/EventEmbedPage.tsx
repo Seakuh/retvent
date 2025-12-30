@@ -20,12 +20,14 @@ export const EventEmbedPage: React.FC = () => {
   const limit = parseInt(searchParams.get("limit") || "999");
   const transparent = searchParams.get("transparent") === "true";
 
-  const mainColorParam = searchParams.get("mainColor") || "000000";
+  const mainColorParam = searchParams.get("mainColor") || "transparent";
   const secondaryColorParam = searchParams.get("secondaryColor") || "000000";
 
   // Ensure colors have # prefix
-  // mainColor is transparent if transparent=true, secondaryColor keeps its value
-  const mainColor = transparent ? "transparent" : (mainColorParam.startsWith("#") ? mainColorParam : `#${mainColorParam}`);
+  // mainColor is transparent if transparent=true OR if mainColorParam is "transparent"
+  const mainColor = transparent || mainColorParam === "transparent"
+    ? "transparent"
+    : (mainColorParam.startsWith("#") ? mainColorParam : `#${mainColorParam}`);
   const secondaryColor = secondaryColorParam.startsWith("#") ? secondaryColorParam : `#${secondaryColorParam}`;
 
   // Event filter parameters
