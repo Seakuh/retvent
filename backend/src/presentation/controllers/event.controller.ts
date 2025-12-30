@@ -937,6 +937,24 @@ export class EventController {
     );
   }
 
+
+  @Put(':eventId/v2/prompt')
+  @UseGuards(JwtAuthGuard)
+  async updateEventFromPromptV2(
+    @Param('eventId') eventId: string,
+    @Body() body: { prompt: string },
+    @Request() req,
+  ) {
+    console.log('updateEventFromPrompt', eventId, body.prompt, req.user.sub);
+
+    return this.eventService.updateEventFromPromptV2(
+      req.user.sub,
+      eventId,
+      body.prompt,
+    );
+  }
+
+
   @Post(':eventId/create-sponsored')
   @UseGuards(JwtAuthGuard)
   async createSponsoredEvent(

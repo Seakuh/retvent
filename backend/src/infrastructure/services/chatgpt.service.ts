@@ -913,4 +913,100 @@ Example format: "Dynamic camera movement revealing event details, animated text 
 
     return generatedPrompt.trim();
   }
+
+  /**
+   * Generiert eine detaillierte Event-Beschreibung mit optionalen Künstler-Biografien
+   * Fügt nur dann Künstler-Informationen hinzu, wenn die KI sich ganz sicher ist, dass es sich um bekannte Künstler handelt
+   * 
+   * @param event - Das Event-Objekt für das eine Beschreibung erstellt werden soll
+   * @returns Eine vollständige, ansprechende Event-Beschreibung mit subtilen Emojis
+   */
+  async generateDetailedEventDescription(event: Event): Promise<string> {
+    const lineupNames = event.lineup?.map(l => l.name).join(', ') || '';
+    const lineupInfo = event.lineup?.map(l => ({
+      name: l.name,
+      role: l.role || '',
+      startTime: l.startTime || ''
+    })) || [];
+
+    const eventInfo = {
+      title: event.title || '',
+      description: event.description || '',
+      category: event.category || '',
+      city: event.city || '',
+      startDate: event.startDate ? new Date(event.startDate).toLocaleDateString('de-DE', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }) : '',
+      startTime: event.startTime || '',
+      price: event.price || '',
+      tags: event.tags?.join(', ') || '',
+      lineup: lineupInfo
+    };
+
+    const systemPrompt = `Du bist ein Experte für Event-Beschreibungen und Musik-/Kunstszene. Deine Aufgabe ist es, eine ansprechende, detaillierte Beschreibung für ein Event zu erstellen.
+
+WICHTIGE REGELN:
+Starte mit einer omage zu dem event wenn artist auch an den künslter was zu erwarten ist.
+1. Erstelle eine professionelle, ansprechende Event-Beschreibung (150-250 Wörter)
+2. Verwende subtile, passende Emojis (maximal 4-6, sparsam und gezielt eingesetzt)
+3. Wenn Künstler im Lineup sind, prüfe OB du dir GANZ SICHER bist, dass es sich um bekannte, identifizierbare Künstler handelt
+4. Füge NUR dann Künstler-Biografien hinzu, wenn du dir zu 100% sicher bist - bei Unsicherheit weglassen!
+5. Künstler-Informationen sollten kurz sein (1-2 Sätze zur Historie/Biografie) und nahtlos in die Beschreibung integriert werden
+6. Die Beschreibung sollte die Atmosphäre, den Stil und die Besonderheiten des Events einfangen
+7. Verwende eine natürliche, begeisternde Sprache, die zum Event-Typ passt
+8. gib am schluss noch sicherheit den nutzern mit schließe ab wir freuen uns und gibt aufeinander acht abrunden das man sich auf die veranstaltung freut.
+
+Event-Informationen:
+- Titel: ${eventInfo.title}
+- Kategorie: ${eventInfo.category}
+- Stadt: ${eventInfo.city}
+- Datum: ${eventInfo.startDate}
+- Uhrzeit: ${eventInfo.startTime}
+- Preis: ${eventInfo.price}
+- Tags: ${eventInfo.tags}
+- Lineup: ${JSON.stringify(eventInfo.lineup)}
+- Bestehende Beschreibung: ${eventInfo.description}
+
+Erstelle eine vollständige, ansprechende Beschreibung, die:
+- Das Event lebendig und attraktiv darstellt
+- Die wichtigsten Informationen enthält
+- Bei bekannten Künstlern (nur wenn sicher identifiziert!) kurze Hintergrundinfos einbaut
+- Subtile Emojis verwendet (z.B. 🎵 für Musik, 🎨 für Kunst, 🎭 für Theater, etc.)
+- Die Leser begeistert und zum Besuch motiviert
+
+Antworte NUR mit der fertigen Beschreibung, ohne zusätzliche Erklärungen. bitte auf Englisch antworten.`;
+
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: 'Du bist ein Experte für Event-Marketing und kulturelle Veranstaltungen. Du erstellst ansprechende, professionelle Event-Beschreibungen mit subtilen Emojis.',
+          },
+          { role: 'user', content: systemPrompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 600,
+      });
+
+      const generatedDescription = response.choices[0]?.message?.content?.trim() || '';
+      
+      // Fallback, falls keine Beschreibung generiert wurde
+      if (!generatedDescription || generatedDescription.length < 50) {
+        const fallbackDescription = `${eventInfo.title}${eventInfo.category ? ` - Ein ${eventInfo.category.toLowerCase()}` : ''}${eventInfo.city ? ` in ${eventInfo.city}` : ''}.${eventInfo.startDate ? ` Am ${eventInfo.startDate}` : ''}${eventInfo.startTime ? ` um ${eventInfo.startTime} Uhr` : ''}.${lineupNames ? ` Mit dabei: ${lineupNames}.` : ''}${eventInfo.description ? ` ${eventInfo.description}` : ''}`;
+        return fallbackDescription;
+      }
+
+      return generatedDescription;
+    } catch (error) {
+      console.error('Fehler bei der Generierung der Event-Beschreibung:', error);
+      // Fallback-Beschreibung bei Fehler
+      const fallbackDescription = `${eventInfo.title}${eventInfo.category ? ` - Ein ${eventInfo.category.toLowerCase()}` : ''}${eventInfo.city ? ` in ${eventInfo.city}` : ''}.${eventInfo.startDate ? ` Am ${eventInfo.startDate}` : ''}${eventInfo.startTime ? ` um ${eventInfo.startTime} Uhr` : ''}.${lineupNames ? ` Mit dabei: ${lineupNames}.` : ''}${eventInfo.description ? ` ${eventInfo.description}` : ''}`;
+      return fallbackDescription;
+    }
+  }
 }

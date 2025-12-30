@@ -553,6 +553,15 @@ export class MongoEventRepository implements IEventRepository {
     });
   }
 
+  updateFromPromptV2(eventId: string, eventFromPrompt: UpdateEventDto, detailedEventDescription: string) {
+    return this.eventModel.findByIdAndUpdate(eventId, {
+      ...eventFromPrompt,
+      description: detailedEventDescription,
+    }, {
+      new: true,
+    });
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.eventModel.deleteOne({ _id: id }).exec();
     return result.deletedCount === 1;

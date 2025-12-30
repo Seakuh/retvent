@@ -1135,6 +1135,32 @@ export class EventService {
     // return this.eventRepository.updateEventFromPrompt(eventId, prompt);
   }
 
+  async updateEventFromPromptV2(userId: string, eventId: string, prompt: string) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to update this event',
+      );
+    }
+    // extract event from prompt
+    const eventFromPrompt: UpdateEventDto =
+      await this.chatGptService.extractEventFromPrompt(prompt, event);
+    console.log('eventFromPrompt', eventFromPrompt);
+
+    const detailedEventDescription = await this.chatGptService.generateDetailedEventDescription(event);
+    console.log('detailedEventDescription', detailedEventDescription);
+
+    // update event with eventFromPrompt
+    return await this.eventRepository.updateFromPromptV2( 
+      eventId,
+      eventFromPrompt,
+      detailedEventDescription,
+    );
+  }
+
   async updateEventImage(
     eventId: string,
     image: Express.Multer.File,
