@@ -10,7 +10,7 @@ export const SocialSearchButtons: React.FC<SocialSearchButtonsProps> = ({
 }) => {
   const handleGoogleSearch = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const searchQuery = `site:google.com ${title}`;
+    const searchQuery = `${title}`;
     const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
     window.open(url, "_blank");
   };
