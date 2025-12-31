@@ -944,6 +944,17 @@ export class EventService {
       await this.profileService.addCreatedEvent(userId, createdEvent.id);
       await this.userService.addUserPoints(userId, 20);
 
+            // event description - generate asynchronously without blocking
+            this.chatGptService.generateDetailedEventDescription(createdEvent)
+            .then((eventDescription) => {
+              console.log('eventDescription', eventDescription);
+              return this.eventRepository.update(createdEvent.id, { description: eventDescription });
+            })
+            .catch((error) => {
+              console.error('Failed to generate event description:', error);
+              // Optionally update with a fallback description or leave existing
+            });
+
       // Add feed item to feed
       await this.feedService.pushFeedItemFromEvent(createdEvent, 'event');
       return createdEvent;
