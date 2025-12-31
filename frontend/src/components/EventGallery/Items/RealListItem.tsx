@@ -153,7 +153,16 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
         className={`real-event-list-item ${isPast ? "past-event" : ""}`}
         onClick={() => navigate(`/event/${event.id || event._id}`)}
       >
-        <div className="real-list-item-profile-header-container" style={{ position: "relative" }}>
+     
+        <div className="real-event-thumbnail">
+          <img
+            src={`https://img.event-scanner.com/insecure/rs:fit:935/q:70/plain/${event.imageUrl}@webp`}
+            alt={event.title}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+           <div className="real-list-item-profile-header-container" style={{ position: "relative" }}>
           <RealListItemProfileHeader
             profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
             name={event?.host?.username || ""}
@@ -161,6 +170,9 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             id={event?.hostId || ""}
             location={event?.city || "TBA"}
           />
+           <h2 className="event-description-real-list-item">
+            {event.description}
+          </h2>
           <div style={{ position: "absolute", right: 12, top: 10, zIndex: 2 }}>
             <RealListItemDropdown
               eventId={event.id || event._id || ""}
@@ -188,7 +200,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                 return (
                   <>
                     {formattedDate}{" "}
-                    {days === 0
+                    {/* {days === 0
                       ? "| today"
                       : days === 1
                       ? "| tomorrow"
@@ -196,7 +208,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                       ? "| yesterday"
                       : days < 0
                       ? `| ${Math.abs(days)} days ago`
-                      : `| in ${days} days`}
+                      : `| in ${days} days`} */}
                   </>
                 );
               } catch (error) {
@@ -206,15 +218,6 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             })()}
           </span>
         </div>
-        <div className="real-event-thumbnail">
-          <img
-            src={`https://img.event-scanner.com/insecure/rs:fit:935/q:70/plain/${event.imageUrl}@webp`}
-            alt={event.title}
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        
 
 
         <div className="event-meta-container">
@@ -229,6 +232,23 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
                 fill={isFavorite(event.id!) ? "red" : "none"}
               />
             </div>
+            {event.lineup && event.lineup.length > 0 && (
+              <button
+                className="event-card-like-container"
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleLineupClick();
+                }}
+                title="Lineup anzeigen"
+              >
+                <Star
+                  size={24}
+                  color={showLineup ? "#FFD700" : "white"}
+                  fill={showLineup ? "#FFD700" : "none"}
+                />
+              </button>
+            )}
             <span className="">
               <Eye size={20} />
               {event.views}
@@ -252,9 +272,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           </div>
         </div>
         <div className="miniature-event-info">
-          <h2 className="event-description-real-list-item">
-            {event.description}
-          </h2>
+         
           <div className="event-info-button-container">
             {/* <button
               className="real-action-button"
@@ -273,20 +291,7 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
               <span>Web</span>
             </button> */}
             {/* Lineup Button for Desktop */}
-            {event.lineup && event.lineup.length > 0 && (
-              <button
-                className="real-action-button"
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleLineupClick();
-                }}
-                title="Lineup anzeigen"
-              >
-                <Star size={24} />
-                <span>Artists</span>
-              </button>
-            )}
+            
             {/* <button
               className="real-action-button"
               onClick={(e) => {

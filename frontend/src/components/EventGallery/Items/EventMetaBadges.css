@@ -1,0 +1,31 @@
+.event-meta-badges-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 1rem;
+}
+
+.event-meta-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  gap: 0.5rem;
+  overflow-x: hidden;
+  background-color: #232323;
+  border: 0.1px solid #ffffff;
+  border-radius: 1rem;
+  padding: 0.25rem 0.75rem;
+  white-space: nowrap;
+}
+
+.event-meta-badge-location {
+  /* Spezifische Styles für Location-Badge falls nötig */
+}
+
+.event-meta-badge-date {
+  /* Spezifische Styles für Date-Badge falls nötig */
+}
+
