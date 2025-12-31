@@ -88,6 +88,11 @@ import { PokerStatsService } from 'src/application/services/poker-stats.service'
 import { PokerInvitationService } from 'src/application/services/poker-invitation.service';
 import { PokerStatsSchema } from 'src/core/domain/poker-stats.schema';
 import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
+import { ManagedTicketService } from 'src/application/services/managed-ticket.service';
+import { ManagedTicketSchema } from './schemas/managed-ticket.schema';
+import { MongoManagedTicketRepository } from './repositories/mongodb/managed-ticket.repository';
+import { ManagedTicketController } from 'src/presentation/controllers/managed-ticket.controller';
+import { ManagedTicketAdminGuard } from 'src/presentation/guards/managed-ticket-admin.guard';
 @Module({
   imports: [
     CoreModule,
@@ -146,6 +151,7 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
       { name: 'Post', schema: PostSchema },
       { name: 'PeerAssessment', schema: PeerAssessmentSchema },
       { name: 'SelfAssessment', schema: SelfAssessmentSchema },
+      { name: 'ManagedTicket', schema: ManagedTicketSchema },
     ]),
   ],
   controllers: [
@@ -165,6 +171,7 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     AssessmentController,
     ArtistController,
     TicketsController,
+    ManagedTicketController,
   ],
   providers: [
     RegistrationService,
@@ -217,6 +224,9 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     UserService,
     GroovecastService,
     QdrantService,
+    ManagedTicketService,
+    MongoManagedTicketRepository,
+    ManagedTicketAdminGuard,
     {
       provide: 'IEventRepository',
       useClass: MongoEventRepository,
@@ -260,6 +270,10 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     {
       provide: 'IPostRepository',
       useClass: MongoPostRepository,
+    },
+    {
+      provide: 'IManagedTicketRepository',
+      useClass: MongoManagedTicketRepository,
     },
   ],
   exports: [
@@ -321,6 +335,10 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     TicketsService,
     QdrantService,
     CommunityService,
+    ManagedTicketService,
+    MongoManagedTicketRepository,
+    ManagedTicketAdminGuard,
+    'IManagedTicketRepository',
   ],
 })
 export class InfrastructureModule {}
