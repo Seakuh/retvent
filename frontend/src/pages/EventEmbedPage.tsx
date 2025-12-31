@@ -223,10 +223,17 @@ export const EventEmbedPage: React.FC = () => {
   // Filter and sort events by upcoming/past
   const getFilteredEvents = () => {
     const now = new Date();
+    // Set to start of today for date comparison (ignore time)
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const filteredEvents = events.filter((event) => {
       const eventDate = new Date(event.startDate || new Date());
-      return showHistory ? eventDate < now : eventDate >= now;
+      // Set to start of event date for comparison (ignore time)
+      const eventDateStart = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+      
+      // For "next events": include today and future dates
+      // For "past events": only dates before today
+      return showHistory ? eventDateStart < todayStart : eventDateStart >= todayStart;
     });
 
     // Sort: upcoming ascending, past descending
@@ -241,6 +248,15 @@ export const EventEmbedPage: React.FC = () => {
   };
 
   const displayedEvents = getFilteredEvents();
+
+  // Check if event is today
+  const isToday = (eventDate: Date | string) => {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const eventDateObj = new Date(eventDate);
+    const eventDateStart = new Date(eventDateObj.getFullYear(), eventDateObj.getMonth(), eventDateObj.getDate());
+    return eventDateStart.getTime() === todayStart.getTime();
+  };
 
   if (loading) {
     return (
@@ -271,13 +287,15 @@ export const EventEmbedPage: React.FC = () => {
       ) : (
         <div ref={scrollContainerRef} className="event-embed-scroll">
           <div className="event-embed-grid">
-            {displayedEvents.map((event) => (
-            <a
-              key={event.id || event._id}
-              className="event-embed-card"
-              onClick={() => handleEventClick(event.id || event._id || "")}
-              style={{ cursor: "pointer", backgroundColor: secondaryColor }}
-            >
+            {displayedEvents.map((event) => {
+              const eventIsToday = isToday(event.startDate || new Date());
+              return (
+              <a
+                key={event.id || event._id}
+                className={`event-embed-card ${eventIsToday ? "event-today" : ""}`}
+                onClick={() => handleEventClick(event.id || event._id || "")}
+                style={{ cursor: "pointer", backgroundColor: secondaryColor }}
+              >
               <div className="event-embed-card-image">
                 <img
                   src={getImageProxyUrl(event.imageUrl, 400, 247)}
@@ -293,7 +311,8 @@ export const EventEmbedPage: React.FC = () => {
                 </div>
               </div>
             </a>
-          ))}
+            );
+          })}
         </div>
       </div>
       )}
