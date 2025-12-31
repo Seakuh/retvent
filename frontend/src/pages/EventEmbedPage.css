@@ -123,7 +123,6 @@
 /* Today's events - red border with shine */
 .event-embed-card.event-today {
   position: relative;
-  border: 2px solid red;
   background-clip: padding-box;
   overflow: hidden;
   transition: border-color 0.3s ease;
