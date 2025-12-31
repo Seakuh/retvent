@@ -37,18 +37,7 @@ export const EventDescription: React.FC<EventDescriptionProps> = ({
   if (!description) return null;
 
   const toggleExpanded = () => {
-    const wasExpanded = expanded;
     setExpanded(!expanded);
-    
-    // Wenn wir einklappen (von expanded zu collapsed), nach oben scrollen
-    if (wasExpanded && containerRef.current) {
-      setTimeout(() => {
-        containerRef.current?.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        });
-      }, 100);
-    }
   };
 
   return (
