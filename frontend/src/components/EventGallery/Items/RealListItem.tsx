@@ -162,64 +162,6 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             decoding="async"
           />
         </div>
-           <div className="real-list-item-profile-header-container" style={{ position: "relative" }}>
-          <RealListItemProfileHeader
-            profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
-            name={event?.host?.username || ""}
-            title={event?.title || ""}
-            id={event?.hostId || ""}
-            location={event?.city || "TBA"}
-          />
-           <h2 className="event-description-real-list-item">
-            {event.description}
-          </h2>
-          <div style={{ position: "absolute", right: 12, top: 10, zIndex: 2 }}>
-            <RealListItemDropdown
-              eventId={event.id || event._id || ""}
-              onShare={(e) => shareEvent(e, event!)}
-            />
-          </div>
-        </div>
-      {/* <h1 className="event-info-title-headline">{event.title}</h1> */}
-      <div className="real-list-item-location-date-container">
-          <span className="real-list-item-location">
-            <MapPin size={14} color="white" />
-            {event?.city || "TBA"}
-          </span>
-          <span className="real-list-item-date">
-            <CalendarIcon size={16} color="white" />
-            {(() => {
-              try {
-                if (!event.startDate) {
-                  throw new Error("No start date available");
-                }
-
-                const formattedDate = formatDate(event.startDate as string);
-                const days = getDaysUntilDate(formattedDate);
-
-                return (
-                  <>
-                    {formattedDate}{" "}
-                    {/* {days === 0
-                      ? "| today"
-                      : days === 1
-                      ? "| tomorrow"
-                      : days === -1
-                      ? "| yesterday"
-                      : days < 0
-                      ? `| ${Math.abs(days)} days ago`
-                      : `| in ${days} days`} */}
-                  </>
-                );
-              } catch (error) {
-                console.error("Error while formatting date:", error);
-                return <span>No date available</span>;
-              }
-            })()}
-          </span>
-        </div>
-
-
         <div className="event-meta-container">
           <div className="event-meta-container-left">
             <div
@@ -271,6 +213,66 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           </div>
           </div>
         </div>
+           <div className="real-list-item-profile-header-container" style={{ position: "relative" }}>
+          <RealListItemProfileHeader
+            profileUrl={event?.host?.profileImageUrl || event?.imageUrl || ""}
+            name={event?.host?.username || ""}
+            title={event?.title || ""}
+            id={event?.hostId || ""}
+            location={event?.city || "TBA"}
+          />
+           <h2 className="event-description-real-list-item">
+            {event.description}
+          </h2>
+          <div style={{ position: "absolute", right: 12, top: 10, zIndex: 2 }}>
+            <RealListItemDropdown
+              eventId={event.id || event._id || ""}
+              onShare={(e) => shareEvent(e, event!)}
+            />
+          </div>
+        </div>
+        
+      {/* <h1 className="event-info-title-headline">{event.title}</h1> */}
+      <div className="real-list-item-location-date-container">
+          <span className="real-list-item-location">
+            <MapPin size={14} color="white" />
+            {event?.city || "TBA"}
+          </span>
+          <span className="real-list-item-date">
+            <CalendarIcon size={16} color="white" />
+            {(() => {
+              try {
+                if (!event.startDate) {
+                  throw new Error("No start date available");
+                }
+
+                const formattedDate = formatDate(event.startDate as string);
+                const days = getDaysUntilDate(formattedDate);
+
+                return (
+                  <>
+                    {formattedDate}{" "}
+                    {/* {days === 0
+                      ? "| today"
+                      : days === 1
+                      ? "| tomorrow"
+                      : days === -1
+                      ? "| yesterday"
+                      : days < 0
+                      ? `| ${Math.abs(days)} days ago`
+                      : `| in ${days} days`} */}
+                  </>
+                );
+              } catch (error) {
+                console.error("Error while formatting date:", error);
+                return <span>No date available</span>;
+              }
+            })()}
+          </span>
+        </div>
+
+
+        
         <div className="miniature-event-info">
          
           <div className="event-info-button-container">
