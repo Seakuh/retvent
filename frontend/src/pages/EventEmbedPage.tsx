@@ -308,6 +308,7 @@ export const EventEmbedPage: React.FC = () => {
                 <div className="event-embed-card-date">
                   {formatDate(event.startDate || new Date())}
                   {event.startTime && ` • ${event.startTime}`}
+                  {eventIsToday && <span className="event-today-label">  • TODAY</span>}
                 </div>
               </div>
             </a>
