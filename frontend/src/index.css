@@ -64,14 +64,10 @@ body[data-theme="classic"],
   color-scheme: dark;
 }
 
-:root[data-theme="classic"] button {
-  background-color: black;
-  border-color: #333333;
-}
-
 :root[data-theme="classic"] button:hover {
   background-color: #2a2a2a;
 }
+
 
 .neon-shadow {
   box-shadow: 0 0 10px var(--color-neon-blue),

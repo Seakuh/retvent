@@ -70,7 +70,7 @@ export const SideBar = ({
           </div>
           <nav className="space-y-2">
             <button
-className="flex items-center gap-2 px-4 py-2 w-full text-white bg-blue-600 rounded-full overflow-hidden"
+className="flex items-center gap-2 px-4 py-2 w-full text-white rounded-full overflow-hidden"
 onClick={() => setViewMode("Search")}
             >
               <Search size={20} />
