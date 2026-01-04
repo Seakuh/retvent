@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Event } from "../../utils";
 import { EventCard } from "./EventCard";
 import "./EventSection.css";
+import { RealListItem } from "../EventGallery/Items/RealListItem";
 interface EventSectionProps {
   title?: string;
   events: Event[];
@@ -78,7 +79,7 @@ export const EventSection = ({ title, events }: EventSectionProps) => {
                   className="event-card-list-item"
                   key={event.id || event._id}
                 >
-                  <EventCard event={event} />
+                  <RealListItem event={event} />
                 </div>
               ))}
             </div>
