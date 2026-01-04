@@ -111,15 +111,22 @@
   }
   
   .event-hero-image {
+    width: 100vw;
+    max-width: 80rem;
     height: auto;
-    width: 80rem;
-    max-height: 50rem;
+    max-height: 70vh;
     margin: 0 auto;
     border-radius: 1rem 1rem 0 0;
-    height: 100%;
-    object-fit: cover;
+    display: block;
+    object-fit: contain;
+    padding: 0;
     transition: transform 0.3s ease;
+    background: black;
+    position: relative;
+    z-index: 1;
   }
+  /* Remove ::before pseudo-element for the image, as it does not apply to <img> tags.
+     Instead, background blur should be implemented at the parent (.event-hero) level if needed. */
 
   @media (max-width: 768px) {
     .event-hero {
@@ -155,6 +162,7 @@
      NAVIGATION & BUTTONS
      ============================================================= */
      .back-button {
+      position: absolute;
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(8px);
       color: white;
@@ -167,7 +175,6 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       border: none;
       cursor: pointer;
-      position: fixed;
       top: 2rem;
       z-index: 10;
       left: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
