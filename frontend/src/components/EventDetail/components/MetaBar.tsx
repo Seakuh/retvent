@@ -19,7 +19,18 @@ export const MetaBar = (event: Event) => {
 
   return (
     <div className="event-detail-meta-bar">
+      
       <div className="community-intercation">
+            {/* like */}
+            <div className="event-detail-meta-bar-item">
+          <div className="event-detail-meta-bar-item-icon">
+            <Heart
+              onClick={handleLike}
+              color={isFavorite(event.id!) ? "red" : "white"}
+              fill={isFavorite(event.id!) ? "red" : "none"}
+            />
+          </div>
+        </div>
         {/* views */}
         <div className="event-detail-meta-bar-item">
           <div className="event-detail-meta-bar-item-icon views-meta-bar-icon">
@@ -53,16 +64,7 @@ export const MetaBar = (event: Event) => {
             <Send />
           </div>
         </div>
-        {/* like */}
-        <div className="event-detail-meta-bar-item">
-          <div className="event-detail-meta-bar-item-icon">
-            <Heart
-              onClick={handleLike}
-              color={isFavorite(event.id!) ? "red" : "white"}
-              fill={isFavorite(event.id!) ? "red" : "none"}
-            />
-          </div>
-        </div>
+    
       </div>
     </div>
   );
