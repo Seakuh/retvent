@@ -513,19 +513,7 @@ export class EventController {
 
   /**
    * Vector-basierte Suche mit erweiterten Filtern
-   * Unterstützt: Query, Age Range, Region, Musik (live/DJ/Genre), Kategorien
-   * 
-   * Query-Parameter:
-   * - query: Suchtext (optional)
-   * - limit: Anzahl der Ergebnisse (optional, Standard: 20)
-   * - isUpcoming: 'true' für kommende, 'false' für vergangene Events (optional)
-   * - minAge: Mindestalter (optional)
-   * - maxAge: Höchstalter (optional)
-   * - region: Region/Stadt (optional)
-   * - city: Spezifische Stadt (optional)
-   * - musikTypes: Musik-Typen, komma-separiert: 'live', 'DJ', 'Genre' (optional)
-   * - musikGenre: Spezifisches Genre (optional)
-   * - category: Kategorie (optional): 'Kunst / Kultur', 'Networking / Business', 'Lernen / Talks', 'Party / Nachtleben', 'Natur / Outdoor', 'Experimentell / ungewöhnlich'
+   * Unterstützt alle Filter aus VectorSearchFilterDto
    */
   @Get('search/vector/filtered')
   async searchEventsWithVectorFilters(
@@ -536,10 +524,37 @@ export class EventController {
         ? undefined
         : filters.isUpcoming === 'true' || filters.isUpcoming === '1';
 
-    // Parse musikTypes (komma-separiert)
+    // Parse komma-separierte Listen
     const musikTypes = filters.musikTypes
       ? filters.musikTypes.split(',').map((t) => t.trim() as 'live' | 'DJ' | 'Genre')
       : undefined;
+    const categories = filters.categories
+      ? filters.categories.split(',').map((c) => c.trim())
+      : undefined;
+    const genres = filters.genres
+      ? filters.genres.split(',').map((g) => g.trim())
+      : undefined;
+    const tags = filters.tags
+      ? filters.tags.split(',').map((t) => t.trim())
+      : undefined;
+    const weekdays = filters.weekdays
+      ? filters.weekdays.split(',').map((w) => w.trim())
+      : undefined;
+    const avoidTags = filters.avoidTags
+      ? filters.avoidTags.split(',').map((t) => t.trim())
+      : undefined;
+    const accessibility = filters.accessibility
+      ? filters.accessibility.split(',').map((a) => a.trim())
+      : undefined;
+    const vibeTags = filters.vibeTags
+      ? filters.vibeTags.split(',').map((v) => v.trim())
+      : undefined;
+
+    // Parse Boolean-Werte
+    const parseBool = (value?: string): boolean | undefined => {
+      if (value === undefined) return undefined;
+      return value === 'true' || value === '1';
+    };
 
     return this.eventService.searchEventsWithVectorFilters({
       query: filters.query,
@@ -549,11 +564,43 @@ export class EventController {
       maxAge: filters.maxAge,
       region: filters.region,
       city: filters.city,
+      lat: filters.lat,
+      lon: filters.lon,
+      maxDistanceKm: filters.maxDistanceKm,
       musik: {
         types: musikTypes,
         genre: filters.musikGenre,
       },
       category: filters.category,
+      categories,
+      genres,
+      tags,
+      maxPrice: filters.maxPrice,
+      pricingType: filters.pricingType,
+      dateFrom: filters.dateFrom,
+      dateTo: filters.dateTo,
+      timeFrom: filters.timeFrom,
+      timeTo: filters.timeTo,
+      weekdays,
+      avoidLoud: parseBool(filters.avoidLoud),
+      avoidAlcohol: parseBool(filters.avoidAlcohol),
+      avoidCrowds: parseBool(filters.avoidCrowds),
+      avoidPolitical: parseBool(filters.avoidPolitical),
+      avoidLongDuration: parseBool(filters.avoidLongDuration),
+      avoidTags,
+      maxLoudnessLevel: filters.maxLoudnessLevel,
+      maxCrowdLevel: filters.maxCrowdLevel,
+      foodAvailable: parseBool(filters.foodAvailable),
+      veganAvailable: parseBool(filters.veganAvailable),
+      indoor: parseBool(filters.indoor),
+      outdoor: parseBool(filters.outdoor),
+      online: parseBool(filters.online),
+      accessibility,
+      language: filters.language,
+      maxEnergyLevel: filters.maxEnergyLevel,
+      vibeTags,
+      boostToday: parseBool(filters.boostToday),
+      boostWeekend: parseBool(filters.boostWeekend),
     });
   }
 

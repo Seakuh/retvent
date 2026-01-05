@@ -577,11 +577,43 @@ export class EventService {
     maxAge?: number;
     region?: string;
     city?: string;
+    lat?: number;
+    lon?: number;
+    maxDistanceKm?: number;
     musik?: {
       types?: ('live' | 'DJ' | 'Genre')[];
       genre?: string;
     };
     category?: 'Kunst / Kultur' | 'Networking / Business' | 'Lernen / Talks' | 'Party / Nachtleben' | 'Natur / Outdoor' | 'Experimentell / ungewöhnlich';
+    categories?: string[];
+    genres?: string[];
+    tags?: string[];
+    maxPrice?: number;
+    pricingType?: 'free' | 'donation' | 'paid' | 'subscription';
+    dateFrom?: string;
+    dateTo?: string;
+    timeFrom?: string;
+    timeTo?: string;
+    weekdays?: string[];
+    avoidLoud?: boolean;
+    avoidAlcohol?: boolean;
+    avoidCrowds?: boolean;
+    avoidPolitical?: boolean;
+    avoidLongDuration?: boolean;
+    avoidTags?: string[];
+    maxLoudnessLevel?: number;
+    maxCrowdLevel?: number;
+    foodAvailable?: boolean;
+    veganAvailable?: boolean;
+    indoor?: boolean;
+    outdoor?: boolean;
+    online?: boolean;
+    accessibility?: string[];
+    language?: string;
+    maxEnergyLevel?: number;
+    vibeTags?: string[];
+    boostToday?: boolean;
+    boostWeekend?: boolean;
   }) {
     const {
       query,
@@ -589,8 +621,40 @@ export class EventService {
       isUpcoming,
       region,
       city,
+      lat,
+      lon,
+      maxDistanceKm,
       musik,
       category,
+      categories,
+      genres,
+      tags,
+      maxPrice,
+      pricingType,
+      dateFrom,
+      dateTo,
+      timeFrom,
+      timeTo,
+      weekdays,
+      avoidLoud,
+      avoidAlcohol,
+      avoidCrowds,
+      avoidPolitical,
+      avoidLongDuration,
+      avoidTags,
+      maxLoudnessLevel,
+      maxCrowdLevel,
+      foodAvailable,
+      veganAvailable,
+      indoor,
+      outdoor,
+      online,
+      accessibility,
+      language,
+      maxEnergyLevel,
+      vibeTags,
+      boostToday,
+      boostWeekend,
     } = filters;
 
     const now = new Date();
@@ -686,6 +750,49 @@ export class EventService {
       }
     }
 
+    // Zusätzliche Qdrant-Filter
+    if (categories && categories.length > 0) {
+      filterClauses.push({
+        key: 'category',
+        match: { any: categories },
+      });
+    }
+
+    if (genres && genres.length > 0) {
+      filterClauses.push({
+        key: 'tags',
+        match: { any: genres },
+      });
+    }
+
+    if (tags && tags.length > 0) {
+      filterClauses.push({
+        key: 'tags',
+        match: { any: tags },
+      });
+    }
+
+    // Datum-Filter (dateFrom, dateTo)
+    if (dateFrom || dateTo) {
+      const fromTimestamp = dateFrom
+        ? Math.floor(new Date(dateFrom).getTime() / 1000)
+        : undefined;
+      const toTimestamp = dateTo
+        ? Math.floor(new Date(dateTo).getTime() / 1000)
+        : undefined;
+
+      const dateRangeFilter: any = { key: 'start_time', range: {} };
+      if (fromTimestamp !== undefined) {
+        dateRangeFilter.range.gte = fromTimestamp;
+      }
+      if (toTimestamp !== undefined) {
+        dateRangeFilter.range.lte = toTimestamp;
+      }
+      if (Object.keys(dateRangeFilter.range).length > 0) {
+        filterClauses.push(dateRangeFilter);
+      }
+    }
+
     const qdrantFilter =
       filterClauses.length > 0 ? { must: filterClauses } : undefined;
 
@@ -721,7 +828,12 @@ export class EventService {
         eventIds.map((id) => this.eventRepository.findById(id)),
       );
 
-      return events.filter((event): event is Event => event !== null);
+      // Zusätzliche Filterung nach Events, die nicht in Qdrant gespeichert sind
+      return this.applyAdvancedFilters(
+        events.filter((event): event is Event => event !== null),
+        filters,
+        now,
+      );
     } else {
       // Fallback: Suche ohne Vector (nur Filter)
       // Da Qdrant keine reine Filter-Suche ohne Vector unterstützt,
@@ -731,64 +843,292 @@ export class EventService {
       );
 
       // Filtere Events nach den Kriterien
-      let filteredEvents = allEvents.filter((event) => {
-        // Datum-Filter
-        if (isUpcoming !== undefined && event.startDate) {
-          const eventDate = new Date(event.startDate);
-          if (isUpcoming && eventDate < now) return false;
-          if (!isUpcoming && eventDate >= now) return false;
-        }
+      let filteredEvents = this.applyAdvancedFilters(allEvents, filters, now);
+      return filteredEvents.slice(0, limit);
+    }
+  }
 
-        // City/Region-Filter
-        if (city && event.city?.toLowerCase() !== city.toLowerCase()) {
+  /**
+   * Wendet erweiterte Filter auf Events an (nach Qdrant-Suche oder als Fallback)
+   */
+  private applyAdvancedFilters(
+    events: Event[],
+    filters: {
+      isUpcoming?: boolean;
+      region?: string;
+      city?: string;
+      lat?: number;
+      lon?: number;
+      maxDistanceKm?: number;
+      musik?: {
+        types?: ('live' | 'DJ' | 'Genre')[];
+        genre?: string;
+      };
+      category?: string;
+      categories?: string[];
+      genres?: string[];
+      tags?: string[];
+      maxPrice?: number;
+      pricingType?: 'free' | 'donation' | 'paid' | 'subscription';
+      dateFrom?: string;
+      dateTo?: string;
+      timeFrom?: string;
+      timeTo?: string;
+      weekdays?: string[];
+      avoidLoud?: boolean;
+      avoidAlcohol?: boolean;
+      avoidCrowds?: boolean;
+      avoidPolitical?: boolean;
+      avoidLongDuration?: boolean;
+      avoidTags?: string[];
+      maxLoudnessLevel?: number;
+      maxCrowdLevel?: number;
+      foodAvailable?: boolean;
+      veganAvailable?: boolean;
+      indoor?: boolean;
+      outdoor?: boolean;
+      online?: boolean;
+      accessibility?: string[];
+      language?: string;
+      maxEnergyLevel?: number;
+      vibeTags?: string[];
+    },
+    now: Date,
+  ): Event[] {
+    return events.filter((event) => {
+      // Datum-Filter
+      if (filters.isUpcoming !== undefined && event.startDate) {
+        const eventDate = new Date(event.startDate);
+        if (filters.isUpcoming && eventDate < now) return false;
+        if (!filters.isUpcoming && eventDate >= now) return false;
+      }
+
+      // Datum-Range-Filter
+      if (filters.dateFrom || filters.dateTo) {
+        if (!event.startDate) return false;
+        const eventDate = new Date(event.startDate);
+        if (filters.dateFrom && eventDate < new Date(filters.dateFrom)) return false;
+        if (filters.dateTo && eventDate > new Date(filters.dateTo)) return false;
+      }
+
+      // Zeit-Filter
+      if (filters.timeFrom || filters.timeTo) {
+        if (!event.startTime) return false;
+        const [hours, minutes] = event.startTime.split(':').map(Number);
+        const eventTime = hours * 60 + minutes;
+        if (filters.timeFrom) {
+          const [fromHours, fromMinutes] = filters.timeFrom.split(':').map(Number);
+          const fromTime = fromHours * 60 + fromMinutes;
+          if (eventTime < fromTime) return false;
+        }
+        if (filters.timeTo) {
+          const [toHours, toMinutes] = filters.timeTo.split(':').map(Number);
+          const toTime = toHours * 60 + toMinutes;
+          if (eventTime > toTime) return false;
+        }
+      }
+
+      // Wochentag-Filter
+      if (filters.weekdays && filters.weekdays.length > 0 && event.startDate) {
+        const eventDate = new Date(event.startDate);
+        const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+        const eventDay = dayNames[eventDate.getDay()];
+        if (!filters.weekdays.includes(eventDay)) return false;
+      }
+
+      // City/Region-Filter
+      if (filters.city && event.city?.toLowerCase() !== filters.city.toLowerCase()) {
+        return false;
+      }
+      if (filters.region && event.city && !event.city.toLowerCase().includes(filters.region.toLowerCase())) {
+        return false;
+      }
+
+      // Geo-Distanz-Filter
+      if (filters.lat && filters.lon && filters.maxDistanceKm && event.uploadLat && event.uploadLon) {
+        const distance = this.calculateDistance(
+          filters.lat,
+          filters.lon,
+          event.uploadLat,
+          event.uploadLon,
+        );
+        if (distance > filters.maxDistanceKm) return false;
+      }
+
+      // Kategorie-Filter
+      if (filters.category && event.category !== filters.category) {
+        return false;
+      }
+      if (filters.categories && filters.categories.length > 0) {
+        if (!event.category || !filters.categories.includes(event.category)) {
           return false;
         }
-        if (region && event.city && !event.city.toLowerCase().includes(region.toLowerCase())) {
+      }
+
+      // Genres/Tags-Filter
+      if (filters.genres && filters.genres.length > 0) {
+        const hasGenre = event.tags?.some((tag) =>
+          filters.genres!.some((genre) =>
+            tag.toLowerCase().includes(genre.toLowerCase()),
+          ),
+        );
+        if (!hasGenre) return false;
+      }
+
+      if (filters.tags && filters.tags.length > 0) {
+        const hasTag = event.tags?.some((tag) =>
+          filters.tags!.some((filterTag) =>
+            tag.toLowerCase().includes(filterTag.toLowerCase()),
+          ),
+        );
+        if (!hasTag) return false;
+      }
+
+      // Preis-Filter
+      if (filters.maxPrice !== undefined) {
+        const eventPrice = event.price ? parseFloat(String(event.price)) : undefined;
+        if (eventPrice !== undefined && eventPrice > filters.maxPrice) {
           return false;
         }
+      }
 
-        // Kategorie-Filter
-        if (category && event.category !== category) {
+      if (filters.pricingType) {
+        const eventPrice = event.price ? parseFloat(String(event.price)) : undefined;
+        if (filters.pricingType === 'free' && eventPrice !== 0 && eventPrice !== undefined) {
           return false;
         }
+        if (filters.pricingType === 'paid' && (eventPrice === 0 || eventPrice === undefined)) {
+          return false;
+        }
+      }
 
-        // Musik-Filter
-        if (musik) {
-          if (musik.types && musik.types.length > 0) {
-            const hasMatchingRole = musik.types.some((type) => {
-              if (type === 'live' || type === 'DJ') {
-                return event.lineup?.some((item) =>
-                  item.role?.toLowerCase().includes(type.toLowerCase()),
-                );
-              }
-              return false;
-            });
-
-            if (!hasMatchingRole && musik.types.some((t) => t === 'live' || t === 'DJ')) {
-              return false;
+      // Musik-Filter
+      if (filters.musik) {
+        if (filters.musik.types && filters.musik.types.length > 0) {
+          const hasMatchingRole = filters.musik.types.some((type) => {
+            if (type === 'live' || type === 'DJ') {
+              return event.lineup?.some((item) =>
+                item.role?.toLowerCase().includes(type.toLowerCase()),
+              );
             }
+            return false;
+          });
 
-            if (musik.genre) {
-              const hasGenre =
-                event.tags?.some((tag) =>
-                  tag.toLowerCase().includes(musik.genre!.toLowerCase()),
-                ) || false;
-              if (!hasGenre) return false;
-            }
-          } else if (musik.genre) {
+          if (!hasMatchingRole && filters.musik.types.some((t) => t === 'live' || t === 'DJ')) {
+            return false;
+          }
+
+          if (filters.musik.genre) {
             const hasGenre =
               event.tags?.some((tag) =>
-                tag.toLowerCase().includes(musik.genre!.toLowerCase()),
+                tag.toLowerCase().includes(filters.musik!.genre!.toLowerCase()),
               ) || false;
             if (!hasGenre) return false;
           }
+        } else if (filters.musik.genre) {
+          const hasGenre =
+            event.tags?.some((tag) =>
+              tag.toLowerCase().includes(filters.musik!.genre!.toLowerCase()),
+            ) || false;
+          if (!hasGenre) return false;
         }
+      }
 
-        return true;
-      });
+      // No-Go Filter (ausschließen)
+      if (filters.avoidTags && filters.avoidTags.length > 0) {
+        const hasAvoidedTag = event.tags?.some((tag) =>
+          filters.avoidTags!.some((avoidTag) =>
+            tag.toLowerCase().includes(avoidTag.toLowerCase()),
+          ),
+        );
+        if (hasAvoidedTag) return false;
+      }
 
-      return filteredEvents.slice(0, limit);
-    }
+      // Vermeide laut (über Tags oder Kategorie)
+      if (filters.avoidLoud) {
+        const loudTags = ['loud', 'laut', 'noise', 'party', 'club', 'konzert'];
+        const hasLoudTag = event.tags?.some((tag) =>
+          loudTags.some((loud) => tag.toLowerCase().includes(loud)),
+        );
+        if (hasLoudTag || event.category?.toLowerCase().includes('party')) {
+          return false;
+        }
+      }
+
+      // Vermeide Alkohol (über Tags)
+      if (filters.avoidAlcohol) {
+        const alcoholTags = ['alcohol', 'alkohol', 'bar', 'drinks', 'cocktail'];
+        const hasAlcoholTag = event.tags?.some((tag) =>
+          alcoholTags.some((alc) => tag.toLowerCase().includes(alc)),
+        );
+        if (hasAlcoholTag) return false;
+      }
+
+      // Vermeide Menschenmengen (über Tags oder Kategorie)
+      if (filters.avoidCrowds) {
+        const crowdTags = ['crowd', 'massen', 'festival', 'groß', 'large'];
+        const hasCrowdTag = event.tags?.some((tag) =>
+          crowdTags.some((crowd) => tag.toLowerCase().includes(crowd)),
+        );
+        if (hasCrowdTag || (event.capacity && event.capacity > 500)) {
+          return false;
+        }
+      }
+
+      // Vermeide politisch/religiös (über Tags oder Kategorie)
+      if (filters.avoidPolitical) {
+        const politicalTags = ['political', 'politik', 'religion', 'religiös', 'demo'];
+        const hasPoliticalTag = event.tags?.some((tag) =>
+          politicalTags.some((pol) => tag.toLowerCase().includes(pol)),
+        );
+        if (hasPoliticalTag) return false;
+      }
+
+      // Vermeide lange Dauer (über endDate)
+      if (filters.avoidLongDuration && event.startDate && event.endDate) {
+        const duration = new Date(event.endDate).getTime() - new Date(event.startDate).getTime();
+        const hours = duration / (1000 * 60 * 60);
+        if (hours > 6) return false; // Mehr als 6 Stunden
+      }
+
+      // Language-Filter
+      if (filters.language && event.language && event.language !== filters.language) {
+        return false;
+      }
+
+      // Accessibility-Filter
+      if (filters.accessibility && filters.accessibility.length > 0) {
+        // Prüfe über Tags (z.B. 'wheelchair', 'barrierefrei')
+        const hasAccessibility = filters.accessibility.some((acc) =>
+          event.tags?.some((tag) => tag.toLowerCase().includes(acc.toLowerCase())),
+        );
+        // Wenn explizit gesucht wird, aber nicht gefunden, ausschließen
+        // (kann später erweitert werden, wenn Events ein accessibility-Feld haben)
+      }
+
+      return true;
+    });
+  }
+
+  /**
+   * Berechnet die Distanz zwischen zwei Geo-Koordinaten in Kilometern (Haversine-Formel)
+   */
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // Erdradius in km
+    const dLat = this.deg2rad(lat2 - lat1);
+    const dLon = this.deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(lat1)) *
+        Math.cos(this.deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  private deg2rad(deg: number): number {
+    return deg * (Math.PI / 180);
   }
   
   // ----------------------------------------------------------------------------
