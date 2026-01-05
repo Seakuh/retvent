@@ -29,6 +29,8 @@ export class ProfileService {
   updateProfileEmbedding(id: any, embedding: number[]) {
     return this.profileRepository.updateProfileEmbedding(id, embedding);
   }
+
+  
   async updateProfileGallery(
     id: string,
     gallery: Express.Multer.File[],

@@ -607,12 +607,12 @@ export class AssessmentService {
    * Findet passende Events basierend auf Nutzervorlieben mittels Vector-Suche
    * @param preferences - Die Vorlieben des Nutzers
    * @param limit - Anzahl der zurückzugebenden Events (Standard: 20)
-   * @returns Array von passenden Events
+   * @returns Array von passenden Events mit Similarity-Score in Prozent
    */
   async findEventsByPreferences(
     preferences: OnboardingPreferencesDto,
     limit: number = 20,
-  ): Promise<Event[]> {
+  ): Promise<Array<{ event: Event; matchPercentage: number }>> {
     try {
       // Konvertiere Vorlieben zu Text
       const preferencesText = this.preferencesToText(preferences);
@@ -655,10 +655,27 @@ export class AssessmentService {
         withPayload: true,
       });
 
-      // Extrahiere Event-IDs aus den Ergebnissen
-      const eventIds = searchResults
-        .map((hit) => this.extractEventIdFromPayload(hit.payload))
-        .filter((id): id is string => Boolean(id));
+      // Erstelle Map für Event-IDs mit ihren Scores
+      const eventIdScoreMap = new Map<string, number>();
+      const eventIds: string[] = [];
+
+      searchResults.forEach((hit: any) => {
+        const eventId = this.extractEventIdFromPayload(hit.payload);
+        if (eventId) {
+          // Qdrant gibt Score als Similarity-Score zurück (normalerweise 0-1 für Cosine Similarity)
+          // Konvertiere zu Prozent (0-100)
+          const score = hit.score ?? 0;
+          const matchPercentage = Math.round(score * 100);
+          
+          // Verwende nur die beste Score wenn mehrere Treffer für dasselbe Event existieren
+          if (!eventIdScoreMap.has(eventId) || eventIdScoreMap.get(eventId)! < matchPercentage) {
+            eventIdScoreMap.set(eventId, matchPercentage);
+            if (!eventIds.includes(eventId)) {
+              eventIds.push(eventId);
+            }
+          }
+        }
+      });
 
       if (eventIds.length === 0) {
         return [];
@@ -666,10 +683,15 @@ export class AssessmentService {
 
       // Lade Events aus der Datenbank
       const events = await Promise.all(
-        eventIds.map((id) => this.eventRepository.findById(id)),
+        eventIds.map(async (id) => {
+          const event = await this.eventRepository.findForAssessment(id);
+          return event ? { event, matchPercentage: eventIdScoreMap.get(id) ?? 0 } : null;
+        }),
       );
 
-      return events.filter((event): event is Event => event !== null);
+      return events.filter(
+        (result): result is { event: Event; matchPercentage: number } => result !== null,
+      );
     } catch (error) {
       console.error('Error finding events by preferences:', error);
       if (error instanceof BadRequestException) {
@@ -684,7 +706,7 @@ export class AssessmentService {
    * @param preferences - Die Onboarding-Präferenzen des Nutzers
    * @param userId - Die User-ID des Nutzers
    * @param limit - Optional: Anzahl der Event-Vorschläge (Standard: 20)
-   * @returns Objekt mit Profil-Update-Status und optionalen Event-Vorschlägen
+   * @returns Objekt mit Profil-Update-Status und optionalen Event-Vorschlägen mit Match-Percentage
    */
   async setOnboardingPreferences(
     preferences: OnboardingPreferencesDto,
@@ -693,7 +715,7 @@ export class AssessmentService {
   ): Promise<{
     success: boolean;
     profileUpdated: boolean;
-    events?: Event[];
+    events?: Array<{ event: Event; matchPercentage: number }>;
   }> {
     try {
       if (!userId || typeof userId !== 'string' || userId.trim() === '') {
@@ -728,9 +750,9 @@ export class AssessmentService {
       await this.profileService.updateProfileEmbedding(profile.id, embedding);
 
       // Optional: Finde passende Events basierend auf den Präferenzen
-      let events: Event[] = [];
+      let eventsWithScores: Array<{ event: Event; matchPercentage: number }> = [];
       try {
-        events = await this.findEventsByPreferences(preferences, limit);
+        eventsWithScores = await this.findEventsByPreferences(preferences, limit);
       } catch (error) {
         console.warn('Failed to find events by preferences:', error);
         // Event-Vorschläge sind optional, daher kein Fehler werfen
@@ -739,7 +761,7 @@ export class AssessmentService {
       return {
         success: true,
         profileUpdated: true,
-        events: events.length > 0 ? events : undefined,
+        events: eventsWithScores.length > 0 ? eventsWithScores : undefined,
       };
     } catch (error) {
       console.error('Error setting onboarding preferences:', error);

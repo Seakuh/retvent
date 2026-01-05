@@ -396,8 +396,14 @@ export class MongoEventRepository implements IEventRepository {
       .filter((event): event is Event => Boolean(event));
   }
 
+  findForAssessment(id: string): Promise<Event | null> {
+    return this.eventModel.findById(id).select('title imageUrl startDate city views tags commentCount lineup.name').exec();
+  }
+
   async findById(id: string): Promise<Event | null> {
-    const event = await this.eventModel.findById(id).exec();
+    // "-embedding" bedeutet, dass das Feld "embedding" im zurückgegebenen Dokument ausgeschlossen wird
+    // (es wird NICHT mitgeliefert)
+    const event = await this.eventModel.findById(id).select('-embedding').exec();
 
     if (!event) {
       return null;
