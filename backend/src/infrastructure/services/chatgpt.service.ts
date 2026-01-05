@@ -922,7 +922,7 @@ Example format: "Dynamic camera movement revealing event details, animated text 
    * @param event - Das Event-Objekt für das eine Beschreibung erstellt werden soll
    * @returns Eine vollständige, ansprechende Event-Beschreibung mit subtilen Emojis
    */
-  async generate10NewEvents(): Promise<Partial<Event>[]> {
+  async generate10NewEvents(amount: number): Promise<Partial<Event>[]> {
     const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
 
     const response = await this.openai.chat.completions.create({
@@ -930,13 +930,13 @@ Example format: "Dynamic camera movement revealing event details, animated text 
       messages: [
         {
           role: 'user',
-          content: `Erstelle genau 10 neue, realistische Events mit folgenden Informationen:
+          content: `Erstelle genau ${amount} neue, realistische Events mit folgenden Informationen:
 
 ### **Current Date:**  
 Today's date is **${today}**. Verwende zukünftige Daten für die Events.
 
 ### WICHTIGE REGELN:
-- Erstelle genau 3 verschiedene Events
+- Erstelle genau ${amount} verschiedene Events
 - Jedes Event MUSS eine imageUrl haben (verwende realistische öffentliche Bild-URLs, z.B. von Unsplash, Pexels oder ähnlichen Quellen)
 - Die Events sollen vielfältig sein (Konzerte, Ausstellungen, Workshops, Sportevents, etc.)
 - Verwende verschiedene deutsche Städte
@@ -1092,5 +1092,41 @@ Antworte NUR mit der fertigen Beschreibung, ohne zusätzliche Erklärungen. bitt
       const fallbackDescription = `${eventInfo.title}${eventInfo.category ? ` - Ein ${eventInfo.category.toLowerCase()}` : ''}${eventInfo.city ? ` in ${eventInfo.city}` : ''}.${eventInfo.startDate ? ` Am ${eventInfo.startDate}` : ''}${eventInfo.startTime ? ` um ${eventInfo.startTime} Uhr` : ''}.${lineupNames ? ` Mit dabei: ${lineupNames}.` : ''}${eventInfo.description ? ` ${eventInfo.description}` : ''}`;
       return fallbackDescription;
     }
+  }
+
+  async generateUsername(): Promise<string> {
+    const systemPrompt = `Erstelle nur einen kreativen, verrückten Nutzernamen für ein beliebiges Event – maximal 10 Zeichen! Gib NUR den Namen zurück auf englisch, ohne jegliche Erklärungen oder Zusätze.`;
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: systemPrompt }],
+      max_tokens: 15,
+    });
+    return response.choices[0]?.message?.content?.trim() || '';
+  }
+
+  async generatebiography(prompt: string, name: string): Promise<string> {
+    const systemPrompt = `Erstelle eine kreative, ansprechende Künstlerbiografie für ${name} basierend auf folgenden Informationen:
+
+${prompt}
+
+### Anforderungen:
+- Schreibe eine lebendige, inspirierende Biografie (100-150 Wörter)
+- Verwende 2-4 passende, subtile Emojis (nicht übertreiben!)
+- Erzähle die Geschichte des Künstlers auf eine fesselnde Art
+- Hebe besondere Talente, Erfolge oder den einzigartigen Stil hervor
+- Verwende eine natürliche, begeisternde Sprache
+- Mache die Biografie persönlich und authentisch
+- Beginne mit einem fesselnden Einstieg
+- Beende mit einem prägnanten Fazit oder Ausblick
+
+Die Biografie sollte Leser neugierig machen und Lust auf mehr wecken! auf englisch`;
+    
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: systemPrompt }],
+      temperature: 0.8,
+      max_tokens: 300,
+    });
+    return response.choices[0]?.message?.content?.trim() || '';
   }
 }

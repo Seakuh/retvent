@@ -7,6 +7,7 @@ import { ImageService } from 'src/infrastructure/services/image.service';
 import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
 import { CommentService } from './comment.service';
 import { EventService } from './event.service';
+import { Event } from 'src/core/domain';
 @Injectable()
 export class BotService {
   constructor(
@@ -124,14 +125,15 @@ export class BotService {
    * Generiert 10 neue Events von ChatGPT, lädt die Bilder hoch,
    * erstellt neue Profile und erstellt die Events
    */
-  // @Cron(CronExpression.EVERY_5_SECONDS)
+  //@Cron(CronExpression.EVERY_10_SECONDS)
   async generateAndCreateEventsWithProfiles() {
     this.logger.log('🚀 Starte Generierung von 10 neuen Events mit Profilen...');
 
     try {
       // 1. ChatGPT nach 10 Events fragen
       this.logger.log('📡 Frage ChatGPT nach 10 neuen Events...');
-      const events = await this.chatgptService.generate10NewEvents();
+      const events = await this.chatgptService.generate10NewEvents(2);
+      console.log(events);
       this.logger.log(`✅ ${events.length} Events von ChatGPT erhalten`);
 
       const createdEvents = [];
@@ -169,7 +171,8 @@ export class BotService {
           }
 
           // 2.2 Neues Profil erstellen
-          const username = `event_${Date.now()}_${i}`;
+
+          const username =  await this.chatgptService.generateUsername()|| `event_${Date.now()}_${i}`;
           const email = `${username}@events.local`;
           const password = `Event${Math.random().toString(36).slice(2)}!`;
 
@@ -183,12 +186,14 @@ export class BotService {
           this.logger.log(`✅ Profil erstellt: ${username} (ID: ${hostId})`);
 
           // 2.3 Event erstellen
-          const eventToCreate: any = {
+          const eventToCreate: Partial<Event> = {
             title: eventData.title,
             description: eventData.description,
             startDate: new Date(eventData.startDate),
             startTime: eventData.startTime || '20:00',
             hostId: hostId,
+            hostUsername: username,
+            hostImageUrl: uploadedImageUrl,
             city: eventData.city,
             category: eventData.category,
             price: eventData.price,
@@ -222,7 +227,7 @@ export class BotService {
       this.logger.log(`\n🎊 Fertig! ${createdEvents.length}/${events.length} Events erfolgreich erstellt`);
       return {
         success: true,
-        totalRequested: events.length,
+        totalRequested: events.length as number,
         totalCreated: createdEvents.length,
         events: createdEvents,
       };
