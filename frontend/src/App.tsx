@@ -26,12 +26,14 @@ import { Me } from "./components/User/Me/Me";
 import { Profile } from "./components/User/Profile/Profile";
 import { UserContextProvider } from "./contexts/UserContextProvider";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { OnboardingWrapper } from "./components/Onboarding";
 import ReelPage from "./pages/ReelPage";
 import { SearchPage } from "./pages/SearchPage";
 import { ShoppingPage } from "./pages/ShoppingPage";
 import { TicketPage } from "./pages/TicketPage";
 import { EventEmbedPage } from "./pages/EventEmbedPage";
 import { syncFavorites } from "./service";
+import "./utils/onboarding-helpers"; // Load onboarding debug helpers
 // const queryClient = new QueryClient({
 //   defaultOptions: {
 //     queries: {
@@ -92,7 +94,14 @@ const App: React.FC = () => {
               <div className="app">
               <main>
                 <Routes>
-                  <Route path="/" element={<LandingPage />} />
+                  <Route
+                    path="/"
+                    element={
+                      <OnboardingWrapper>
+                        <LandingPage />
+                      </OnboardingWrapper>
+                    }
+                  />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/profile/:userId" element={<Profile />} />
