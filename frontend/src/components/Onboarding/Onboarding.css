@@ -18,23 +18,23 @@
   padding: 1.5rem 1.5rem 1rem;
 }
 
-.search-container {
-  max-width: 640px;
+.onboarding-search-container {
   margin: 10rem;
+  max-width: 640px;
   margin: 0 auto;
   position: relative;
 }
 
-.search-icon {
+.onboarding-search-icon {
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  color: #666;
+  color: #ffffff;
   pointer-events: none;
 }
 
-.search-input {
+.onboarding-search-input {
   width: 100%;
   padding: 0.75rem 0 0.75rem 2.5rem;
   background: transparent;
@@ -46,15 +46,15 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.search-input::placeholder {
+.onboarding-search-input::placeholder {
   color: #666;
 }
 
-.search-input:focus {
+.onboarding-search-input:focus {
   border-bottom-color: #ffffff;
 }
 
-.search-input:focus::placeholder {
+.onboarding-search-input:focus::placeholder {
   color: #999;
 }
 
@@ -108,6 +108,12 @@
 .no-results p {
   color: #999;
   font-size: 0.9375rem;
+  margin-bottom: 1rem;
+}
+
+.no-results-hint {
+  color: #4ade80 !important;
+  font-size: 0.875rem !important;
   margin-bottom: 1rem;
 }
 
@@ -209,6 +215,38 @@
 
 .vibe-section {
   margin-bottom: 2rem;
+}
+
+/* Techno Subgenres Section */
+.techno-section {
+  margin-bottom: 3rem;
+}
+
+.techno-category {
+  margin-bottom: 2rem;
+}
+
+.techno-category:last-child {
+  margin-bottom: 0;
+}
+
+.techno-category-title {
+  font-size: 0.9375rem;
+  color: #888;
+  margin: 0 0 1rem 0;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Custom Tags Section */
+.custom-tags-section {
+  margin-bottom: 2rem;
+}
+
+.custom-tag-bubble {
+  background: rgba(74, 222, 128, 0.15);
+  border-color: rgba(74, 222, 128, 0.3);
+  color: #4ade80;
 }
 
 /* ========================================
@@ -363,7 +401,7 @@
 .onboarding-helper,
 .optional-label,
 .skip-button,
-.search-input,
+.onboarding-search-input,
 .clear-search,
 .no-results p,
 .progress-bar {

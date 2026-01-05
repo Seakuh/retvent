@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { onboardingService, OnboardingPreferences } from "../../services/onboarding.service";
 import "./Onboarding.css";
+import { Search } from "lucide-react";
 
 interface OnboardingProps {
   onComplete: (events?: any[]) => void;
@@ -11,6 +12,8 @@ export interface UserPreferences {
   mainListening: string[];
   genres: string[];
   vibes: string[];
+  technoSubgenres: string[];
+  customTags: string[];
 }
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
@@ -18,6 +21,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
     mainListening: [],
     genres: [],
     vibes: [],
+    technoSubgenres: [],
+    customTags: [],
   });
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -47,7 +52,103 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
     "+ more",
   ];
 
-  const vibeOptions = ["Calm", "Curious", "Energetic", "Intimate", "Late-night"];
+  const vibeOptions = [
+    "On weekends",
+    "After work",
+    "Calm",
+    "Curious",
+    "Energetic",
+    "Intimate",
+    "Late-night",
+    "During the week",
+    "Yoga sessions in relaxed atmosphere",
+    "Networking opportunities",
+    "Learning & workshops",
+    "Outdoor events",
+    "Small intimate gatherings",
+    "Large crowds & festivals",
+    "Underground vibes",
+    "Art & exhibitions",
+    "Food & drinks focused",
+    "Dancing all night",
+    "Seated listening sessions",
+    "Daytime events",
+  ];
+
+  const technoSubgenres = {
+    "Classic & Foundation": [
+      "Detroit Techno",
+      "Minimal Techno",
+      "Dub Techno",
+      "Deep Techno",
+      "Raw Techno",
+      "Hypnotic Techno",
+      "Groove Techno",
+    ],
+    "⚙️ Harder / Darker / Industrial": [
+      "Hard Techno",
+      "Industrial Techno",
+      "Dark Techno",
+      "Schranz",
+      "Acid Techno",
+      "EBM Techno",
+      "Noise Techno",
+      "Post-Industrial Techno",
+    ],
+    "🌀 Experimental / Avant-garde": [
+      "Experimental Techno",
+      "Abstract Techno",
+      "Leftfield Techno",
+      "Deconstructed Techno",
+      "Broken Techno",
+      "Polyrhythmic Techno",
+      "Glitch Techno",
+    ],
+    "🌫 Atmospheric / Hypnotic": [
+      "Ambient Techno",
+      "Deep Hypnotic Techno",
+      "Ethereal Techno",
+      "Cosmic Techno",
+      "Drone Techno",
+    ],
+    "🔊 Rave / Peak-Time / Club": [
+      "Peak Time Techno",
+      "Rave Techno",
+      "Festival Techno",
+      "Warehouse Techno",
+      "Big Room Techno",
+    ],
+    "🧪 Acid & Oldschool": [
+      "Hard Acid",
+      "303 Techno",
+      "Oldschool Techno",
+      "90s Techno",
+      "Rave Techno (UK/90s)",
+    ],
+    "🌍 Regional / Scene-specific": [
+      "Berlin Techno",
+      "Dub Techno (Berlin/Basic Channel)",
+      "UK Techno",
+      "Birmingham Techno",
+      "Japanese Techno",
+      "Scandinavian Techno",
+    ],
+    "🔄 Hybrid & Crossover": [
+      "Techno-Trance",
+      "Techno-Electro",
+      "Techno-Breaks",
+      "Techno-IDM",
+      "Techno-House",
+      "Techno-EBM",
+      "Techno-Ambient",
+    ],
+    "🧠 Intellectual / Listening-oriented": [
+      "Intelligent Techno",
+      "IDM-influenced Techno",
+      "Cinematic Techno",
+      "Conceptual Techno",
+    ],
+  };
 
   // Filter options based on search query
   const filterOptions = (options: string[]) => {
@@ -62,8 +163,20 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
   const filteredGenres = filterOptions(genreOptions);
   const filteredVibes = filterOptions(vibeOptions);
 
-  const hasResults = filteredMainListening.length > 0 || filteredGenres.length > 0 || filteredVibes.length > 0;
-  const totalSelections = preferences.mainListening.length + preferences.genres.length + preferences.vibes.length;
+  // Filter Techno subgenres based on search
+  const filteredTechnoSubgenres: { [key: string]: string[] } = {};
+  if (preferences.genres.includes("Techno")) {
+    Object.entries(technoSubgenres).forEach(([category, subgenres]) => {
+      const filtered = filterOptions(subgenres);
+      if (filtered.length > 0) {
+        filteredTechnoSubgenres[category] = filtered;
+      }
+    });
+  }
+
+  const hasTechnoSubgenres = Object.keys(filteredTechnoSubgenres).length > 0;
+  const hasResults = filteredMainListening.length > 0 || filteredGenres.length > 0 || filteredVibes.length > 0 || hasTechnoSubgenres;
+  const totalSelections = preferences.mainListening.length + preferences.genres.length + preferences.vibes.length + preferences.technoSubgenres.length + preferences.customTags.length;
 
   // Calculate progress percentage (max at 10 selections = 100%)
   const progressPercentage = Math.min((totalSelections / 10) * 100, 100);
@@ -82,6 +195,23 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
     });
   };
 
+  const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      const trimmedQuery = searchQuery.trim();
+
+      // Check if it's not already in customTags
+      if (!preferences.customTags.includes(trimmedQuery)) {
+        setPreferences((prev) => ({
+          ...prev,
+          customTags: [...prev.customTags, trimmedQuery],
+        }));
+      }
+
+      // Clear search
+      setSearchQuery("");
+    }
+  };
+
   const handleContinue = async () => {
     try {
       // Transform frontend preferences to backend format
@@ -96,6 +226,20 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
           selected: preferences.vibes,
         },
       };
+
+      // Add techno subgenres to genreStyle if any are selected
+      if (preferences.technoSubgenres.length > 0) {
+        backendPreferences.genreStyle = {
+          selected: [...preferences.genres, ...preferences.technoSubgenres],
+        };
+      }
+
+      // Add custom tags to context
+      if (preferences.customTags.length > 0) {
+        backendPreferences.context = {
+          selected: [...preferences.vibes, ...preferences.customTags],
+        };
+      }
 
       // Send to backend and get personalized events
       const response = await onboardingService.savePreferencesAndGetEvents(backendPreferences);
@@ -122,38 +266,47 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
   return (
     <div className="onboarding-container">
       {/* Fixed Header with Search */}
-      <div className="onboarding-header">
-        <div className="search-container">
-          <svg
-            className="search-icon"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
+      {/* <div className="onboarding-header">
+        <div className="onboarding-search-container">
+          <Search className="onboarding-search-icon" size={20} />
           <input
             type="text"
-            className="search-input"
-            placeholder="Search..."
+            className="onboarding-search-input"
+            placeholder="Search or add your own (press Enter)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleSearchKeyPress}
           />
         </div>
-      </div>
+      </div> */}
+
+
 
       {/* Scrollable Content */}
       <div className="onboarding-content">
+        {/* Custom Tags Section - Always at top */}
+        {preferences.customTags.length > 0 && (
+          <section className="onboarding-section custom-tags-section">
+            <h2 className="onboarding-subheadline">Your custom preferences</h2>
+            <div className="bubble-grid custom-tags-grid">
+              {preferences.customTags.map((tag) => (
+                <button
+                  key={tag}
+                  className="bubble custom-tag-bubble selected"
+                  onClick={() => toggleSelection("customTags", tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* No Results Message */}
         {searchQuery && !hasResults && (
           <div className="no-results">
             <p>No matches for "{searchQuery}"</p>
+            <p className="no-results-hint">Press Enter to add it as a custom preference</p>
             <button
               className="clear-search"
               onClick={() => setSearchQuery("")}
@@ -161,6 +314,30 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
               Clear search
             </button>
           </div>
+        )}
+
+
+        {/* Section 3 - Optional Vibe Refinement */}
+        {filteredVibes.length > 0 && (
+          <section className="onboarding-section vibe-section">
+          <h2 className="onboarding-subheadline">🌟 When & how do you like to experience events?</h2>
+          <p className="onboarding-helper">
+            Optional — helps us understand your context
+          </p>
+          <div className="bubble-grid vibe-grid">
+            {filteredVibes.map((option) => (
+              <button
+                key={option}
+                className={`bubble vibe-bubble ${
+                  preferences.vibes.includes(option) ? "selected" : ""
+                }`}
+                onClick={() => toggleSelection("vibes", option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+          </section>
         )}
 
         {/* Section 1 - Main Question */}
@@ -208,25 +385,36 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
           </section>
         )}
 
-        {/* Section 3 - Optional Vibe Refinement */}
-        {filteredVibes.length > 0 && (
-          <section className="onboarding-section vibe-section">
-          <p className="optional-label">Optional</p>
-          <div className="bubble-grid vibe-grid">
-            {filteredVibes.map((option) => (
-              <button
-                key={option}
-                className={`bubble vibe-bubble ${
-                  preferences.vibes.includes(option) ? "selected" : ""
-                }`}
-                onClick={() => toggleSelection("vibes", option)}
-              >
-                {option}
-              </button>
+        {/* Section 2.5 - Techno Subgenres */}
+        {hasTechnoSubgenres && (
+          <section className="onboarding-section techno-section">
+            <h2 className="onboarding-subheadline">
+              What kind of Techno?
+            </h2>
+            <p className="onboarding-helper">
+              Select specific styles you enjoy
+            </p>
+            {Object.entries(filteredTechnoSubgenres).map(([category, subgenres]) => (
+              <div key={category} className="techno-category">
+                <h3 className="techno-category-title">{category}</h3>
+                <div className="bubble-grid techno-subgenre-grid">
+                  {subgenres.map((subgenre) => (
+                    <button
+                      key={subgenre}
+                      className={`bubble techno-bubble ${
+                        preferences.technoSubgenres.includes(subgenre) ? "selected" : ""
+                      }`}
+                      onClick={() => toggleSelection("technoSubgenres", subgenre)}
+                    >
+                      {subgenre}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
-          </div>
           </section>
         )}
+
       </div>
 
       {/* Fixed Footer with Actions */}

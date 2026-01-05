@@ -2,6 +2,7 @@ import {
   Calendar,
   House,
   SlidersHorizontal,
+  Sparkles,
   Telescope,
   TrendingUp,
 } from "lucide-react";
@@ -89,6 +90,16 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
   return (
     <div className="category-filter" ref={containerRef}>
+      {/* Inspire button with star symbol */}
+      {/* <button
+        className={`category-button ${viewMode === "Inspire" ? "active" : ""}`}
+        onClick={() => onViewModeChange("Inspire")}
+      >
+        <Sparkles
+          size={20}
+        />
+        Inspire
+      </button> */}
       {/* Home button */}
       <button
         className={`category-button ${viewMode === "Home" ? "active" : ""}`}

@@ -1,9 +1,11 @@
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BottomBar } from "./BottomBar";
 import { FilterBar } from "./components/FilterBar/FilterBar";
 import { EventPage } from "./components/EventPage/EventPage";
 import { Trending } from "./components/Trending/Trending";
+import Onboarding from "./components/Onboarding/Onboarding";
+import OnboardingRecommendations from "./components/Onboarding/OnboardingRecommendations";
 import { UserContext } from "./contexts/UserContext";
 import Footer from "./Footer/Footer";
 import { useClickOutside } from "./hooks/useClickOutside";
@@ -86,6 +88,9 @@ function LandingPage() {
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingRecommendations, setOnboardingRecommendations] = useState<any[]>([]);
+  const [pageVisitCount, setPageVisitCount] = useState(0);
 
   // ----------------------------------------------------------------------------
   // MEMOIZED VALUES
@@ -175,10 +180,61 @@ function LandingPage() {
   });
 
   // ----------------------------------------------------------------------------
+  // INSPIRE MODE HANDLER
+  // ----------------------------------------------------------------------------
+
+  useEffect(() => {
+    if (viewMode === "Inspire") {
+      setShowOnboarding(true);
+    }
+  }, [viewMode]);
+
+  // ----------------------------------------------------------------------------
   // CONTENT RENDERING (Memoized for performance)
   // ----------------------------------------------------------------------------
 
+  // Handlers for Inspire/Onboarding flow
+  const handleOnboardingComplete = useCallback((recommendedEvents?: any[]) => {
+    if (recommendedEvents && recommendedEvents.length > 0) {
+      setOnboardingRecommendations(recommendedEvents);
+      setShowOnboarding(false);
+    } else {
+      setShowOnboarding(false);
+      setViewMode("Trending");
+    }
+  }, []);
+
+  const handleOnboardingSkip = useCallback(() => {
+    setShowOnboarding(false);
+    setViewMode("Trending");
+  }, []);
+
+  const handleRecommendationsContinue = useCallback(() => {
+    setOnboardingRecommendations([]);
+    setViewMode("Trending");
+  }, []);
+
   const renderContent = useMemo(() => {
+    // Show Onboarding when Inspire is clicked
+    if (viewMode === "Inspire" && showOnboarding) {
+      return (
+        <Onboarding
+          onComplete={handleOnboardingComplete}
+          onSkip={handleOnboardingSkip}
+        />
+      );
+    }
+
+    // Show Recommendations after Onboarding
+    if (viewMode === "Inspire" && !showOnboarding && onboardingRecommendations.length > 0) {
+      return (
+        <OnboardingRecommendations
+          events={onboardingRecommendations}
+          onContinue={handleRecommendationsContinue}
+        />
+      );
+    }
+
     // Show loading spinner while fetching data
     if (loading) {
       return <LoadingSpinner />;
@@ -210,6 +266,10 @@ function LandingPage() {
           />
         );
 
+      case "Inspire":
+        // Onboarding flow handled above
+        return <LoadingSpinner />;
+
       default:
         return (
           <EventPage
@@ -226,6 +286,11 @@ function LandingPage() {
     favoriteEvents,
     followedProfiles,
     feedItemsResponse,
+    showOnboarding,
+    onboardingRecommendations,
+    handleOnboardingComplete,
+    handleOnboardingSkip,
+    handleRecommendationsContinue,
   ]);
 
   // ----------------------------------------------------------------------------
