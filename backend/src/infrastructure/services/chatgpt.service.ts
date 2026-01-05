@@ -936,7 +936,7 @@ Example format: "Dynamic camera movement revealing event details, animated text 
 Today's date is **${today}**. Verwende zukünftige Daten für die Events.
 
 ### WICHTIGE REGELN:
-- Erstelle genau 10 verschiedene Events
+- Erstelle genau 3 verschiedene Events
 - Jedes Event MUSS eine imageUrl haben (verwende realistische öffentliche Bild-URLs, z.B. von Unsplash, Pexels oder ähnlichen Quellen)
 - Die Events sollen vielfältig sein (Konzerte, Ausstellungen, Workshops, Sportevents, etc.)
 - Verwende verschiedene deutsche Städte

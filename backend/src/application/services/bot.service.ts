@@ -124,7 +124,7 @@ export class BotService {
    * Generiert 10 neue Events von ChatGPT, lädt die Bilder hoch,
    * erstellt neue Profile und erstellt die Events
    */
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_MINUTE)
   async generateAndCreateEventsWithProfiles() {
     this.logger.log('🚀 Starte Generierung von 10 neuen Events mit Profilen...');
 
