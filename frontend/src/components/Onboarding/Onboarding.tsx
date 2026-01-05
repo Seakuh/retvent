@@ -3,7 +3,7 @@ import { onboardingService, OnboardingPreferences } from "../../services/onboard
 import "./Onboarding.css";
 
 interface OnboardingProps {
-  onComplete: () => void;
+  onComplete: (events?: any[]) => void;
   onSkip: () => void;
 }
 
@@ -98,13 +98,13 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
       };
 
       // Send to backend and get personalized events
-      await onboardingService.savePreferencesAndGetEvents(backendPreferences);
+      const response = await onboardingService.savePreferencesAndGetEvents(backendPreferences);
 
       // Mark as completed in localStorage
       onboardingService.markOnboardingComplete();
 
-      // Call onComplete callback
-      onComplete();
+      // Call onComplete callback with events data
+      onComplete(response.events);
     } catch (error) {
       console.error("Error saving onboarding preferences:", error);
       // Even if API fails, mark as completed and continue

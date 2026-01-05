@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Onboarding from "./Onboarding";
+import OnboardingRecommendations from "./OnboardingRecommendations";
 import { onboardingService } from "../../services/onboarding.service";
 
 interface OnboardingWrapperProps {
@@ -9,6 +10,8 @@ interface OnboardingWrapperProps {
 
 const OnboardingWrapper: React.FC<OnboardingWrapperProps> = ({ children }) => {
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [recommendedEvents, setRecommendedEvents] = useState<any[]>([]);
   const [isChecking, setIsChecking] = useState(true);
   const navigate = useNavigate();
 
@@ -37,14 +40,28 @@ const OnboardingWrapper: React.FC<OnboardingWrapperProps> = ({ children }) => {
     checkOnboarding();
   }, []);
 
-  const handleOnboardingComplete = () => {
-    console.log("✅ Onboarding completed, proceeding to app");
+  const handleOnboardingComplete = (events?: any[]) => {
+    console.log("✅ Onboarding completed, showing recommendations");
     setShowOnboarding(false);
+
+    if (events && events.length > 0) {
+      setRecommendedEvents(events);
+      setShowRecommendations(true);
+    } else {
+      // If no events, skip recommendations and go to app
+      setShowRecommendations(false);
+    }
   };
 
   const handleOnboardingSkip = () => {
     console.log("⏭️  Onboarding skipped, proceeding to app");
     setShowOnboarding(false);
+    setShowRecommendations(false);
+  };
+
+  const handleRecommendationsContinue = () => {
+    console.log("✅ Recommendations viewed, proceeding to app");
+    setShowRecommendations(false);
   };
 
   // Show nothing while checking
@@ -58,6 +75,16 @@ const OnboardingWrapper: React.FC<OnboardingWrapperProps> = ({ children }) => {
       <Onboarding
         onComplete={handleOnboardingComplete}
         onSkip={handleOnboardingSkip}
+      />
+    );
+  }
+
+  // Show recommendations after onboarding
+  if (showRecommendations && recommendedEvents.length > 0) {
+    return (
+      <OnboardingRecommendations
+        events={recommendedEvents}
+        onContinue={handleRecommendationsContinue}
       />
     );
   }
