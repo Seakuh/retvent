@@ -1,5 +1,5 @@
 import { Heart } from "lucide-react";
-import { lazy, useMemo } from "react";
+import { lazy, useMemo, useState } from "react";
 import { AdBanner } from "../../Advertisement/AdBanner/AdBanner";
 import { Event, FeedResponse } from "../../utils";
 import { CommunityList } from "../Community/CommunityList";
@@ -27,6 +27,8 @@ export const Trending = ({
   favoriteEvents: Event[];
   feedItemsResponse: FeedResponse[];
 }) => {
+  const [selectedFilter, setSelectedFilter] = useState<string>("trends");
+
   // ⚡ Memoize expensive calculations
   const { trendsEvents, groupedEvents } = useMemo(() => {
     const cacheKey = `events_${favoriteEvents.length}_${favoriteEvents
@@ -79,7 +81,9 @@ export const Trending = ({
     // 🧹 Clean cache if it gets too large
     if (calculationCache.size > 50) {
       const firstKey = calculationCache.keys().next().value;
-      calculationCache.delete(firstKey);
+      if (firstKey) {
+        calculationCache.delete(firstKey);
+      }
     }
 
     return result;
@@ -101,6 +105,26 @@ export const Trending = ({
       .filter(({ events }) => events.length >= 4); // Only show tags with at least 4 events
   }, [groupedEvents]);
 
+  // Get available filter options (Trends + Tags)
+  const filterOptions = useMemo(() => {
+    const options = [{ value: "trends", label: "🔥 Trends" }];
+    filteredGroupedEvents.forEach(({ tag }) => {
+      options.push({ value: tag, label: `#${tag}` });
+    });
+    return options;
+  }, [filteredGroupedEvents]);
+
+  // Get events based on selected filter
+  const filteredEvents = useMemo(() => {
+    if (selectedFilter === "trends") {
+      return trendsEvents;
+    }
+    const selectedTagGroup = filteredGroupedEvents.find(
+      ({ tag }) => tag === selectedFilter
+    );
+    return selectedTagGroup ? selectedTagGroup.events : [];
+  }, [selectedFilter, trendsEvents, filteredGroupedEvents]);
+
   return (
     <div className="event-page-container">
       <AdBanner />
@@ -114,15 +138,13 @@ export const Trending = ({
         </div>
       )}
       <div className="event-page-section-container">
-        <EventSection title="🔥 Trends" events={trendsEvents} />
-        <div className="event-page-trends-container">
-          {/* 🚀 Optimized rendering with memoized data */}
-          {filteredGroupedEvents.map(({ tag, events }) => (
-            <div key={tag} className="event-page-section-container">
-              <EventSection title={`#${tag}`} events={events} />
-            </div>
-          ))}
-        </div>
+        <EventSection
+          title="🔥 Trends"
+          events={filteredEvents}
+          filterOptions={filterOptions}
+          selectedFilter={selectedFilter}
+          onFilterChange={setSelectedFilter}
+        />
       </div>
     </div>
   );

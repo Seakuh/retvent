@@ -4,16 +4,30 @@ import { Event } from "../../utils";
 import "./EventSection.css";
 import { TrendsListView } from "./TrendsListView";
 
+interface FilterOption {
+  value: string;
+  label: string;
+}
+
 interface EventSectionProps {
   title?: string;
   events: Event[];
   selectedEvent?: Event | null;
   onEventSelect?: (event: Event) => void;
+  filterOptions?: FilterOption[];
+  selectedFilter?: string;
+  onFilterChange?: (filter: string) => void;
 }
 
 type ViewMode = "list" | "compact";
 
-export const EventSection = ({ title, events }: EventSectionProps) => {
+export const EventSection = ({
+  title,
+  events,
+  filterOptions,
+  selectedFilter,
+  onFilterChange,
+}: EventSectionProps) => {
   const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   return (
@@ -23,7 +37,25 @@ export const EventSection = ({ title, events }: EventSectionProps) => {
       ) : (
         <>
           <div className="popular-title-container">
-            <h2 className="popular-title">{title}</h2>
+            {filterOptions && filterOptions.length > 0 ? (
+              <div className="popular-title-with-filter">
+                <div className="filter-options">
+                  {filterOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      className={`filter-option-btn ${
+                        selectedFilter === option.value ? "active" : ""
+                      }`}
+                      onClick={() => onFilterChange?.(option.value)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <h2 className="popular-title">{title}</h2>
+            )}
             <button
               className="view-toggle-btn"
               onClick={() => setViewMode(viewMode === "list" ? "compact" : "list")}
