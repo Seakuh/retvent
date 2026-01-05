@@ -25,6 +25,7 @@ import { EventService } from '../../application/services/event.service';
 import { CreateEventDto } from '../dtos/create-event.dto';
 import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
+import { VectorSearchFilterDto } from '../dtos/vector-search-filter.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UploadGuard } from '../guards/upload.guard';
 import { CommunityEventGuard } from '../guards/community-event.guard';
@@ -510,8 +511,51 @@ export class EventController {
     );
   }
 
+  /**
+   * Vector-basierte Suche mit erweiterten Filtern
+   * Unterstützt: Query, Age Range, Region, Musik (live/DJ/Genre), Kategorien
+   * 
+   * Query-Parameter:
+   * - query: Suchtext (optional)
+   * - limit: Anzahl der Ergebnisse (optional, Standard: 20)
+   * - isUpcoming: 'true' für kommende, 'false' für vergangene Events (optional)
+   * - minAge: Mindestalter (optional)
+   * - maxAge: Höchstalter (optional)
+   * - region: Region/Stadt (optional)
+   * - city: Spezifische Stadt (optional)
+   * - musikTypes: Musik-Typen, komma-separiert: 'live', 'DJ', 'Genre' (optional)
+   * - musikGenre: Spezifisches Genre (optional)
+   * - category: Kategorie (optional): 'Kunst / Kultur', 'Networking / Business', 'Lernen / Talks', 'Party / Nachtleben', 'Natur / Outdoor', 'Experimentell / ungewöhnlich'
+   */
+  @Get('search/vector/filtered')
+  async searchEventsWithVectorFilters(
+    @Query() filters: VectorSearchFilterDto,
+  ) {
+    const isUpcomingBool =
+      filters.isUpcoming === undefined
+        ? undefined
+        : filters.isUpcoming === 'true' || filters.isUpcoming === '1';
 
+    // Parse musikTypes (komma-separiert)
+    const musikTypes = filters.musikTypes
+      ? filters.musikTypes.split(',').map((t) => t.trim() as 'live' | 'DJ' | 'Genre')
+      : undefined;
 
+    return this.eventService.searchEventsWithVectorFilters({
+      query: filters.query,
+      limit: filters.limit,
+      isUpcoming: isUpcomingBool,
+      minAge: filters.minAge,
+      maxAge: filters.maxAge,
+      region: filters.region,
+      city: filters.city,
+      musik: {
+        types: musikTypes,
+        genre: filters.musikGenre,
+      },
+      category: filters.category,
+    });
+  }
 
   @Get('search/all')
   async searchEventsWithUserInput(

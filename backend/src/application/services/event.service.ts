@@ -562,9 +562,233 @@ export class EventService {
       eventIds.map((id) => this.eventRepository.findById(id)),
     );
 
-    return events
-      .filter((event): event is Event => event !== null)
-      .map((event) => this.toEntity(event));
+    return events.filter((event): event is Event => event !== null);
+  }
+
+  /**
+   * Vector-basierte Suche mit erweiterten Filtern
+   * @param filters - Filter-Objekt mit allen optionalen Filtern
+   */
+  async searchEventsWithVectorFilters(filters: {
+    query?: string;
+    limit?: number;
+    isUpcoming?: boolean;
+    minAge?: number;
+    maxAge?: number;
+    region?: string;
+    city?: string;
+    musik?: {
+      types?: ('live' | 'DJ' | 'Genre')[];
+      genre?: string;
+    };
+    category?: 'Kunst / Kultur' | 'Networking / Business' | 'Lernen / Talks' | 'Party / Nachtleben' | 'Natur / Outdoor' | 'Experimentell / ungewöhnlich';
+  }) {
+    const {
+      query,
+      limit = 20,
+      isUpcoming,
+      region,
+      city,
+      musik,
+      category,
+    } = filters;
+
+    const now = new Date();
+    const nowTimestamp = Math.floor(now.getTime() / 1000);
+
+    // Baue Filter für Qdrant auf
+    const filterClauses: Array<Record<string, any>> = [];
+
+    // Datum-Filter
+    if (isUpcoming !== undefined) {
+      if (isUpcoming) {
+        filterClauses.push({
+          key: 'start_time',
+          range: {
+            gte: nowTimestamp,
+          },
+        });
+      } else {
+        filterClauses.push({
+          key: 'start_time',
+          range: {
+            lt: nowTimestamp,
+          },
+        });
+      }
+    }
+
+    // Region/City-Filter
+    if (city) {
+      filterClauses.push({
+        key: 'city',
+        match: { value: city },
+      });
+    } else if (region) {
+      // Region könnte mehrere Städte umfassen, daher als Text-Suche
+      filterClauses.push({
+        key: 'city',
+        match: { text: region },
+      });
+    }
+
+    // Kategorie-Filter
+    if (category) {
+      filterClauses.push({
+        key: 'category',
+        match: { value: category },
+      });
+    }
+
+    // Musik-Filter
+    if (musik) {
+      if (musik.types && musik.types.length > 0) {
+        // Filter nach roles (live, DJ)
+        const roleTypes = musik.types.filter((type) => type === 'live' || type === 'DJ');
+        
+        if (roleTypes.length > 0) {
+          // Wenn mehrere Rollen, verwende "should" (OR) - Qdrant unterstützt should auf oberster Ebene
+          if (roleTypes.length === 1) {
+            filterClauses.push({
+              key: 'roles',
+              match: { value: roleTypes[0] },
+            });
+          } else {
+            // Für mehrere Rollen: sollte in einem should-Block sein
+            // Da Qdrant-Filter-Struktur komplex ist, verwenden wir einen alternativen Ansatz
+            // Filtere nach der ersten Rolle und lasse die anderen über die Datenbank-Filterung
+            filterClauses.push({
+              key: 'roles',
+              match: { any: roleTypes },
+            });
+          }
+        }
+
+        // Genre-Filter über tags
+        if (musik.genre) {
+          filterClauses.push({
+            key: 'tags',
+            match: { text: musik.genre },
+          });
+        } else if (musik.types.includes('Genre')) {
+          // Wenn "Genre" ausgewählt, aber kein spezifisches Genre, filtere nach Musik-Tags
+          filterClauses.push({
+            key: 'tags',
+            match: { any: ['music', 'musik', 'konzert', 'concert', 'festival'] },
+          });
+        }
+      } else if (musik.genre) {
+        // Nur Genre ohne Types
+        filterClauses.push({
+          key: 'tags',
+          match: { text: musik.genre },
+        });
+      }
+    }
+
+    const qdrantFilter =
+      filterClauses.length > 0 ? { must: filterClauses } : undefined;
+
+    // Erstelle Embedding für Query (falls vorhanden)
+    let searchVector: number[] | undefined;
+    if (query && query.trim()) {
+      try {
+        searchVector = await this.chatGptService.createEmbeddingV2(query);
+      } catch (error) {
+        console.error('Failed to create embedding for query:', error);
+        // Fallback: ohne Vector-Suche
+      }
+    }
+
+    if (searchVector) {
+      // Vector-basierte Suche
+      const searchResults = await this.qdrantService.searchEventsSimilar({
+        vector: searchVector,
+        limit,
+        filter: qdrantFilter,
+        withPayload: true,
+      });
+
+      const eventIds = searchResults
+        .map((hit) => this.extractEventIdFromPayload(hit.payload))
+        .filter((id): id is string => Boolean(id));
+
+      if (eventIds.length === 0) {
+        return [];
+      }
+
+      const events = await Promise.all(
+        eventIds.map((id) => this.eventRepository.findById(id)),
+      );
+
+      return events.filter((event): event is Event => event !== null);
+    } else {
+      // Fallback: Suche ohne Vector (nur Filter)
+      // Da Qdrant keine reine Filter-Suche ohne Vector unterstützt,
+      // müssen wir über die Datenbank suchen
+      const allEvents = await this.eventRepository.findAllWithEmbedding(
+        limit * 3,
+      );
+
+      // Filtere Events nach den Kriterien
+      let filteredEvents = allEvents.filter((event) => {
+        // Datum-Filter
+        if (isUpcoming !== undefined && event.startDate) {
+          const eventDate = new Date(event.startDate);
+          if (isUpcoming && eventDate < now) return false;
+          if (!isUpcoming && eventDate >= now) return false;
+        }
+
+        // City/Region-Filter
+        if (city && event.city?.toLowerCase() !== city.toLowerCase()) {
+          return false;
+        }
+        if (region && event.city && !event.city.toLowerCase().includes(region.toLowerCase())) {
+          return false;
+        }
+
+        // Kategorie-Filter
+        if (category && event.category !== category) {
+          return false;
+        }
+
+        // Musik-Filter
+        if (musik) {
+          if (musik.types && musik.types.length > 0) {
+            const hasMatchingRole = musik.types.some((type) => {
+              if (type === 'live' || type === 'DJ') {
+                return event.lineup?.some((item) =>
+                  item.role?.toLowerCase().includes(type.toLowerCase()),
+                );
+              }
+              return false;
+            });
+
+            if (!hasMatchingRole && musik.types.some((t) => t === 'live' || t === 'DJ')) {
+              return false;
+            }
+
+            if (musik.genre) {
+              const hasGenre =
+                event.tags?.some((tag) =>
+                  tag.toLowerCase().includes(musik.genre!.toLowerCase()),
+                ) || false;
+              if (!hasGenre) return false;
+            }
+          } else if (musik.genre) {
+            const hasGenre =
+              event.tags?.some((tag) =>
+                tag.toLowerCase().includes(musik.genre!.toLowerCase()),
+              ) || false;
+            if (!hasGenre) return false;
+          }
+        }
+
+        return true;
+      });
+
+      return filteredEvents.slice(0, limit);
+    }
   }
   
   // ----------------------------------------------------------------------------
