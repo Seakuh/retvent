@@ -29,10 +29,16 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
       className={`trends-list-item ${isCompact ? "trends-list-item-compact" : ""}`}
       onClick={handleEventClick}
     >
-      {/* Nummerierung ganz links oder Match-Prozent bei Onboarding */}
-      <div className="trends-list-number">
-        {matchPercentage !== undefined ? `${matchPercentage}%` : index + 1}
-      </div>
+      {/* Subtiler Hintergrund basierend auf matchPercentage */}
+      {matchPercentage !== undefined && (
+        <div
+          className="trends-list-match-background"
+          style={{ width: `${matchPercentage}%` }}
+        />
+      )}
+
+      {/* Nummerierung ganz links */}
+      <div className="trends-list-number">{index + 1}</div>
 
       {/* Bild - nur im List-Modus */}
       {!isCompact && event.imageUrl && (
@@ -59,6 +65,11 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
             <span className="trends-list-views">
               <Eye size={14} />
               {event.views}
+            </span>
+          )}
+          {matchPercentage !== undefined && (
+            <span className="trends-list-match">
+              {matchPercentage}%
             </span>
           )}
         </div>
