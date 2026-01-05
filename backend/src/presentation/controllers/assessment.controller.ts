@@ -18,6 +18,7 @@ import { User as UserDecorator } from '../decorators/user.decorator';
 import { CreateAssessmentDto } from '../dtos/create-assessment.dto';
 import { CreatePeerAssessmentDto } from '../dtos/create-peer-assessment.dto';
 import { PlayerActionDto, CreateInvitationDto, AcceptInvitationDto, DeclineInvitationDto } from '../dtos/poker-game.dto';
+import { OnboardingPreferencesDto } from '../dtos/onboarding-preferences.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('assessment')
@@ -334,5 +335,23 @@ export class AssessmentController {
         winRate: 0,
       },
     };
+  }
+
+  // ============================================
+  // EVENT RECOMMENDATIONS ENDPOINTS
+  // ============================================
+
+  @Post('events/onboarding')
+  @UseGuards(JwtAuthGuard)
+  async getEventsByOnboardingPreferences(
+    @Body() preferencesDto: OnboardingPreferencesDto,
+    @UserDecorator() user: User,
+    @Query('limit') limit?: string,
+  ) {
+    const limitNum = limit ? parseInt(limit, 10) : 20;
+    return this.assessmentService.findEventsByPreferences(
+      preferencesDto,
+      limitNum,
+    );
   }
 }

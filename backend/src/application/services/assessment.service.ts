@@ -17,6 +17,11 @@ import {
   AssessmentDataPoint,
 } from 'src/presentation/dtos/assessment-matrix.dto';
 import { UserService } from './user.service';
+import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
+import { QdrantService } from 'src/infrastructure/services/qdrant.service';
+import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
+import { OnboardingPreferencesDto } from 'src/presentation/dtos/onboarding-preferences.dto';
+import { Event } from 'src/core/domain/event';
 
 @Injectable()
 export class AssessmentService {
@@ -28,6 +33,9 @@ export class AssessmentService {
     @InjectModel('SelfAssessment')
     private readonly selfAssessmentModel: Model<ISelfAssessment>,
     private readonly userService: UserService,
+    private readonly chatGptService: ChatGPTService,
+    private readonly qdrantService: QdrantService,
+    private readonly eventRepository: MongoEventRepository,
   ) {}
 
   async createAssessment(
@@ -477,6 +485,197 @@ export class AssessmentService {
         myMatrix: null,
         matches: [],
       };
+    }
+  }
+
+  // ----------------------------------------------------------------------------
+  // EVENT RECOMMENDATIONS BASED ON USER PREFERENCES ---------------------------
+  // ----------------------------------------------------------------------------
+
+  /**
+   * Konvertiert Nutzervorlieben zu einem Text-String für Embedding
+   */
+  private preferencesToText(preferences: OnboardingPreferencesDto): string {
+    if (!preferences || typeof preferences !== 'object') {
+      return '';
+    }
+
+    const sections: string[] = [];
+
+    // Hilfsfunktion: Konvertiert Feldnamen in lesbare Labels
+    const toLabel = (key: string | undefined | null): string => {
+      if (!key || typeof key !== 'string') {
+        return '';
+      }
+      return key
+        .replace(/_/g, ' ')
+        .replace(/([A-Z])/g, ' $1')
+        .trim()
+        .split(' ')
+        .filter(word => word.length > 0)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    };
+
+    // Hilfsfunktion: Formatiert Arrays zu Strings
+    const formatArray = (arr: any[]): string => {
+      if (!Array.isArray(arr)) {
+        return '';
+      }
+      return arr
+        .filter(item => item !== null && item !== undefined && item !== '')
+        .map(item => String(item))
+        .join(', ');
+    };
+
+    // Rekursive Funktion zum Durchlaufen der Struktur
+    const processValue = (value: any, label: string, indent: number = 0): string => {
+      if (!label || label.trim() === '') {
+        return '';
+      }
+      
+      const indentStr = '  '.repeat(indent);
+      
+      if (Array.isArray(value)) {
+        const formatted = formatArray(value);
+        return formatted ? `${indentStr}${label}: ${formatted}` : '';
+      } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const lines: string[] = [];
+        const hasContent = Object.keys(value).some(key => {
+          const val = value[key];
+          return val !== null && val !== undefined && 
+                 (Array.isArray(val) ? val.length > 0 : typeof val === 'object' ? Object.keys(val).length > 0 : val !== '');
+        });
+        
+        if (hasContent) {
+          lines.push(`${indentStr}${label}:`);
+          for (const [key, val] of Object.entries(value)) {
+            if (val !== null && val !== undefined) {
+              const subLabel = toLabel(key);
+              if (subLabel) {
+                const subLine = processValue(val, subLabel, indent + 1);
+                if (subLine && subLine.trim()) {
+                  lines.push(subLine);
+                }
+              }
+            }
+          }
+        }
+        return lines.join('\n');
+      } else if (value !== null && value !== undefined && value !== '') {
+        return `${indentStr}${label}: ${String(value)}`;
+      }
+      return '';
+    };
+
+    // Hauptlogik: Durchlaufe alle Top-Level-Keys
+    for (const [key, value] of Object.entries(preferences)) {
+      if (value !== null && value !== undefined) {
+        const sectionLabel = toLabel(key);
+        if (sectionLabel) {
+          const sectionText = processValue(value, sectionLabel, 0);
+          if (sectionText && sectionText.trim()) {
+            sections.push(sectionText);
+          }
+        }
+      }
+    }
+
+    const result = sections.join('\n\n').trim();
+    return result || '';
+  }
+
+  /**
+   * Extrahiert Event-ID aus Qdrant Payload
+   */
+  private extractEventIdFromPayload(payload: any): string | undefined {
+    if (!payload || typeof payload !== 'object') {
+      return undefined;
+    }
+
+    const candidate =
+      payload.eventId ?? payload.id ?? payload.sourceId ?? payload.originalId;
+
+    if (typeof candidate === 'string' && candidate.length) {
+      return candidate;
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Findet passende Events basierend auf Nutzervorlieben mittels Vector-Suche
+   * @param preferences - Die Vorlieben des Nutzers
+   * @param limit - Anzahl der zurückzugebenden Events (Standard: 20)
+   * @returns Array von passenden Events
+   */
+  async findEventsByPreferences(
+    preferences: OnboardingPreferencesDto,
+    limit: number = 20,
+  ): Promise<Event[]> {
+    try {
+      // Konvertiere Vorlieben zu Text
+      const preferencesText = this.preferencesToText(preferences);
+      
+      if (!preferencesText || preferencesText.trim() === '') {
+        throw new BadRequestException(
+          'Preferences must contain at least one valid preference',
+        );
+      }
+
+      // Erstelle Embedding aus den Vorlieben
+      let searchVector: number[];
+      try {
+        searchVector = await this.chatGptService.createEmbeddingV2(preferencesText);
+      } catch (error) {
+        console.error('Failed to create embedding for preferences:', error);
+        throw new BadRequestException('Failed to process preferences');
+      }
+
+      // Filter für kommende Events (nur zukünftige Events)
+      const now = new Date();
+      const nowTimestamp = Math.floor(now.getTime() / 1000);
+      
+      const dateFilter = {
+        must: [
+          {
+            key: 'start_time',
+            range: {
+              gte: nowTimestamp,
+            },
+          },
+        ],
+      };
+
+      // Führe Vector-Suche durch
+      const searchResults = await this.qdrantService.searchEventsSimilar({
+        vector: searchVector,
+        limit,
+        filter: dateFilter,
+        withPayload: true,
+      });
+
+      // Extrahiere Event-IDs aus den Ergebnissen
+      const eventIds = searchResults
+        .map((hit) => this.extractEventIdFromPayload(hit.payload))
+        .filter((id): id is string => Boolean(id));
+
+      if (eventIds.length === 0) {
+        return [];
+      }
+
+      // Lade Events aus der Datenbank
+      const events = await Promise.all(
+        eventIds.map((id) => this.eventRepository.findById(id)),
+      );
+
+      return events.filter((event): event is Event => event !== null);
+    } catch (error) {
+      console.error('Error finding events by preferences:', error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to find events based on preferences');
     }
   }
 }
