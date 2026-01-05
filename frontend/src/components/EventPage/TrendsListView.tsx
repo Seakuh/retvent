@@ -6,11 +6,13 @@ import "./TrendsListView.css";
 interface TrendsListViewProps {
   event: Event;
   index: number;
+  viewMode?: "list" | "compact";
 }
 
 export const TrendsListView: React.FC<TrendsListViewProps> = ({
   event,
   index,
+  viewMode = "list",
 }) => {
   const navigate = useNavigate();
 
@@ -18,13 +20,18 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
     navigate(`/event/${event.id || event._id}`);
   };
 
+  const isCompact = viewMode === "compact";
+
   return (
-    <div className="trends-list-item" onClick={handleEventClick}>
+    <div
+      className={`trends-list-item ${isCompact ? "trends-list-item-compact" : ""}`}
+      onClick={handleEventClick}
+    >
       {/* Nummerierung ganz links */}
       <div className="trends-list-number">{index + 1}</div>
 
-      {/* Bild */}
-      {event.imageUrl && (
+      {/* Bild - nur im List-Modus */}
+      {!isCompact && event.imageUrl && (
         <div className="trends-list-image-container">
           <img
             src={`https://img.event-scanner.com/insecure/rs:fit:200/q:70/plain/${event.imageUrl}@webp`}
