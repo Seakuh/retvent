@@ -22,6 +22,7 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
+import { Event } from '../../core/domain/event';
 import { CreateEventDto } from '../dtos/create-event.dto';
 import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
@@ -1403,10 +1404,99 @@ export class EventController {
   // Get VECTOR PROFILE RESULTS
   // ------------------------------------------------------------
 
+  /**
+   * Gibt personalisierte Event-Empfehlungen basierend auf dem Profil-Vector des Users zurück.
+   * 
+   * Diese Methode verwendet eine Vector-Similarity-Suche (Cosine Similarity) in Qdrant,
+   * um Events zu finden, die am besten zum Profil des Users passen. Das Profil-Embedding
+   * wird mit den Event-Embeddings verglichen, um die ähnlichsten Events zu identifizieren.
+   * 
+   * **Funktionsweise:**
+   * 1. Das Profil des authentifizierten Users wird geladen
+   * 2. Der Profil-Vector (Embedding) wird aus Qdrant abgerufen
+   * 3. Eine Vector-Similarity-Suche wird in Qdrant durchgeführt
+   * 4. Nur zukünftige Events werden berücksichtigt (start_time >= jetzt)
+   * 5. Events werden nach Similarity-Score sortiert (höchste zuerst)
+   * 6. Pagination wird angewendet (offset/limit)
+   * 7. Events werden aus der Datenbank geladen und mit Scores zurückgegeben
+   * 
+   * **Pagination (Infinite Scroll Support):**
+   * - `offset`: Anzahl der Events, die übersprungen werden sollen (Standard: 0)
+   * - `limit`: Anzahl der Events pro Seite (Standard: 20)
+   * - Für Infinite Scroll: Bei jedem Scroll-Event den `offset` um `limit` erhöhen
+   * 
+   * **Beispiel-Verwendung:**
+   * ```
+   * // Erste Seite (erste 20 Events)
+   * GET /events/vector/profile/results/recommendations?offset=0&limit=20
+   * 
+   * // Zweite Seite (nächste 20 Events)
+   * GET /events/vector/profile/results/recommendations?offset=20&limit=20
+   * 
+   * // Dritte Seite (nächste 20 Events)
+   * GET /events/vector/profile/results/recommendations?offset=40&limit=20
+   * ```
+   * 
+   * **Rückgabewert:**
+   * Array von Event-Objekten mit Similarity-Scores:
+   * ```typescript
+   * [
+   *   {
+   *     event: {
+   *       id: string,
+   *       title: string,
+   *       description: string,
+   *       startDate: Date,
+   *       // ... weitere Event-Felder
+   *     },
+   *     similarityScore: number  // 0-1, je höher desto ähnlicher zum Profil
+   *   },
+   *   ...
+   * ]
+   * ```
+   * 
+   * **Similarity-Score:**
+   * - Wert zwischen 0 und 1 (Cosine Similarity)
+   * - 1.0 = perfekte Übereinstimmung
+   * - 0.0 = keine Ähnlichkeit
+   * - Events sind nach Score sortiert (höchste zuerst)
+   * 
+   * **Fehler:**
+   * - 401 Unauthorized: User nicht authentifiziert
+   * - 404 Not Found: Profil nicht gefunden
+   * - 400 Bad Request: Profil hat noch kein Embedding
+   * 
+   * **Performance:**
+   * - Die Methode holt mehr Events von Qdrant (offset + limit + Puffer)
+   * - Pagination erfolgt im Service, um die Performance zu optimieren
+   * - Nur Events mit Embeddings werden zurückgegeben
+   * 
+   * @param req - Request-Objekt mit authentifiziertem User (req.user.id)
+   * @param offset - Anzahl der Events, die übersprungen werden sollen (Standard: 0)
+   * @param limit - Anzahl der Events pro Seite (Standard: 20, Maximum empfohlen: 50)
+   * @returns Promise mit Array von Event-Objekten und Similarity-Scores
+   * 
+   * @example
+   * ```typescript
+   * // Erste Seite laden
+   * const firstPage = await getVectorProfileResults(req, 0, 20);
+   * 
+   * // Nächste Seite laden (Infinite Scroll)
+   * const nextPage = await getVectorProfileResults(req, 20, 20);
+   * ```
+   */
   @Get('vector/profile/results/recommendations')
   @UseGuards(JwtAuthGuard)
-  async getVectorProfileResults(@Request() req) : Promise<Even[]> {
-    const events = await this.eventService.getVectorProfileResults(req.user.id);
-    return events;
+  async getVectorProfileResults(
+    @Request() req,
+    @Query('offset') offset: number = 0,
+    @Query('limit') limit: number = 20,
+  ): Promise<Array<{ event: Event; similarityScore: number }>> {
+    const results = await this.eventService.getVectorProfileResults(
+      req.user.id,
+      offset,
+      limit,
+    );
+    return results;
   }
 }

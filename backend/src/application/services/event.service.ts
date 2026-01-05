@@ -2237,7 +2237,11 @@ export class EventService {
   // ------------------------------------------------------------
   // Get VECTOR PROFILE RESULTS
   // ------------------------------------------------------------
-  async getVectorProfileResults(userId: string, limit: number = 20) {
+  async getVectorProfileResults(
+    userId: string,
+    offset: number = 0,
+    limit: number = 20,
+  ): Promise<Array<{ event: Event; similarityScore: number }>> {
     const profile = await this.profileService.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundException('Profile not found');
@@ -2266,18 +2270,32 @@ export class EventService {
       ],
     };
 
+    // Hole mehr Events von Qdrant für Pagination (offset + limit + etwas Puffer)
+    const qdrantLimit = offset + limit + 10; // Puffer für mögliche fehlende Events
+
     // Suche ähnliche Events basierend auf Profil-Vector
     const searchResults = await this.qdrantService.searchEventsSimilar({
       vector: profileVector,
-      limit,
+      limit: qdrantLimit,
       filter: dateFilter,
       withPayload: true,
     });
 
-    // Extrahiere Event-IDs aus den SearchResults
-    const eventIds = searchResults
-      .map((hit) => this.extractEventIdFromPayload(hit.payload))
-      .filter((id): id is string => Boolean(id));
+    if (searchResults.length === 0) {
+      return [];
+    }
+
+    // Erstelle Map für Event-IDs mit ihren Scores
+    const eventIdScoreMap = new Map<string, number>();
+    const eventIds: string[] = [];
+
+    searchResults.forEach((hit) => {
+      const eventId = this.extractEventIdFromPayload(hit.payload);
+      if (eventId && !eventIdScoreMap.has(eventId)) {
+        eventIdScoreMap.set(eventId, hit.score || 0);
+        eventIds.push(eventId);
+      }
+    });
 
     if (eventIds.length === 0) {
       return [];
@@ -2288,10 +2306,24 @@ export class EventService {
       eventIds.map((id) => this.eventRepository.findById(id)),
     );
 
-    // Filtere null-Werte und konvertiere zu Entities
-    return events
-      .filter((event): event is Event => event !== null)
-      .map((event) => this.toEntity(event));
+    // Kombiniere Events mit Scores und filtere null-Werte
+    const eventsWithScores = events
+      .map((event, index) => {
+        if (!event) return null;
+        return {
+          event: this.toEntity(event),
+          similarityScore: eventIdScoreMap.get(eventIds[index]) || 0,
+        };
+      })
+      .filter(
+        (item): item is { event: Event; similarityScore: number } =>
+          item !== null,
+      );
+
+    // Paginiere die Ergebnisse
+    const paginatedResults = eventsWithScores.slice(offset, offset + limit);
+
+    return paginatedResults;
   }
 
 
