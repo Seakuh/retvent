@@ -23,71 +23,36 @@
 /* Haupt-Container für die Event-Karten */
 .event-list-container {
   display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
+  flex-direction: column;
+  width: 100%;
   max-width: 80rem;
   margin: 0 auto;
-  flex-direction: row;
-  overflow-y: hidden;
-  gap: 0.5rem;
-  white-space: nowrap;
-  height: 100%;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
-.event-list-container::-webkit-scrollbar {
-  display: none;
-}
-
-/* Die einzelnen Karten sollen nebeneinander bleiben */
 .event-card-list-item {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-
-.event-list-wrapper {
-  position: relative;
-  display: flex;
-  justify-content: start;
-}
-
-
-.event-list-container::-webkit-scrollbar {
-  display: none;
-}
-.event-card-list-item {
-  min-width: 250px;
-  flex-shrink: 0;
-  max-width: 80rem;
-  margin: 0 auto;
-}
-
-.scroll-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  padding: 0.5rem;
-  z-index: 10;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-.scroll-button-left {
-  left: 0;
-}
-
-.scroll-button-right {
-  right: 0;
-}
-
-  @media (max-width: 768px) {
-    .popular-title {
-      font-size: 1rem;
-    }
-    .event-list-container {
-      gap: 0.3rem;
-      padding: 0.5rem;
-    }
+@media (max-width: 768px) {
+  .popular-title {
+    font-size: 1rem;
   }
+  .event-list-container {
+    width: 100%;
+    max-width: 100%;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+  }
+  
+  .event-card-list-item {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
