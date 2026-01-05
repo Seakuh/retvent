@@ -1398,4 +1398,15 @@ export class EventController {
       throw error;
     }
   }
+
+  // ------------------------------------------------------------
+  // Get VECTOR PROFILE RESULTS
+  // ------------------------------------------------------------
+
+  @Get('vector/profile/results/recommendations')
+  @UseGuards(JwtAuthGuard)
+  async getVectorProfileResults(@Request() req) : Promise<Even[]> {
+    const events = await this.eventService.getVectorProfileResults(req.user.id);
+    return events;
+  }
 }

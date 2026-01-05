@@ -2234,5 +2234,65 @@ export class EventService {
     return subevent;
   }
 
+  // ------------------------------------------------------------
+  // Get VECTOR PROFILE RESULTS
+  // ------------------------------------------------------------
+  async getVectorProfileResults(userId: string, limit: number = 20) {
+    const profile = await this.profileService.getProfileByUserId(userId);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+    
+    const profileVector = await this.profileService.getProfileVector(profile.id);
+    
+    if (!profileVector || !Array.isArray(profileVector) || profileVector.length === 0) {
+      throw new BadRequestException(
+        'Das Profil besitzt noch kein Embedding und kann keine Events empfohlen werden.',
+      );
+    }
+
+    // Filter für kommende Events (nur zukünftige Events)
+    const now = new Date();
+    const nowTimestamp = Math.floor(now.getTime() / 1000);
+    
+    const dateFilter = {
+      must: [
+        {
+          key: 'start_time',
+          range: {
+            gte: nowTimestamp,
+          },
+        },
+      ],
+    };
+
+    // Suche ähnliche Events basierend auf Profil-Vector
+    const searchResults = await this.qdrantService.searchEventsSimilar({
+      vector: profileVector,
+      limit,
+      filter: dateFilter,
+      withPayload: true,
+    });
+
+    // Extrahiere Event-IDs aus den SearchResults
+    const eventIds = searchResults
+      .map((hit) => this.extractEventIdFromPayload(hit.payload))
+      .filter((id): id is string => Boolean(id));
+
+    if (eventIds.length === 0) {
+      return [];
+    }
+
+    // Hole Events aus der Datenbank
+    const events = await Promise.all(
+      eventIds.map((id) => this.eventRepository.findById(id)),
+    );
+
+    // Filtere null-Werte und konvertiere zu Entities
+    return events
+      .filter((event): event is Event => event !== null)
+      .map((event) => this.toEntity(event));
+  }
+
 
 }

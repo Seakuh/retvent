@@ -168,6 +168,10 @@ export class MongoProfileRepository implements IProfileRepository {
     return this.profileModel.findOne({ userId });
   }
 
+  async findProfileVector(userId: string): Promise<Profile | null> {
+    return this.profileModel.findOne({ userId }).select('embedding');
+  }
+
   async findByUserIdWithStatus(userId: string): Promise<Profile | null> {
     return this.profileModel.findOne({ userId }).select('username profileImageUrl');
   }

@@ -30,7 +30,10 @@ export class ProfileService {
     return this.profileRepository.updateProfileEmbedding(id, embedding);
   }
 
-  
+  getProfileVector(id: string) {
+    return this.profileRepository.findByUserId(id);
+  }
+
   async updateProfileGallery(
     id: string,
     gallery: Express.Multer.File[],
