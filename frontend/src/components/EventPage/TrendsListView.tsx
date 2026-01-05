@@ -7,12 +7,14 @@ interface TrendsListViewProps {
   event: Event;
   index: number;
   viewMode?: "list" | "compact";
+  matchPercentage?: number;
 }
 
 export const TrendsListView: React.FC<TrendsListViewProps> = ({
   event,
   index,
   viewMode = "list",
+  matchPercentage,
 }) => {
   const navigate = useNavigate();
 
@@ -27,8 +29,10 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
       className={`trends-list-item ${isCompact ? "trends-list-item-compact" : ""}`}
       onClick={handleEventClick}
     >
-      {/* Nummerierung ganz links */}
-      <div className="trends-list-number">{index + 1}</div>
+      {/* Nummerierung ganz links oder Match-Prozent bei Onboarding */}
+      <div className="trends-list-number">
+        {matchPercentage !== undefined ? `${matchPercentage}%` : index + 1}
+      </div>
 
       {/* Bild - nur im List-Modus */}
       {!isCompact && event.imageUrl && (

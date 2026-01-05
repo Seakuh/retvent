@@ -24,7 +24,7 @@ export const onboardingService = {
 
     try {
       const response = await fetch(
-        `${API_URL}events/onboarding?limit=${limit}`,
+        `${API_URL}assessment/onboarding?limit=${limit}`,
         {
           method: "POST",
           headers: {
