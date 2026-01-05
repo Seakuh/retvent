@@ -142,23 +142,30 @@ export class BotService {
         this.logger.log(`\n📅 Verarbeite Event ${i + 1}/${events.length}: ${eventData.title}`);
 
         try {
-          // 2.1 Bild herunterladen und hochladen
+          // 2.1 Bild herunterladen und hochladen (optional)
           let uploadedImageUrl = eventData.imageUrl;
           if (eventData.imageUrl) {
-            this.logger.log(`📥 Lade Bild herunter: ${eventData.imageUrl}`);
+            this.logger.log(`📥 Versuche Bild herunterzuladen: ${eventData.imageUrl}`);
             try {
               const imageBuffer = await this.downloadImage(eventData.imageUrl);
-              this.logger.log(`✅ Bild erfolgreich heruntergeladen (${imageBuffer.length} bytes)`);
-              
-              this.logger.log(`📤 Lade Bild hoch...`);
-              uploadedImageUrl = await this.imageService.uploadImageFromBuffer(imageBuffer);
-              this.logger.log(`✅ Bild erfolgreich hochgeladen: ${uploadedImageUrl}`);
+              if (imageBuffer) {
+                this.logger.log(`✅ Bild erfolgreich heruntergeladen (${imageBuffer.length} bytes)`);
+                
+                this.logger.log(`📤 Lade Bild hoch...`);
+                uploadedImageUrl = await this.imageService.uploadImageFromBuffer(imageBuffer);
+                this.logger.log(`✅ Bild erfolgreich hochgeladen: ${uploadedImageUrl}`);
+              } else {
+                this.logger.warn(`⚠️ Bild konnte nicht heruntergeladen werden, verwende ursprüngliche URL`);
+                uploadedImageUrl = eventData.imageUrl;
+              }
             } catch (imageError) {
-              this.logger.error(`❌ Fehler beim Herunterladen/Hochladen des Bildes: ${imageError.message}`);
+              this.logger.warn(`⚠️ Fehler beim Herunterladen/Hochladen des Bildes: ${imageError.message}`);
               this.logger.warn(`⚠️ Verwende ursprüngliche Image URL: ${eventData.imageUrl}`);
+              uploadedImageUrl = eventData.imageUrl;
             }
           } else {
             this.logger.warn(`⚠️ Keine Image URL für Event: ${eventData.title}`);
+            uploadedImageUrl = undefined;
           }
 
           // 2.2 Neues Profil erstellen
@@ -176,10 +183,9 @@ export class BotService {
           this.logger.log(`✅ Profil erstellt: ${username} (ID: ${hostId})`);
 
           // 2.3 Event erstellen
-          const eventToCreate = {
+          const eventToCreate: any = {
             title: eventData.title,
             description: eventData.description,
-            imageUrl: uploadedImageUrl,
             startDate: new Date(eventData.startDate),
             startTime: eventData.startTime || '20:00',
             hostId: hostId,
@@ -194,6 +200,11 @@ export class BotService {
             createdAt: new Date(),
             updatedAt: new Date(),
           };
+
+          // Füge imageUrl nur hinzu, wenn vorhanden
+          if (uploadedImageUrl) {
+            eventToCreate.imageUrl = uploadedImageUrl;
+          }
 
           this.logger.log(`🎉 Erstelle Event: ${eventData.title}`);
           const createdEvent = await this.eventRepository.create(eventToCreate);
@@ -224,24 +235,45 @@ export class BotService {
   }
 
   /**
-   * Lädt ein Bild von einer URL herunter
+   * Lädt ein Bild von einer URL herunter (optional - gibt null zurück bei Fehler)
    */
-  private async downloadImage(url: string): Promise<Buffer> {
+  private async downloadImage(url: string): Promise<Buffer | null> {
     // Instagram URL ggf. anpassen
     if (url.includes('instagram.com')) {
       url = url.split('?')[0].replace(/\d+_n\.jpg$/, '1080_n.jpg');
     }
 
+    // Versuche zuerst direkt ohne Proxy
+    try {
+      const directResponse = await axios.get(url, {
+        responseType: 'arraybuffer',
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          Accept:
+            'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+          'Accept-Language': 'de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7',
+        },
+        timeout: 5000,
+      });
+
+      const contentType = directResponse.headers['content-type'];
+      if (contentType?.startsWith('image/')) {
+        this.logger.log(`✅ Bild direkt geladen von ${url}`);
+        return Buffer.from(directResponse.data, 'binary');
+      }
+    } catch (directError) {
+      this.logger.debug(`Direkter Download fehlgeschlagen, versuche Proxies...`);
+    }
+
+    // Falls direkter Download fehlschlägt, versuche Proxies
     const proxyServices = [
       (url: string) =>
         `https://images.weserv.nl/?url=${encodeURIComponent(url)}`,
       (url: string) =>
         `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
       (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-      (url: string) => `https://cors-anywhere.herokuapp.com/${url}`,
     ];
-
-    let lastError: any;
 
     for (const proxyFn of proxyServices) {
       const proxyUrl = proxyFn(url);
@@ -257,25 +289,22 @@ export class BotService {
               'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
             'Accept-Language': 'de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7',
           },
-          timeout: 10000,
+          timeout: 5000,
         });
 
         const contentType = response.headers['content-type'];
         if (contentType?.startsWith('image/')) {
-          this.logger.debug(`✅ Bild erfolgreich geladen von ${proxyUrl}`);
+          this.logger.log(`✅ Bild erfolgreich geladen von Proxy`);
           return Buffer.from(response.data, 'binary');
-        } else {
-          this.logger.warn(`⚠️ Kein Bild-Content-Type: ${contentType}`);
         }
       } catch (err) {
-        this.logger.debug(`❌ Fehler bei Proxy ${proxyUrl}: ${err.message}`);
-        lastError = err;
+        // Weiter zum nächsten Proxy
+        continue;
       }
     }
 
-    this.logger.error('❗️Alle Proxy-Versuche fehlgeschlagen:', lastError);
-    throw new Error(
-      `Bild konnte nicht heruntergeladen werden: ${lastError?.message || 'Unbekannter Fehler'}`,
-    );
+    // Alle Versuche fehlgeschlagen - gibt null zurück statt Error zu werfen
+    this.logger.warn(`⚠️ Bild konnte nicht heruntergeladen werden: ${url}`);
+    return null;
   }
 }
