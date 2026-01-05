@@ -441,6 +441,86 @@ export class EventController {
     );
   }
 
+  // ----------------------------------------------------------------------------
+  // SEARCH EVENTS VECTOR BASED -------------------------------------------------
+  // ----------------------------------------------------------------------------
+  @Get('all/vector')
+  async searchEventsVector(
+    @Query('query') query: string,
+  ) {
+    return this.eventService.findFindPopularVectorBased(100);
+  }
+
+  @Get('home/vector')
+  @UseGuards(JwtAuthGuard)
+  async searchEventsUserBasedHome(
+    @Request() req,
+  ) {
+    return this.eventService.findFindPopularUserBasedHome(req.user.id);
+  }
+
+  /**
+   * Gibt alle Events zurück
+   */
+  @Get('all')
+  async getAllEvents() {
+    return this.eventService.getAllEvents();
+  }
+
+  /**
+   * Gibt beliebte Events mit Vector-basierter Suche zurück
+   * @param query - Optional: Suchtext für Vector-Suche
+   * @param isUpcoming - true für kommende Events, false für vergangene, undefined für alle
+   * @param limit - Anzahl der zurückzugebenden Events (Standard: 20)
+   */
+  @Get('popular/vector')
+  async getPopularEventsVector(
+    @Query('query') query?: string,
+    @Query('isUpcoming') isUpcoming?: string,
+    @Query('limit') limit?: number,
+  ) {
+    const isUpcomingBool =
+      isUpcoming === undefined
+        ? undefined
+        : isUpcoming === 'true' || isUpcoming === '1';
+    const limitNum = limit && limit > 0 ? limit : 20;
+    return this.eventService.getPopularEventsVectorBased(
+      query,
+      isUpcomingBool,
+      limitNum,
+    );
+  }
+
+  /**
+   * Vector-basierte Suche nach Events mit Query-Text
+   * @param query - Suchtext für Vector-Suche (erforderlich)
+   * @param isUpcoming - true für kommende Events, false für vergangene, undefined für alle
+   * @param limit - Anzahl der zurückzugebenden Events (Standard: 20)
+   */
+  @Get('search/vector')
+  async searchEventsWithVector(
+    @Query('query') query: string,
+    @Query('isUpcoming') isUpcoming?: string,
+    @Query('limit') limit?: number,
+  ) {
+    if (!query || !query.trim()) {
+      throw new BadRequestException('Query parameter is required');
+    }
+    const isUpcomingBool =
+      isUpcoming === undefined
+        ? undefined
+        : isUpcoming === 'true' || isUpcoming === '1';
+    const limitNum = limit && limit > 0 ? limit : 20;
+    return this.eventService.searchEventsWithQueryVector(
+      query,
+      isUpcomingBool,
+      limitNum,
+    );
+  }
+
+
+
+
   @Get('search/all')
   async searchEventsWithUserInput(
     @Query('location') location?: string,

@@ -24,6 +24,7 @@ import { UserService } from './user.service';
 import { CommunityService } from './community.service';
 @Injectable()
 export class EventService {
+
   
   constructor(
     private readonly eventRepository: MongoEventRepository,
@@ -363,6 +364,219 @@ export class EventService {
     const events = await this.eventRepository.findAllWithEmbedding(limit);
     return events;
   }
+
+
+  // ----------------------------------------------------------------------------
+  // SEARCH EVENTS VECTOR BASED -------------------------------------------------
+  // ----------------------------------------------------------------------------
+  async findFindPopularVectorBased(limit: number) {
+    const events = await this.eventRepository.findAllWithEmbedding(limit);
+    return events;
+  }
+
+  findFindPopularUserBasedHome(id: any) {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * Gibt alle Events zurück
+   */
+  async getAllEvents() {
+    return this.findAll();
+  }
+
+  /**
+   * Gibt beliebte Events mit Vector-basierter Suche zurück
+   * @param query - Optional: Suchtext für Vector-Suche
+   * @param isUpcoming - true für kommende Events, false für vergangene, undefined für alle
+   * @param limit - Anzahl der zurückzugebenden Events
+   */
+  async getPopularEventsVectorBased(
+    query?: string,
+    isUpcoming?: boolean,
+    limit: number = 20,
+  ) {
+    const now = new Date();
+    const nowTimestamp = Math.floor(now.getTime() / 1000);
+
+    // Filter für Datum basierend auf isUpcoming
+    const dateFilter: any = {};
+    if (isUpcoming !== undefined) {
+      if (isUpcoming) {
+        // Nur kommende Events (startDate >= jetzt)
+        dateFilter.must = [
+          {
+            key: 'start_time',
+            range: {
+              gte: nowTimestamp,
+            },
+          },
+        ];
+      } else {
+        // Nur vergangene Events (startDate < jetzt)
+        dateFilter.must = [
+          {
+            key: 'start_time',
+            range: {
+              lt: nowTimestamp,
+            },
+          },
+        ];
+      }
+    }
+
+    // Filter für Popularität (nur Events mit popularity > 0)
+    const popularityFilter = {
+      key: 'popularity',
+      range: {
+        gt: 0,
+      },
+    };
+
+    if (dateFilter.must) {
+      dateFilter.must.push(popularityFilter);
+    } else {
+      dateFilter.must = [popularityFilter];
+    }
+
+    let searchVector: number[] | undefined;
+
+    // Wenn Query vorhanden, erstelle Embedding
+    if (query && query.trim()) {
+      try {
+        searchVector = await this.chatGptService.createEmbeddingV2(query);
+      } catch (error) {
+        console.error('Failed to create embedding for query:', error);
+        // Fallback: ohne Vector-Suche, nur nach Popularität
+      }
+    }
+
+    if (searchVector) {
+      // Vector-basierte Suche mit Popularitäts- und Datumsfilter
+      const searchResults = await this.qdrantService.searchEventsSimilar({
+        vector: searchVector,
+        limit,
+        filter: dateFilter,
+        withPayload: true,
+      });
+
+      // Extrahiere Event-IDs aus den Ergebnissen
+      const eventIds = searchResults
+        .map((hit) => this.extractEventIdFromPayload(hit.payload))
+        .filter((id): id is string => Boolean(id));
+
+      if (eventIds.length === 0) {
+        return [];
+      }
+
+      // Lade Events aus der Datenbank
+      const events = await Promise.all(
+        eventIds.map((id) => this.eventRepository.findById(id)),
+      );
+
+      return events.filter((event): event is Event => event !== null);
+    } else {
+      // Fallback: Lade Events direkt aus DB und filtere nach Datum
+      const allEvents = await this.eventRepository.findAllWithEmbedding(limit * 2);
+      const filteredEvents = allEvents.filter((event) => {
+        if (!event.startDate) return false;
+        const eventDate = new Date(event.startDate);
+        if (isUpcoming === true) {
+          return eventDate >= now;
+        } else if (isUpcoming === false) {
+          return eventDate < now;
+        }
+        return true;
+      });
+
+      // Sortiere nach Popularität (falls vorhanden) und begrenze
+      return filteredEvents.slice(0, limit);
+    }
+  }
+
+  /**
+   * Vector-basierte Suche nach Events mit Query-Text
+   * @param query - Suchtext für Vector-Suche
+   * @param isUpcoming - true für kommende Events, false für vergangene, undefined für alle
+   * @param limit - Anzahl der zurückzugebenden Events
+   */
+  async searchEventsWithQueryVector(
+    query: string,
+    isUpcoming?: boolean,
+    limit: number = 20,
+  ) {
+    if (!query || !query.trim()) {
+      throw new BadRequestException('Query parameter is required');
+    }
+
+    const now = new Date();
+    const nowTimestamp = Math.floor(now.getTime() / 1000);
+
+    // Filter für Datum basierend auf isUpcoming
+    const dateFilter: any = {};
+    if (isUpcoming !== undefined) {
+      if (isUpcoming) {
+        // Nur kommende Events
+        dateFilter.must = [
+          {
+            key: 'start_time',
+            range: {
+              gte: nowTimestamp,
+            },
+          },
+        ];
+      } else {
+        // Nur vergangene Events
+        dateFilter.must = [
+          {
+            key: 'start_time',
+            range: {
+              lt: nowTimestamp,
+            },
+          },
+        ];
+      }
+    }
+
+    // Erstelle Embedding für den Query-Text
+    let searchVector: number[];
+    try {
+      searchVector = await this.chatGptService.createEmbeddingV2(query);
+    } catch (error) {
+      console.error('Failed to create embedding for query:', error);
+      throw new BadRequestException('Failed to process search query');
+    }
+
+    // Führe Vector-Suche durch
+    const searchResults = await this.qdrantService.searchEventsSimilar({
+      vector: searchVector,
+      limit,
+      filter: dateFilter.must ? dateFilter : undefined,
+      withPayload: true,
+    });
+
+    // Extrahiere Event-IDs aus den Ergebnissen
+    const eventIds = searchResults
+      .map((hit) => this.extractEventIdFromPayload(hit.payload))
+      .filter((id): id is string => Boolean(id));
+
+    if (eventIds.length === 0) {
+      return [];
+    }
+
+    // Lade Events aus der Datenbank
+    const events = await Promise.all(
+      eventIds.map((id) => this.eventRepository.findById(id)),
+    );
+
+    return events
+      .filter((event): event is Event => event !== null)
+      .map((event) => this.toEntity(event));
+  }
+  
+  // ----------------------------------------------------------------------------
+  // END SEARCH EVENTS VECTOR BASED ---------------------------------------------
+  // ----------------------------------------------------------------------------
 
   async findById(id: string) {
     const event = await this.eventRepository.findByIdWithCommentCount(id);
