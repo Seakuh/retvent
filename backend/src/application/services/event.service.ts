@@ -379,13 +379,6 @@ export class EventService {
   }
 
   /**
-   * Gibt alle Events zurück
-   */
-  async getAllEvents() {
-    return this.findAll();
-  }
-
-  /**
    * Gibt beliebte Events mit Vector-basierter Suche zurück
    * @param query - Optional: Suchtext für Vector-Suche
    * @param isUpcoming - true für kommende Events, false für vergangene, undefined für alle

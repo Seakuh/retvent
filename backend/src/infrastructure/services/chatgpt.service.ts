@@ -1,5 +1,5 @@
 // src/infrastructure/services/chatgpt.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import OpenAI from 'openai';
 import { Profile } from 'src/core/domain/profile';
 import { z } from 'zod';
@@ -22,6 +22,7 @@ const EventResponseSchema = z.object({
 @Injectable()
 export class ChatGPTService {
   private openai: OpenAI;
+  private readonly logger = new Logger(ChatGPTService.name);
 
   constructor() {
     this.openai = new OpenAI({
@@ -921,6 +922,89 @@ Example format: "Dynamic camera movement revealing event details, animated text 
    * @param event - Das Event-Objekt für das eine Beschreibung erstellt werden soll
    * @returns Eine vollständige, ansprechende Event-Beschreibung mit subtilen Emojis
    */
+  async generate10NewEvents(): Promise<Partial<Event>[]> {
+    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'user',
+          content: `Erstelle genau 10 neue, realistische Events mit folgenden Informationen:
+
+### **Current Date:**  
+Today's date is **${today}**. Verwende zukünftige Daten für die Events.
+
+### WICHTIGE REGELN:
+- Erstelle genau 10 verschiedene Events
+- Jedes Event MUSS eine imageUrl haben (verwende realistische öffentliche Bild-URLs, z.B. von Unsplash, Pexels oder ähnlichen Quellen)
+- Die Events sollen vielfältig sein (Konzerte, Ausstellungen, Workshops, Sportevents, etc.)
+- Verwende verschiedene deutsche Städte
+- Die Events sollen in der Zukunft liegen (mindestens 1 Woche nach heute)
+
+### Response Format (JSON):
+{
+  "events": [
+    {
+      "title": "string",
+      "description": "string", 
+      "startDate": "YYYY-MM-DD",
+      "startTime": "HH:mm",
+      "imageUrl": "string (MUSS vorhanden sein!)",
+      "city": "string",
+      "category": "string",
+      "price": "string",
+      "ticketLink": "string (optional)",
+      "address": {
+        "street": "string",
+        "houseNumber": "string", 
+        "city": "string"
+      },
+      "lineup": [
+        {
+          "name": "string",
+          "role": "string",
+          "startTime": "HH:mm"
+        }
+      ],
+      "socialMediaLinks": {
+        "instagram": "string",
+        "facebook": "string",
+        "twitter": "string"
+      },
+      "tags": ["string", "string", "string", "string", "string"],
+      "email": "string (optional)"
+    }
+  ]
+}
+
+WICHTIG: Jedes Event MUSS eine gültige imageUrl haben! Verwende URLs von öffentlichen Bildquellen wie Unsplash (z.B. https://images.unsplash.com/photo-...) oder Pexels.`,
+        },
+      ],
+      response_format: { type: 'json_object' },
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('Keine Antwort von ChatGPT erhalten');
+    }
+
+    try {
+      const parsed = JSON.parse(content);
+      const events = parsed.events || [];
+      
+      if (!Array.isArray(events) || events.length === 0) {
+        throw new Error('Keine Events in der Antwort gefunden');
+      }
+
+      this.logger.log(`✅ ${events.length} Events von ChatGPT generiert`);
+      return events;
+    } catch (error) {
+      this.logger.error('Fehler beim Parsen der ChatGPT-Antwort:', error);
+      throw new Error(`Fehler beim Parsen der Events: ${error.message}`);
+    }
+  }
+
   async generateDetailedEventDescription(event: Event): Promise<string> {
     const lineupNames = event.lineup?.map(l => l.name).join(', ') || '';
     const lineupInfo = event.lineup?.map(l => ({

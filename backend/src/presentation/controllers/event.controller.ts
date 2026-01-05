@@ -460,14 +460,6 @@ export class EventController {
   }
 
   /**
-   * Gibt alle Events zurück
-   */
-  @Get('all')
-  async getAllEvents() {
-    return this.eventService.getAllEvents();
-  }
-
-  /**
    * Gibt beliebte Events mit Vector-basierter Suche zurück
    * @param query - Optional: Suchtext für Vector-Suche
    * @param isUpcoming - true für kommende Events, false für vergangene, undefined für alle
