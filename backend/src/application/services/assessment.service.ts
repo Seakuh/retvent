@@ -678,4 +678,75 @@ export class AssessmentService {
       throw new BadRequestException('Failed to find events based on preferences');
     }
   }
+
+  /**
+   * Setzt Onboarding-Präferenzen für einen Nutzer, vektorisiert diese und aktualisiert das Profil-Embedding
+   * @param preferences - Die Onboarding-Präferenzen des Nutzers
+   * @param userId - Die User-ID des Nutzers
+   * @param limit - Optional: Anzahl der Event-Vorschläge (Standard: 20)
+   * @returns Objekt mit Profil-Update-Status und optionalen Event-Vorschlägen
+   */
+  async setOnboardingPreferences(
+    preferences: OnboardingPreferencesDto,
+    userId: string,
+    limit: number = 20,
+  ): Promise<{
+    success: boolean;
+    profileUpdated: boolean;
+    events?: Event[];
+  }> {
+    try {
+      if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+        throw new BadRequestException('userId is required and must be a non-empty string');
+      }
+
+      // Finde das Profil des Nutzers
+      const profile = await this.profileService.getProfileByUserId(userId);
+      if (!profile) {
+        throw new NotFoundException('Profile not found');
+      }
+
+      // Konvertiere Präferenzen zu Text
+      const preferencesText = this.preferencesToText(preferences);
+      
+      if (!preferencesText || preferencesText.trim() === '') {
+        throw new BadRequestException(
+          'Preferences must contain at least one valid preference',
+        );
+      }
+
+      // Erstelle Embedding aus den Präferenzen
+      let embedding: number[];
+      try {
+        embedding = await this.chatGptService.createEmbeddingV2(preferencesText);
+      } catch (error) {
+        console.error('Failed to create embedding for preferences:', error);
+        throw new BadRequestException('Failed to process preferences');
+      }
+
+      // Aktualisiere das Profil-Embedding
+      await this.profileService.updateProfileEmbedding(profile.id, embedding);
+
+      // Optional: Finde passende Events basierend auf den Präferenzen
+      let events: Event[] = [];
+      try {
+        events = await this.findEventsByPreferences(preferences, limit);
+      } catch (error) {
+        console.warn('Failed to find events by preferences:', error);
+        // Event-Vorschläge sind optional, daher kein Fehler werfen
+      }
+
+      return {
+        success: true,
+        profileUpdated: true,
+        events: events.length > 0 ? events : undefined,
+      };
+    } catch (error) {
+      console.error('Error setting onboarding preferences:', error);
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to set onboarding preferences');
+    }
+  }
 }

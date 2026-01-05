@@ -354,4 +354,19 @@ export class AssessmentController {
       limitNum,
     );
   }
+
+  @Post('onboarding')
+  @UseGuards(JwtAuthGuard)
+  async setOnboardingPreferences(
+    @Body() preferencesDto: OnboardingPreferencesDto,
+    @UserDecorator() user: User,
+    @Query('limit') limit?: string,
+  ) {
+    const limitNum = limit ? parseInt(limit, 10) : 20;
+    return this.assessmentService.setOnboardingPreferences(
+      preferencesDto,
+      user.sub,
+      limitNum,
+    );
+  }
 }
