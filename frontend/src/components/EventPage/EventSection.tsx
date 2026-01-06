@@ -7,6 +7,7 @@ import { TrendsListView } from "./TrendsListView";
 interface FilterOption {
   value: string;
   label: string;
+  emoji?: string;
 }
 
 interface EventSectionProps {
@@ -48,7 +49,9 @@ export const EventSection = ({
                       }`}
                       onClick={() => onFilterChange?.(option.value)}
                     >
-                      {option.label}
+                      {selectedFilter === option.value && option.emoji
+                        ? `${option.emoji} ${option.label}`
+                        : option.label}
                     </button>
                   ))}
                 </div>

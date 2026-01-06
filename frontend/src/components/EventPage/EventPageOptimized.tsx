@@ -61,7 +61,7 @@ export const EventPageOptimized = ({
   if (error) {
     return (
       <div className="event-page-container">
-        <AdBanner />
+        {/* <AdBanner /> */}
         <div className="error-state">
           <div className="error-icon">❌</div>
           <p>Failed to load events. Please try again.</p>
@@ -72,7 +72,7 @@ export const EventPageOptimized = ({
 
   return (
     <div className="event-page-container">
-      <AdBanner />
+      {/* <AdBanner /> */}
       {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}
       <ExploreFeed feedItemsResponse={feedItemsResponse} />
 
