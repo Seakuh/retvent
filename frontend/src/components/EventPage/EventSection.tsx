@@ -57,22 +57,39 @@ export const EventSection = ({
                 );
               })}
             </div>
+            {events.length > 0 && (
+              <div className="view-toggle-container">
+                <button
+                  className="view-toggle-btn"
+                  onClick={() => setViewMode(viewMode === "list" ? "compact" : "list")}
+                  title={viewMode === "list" ? "Switch to Compact View" : "Switch to List View"}
+                >
+                  {viewMode === "list" ? (
+                    <Minus size={20} />
+                  ) : (
+                    <List size={20} />
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         ) : (
-          <h2 className="popular-title">{title}</h2>
-        )}
-        {events.length > 0 && (
-          <button
-            className="view-toggle-btn"
-            onClick={() => setViewMode(viewMode === "list" ? "compact" : "list")}
-            title={viewMode === "list" ? "Switch to Compact View" : "Switch to List View"}
-          >
-            {viewMode === "list" ? (
-              <Minus size={20} />
-            ) : (
-              <List size={20} />
+          <>
+            <h2 className="popular-title">{title}</h2>
+            {events.length > 0 && (
+              <button
+                className="view-toggle-btn"
+                onClick={() => setViewMode(viewMode === "list" ? "compact" : "list")}
+                title={viewMode === "list" ? "Switch to Compact View" : "Switch to List View"}
+              >
+                {viewMode === "list" ? (
+                  <Minus size={20} />
+                ) : (
+                  <List size={20} />
+                )}
+              </button>
             )}
-          </button>
+          </>
         )}
       </div>
       {events.length > 0 && (
