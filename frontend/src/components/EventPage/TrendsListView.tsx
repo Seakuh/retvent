@@ -27,13 +27,15 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
 
   const handleLike = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.stopPropagation();
+    e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
 
-    if (isFavorite(event.id || event._id || "")) {
-      removeFavorite(event.id || event._id || "");
+    if (isFavorite(event._id!)) {
+      // Nutze isFavorite statt lokalem State
+      removeFavorite(event._id!);
     } else {
-      addFavorite(event.id || event._id || "");
+      addFavorite(event._id!);
     }
+    // setIsLiked nicht nötig, da wir isFavorite vom Context nutzen
   };
 
   const isCompact = viewMode === "compact";
@@ -105,8 +107,8 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
       >
         <Heart
           size={20}
-          color={isFavorite(event.id || event._id || "") ? "red" : "white"}
-          fill={isFavorite(event.id || event._id || "") ? "red" : "none"}
+          color={isFavorite(event._id!) ? "red" : "white"}
+          fill={isFavorite(event._id!) ? "red" : "none"}
         />
       </div>
     </div>
