@@ -17,6 +17,7 @@
   background: inherit;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  border-bottom: 0.5px solid var(--color-neon-blue-light);
 }
 
 .popular-title {
@@ -184,7 +185,7 @@
 
 @media (max-width: 768px) {
   .popular-title-container {
-    padding: 0.5rem;
+    padding: 1rem;
     gap: 0.5rem;
   }
 
