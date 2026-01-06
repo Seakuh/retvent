@@ -11,6 +11,12 @@
   justify-content: space-between;
   padding: 1rem;
   gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: inherit;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .popular-title {
@@ -48,7 +54,6 @@
   overflow-y: hidden;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 0.5rem;
   min-width: 0;
   width: 100%;
   /* Hide scrollbar on desktop but allow scrolling */
@@ -152,7 +157,6 @@
 
   .filter-options {
     gap: 0.25rem;
-    padding-bottom: 0.75rem;
   }
   
   .filter-options::-webkit-scrollbar {

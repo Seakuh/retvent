@@ -57,7 +57,7 @@ export const EventSection = ({
                 );
               })}
             </div>
-            {events.length > 0 && (
+            {/* {events.length > 0 && (
               <div className="view-toggle-container">
                 <button
                   className="view-toggle-btn"
@@ -71,7 +71,7 @@ export const EventSection = ({
                   )}
                 </button>
               </div>
-            )}
+            )} */}
           </div>
         ) : (
           <>
