@@ -11,6 +11,8 @@
   max-width: 100vw;
   box-sizing: border-box;
   background: transparent;
+  border-top: 0.5px solid var(--color-neon-blue-light);
+
 }
 
 .bottom-bar nav {

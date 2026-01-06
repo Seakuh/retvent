@@ -471,7 +471,6 @@
   @media (min-width: 768px) {
     .event-list {
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 2rem;
     }
   }
 

@@ -9,17 +9,16 @@
     position: sticky;
     z-index: 10;
     top: 0;
-    backdrop-filter: blur(10px);
-    backdrop-filter: blur(3px);
-    background-color: rgba(0, 0, 0, 0.2);
-  border-bottom: 0.5px solid var(--color-neon-blue-light);
+    backdrop-filter: blur(6px);
     /* Stelle sicher, dass der Container einen definierten Kontext hat */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
+    border-bottom: 0.5px solid var(--color-neon-blue-light);
+
 }
 
 .section-title {
-    font-size: 2rem; 
+    font-size: 1.5rem; 
     font-weight: 600;
     margin: 0 auto;
     color: white;
@@ -31,6 +30,7 @@
     position: sticky;
     z-index: 10;
     padding: 1rem 0;
+
     /* Stelle sicher, dass der Container einen definierten Kontext hat */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
