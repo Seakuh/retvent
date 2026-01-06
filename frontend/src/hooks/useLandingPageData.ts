@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchFavoriteEvents } from "../components/EventPage/service";
 import {
   getLatestFeedAll,
+  getRecommendedEvents,
   getLatestFeedByFollowing,
 } from "../components/Feed/service";
 import { searchEvents } from "../service";
@@ -21,6 +22,7 @@ type SearchParams = {
 
 type UseLandingPageDataProps = {
   favoriteEventIds: string[];
+  recommendedEvents: Event[];
   loggedIn: boolean;
   searchParams: SearchParams;
 };
@@ -48,6 +50,7 @@ export const useLandingPageData = ({
   const [favoriteEvents, setFavoriteEvents] = useState<Event[]>([]);
   const [followedProfiles, setFollowedProfiles] = useState<FeedResponse[]>([]);
   const [feedItemsResponse, setFeedItemsResponse] = useState<FeedResponse[]>([]);
+  const [recommendedEvents, setRecommendedEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
   // ----------------------------------------------------------------------------
@@ -80,6 +83,7 @@ export const useLandingPageData = ({
       let isMounted = true;
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
+
 
       const loadEvents = async () => {
         setLoading(true);
@@ -249,5 +253,6 @@ export const useLandingPageData = ({
     feedItemsResponse,
     loading,
     performSearch,
+    recommendedEvents,
   };
 };

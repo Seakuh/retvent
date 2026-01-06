@@ -1,5 +1,7 @@
-import { Eye } from "lucide-react";
+import { Calendar, Eye, Heart } from "lucide-react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../contexts/UserContext";
 import { Event } from "../../utils";
 import "./TrendsListView.css";
 
@@ -17,9 +19,21 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
   matchPercentage,
 }) => {
   const navigate = useNavigate();
+  const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
 
   const handleEventClick = () => {
     navigate(`/event/${event.id || event._id}`);
+  };
+
+  const handleLike = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isFavorite(event.id || event._id || "")) {
+      removeFavorite(event.id || event._id || "");
+    } else {
+      addFavorite(event.id || event._id || "");
+    }
   };
 
   const isCompact = viewMode === "compact";
@@ -30,14 +44,14 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
       onClick={handleEventClick}
     >
       {/* Subtiler Hintergrund basierend auf matchPercentage */}
-      {matchPercentage !== undefined && (
+      {/* {matchPercentage !== undefined && (
         <div
           className="trends-list-match-background"
           style={{ width: `${matchPercentage}%` }}
         />
-      )}
+      )} */}
 
-      {/* Nummerierung ganz links */}
+      {/* Nummerierung */}
       <div className="trends-list-number">{index + 1}</div>
 
       {/* Bild - nur im List-Modus */}
@@ -67,6 +81,15 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
               {event.views}
             </span>
           )}
+          {event.startDate && (
+            <span className="trends-list-date">
+              <Calendar size={14} />
+              {new Date(event.startDate).toLocaleDateString("de-DE", {
+                day: "2-digit",
+                month: "2-digit",
+              })}
+            </span>
+          )}
           {matchPercentage !== undefined && (
             <span className="trends-list-match">
               {matchPercentage}%
@@ -75,15 +98,17 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
         </div>
       </div>
 
-      {/* Datum ganz rechts */}
-      {event.startDate && (
-        <div className="trends-list-date">
-          {new Date(event.startDate).toLocaleDateString("de-DE", {
-            day: "2-digit",
-            month: "2-digit",
-          })}
-        </div>
-      )}
+      {/* Herz-Button rechts */}
+      <div
+        onClick={handleLike}
+        className="trends-list-heart-container"
+      >
+        <Heart
+          size={20}
+          color={isFavorite(event.id || event._id || "") ? "red" : "white"}
+          fill={isFavorite(event.id || event._id || "") ? "red" : "none"}
+        />
+      </div>
     </div>
   );
 };

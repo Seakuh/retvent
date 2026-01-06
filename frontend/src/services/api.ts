@@ -153,3 +153,62 @@ export const profileService = {
     }
   },
 };
+
+export interface VectorProfileResult {
+  event: {
+    id: string;
+    title: string;
+    description: string;
+    startDate: string;
+    [key: string]: any;
+  };
+  similarityScore: number;
+}
+
+export const vectorProfileService = {
+  /**
+   * Lädt personalisierte Event-Empfehlungen basierend auf dem Profil-Vector des Users.
+   * 
+   * @param offset - Anzahl der Events, die übersprungen werden sollen (Standard: 0)
+   * @param limit - Anzahl der Events pro Seite (Standard: 20)
+   * @returns Promise mit Array von Event-Objekten und Similarity-Scores
+   */
+  getVectorProfileResults: async (
+    offset: number = 0,
+    limit: number = 20
+  ): Promise<VectorProfileResult[]> => {
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        throw new Error("User nicht authentifiziert");
+      }
+
+      const response = await fetch(
+        `${API_URL}events/vector/profile/results/recommendations?offset=${offset}&limit=${limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("User nicht authentifiziert");
+        }
+        if (response.status === 404) {
+          throw new Error("Profil nicht gefunden");
+        }
+        if (response.status === 400) {
+          throw new Error("Profil hat noch kein Embedding");
+        }
+        throw new Error("Vector Profile Results konnten nicht geladen werden");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error loading vector profile results:", error);
+      throw error;
+    }
+  },
+};

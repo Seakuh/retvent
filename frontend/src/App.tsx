@@ -34,6 +34,7 @@ import { TicketPage } from "./pages/TicketPage";
 import { EventEmbedPage } from "./pages/EventEmbedPage";
 import { syncFavorites } from "./service";
 import "./utils/onboarding-helpers"; // Load onboarding debug helpers
+import { useVectorProfileResults } from "./hooks/useVectorProfileResults";
 // const queryClient = new QueryClient({
 //   defaultOptions: {
 //     queries: {
@@ -79,6 +80,9 @@ const App: React.FC = () => {
 ----------------------------.-................
 ----------------------.-......................`
   );
+
+  // Lade Vector Profile Results im Hintergrund, wenn onboarding_completed true ist
+  useVectorProfileResults(true, 0, 20);
 
   useEffect(() => {
     void syncFavorites();
