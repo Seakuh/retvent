@@ -91,7 +91,7 @@ onClick={() => setViewMode("Search")}
               onClick={() => setViewMode("Trending")}
             >
               <Flame size={20} />
-              <span className="hidden md:inline">Trending</span>
+              <span className="hidden md:inline">Trends</span>
             </button>
 
             <button
