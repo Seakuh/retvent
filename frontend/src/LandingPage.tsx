@@ -250,14 +250,10 @@ function LandingPage() {
     switch (viewMode) {
       case "Home":
         return (
-          <OnboardingWrapper
-            children={    
               <EventPage
                 favoriteEvents={favoriteEvents}
                 feedItemsResponse={followedProfiles}
               />
-            }
-          />
         );
 
       case "Search":
