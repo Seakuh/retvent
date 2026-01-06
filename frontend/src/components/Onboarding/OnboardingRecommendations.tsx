@@ -28,7 +28,7 @@ const OnboardingRecommendations: React.FC<OnboardingRecommendationsProps> = ({
       <div className="recommendations-list">
         {events.map((item, index) => (
           <TrendsListView
-            key={item.event._id || item.event.id}
+            key={item.event._id || item.event.id || `recommendation-${index}`}
             event={item.event}
             index={index}
             matchPercentage={item.matchPercentage}

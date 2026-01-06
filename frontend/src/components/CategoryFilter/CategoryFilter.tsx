@@ -3,15 +3,16 @@ import {
   Flame,
   House,
   SlidersHorizontal,
-  Sparkles,
   Telescope,
-  TrendingUp,
 } from "lucide-react";
 import React, { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { ViewMode } from "../../types/event";
 import { categoriesToFilter, Event } from "../../utils";
 import { CalendarComponent } from "../EventDetail/components/Calendar/CalendarComponent";
+import Onboarding from "../Onboarding/Onboarding";
+import OnboardingRecommendations from "../Onboarding/OnboardingRecommendations";
 import "./CategoryFilter.css";
 import { GenreModal } from "./GenreModal";
 
@@ -50,6 +51,9 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [showGenreModal, setShowGenreModal] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [recommendedEvents, setRecommendedEvents] = useState<any[]>([]);
 
   /**
    * Toggle the genre filter modal visibility
@@ -141,11 +145,11 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       <button
         className={`category-button ${category ? "active" : ""}`}
         onClick={() => {
-          toggleGenreModal();
+          setShowOnboarding(true);
         }}
       >
         <SlidersHorizontal size={20} />
-        Filter
+        Vibe
       </button>
 
       {/* Genre selection modal */}
@@ -167,6 +171,53 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
           onReset={handleDateReset}
         />
       )}
+
+      {/* Onboarding modal */}
+      {showOnboarding && (
+        <Onboarding
+          onComplete={(events?: any[]) => {
+            console.log("Onboarding completed with events:", events);
+            setShowOnboarding(false);
+            if (events && events.length > 0) {
+              // Convert events to RecommendedEvent format
+              // Check if events are already in RecommendedEvent format or plain events
+              const recommendedEventsData = events.map((event) => {
+                // If event already has event property, it's already in RecommendedEvent format
+                if (event.event) {
+                  return event;
+                }
+                // Otherwise, wrap it
+                return {
+                  event: event,
+                  matchPercentage: event.matchPercentage || 100,
+                };
+              });
+              console.log("Converted recommended events:", recommendedEventsData);
+              setRecommendedEvents(recommendedEventsData);
+              setShowRecommendations(true);
+            } else {
+              console.log("No events returned from onboarding");
+            }
+          }}
+          onSkip={() => {
+            setShowOnboarding(false);
+            setShowRecommendations(false);
+          }}
+        />
+      )}
+      
+      {/* Onboarding Recommendations - rendered outside container using portal */}
+      {showRecommendations && recommendedEvents.length > 0 && 
+        createPortal(
+          <OnboardingRecommendations
+            events={recommendedEvents}
+            onContinue={() => {
+              setShowRecommendations(false);
+            }}
+          />,
+          document.body
+        )
+      }
     </div>
   );
 };
