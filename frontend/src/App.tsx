@@ -82,7 +82,7 @@ const App: React.FC = () => {
   );
 
   // Lade Vector Profile Results im Hintergrund, wenn onboarding_completed true ist
-  useVectorProfileResults(true, 0, 20);
+  //useVectorProfileResults(true, 0, 20);
 
   useEffect(() => {
     void syncFavorites();
