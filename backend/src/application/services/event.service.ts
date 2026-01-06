@@ -1812,8 +1812,29 @@ export class EventService {
   }
 
   private toEntity(event: any): Event {
-    // Implementiere die Umwandlung von event-formatierten Daten in ein Event-Objekt
-    throw new Error('Method not implemented');
+    return {
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      imageUrl: event.imageUrl,
+      communityId: event.communityId,
+      commentCount: event.commentCount,
+      locationId: event.locationId,
+      category: event.category,
+      price: event.price,
+      ticketLink: event.ticketLink,
+      lineup: event.lineup,
+      socialMediaLinks: event.socialMediaLinks,
+      tags: event.tags,
+      website: event.website,
+      views: event.views,
+      startDate: event.startDate,
+      startTime: event.startTime,
+      hostId: event.hostId,
+      regenstrations: event.regenstrations,
+      createdAt: event.createdAt,
+      updatedAt: event.updatedAt,
+    };
   }
 
   // Embedding ----------------------------------------------------
@@ -2247,9 +2268,8 @@ export class EventService {
       throw new NotFoundException('Profile not found');
     }
     
-    const profileVector = await this.profileService.getProfileVector(profile.id);
     
-    if (!profileVector || !Array.isArray(profileVector) || profileVector.length === 0) {
+    if (!profile.embedding || !Array.isArray(profile.embedding) || profile.embedding.length === 0) {
       throw new BadRequestException(
         'Das Profil besitzt noch kein Embedding und kann keine Events empfohlen werden.',
       );
@@ -2274,12 +2294,34 @@ export class EventService {
     const qdrantLimit = offset + limit + 10; // Puffer für mögliche fehlende Events
 
     // Suche ähnliche Events basierend auf Profil-Vector
-    const searchResults = await this.qdrantService.searchEventsSimilar({
-      vector: profileVector,
-      limit: qdrantLimit,
-      filter: dateFilter,
-      withPayload: true,
-    });
+    let searchResults;
+    try {
+      searchResults = await this.qdrantService.searchEventsSimilar({
+        vector: profile.embedding,
+        limit: 20,
+        filter: dateFilter,
+        withPayload: true,
+      });
+    } catch (error) {
+      // Logge den Qdrant-Fehler inkl. Details
+      const errorDetails =
+        error?.response?.data?.status?.error ||
+        error?.message ||
+        JSON.stringify(error);
+
+      // Prüfe auf spezifischen Formatierungsfehler im JSON Body und gib klarere Fehlermeldung aus
+      if (
+        errorDetails &&
+        errorDetails.toString().includes('Format error in JSON body')
+      ) {
+        throw new BadRequestException(
+          'Fehler bei der Suche nach Events: Die Datenbank hat einen Formatfehler entdeckt. Wahrscheinlich ist eines der Event-Felder als Zahl erwartet, enthält aber einen Wert vom Typ String (z.B. eine Postleitzahl als "02010" statt als Zahl). Bitte melde dieses Problem dem Support.',
+        );
+      }
+      throw new BadRequestException(
+        `Fehler bei der Suche nach ähnlichen Events (Qdrant): ${errorDetails}`,
+      );
+    }
 
     if (searchResults.length === 0) {
       return [];

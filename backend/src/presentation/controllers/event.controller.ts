@@ -1493,7 +1493,7 @@ export class EventController {
     @Query('limit') limit: number = 20,
   ): Promise<Array<{ event: Event; similarityScore: number }>> {
     const results = await this.eventService.getVectorProfileResults(
-      req.user.id,
+      req.user.sub,
       offset,
       limit,
     );
