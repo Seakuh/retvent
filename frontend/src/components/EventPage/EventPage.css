@@ -5,7 +5,7 @@
 }
 
 .event-favorites-container {
-  margin-top: -3rem;
+  margin-top: -1.5rem;
 }
 .no-liked-events {
   margin-top: clamp(5rem, 10vh, 10rem);
