@@ -1,5 +1,6 @@
 import {
   Calendar,
+  Flame,
   House,
   SlidersHorizontal,
   Sparkles,
@@ -115,15 +116,15 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         onClick={() => onViewModeChange("All")}
       >
         <Telescope size={20} />
-        All
+        Now
       </button>
 
       <button
         className={`category-button ${viewMode === "Trending" ? "active" : ""}`}
         onClick={() => onViewModeChange("Trending")}
       >
-        <TrendingUp size={20} />
-        Trending
+        <Flame size={20} />
+        Trends
       </button>
       {/* Calendar/date filter button */}
       <button

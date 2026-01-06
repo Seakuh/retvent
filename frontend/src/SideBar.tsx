@@ -1,6 +1,7 @@
 import {
   Calendar,
   Film,
+  Flame,
   Info,
   LogIn,
   LogOut,
@@ -9,6 +10,7 @@ import {
   Send,
   Settings,
   Smartphone,
+  Telescope,
   TrendingUp,
   Upload,
   UserIcon,
@@ -80,7 +82,7 @@ onClick={() => setViewMode("Search")}
               className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
               onClick={goStart}
             >
-              <Calendar size={20} />
+              <Telescope size={20} />
               <span className="hidden md:inline">Now</span>
             </button>
 
@@ -88,7 +90,7 @@ onClick={() => setViewMode("Search")}
               className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
               onClick={() => setViewMode("Trending")}
             >
-              <TrendingUp size={20} />
+              <Flame size={20} />
               <span className="hidden md:inline">Trending</span>
             </button>
 
