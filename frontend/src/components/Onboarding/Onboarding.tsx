@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { onboardingService, OnboardingPreferences } from "../../services/onboarding.service";
 import "./Onboarding.css";
-import { Search } from "lucide-react";
 
 interface OnboardingProps {
   onComplete: (events?: any[]) => void;
@@ -319,10 +318,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
 
         {/* Section 3 - Optional Vibe Refinement */}
         {filteredVibes.length > 0 && (
-          <section className="onboarding-section vibe-section">
-          <h2 className="onboarding-subheadline">🌟 When & how do you like to experience events?</h2>
+          <section className="onboarding-section">
+          <h1 className="onboarding-headline">How do you want to experience?</h1>
           <p className="onboarding-helper">
-            Optional — helps us understand your context
+            helps to understand your context
           </p>
           <div className="bubble-grid vibe-grid">
             {filteredVibes.map((option) => (
@@ -343,7 +342,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
         {/* Section 1 - Main Question */}
         {filteredMainListening.length > 0 && (
           <section className="onboarding-section">
-            <h1 className="onboarding-headline">What do you mostly listen to?</h1>
+            <h1 className="onboarding-headline">What do you want to hear?</h1>
             <p className="onboarding-helper">
               Just pick what feels closest — you can change this anytime.
             </p>
@@ -366,9 +365,12 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
         {/* Section 2 - Genre Focus */}
         {filteredGenres.length > 0 && (
           <section className="onboarding-section">
-          <h2 className="onboarding-subheadline">
+          <h1 className="onboarding-headline">
             Any genres you come back to?
-          </h2>
+          </h1>
+          <p className="onboarding-helper">
+            Select specific genres you enjoy
+          </p>
           <div className="bubble-grid genre-grid">
             {filteredGenres.map((option) => (
               <button

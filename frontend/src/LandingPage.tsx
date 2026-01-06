@@ -18,6 +18,7 @@ import { SearchPage } from "./pages/SearchPage";
 import { SideBar } from "./SideBar";
 import { ViewMode } from "./types/event";
 import { UploadModal } from "./UploadModal/UploadModal";
+import { OnboardingWrapper } from "./components/Onboarding";
 
 // ============================================================================
 // LOADING SPINNER COMPONENT
@@ -249,9 +250,13 @@ function LandingPage() {
     switch (viewMode) {
       case "Home":
         return (
-          <EventPage
-            favoriteEvents={favoriteEvents}
-            feedItemsResponse={followedProfiles}
+          <OnboardingWrapper
+            children={    
+              <EventPage
+                favoriteEvents={favoriteEvents}
+                feedItemsResponse={followedProfiles}
+              />
+            }
           />
         );
 
