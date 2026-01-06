@@ -3,12 +3,17 @@
   top: 0;
   left: 0;
   width: 100%;
+  width: 100vw;
   height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
+  min-height: -webkit-fill-available; /* iOS Safari fix */
   display: flex;
   flex-direction: column;
   background-color: #000;
   color: #fff;
   z-index: 9999;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .recommendations-header {
@@ -31,7 +36,10 @@
 .recommendations-list {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 0 1rem 1rem;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0; /* Important for flex children to scroll */
 }
 
 .recommendations-footer {
@@ -54,4 +62,45 @@
 
 .recommendations-footer .continue-button:hover {
   background-color: #e0e0e0;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .recommendations-container {
+    height: 100vh;
+    height: 100dvh;
+    min-height: -webkit-fill-available;
+  }
+
+  .recommendations-header {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .recommendations-title {
+    font-size: 1.5rem;
+  }
+
+  .recommendations-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .recommendations-list {
+    padding: 0 0.75rem 1rem;
+  }
+
+  .recommendations-footer {
+    padding: 1rem;
+  }
+
+  .recommendations-footer .continue-button {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .recommendations-container {
+    height: -webkit-fill-available;
+  }
 }

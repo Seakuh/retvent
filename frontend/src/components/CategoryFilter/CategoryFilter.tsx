@@ -181,11 +181,13 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             setIsLoadingRecommendations(true);
           }}
           onComplete={(events?: any[]) => {
+            console.log("Onboarding completed with events:", events);
             setShowOnboarding(false);
             
             // Process events
             setTimeout(() => {
               if (events && events.length > 0) {
+                console.log("Processing events, count:", events.length);
                 // Convert events to RecommendedEvent format
                 const recommendedEventsData = events.map((event) => {
                   if (event.event) {
@@ -196,10 +198,13 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                     matchPercentage: event.matchPercentage || 100,
                   };
                 });
+                console.log("Converted recommended events:", recommendedEventsData);
                 setRecommendedEvents(recommendedEventsData);
                 setIsLoadingRecommendations(false);
                 setShowRecommendations(true);
+                console.log("Showing recommendations, count:", recommendedEventsData.length);
               } else {
+                console.log("No events returned from onboarding");
                 setIsLoadingRecommendations(false);
               }
             }, 500);
