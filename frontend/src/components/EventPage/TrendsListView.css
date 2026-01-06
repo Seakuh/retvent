@@ -67,7 +67,7 @@
   height: 2rem;
 }
 
-/* Herz-Button rechts */
+/* Herz-Button */
 .trends-list-heart-container {
   display: flex;
   align-items: center;
@@ -77,7 +77,6 @@
   cursor: pointer;
   flex-shrink: 0;
   transition: transform 0.2s ease;
-  margin-left: auto;
 }
 
 .trends-list-heart-container:hover {
@@ -156,12 +155,17 @@
 }
 
 .trends-list-date {
-  font-size: 0.875rem;
   display: flex;
-  gap: 0.25rem;
   align-items: center;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 500;
+  justify-content: center;
+  min-width: 3rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+  text-align: center;
+  line-height: 1.2;
+  margin-left: auto;
 }
 
 .trends-list-match {

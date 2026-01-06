@@ -1,4 +1,4 @@
-import { Calendar, Eye, Heart } from "lucide-react";
+import { Eye, Heart } from "lucide-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -29,11 +29,14 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
     e.preventDefault();
     e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
 
-    if (isFavorite(event._id!)) {
+    const eventId = event.id || event._id;
+    if (!eventId) return;
+
+    if (isFavorite(eventId)) {
       // Nutze isFavorite statt lokalem State
-      removeFavorite(event._id!);
+      removeFavorite(eventId);
     } else {
-      addFavorite(event._id!);
+      addFavorite(eventId);
     }
     // setIsLiked nicht nötig, da wir isFavorite vom Context nutzen
   };
@@ -55,6 +58,18 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
 
       {/* Nummerierung */}
       <div className="trends-list-number">{index + 1}</div>
+
+      {/* Herz-Button als zweites Element */}
+      <div
+        onClick={handleLike}
+        className="trends-list-heart-container"
+      >
+        <Heart
+          size={20}
+          color={isFavorite(event.id || event._id || "") ? "red" : "white"}
+          fill={isFavorite(event.id || event._id || "") ? "red" : "none"}
+        />
+      </div>
 
       {/* Bild - nur im List-Modus */}
       {!isCompact && event.imageUrl && (
@@ -83,15 +98,6 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
               {event.views}
             </span>
           )}
-          {event.startDate && (
-            <span className="trends-list-date">
-              <Calendar size={14} />
-              {new Date(event.startDate).toLocaleDateString("de-DE", {
-                day: "2-digit",
-                month: "2-digit",
-              })}
-            </span>
-          )}
           {matchPercentage !== undefined && (
             <span className="trends-list-match">
               {matchPercentage}%
@@ -100,17 +106,15 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
         </div>
       </div>
 
-      {/* Herz-Button rechts */}
-      <div
-        onClick={handleLike}
-        className="trends-list-heart-container"
-      >
-        <Heart
-          size={20}
-          color={isFavorite(event._id!) ? "red" : "white"}
-          fill={isFavorite(event._id!) ? "red" : "none"}
-        />
-      </div>
+      {/* Datum rechts */}
+      {event.startDate && (
+        <div className="trends-list-date">
+          {new Date(event.startDate).toLocaleDateString("de-DE", {
+            day: "2-digit",
+            month: "2-digit",
+          })}
+        </div>
+      )}
     </div>
   );
 };
