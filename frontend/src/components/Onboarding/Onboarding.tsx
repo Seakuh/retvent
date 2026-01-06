@@ -5,6 +5,7 @@ import "./Onboarding.css";
 interface OnboardingProps {
   onComplete: (events?: any[]) => void;
   onSkip: () => void;
+  onContinueClick?: () => void;
 }
 
 export interface UserPreferences {
@@ -15,7 +16,7 @@ export interface UserPreferences {
   customTags: string[];
 }
 
-const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
+const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip, onContinueClick }) => {
   const [preferences, setPreferences] = useState<UserPreferences>({
     mainListening: [],
     genres: [],
@@ -212,6 +213,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, onSkip }) => {
   };
 
   const handleContinue = async () => {
+    // Call onContinueClick callback immediately when Continue is clicked
+    if (onContinueClick) {
+      onContinueClick();
+    }
     try {
       // Transform frontend preferences to backend format
       const backendPreferences: OnboardingPreferences = {

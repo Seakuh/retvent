@@ -2,6 +2,7 @@ import {
   Calendar,
   Flame,
   House,
+  Loader2,
   SlidersHorizontal,
   Telescope,
 } from "lucide-react";
@@ -54,6 +55,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [recommendedEvents, setRecommendedEvents] = useState<any[]>([]);
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
 
   /**
    * Toggle the genre filter modal visibility
@@ -175,36 +177,50 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       {/* Onboarding modal */}
       {showOnboarding && (
         <Onboarding
+          onContinueClick={() => {
+            setIsLoadingRecommendations(true);
+          }}
           onComplete={(events?: any[]) => {
-            console.log("Onboarding completed with events:", events);
             setShowOnboarding(false);
-            if (events && events.length > 0) {
-              // Convert events to RecommendedEvent format
-              // Check if events are already in RecommendedEvent format or plain events
-              const recommendedEventsData = events.map((event) => {
-                // If event already has event property, it's already in RecommendedEvent format
-                if (event.event) {
-                  return event;
-                }
-                // Otherwise, wrap it
-                return {
-                  event: event,
-                  matchPercentage: event.matchPercentage || 100,
-                };
-              });
-              console.log("Converted recommended events:", recommendedEventsData);
-              setRecommendedEvents(recommendedEventsData);
-              setShowRecommendations(true);
-            } else {
-              console.log("No events returned from onboarding");
-            }
+            
+            // Process events
+            setTimeout(() => {
+              if (events && events.length > 0) {
+                // Convert events to RecommendedEvent format
+                const recommendedEventsData = events.map((event) => {
+                  if (event.event) {
+                    return event;
+                  }
+                  return {
+                    event: event,
+                    matchPercentage: event.matchPercentage || 100,
+                  };
+                });
+                setRecommendedEvents(recommendedEventsData);
+                setIsLoadingRecommendations(false);
+                setShowRecommendations(true);
+              } else {
+                setIsLoadingRecommendations(false);
+              }
+            }, 500);
           }}
           onSkip={() => {
             setShowOnboarding(false);
             setShowRecommendations(false);
+            setIsLoadingRecommendations(false);
           }}
         />
       )}
+      
+      {/* Loading animation for recommendations */}
+      {isLoadingRecommendations && 
+        createPortal(
+          <div className="onboarding-loading-overlay">
+            <Loader2 className="onboarding-spinner-icon" size={48} />
+          </div>,
+          document.body
+        )
+      }
       
       {/* Onboarding Recommendations - rendered outside container using portal */}
       {showRecommendations && recommendedEvents.length > 0 && 
