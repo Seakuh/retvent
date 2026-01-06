@@ -137,6 +137,9 @@
   text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
+  background: rgba(128, 128, 128, 0.2);
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
 }
 
 .filter-option-btn:hover {

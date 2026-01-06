@@ -39,7 +39,7 @@ export const Trending = ({
 
   // Get available filter options (Trends + Categories from categoriesToFilter)
   const filterOptions = useMemo(() => {
-    const options = [{ value: "trends", label: "Trends", emoji: "🔥" }];
+    const options = [{ value: "trends", label: "All", emoji: "🔥" }];
     
     categoriesToFilter.forEach((category) => {
       const emoji = categoryEmojiMap[category] || "📅";
