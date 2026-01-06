@@ -41,19 +41,25 @@ export const EventSection = ({
             {filterOptions && filterOptions.length > 0 ? (
               <div className="popular-title-with-filter">
                 <div className="filter-options">
-                  {filterOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      className={`filter-option-btn ${
-                        selectedFilter === option.value ? "active" : ""
-                      }`}
-                      onClick={() => onFilterChange?.(option.value)}
-                    >
-                      {selectedFilter === option.value && option.emoji
-                        ? `${option.emoji} ${option.label}`
-                        : option.label}
-                    </button>
-                  ))}
+                  {filterOptions.map((option) => {
+                    const isActive = selectedFilter === option.value;
+                    const labelWithoutHash = option.label.replace(/^#/, "");
+                    const displayText = isActive && option.emoji
+                      ? `${option.emoji} ${labelWithoutHash}`
+                      : option.label;
+                    
+                    return (
+                      <button
+                        key={option.value}
+                        className={`filter-option-btn ${
+                          isActive ? "active" : ""
+                        }`}
+                        onClick={() => onFilterChange?.(option.value)}
+                      >
+                        {displayText}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             ) : (

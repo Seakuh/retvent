@@ -37,6 +37,15 @@ export const eventService = {
     return response.json();
   },
 
+  // Beliebte Events nach Kategorie holen
+  getPopularEventsByCategory: async (category: string, limit: number = 10) => {
+    const response = await fetch(
+      `${API_URL}events/popular/category?category=${encodeURIComponent(category)}&limit=${limit}`
+    );
+    if (!response.ok) throw new Error("Beliebte Events konnten nicht geladen werden 😢");
+    return response.json();
+  },
+
   // Einzelnes Event laden
   getEventById: async (id: string) => {
     const response = await fetch(`${API_URL}events/${id}`);
