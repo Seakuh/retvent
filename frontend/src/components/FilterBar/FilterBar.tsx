@@ -45,7 +45,7 @@ export const FilterBar = memo(({
   onViewModeChange,
 }: FilterBarProps) => {
   return (
-    <div className="py-6 px-4 top-0 z-50 bg-[color:var(--color-neon-blue-dark-2)]">
+    <div className="py-6 px-4 top-0 z-50">
       {/* Location Selection */}
       <CityBar
         onLocationSelect={onLocationChange}
