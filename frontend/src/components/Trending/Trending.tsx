@@ -99,35 +99,36 @@ export const Trending = ({
       {/* <AdBanner /> */}
       {/* <CommunityList /> */}
       {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}
-      {loading ? (
-        <div className="loading-container">
-          <div className="loading-spinner">
-            <Loader2 className="spinner-icon" size={48} />
+      <div className="event-page-section-container">
+        <EventSection
+          title="Trends"
+          events={filteredEvents}
+          filterOptions={filterOptions}
+          selectedFilter={selectedFilter}
+          onFilterChange={setSelectedFilter}
+        />
+        {loading && (
+          <div className="loading-overlay">
+            <div className="loading-spinner">
+              <Loader2 className="spinner-icon" size={48} />
+            </div>
+            <p className="loading-text">Loading events...</p>
           </div>
-          <p className="loading-text">Loading events...</p>
-        </div>
-      ) : filteredEvents.length === 0 && selectedFilter !== "trends" ? (
-        <div className="no-liked-events">
-          <Heart size={100} />
-          No events found for this category. <br></br>Try another filter :)
-        </div>
-      ) : filteredEvents.length === 0 ? (
-        <div className="no-liked-events">
-          <Heart size={100} />
-          No liked events for your search. <br></br>Explore and like some events
-          :)
-        </div>
-      ) : (
-        <div className="event-page-section-container">
-          <EventSection
-            title="Trends"
-            events={filteredEvents}
-            filterOptions={filterOptions}
-            selectedFilter={selectedFilter}
-            onFilterChange={setSelectedFilter}
-          />
-        </div>
-      )}
+        )}
+        {!loading && filteredEvents.length === 0 && selectedFilter !== "trends" && (
+          <div className="no-liked-events">
+            <Heart size={100} />
+            No events found for this category. <br></br>Try another filter :)
+          </div>
+        )}
+        {!loading && filteredEvents.length === 0 && selectedFilter === "trends" && (
+          <div className="no-liked-events">
+            <Heart size={100} />
+            No liked events for your search. <br></br>Explore and like some events
+            :)
+          </div>
+        )}
+      </div>
     </div>
   );
 };

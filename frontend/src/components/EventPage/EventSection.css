@@ -38,29 +38,43 @@
   overflow-y: hidden;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.1);
   padding-bottom: 0.5rem;
   min-width: 0;
   width: 100%;
+  /* Hide scrollbar on desktop but allow scrolling */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 .filter-options::-webkit-scrollbar {
-  height: 0.5rem;
+  display: none; /* Chrome, Safari, Opera */
 }
 
-.filter-options::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 0.25rem;
-}
+/* Show scrollbar on mobile */
+@media (max-width: 768px) {
+  .filter-options {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.1);
+  }
 
-.filter-options::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 0.25rem;
-}
+  .filter-options::-webkit-scrollbar {
+    display: block;
+    height: 0.5rem;
+  }
 
-.filter-options::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.7);
+  .filter-options::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.25rem;
+  }
+
+  .filter-options::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 0.25rem;
+  }
+
+  .filter-options::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
 }
 
 .filter-option-btn {
