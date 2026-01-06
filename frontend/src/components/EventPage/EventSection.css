@@ -39,6 +39,37 @@
   gap: 0.75rem;
 }
 
+.filter-options-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  width: 100%;
+}
+
+.scroll-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.scroll-arrow:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.scroll-arrow:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .view-toggle-container {
   display: flex;
   justify-content: flex-end;
@@ -59,6 +90,20 @@
   /* Hide scrollbar on desktop but allow scrolling */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
+  /* Enable horizontal scrolling with mouse */
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.filter-options.dragging {
+  cursor: grabbing;
+}
+
+.filter-options.dragging.has-moved .filter-option-btn {
+  pointer-events: none;
 }
 
 .filter-options::-webkit-scrollbar {
@@ -67,6 +112,10 @@
 
 /* Show scrollbar on mobile */
 @media (max-width: 768px) {
+  .scroll-arrow {
+    display: none;
+  }
+
   .filter-options {
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.1);
