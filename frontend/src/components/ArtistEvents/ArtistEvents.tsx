@@ -7,6 +7,7 @@ import { SocialSearchButtons } from "../EventDetail/components/SocialSearchButto
 import { ChevronLeft } from "lucide-react";
 import { SimilarEvents } from "../EventDetail/SimilarEvents";
 import { SimilarArtists } from "./SimilarArtists";
+import Footer from "../../Footer/Footer";
 
 export const ArtistEvents: React.FC = () => {
   const { artistName } = useParams<{ artistName: string }>();
@@ -159,16 +160,15 @@ export const ArtistEvents: React.FC = () => {
               <h2 className="artist-events-section-title">Similar Artists</h2>
               <SimilarArtists events={events} currentArtistName={artistName || ""} />
             </div>
-            {upcomingEvents.length > 0 && (
-              <div className="artist-events-section">
-                <h2 className="artist-events-section-title">Similar Events</h2>
-                <div className="artist-events-similar-events-container">
-                  <SimilarEvents eventId={upcomingEvents[0].id || upcomingEvents[0]._id || ""} />
-                </div>
+            <div className="artist-events-section">
+              <h2 className="artist-events-section-title">Similar Events</h2>
+              <div className="artist-events-similar-events-container">
+                <SimilarEvents eventId={events[0]?.id || events[0]?._id || ""} />
               </div>
-            )}
+            </div>
           </>
         )}
+        <Footer />
       </div>
     </div>
   );

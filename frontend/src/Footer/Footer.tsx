@@ -8,7 +8,11 @@ const Footer: React.FC = () => {
       <div className={styles.footerContent}>
         {/* Company Section */}
         <div className={styles.footerSection}>
-          <div className={styles.logoContainer}>
+          <div
+            className={styles.logoContainer}
+            onClick={() => window.location.assign("/")}
+            style={{ cursor: "pointer" }}
+          >
             <h3 className={styles.footerHeading}>Event Scanner</h3>
           </div>
           <p className={styles.footerDescription}>

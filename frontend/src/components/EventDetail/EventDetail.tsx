@@ -21,7 +21,7 @@ import "./EventDetail.css";
 import HelmetMeta from "./HelmMeta";
 import { SimilarEvents } from "./SimilarEvents";
 import { TicketLinkButton } from "../TicketLink/TicketLinkButton";
-import { CalendarButton } from "../TicketLink/CalendarButton";
+import Footer from "../../Footer/Footer";
 
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
@@ -307,6 +307,7 @@ export const EventDetail: React.FC = () => {
         <EventGroups event={event} />
         <CommentSection eventId={eventId || ""} />
       </div>
+      <Footer />
     </div>
   );
 };
