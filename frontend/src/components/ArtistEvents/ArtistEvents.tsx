@@ -7,9 +7,6 @@ import { SocialSearchButtons } from "../EventDetail/components/SocialSearchButto
 import { ChevronLeft } from "lucide-react";
 import { SimilarEvents } from "../EventDetail/SimilarEvents";
 import { SimilarArtists } from "./SimilarArtists";
-import { EventListItem } from "../EventGallery/Items/EventListItem";
-import { EventList } from "../EventList/EventList";
-import { TrendsListView } from "../EventPage/TrendsListView";
 
 export const ArtistEvents: React.FC = () => {
   const { artistName } = useParams<{ artistName: string }>();
@@ -75,6 +72,30 @@ export const ArtistEvents: React.FC = () => {
     window.history.back();
   };
 
+  // Split events into upcoming and past
+  const now = new Date();
+  const upcomingEvents = events
+    .filter((event) => {
+      if (!event.startDate) return false;
+      const eventDate = new Date(event.startDate);
+      return eventDate >= now;
+    })
+    .sort((a, b) => {
+      if (!a.startDate || !b.startDate) return 0;
+      return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+    });
+
+  const pastEvents = events
+    .filter((event) => {
+      if (!event.startDate) return false;
+      const eventDate = new Date(event.startDate);
+      return eventDate < now;
+    })
+    .sort((a, b) => {
+      if (!a.startDate || !b.startDate) return 0;
+      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+    });
+
   return (
     <div className="artist-events-page">
       
@@ -101,13 +122,36 @@ export const ArtistEvents: React.FC = () => {
             <p className="empty-message">No events found for this artist.</p>
           </div>
         ) : (
-          <div className="artist-events-list">
-            {events.map((event) => (
-              <div key={event.id} className="artist-event-item-wrapper">
-                <RealListItem event={event} />
+          <>
+            {upcomingEvents.length > 0 && (
+              <div className="artist-events-section">
+                <h2 className="artist-events-section-title">
+                  Upcoming Events ({upcomingEvents.length})
+                </h2>
+                <div className="artist-events-list">
+                  {upcomingEvents.map((event) => (
+                    <div key={event.id} className="artist-event-item-wrapper">
+                      <RealListItem event={event} />
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
+            )}
+            {pastEvents.length > 0 && (
+              <div className="artist-events-section">
+                <h2 className="artist-events-section-title">
+                  Past Events ({pastEvents.length})
+                </h2>
+                <div className="artist-events-list">
+                  {pastEvents.map((event) => (
+                    <div key={event.id} className="artist-event-item-wrapper">
+                      <RealListItem event={event} isPast={true} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
         {events.length > 0 && (
           <>
@@ -115,12 +159,14 @@ export const ArtistEvents: React.FC = () => {
               <h2 className="artist-events-section-title">Similar Artists</h2>
               <SimilarArtists events={events} currentArtistName={artistName || ""} />
             </div>
-            <div className="artist-events-section">
-              <h2 className="artist-events-section-title">Similar Events</h2>
-              <div className="artist-events-similar-events-container">
-                <SimilarEvents eventId={events[0].id || events[0]._id || ""} />
+            {upcomingEvents.length > 0 && (
+              <div className="artist-events-section">
+                <h2 className="artist-events-section-title">Similar Events</h2>
+                <div className="artist-events-similar-events-container">
+                  <SimilarEvents eventId={upcomingEvents[0].id || upcomingEvents[0]._id || ""} />
+                </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </div>

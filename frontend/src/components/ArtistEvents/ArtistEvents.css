@@ -235,14 +235,20 @@
 }
 
 
+.artist-events-section {
+  max-width: 1200px;
+}
+
 .artist-events-section-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #999999;
+  font-size: 2.5rem;
+  margin: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-top: 1rem;
-  text-align: center;
+  letter-spacing: -0.02em;
+  text-align: left;
+  line-height: 1.2;
+  margin-left: 1.5rem;
 }
 
 .artist-events-similar-events-container {
@@ -251,9 +257,7 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-
   .artist-events-section-title {
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
+    font-size: 1.75rem;
   }
 }
