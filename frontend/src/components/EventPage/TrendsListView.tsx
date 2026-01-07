@@ -1,4 +1,4 @@
-import { Eye, Heart } from "lucide-react";
+import { Eye, Heart, LocateIcon } from "lucide-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -91,7 +91,7 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
             <span className="trends-list-host">
               {event.host?.username || event.hostUsername}
             </span>
-          )}
+          )} <LocateIcon size={14} /> {event.city || "TBA"}
           {event.views !== undefined && (
             <span className="trends-list-views">
               <Eye size={14} />

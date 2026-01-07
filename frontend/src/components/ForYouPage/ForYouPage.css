@@ -1,0 +1,109 @@
+.foryou-page {
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.foryou-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 0;
+}
+
+.foryou-section {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.foryou-section-title {
+    font-size: 2.5rem;
+    margin: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    text-align: left;
+    line-height: 1.2;
+    margin-left: 1.5rem;
+  }
+
+.foryou-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.foryou-event-item-wrapper {
+  width: 100%;
+}
+
+.foryou-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  min-height: 200px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.foryou-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.empty-message {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  margin: 0;
+}
+
+.foryou-artists-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.foryou-artist-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.foryou-artist-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.foryou-artist-name {
+  color: #ffffff;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 500;
+}
+

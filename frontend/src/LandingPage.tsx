@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BottomBar } from "./BottomBar";
 import { FilterBar } from "./components/FilterBar/FilterBar";
 import { EventPage } from "./components/EventPage/EventPage";
+import { ForYouPage } from "./components/ForYouPage/ForYouPage";
 import { Trending } from "./components/Trending/Trending";
 import Onboarding from "./components/Onboarding/Onboarding";
 import OnboardingRecommendations from "./components/Onboarding/OnboardingRecommendations";
@@ -250,7 +251,7 @@ function LandingPage() {
     switch (viewMode) {
       case "Home":
         return (
-              <EventPage
+              <ForYouPage
                 favoriteEvents={favoriteEvents}
                 feedItemsResponse={followedProfiles}
               />
