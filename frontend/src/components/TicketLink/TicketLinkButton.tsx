@@ -28,7 +28,7 @@ export const TicketLinkButton: React.FC<TicketLinkButtonProps> = ({ event }) => 
     const startDate = new Date(event.startDate);
     const formattedDate = formatDate(startDate);
     
-    const searchQuery = `${event.title} ${formattedDate} event`;
+    const searchQuery = `${event.title} ${formattedDate} event tickets`;
     const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
     
     window.open(googleSearchUrl, "_blank");
