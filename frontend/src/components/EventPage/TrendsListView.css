@@ -115,10 +115,16 @@
 .trends-list-info {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
   flex: 1;
   min-width: 0;
   justify-content: center;
+}
+
+.trends-list-host-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .trends-list-event-title {
@@ -147,12 +153,32 @@
   white-space: nowrap;
 }
 
+.trends-list-location {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.trends-list-location svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
 .trends-list-views {
   display: flex;
   align-items: center;
   gap: 0.25rem;
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.7);
+}
+
+.trends-list-views svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 .trends-list-date {
@@ -200,10 +226,17 @@
   }
 
   .trends-list-host,
+  .trends-list-location,
   .trends-list-views,
   .trends-list-date,
   .trends-list-match {
     font-size: 0.75rem;
+  }
+
+  .trends-list-location svg,
+  .trends-list-views svg {
+    width: 12px;
+    height: 12px;
   }
 
   .trends-list-image-container {

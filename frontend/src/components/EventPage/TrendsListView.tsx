@@ -1,4 +1,4 @@
-import { Eye, Heart, LocateIcon } from "lucide-react";
+import { Eye, Heart, MapPin } from "lucide-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -86,16 +86,22 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
       {/* Titel neben Bild, Host-Name und Views darunter */}
       <div className="trends-list-info">
         <h3 className="trends-list-event-title">{event.title}</h3>
-        <div className="trends-list-meta">
-          {(event.host?.username || event.hostUsername) && (
+        {(event.host?.username || event.hostUsername) && (
+          <div className="trends-list-host-row">
             <span className="trends-list-host">
               {event.host?.username || event.hostUsername}
             </span>
-          )} <LocateIcon size={14} /> {event.city || "TBA"}
+          </div>
+        )}
+        <div className="trends-list-meta">
+          <span className="trends-list-location">
+            <MapPin size={14} />
+            <span>{event.city || "TBA"}</span>
+          </span>
           {event.views !== undefined && (
             <span className="trends-list-views">
               <Eye size={14} />
-              {event.views}
+              <span>{event.views}</span>
             </span>
           )}
           {matchPercentage !== undefined && (
