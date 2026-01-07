@@ -4,7 +4,9 @@ import { API_URL, Event } from "../../utils";
 import "./ArtistEvents.css";
 import { RealListItem } from "../EventGallery/Items/RealListItem";
 import { SocialSearchButtons } from "../EventDetail/components/SocialSearchButtons";
-import { Music } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { SimilarEvents } from "../EventDetail/SimilarEvents";
+import { SimilarArtists } from "./SimilarArtists";
 
 export const ArtistEvents: React.FC = () => {
   const { artistName } = useParams<{ artistName: string }>();
@@ -66,28 +68,31 @@ export const ArtistEvents: React.FC = () => {
     );
   }
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <div className="artist-events-page">
+      
       <div className="artist-events-header">
+      <button onClick={handleBack} className="artist-events-back-button">
+        <ChevronLeft className="h-5 w-5" />
+      </button>
         <div className="artist-events-header-content">
           <div className="artist-events-title-section">
-            <Music className="artist-icon" size={32} />
             <h1 className="artist-events-title">{artistName}</h1>
-          </div>
-          <div className="artist-events-stats">
-            <span className="stat-item">
-              <span className="stat-number">{events.length}</span>
-              <span className="stat-label">Events</span>
+            <span className="artist-events-count">
+              {events.length} {events.length === 1 ? "Event" : "Events"}
             </span>
           </div>
-        </div>
-        <div className="artist-events-social-section">
-          <p className="find-artist-text">Find {artistName} on:</p>
-          <SocialSearchButtons title={artistName || ""} />
+          <div className="artist-events-social-section">
+            <SocialSearchButtons title={artistName || ""} />
+          </div>
         </div>
       </div>
 
-      <div className="artist-events-content">
+      <div className="artist-events-content-wrapper">
         {events.length === 0 ? (
           <div className="artist-events-empty">
             <p className="empty-message">No events found for this artist.</p>
@@ -95,11 +100,25 @@ export const ArtistEvents: React.FC = () => {
         ) : (
           <div className="artist-events-list">
             {events.map((event) => (
-              <div className="artist-event-item" key={event.id}>
+              <div key={event.id} className="artist-event-item-wrapper">
                 <RealListItem event={event} />
               </div>
             ))}
           </div>
+        )}
+        {events.length > 0 && (
+          <>
+            <div className="artist-events-section">
+              <h2 className="artist-events-section-title">Similar Artists</h2>
+              <SimilarArtists events={events} currentArtistName={artistName || ""} />
+            </div>
+            <div className="artist-events-section">
+              <h2 className="artist-events-section-title">Similar Events</h2>
+              <div className="artist-events-similar-events-container">
+                <SimilarEvents eventId={events[0].id || events[0]._id || ""} />
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

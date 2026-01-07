@@ -1,0 +1,55 @@
+import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { Event } from "../../utils";
+import "./SimilarArtists.css";
+
+interface SimilarArtistsProps {
+  events: Event[];
+  currentArtistName: string;
+}
+
+export const SimilarArtists: React.FC<SimilarArtistsProps> = ({
+  events,
+  currentArtistName,
+}) => {
+  const navigate = useNavigate();
+
+  const similarArtists = useMemo(() => {
+    const artistsSet = new Set<string>();
+    
+    events.forEach((event) => {
+      event.lineup?.forEach((artist) => {
+        const artistName = artist.name.trim();
+        if (
+          artistName &&
+          artistName.toLowerCase() !== currentArtistName.toLowerCase()
+        ) {
+          artistsSet.add(artistName);
+        }
+      });
+    });
+
+    return Array.from(artistsSet).slice(0, 10); // Max 10 artists
+  }, [events, currentArtistName]);
+
+  if (similarArtists.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="similar-artists-container">
+      <div className="similar-artists-list">
+        {similarArtists.map((artistName) => (
+          <button
+            key={artistName}
+            className="similar-artist-item"
+            onClick={() => navigate(`/artist/${encodeURIComponent(artistName)}/events`)}
+          >
+            {artistName}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+

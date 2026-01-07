@@ -485,11 +485,6 @@
     100% { opacity: 1; }
   }
 
-  /* Neue Klassen hinzufügen */
-  .advertising-back-button {
-    /* ... existing styles ... */
-  }
-
   .advertising-header {
     text-align: center;
     margin-bottom: 2rem;
