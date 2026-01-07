@@ -219,22 +219,6 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
           </div>
         )}
 
-        {/* Past Favorite Events */}
-        {pastFavoriteEvents.length > 0 && (
-          <div className="foryou-section">
-                        <div className="foryou-section-header">
-
-            <h2 className="foryou-section-title">
-              Your past events
-            </h2>
-            </div>
-            <div className="foryou-events-list">
-              {pastFavoriteEvents.map((event, index) => (
-                <TrendsListView key={event.id || event._id || index} event={event} index={index} />
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Recent Artists Section */}
         {recentArtists.length > 0 && (
@@ -324,6 +308,22 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
         )}
 
 
+        {/* Past Favorite Events */}
+        {pastFavoriteEvents.length > 0 && (
+          <div className="foryou-section">
+                        <div className="foryou-section-header">
+
+            <h2 className="foryou-section-title">
+              Your past events
+            </h2>
+            </div>
+            <div className="foryou-events-list">
+              {pastFavoriteEvents.map((event, index) => (
+                <TrendsListView key={event.id || event._id || index} event={event} index={index} />
+              ))}
+            </div>
+          </div>
+        )}
 
         <Footer />
       </div>
