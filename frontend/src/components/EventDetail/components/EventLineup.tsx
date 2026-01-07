@@ -68,7 +68,7 @@ export const EventLineup: React.FC<{
             />
           ))}
         {lineup.map((artist) => (
-          <div key={artist._id} className="lineup-artist">
+          <div onClick={(e) => {e.preventDefault(); handleOnArtistClick(artist)}} key={artist._id} className="lineup-artist cursor-pointer">
             <div className="lineup-profile-sectaion">
               <div
                 className="lineup-artist-image-wrapper"
@@ -84,7 +84,7 @@ export const EventLineup: React.FC<{
                 <div className="lineup-artist-info">
                   <div className="artist-header-link-container">
                     <div className="artist-header">
-                      <a onClick={() => handleOnArtistClick(artist)}>
+                      <a onClick={(e) => {e.preventDefault(); handleOnArtistClick(artist)}}>
                         <h3 className="lineup-artist-name">{artist.name}</h3>
                         {artist.role && (
                           <span className="artist-role">{artist.role}</span>
@@ -95,7 +95,7 @@ export const EventLineup: React.FC<{
                 </div>
                 <div className="lineup-social-media-icons">
                   <button
-                    onClick={() => handleSocialMediaClick("instagram", artist.name)}
+                    onClick={(e) => {e.preventDefault(); handleSocialMediaClick("instagram", artist.name)}}
                     className="social-icon-button"
                     title={`${artist.name} auf Instagram suchen`}
                     aria-label={`${artist.name} auf Instagram suchen`}
@@ -103,7 +103,7 @@ export const EventLineup: React.FC<{
                     <Instagram className="h-5 w-5" />
                   </button>
                   <button
-                    onClick={() => handleSocialMediaClick("soundcloud", artist.name)}
+                    onClick={(e) => {e.preventDefault(); handleSocialMediaClick("soundcloud", artist.name)}}
                     className="social-icon-button"
                     title={`${artist.name} auf SoundCloud suchen`}
                     aria-label={`${artist.name} auf SoundCloud suchen`}
@@ -119,7 +119,7 @@ export const EventLineup: React.FC<{
                     <Facebook className="h-5 w-5" />
                   </button> */}
                   <button
-                    onClick={() => handleSocialMediaClick("web", artist.name)}
+                    onClick={(e) => {e.preventDefault(); handleSocialMediaClick("web", artist.name)}}
                     className="social-icon-button"
                     title={`${artist.name} im Web suchen`}
                     aria-label={`${artist.name} im Web suchen`}

@@ -50,7 +50,6 @@ export const ArtistEvents: React.FC = () => {
       <div className="artist-events-page">
         <div className="artist-events-loading">
           <div className="loading-spinner"></div>
-          <p>Loading events...</p>
         </div>
       </div>
     );
