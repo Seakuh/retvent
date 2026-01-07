@@ -36,6 +36,13 @@ export const SocialSearchButtons: React.FC<SocialSearchButtonsProps> = ({
     window.open(url, "_blank");
   };
 
+  const handleSoundcloudSearch = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const searchQuery = `site:soundcloud.com ${title}`;
+    const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <div className="social-search-buttons-container">
       <button
@@ -51,16 +58,16 @@ export const SocialSearchButtons: React.FC<SocialSearchButtonsProps> = ({
         <span className="social-search-text">GOOGLE</span>
       </button>
       <button
-        className="social-search-button facebook-button"
-        onClick={handleFacebookSearch}
-        aria-label="Suche auf Facebook"
+        className="social-search-button soundcloud-button"
+        onClick={handleSoundcloudSearch}
+        aria-label="Suche auf Soundcloud"
       >
         <img
-          src="/facebook.png"
-          alt="Facebook"
+          src="/soundcloud.png"
+          alt="Soundcloud"
           className="social-search-icon"
         />
-        <span className="social-search-text">FACEBOOK</span>
+        <span className="social-search-text">SOUNDCLOUD</span>
       </button>
       <button
         className="social-search-button instagram-button"
@@ -85,6 +92,18 @@ export const SocialSearchButtons: React.FC<SocialSearchButtonsProps> = ({
           className="social-search-icon"
         />
         <span className="social-search-text">RA</span>
+      </button>
+      <button
+        className="social-search-button facebook-button"
+        onClick={handleFacebookSearch}
+        aria-label="Suche auf Facebook"
+      >
+        <img
+          src="/facebook.png"
+          alt="Facebook"
+          className="social-search-icon"
+        />
+        <span className="social-search-text">FACEBOOK</span>
       </button>
     </div>
   );

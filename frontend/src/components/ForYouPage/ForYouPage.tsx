@@ -6,6 +6,7 @@ import { EventPage } from "../EventPage/EventPage";
 import Footer from "../../Footer/Footer";
 import "./ForYouPage.css";
 import { TrendsListView } from "../EventPage/TrendsListView";
+import { ExploreFeed } from "../Feed/ExploreFeed";
 
 const EVENT_HISTORY_KEY = "recentEvents";
 const ARTIST_HISTORY_KEY = "recentArtists";
@@ -193,6 +194,8 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
   return (
     <div className="foryou-page">
       <div className="foryou-content-wrapper">
+      <ExploreFeed feedItemsResponse={feedItemsResponse} />
+
         {/* Upcoming Favorite Events */}
         {upcomingFavoriteEvents.length > 0 && (
           <div className="foryou-section">
