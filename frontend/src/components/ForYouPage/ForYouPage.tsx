@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Download } from "lucide-react";
-import { Event, FeedResponse, API_URL } from "../../utils";
+import { Event, FeedResponse } from "../../utils";
 import { EventPage } from "../EventPage/EventPage";
 import Footer from "../../Footer/Footer";
 import "./ForYouPage.css";
 import { TrendsListView } from "../EventPage/TrendsListView";
 import { ExploreFeed } from "../Feed/ExploreFeed";
+import Onboarding from "../Onboarding/Onboarding";
+import { OnboardingWrapper } from "../Onboarding";
+import { loadRecommendedEvents, loadHistoryEvents, RecommendedEvent } from "./service";
 
-const EVENT_HISTORY_KEY = "recentEvents";
 const ARTIST_HISTORY_KEY = "recentArtists";
 
 interface ForYouPageProps {
@@ -24,52 +26,32 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
   const [historyEvents, setHistoryEvents] = useState<Event[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [recentArtists, setRecentArtists] = useState<string[]>([]);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [recommendedEvents, setRecommendedEvents] = useState<RecommendedEvent[]>([]);
+  const [loadingRecommended, setLoadingRecommended] = useState(true);
 
   useEffect(() => {
-    const loadHistoryEvents = async () => {
+    const fetchData = async () => {
       try {
         setLoadingHistory(true);
-        const historyIds = localStorage.getItem(EVENT_HISTORY_KEY);
-        if (!historyIds) {
-          setHistoryEvents([]);
-          setLoadingHistory(false);
-          return;
-        }
+        setLoadingRecommended(true);
 
-        const eventIds: string[] = JSON.parse(historyIds);
-        if (eventIds.length === 0) {
-          setHistoryEvents([]);
-          setLoadingHistory(false);
-          return;
-        }
+        // Load history events
+        const history = await loadHistoryEvents();
+        setHistoryEvents(history);
 
-        // Fetch events by IDs
-        const eventsPromises = eventIds.map(async (id) => {
-          try {
-            const response = await fetch(`${API_URL}events/v2/byId?id=${id}`);
-            if (!response.ok) return null;
-            return await response.json();
-          } catch (error) {
-            console.error(`Failed to fetch event ${id}:`, error);
-            return null;
-          }
-        });
-
-        const events = await Promise.all(eventsPromises);
-        const validEvents = events.filter(
-          (event): event is Event => event !== null
-        );
-
-        setHistoryEvents(validEvents);
+        // Load recommended events (only if onboarding completed)
+        const recommended = await loadRecommendedEvents();
+        setRecommendedEvents(recommended);
       } catch (error) {
-        console.error("Failed to load history events:", error);
-        setHistoryEvents([]);
+        console.error("Failed to load data:", error);
       } finally {
         setLoadingHistory(false);
+        setLoadingRecommended(false);
       }
     };
 
-    loadHistoryEvents();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -191,10 +173,39 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
       return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
     });
 
+  // Use recommended events if available, otherwise use favoriteEvents
+  const eventsToDisplay = recommendedEvents.length > 0 
+    ? recommendedEvents.map(re => re.event)
+    : favoriteEvents;
+
+  // Check if recommended events section has no events
+  const hasNoRecommendedEvents = eventsToDisplay.length === 0 && !loadingRecommended;
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    // Reload the page or refresh data
+    window.location.reload();
+  };
+
+  const handleOnboardingSkip = () => {
+    setShowOnboarding(false);
+  };
+
+  // Show Onboarding if button was clicked
+  if (showOnboarding) {
+    return (
+      <OnboardingWrapper
+        children={<Onboarding onComplete={handleOnboardingComplete} onSkip={handleOnboardingSkip} />}
+      />
+    );
+  }
+
   return (
     <div className="foryou-page">
       <div className="foryou-content-wrapper">
-      <ExploreFeed feedItemsResponse={feedItemsResponse} />
+        {feedItemsResponse && feedItemsResponse.length > 0 && (
+          <ExploreFeed feedItemsResponse={feedItemsResponse} />
+        )}
 
         {/* Upcoming Favorite Events */}
         {upcomingFavoriteEvents.length > 0 && (
@@ -285,16 +296,32 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
           </div>
         )}
         <div className="foryou-section">    
-                        <div className="foryou-section-header">
-
-          <h2 className="foryou-section-title">
-            Recommended Events
-          </h2>
+          <div className="foryou-section-header">
+            <h2 className="foryou-section-title">
+              Recommended Events
+            </h2>
           </div>
-           <EventPage
-          favoriteEvents={favoriteEvents}
-          feedItemsResponse={feedItemsResponse}
-        />
+          {hasNoRecommendedEvents ? (
+            <div className="foryou-empty-state">
+              <div className="foryou-empty-content">
+                <h2 className="foryou-empty-title">No events yet</h2>
+                <p className="foryou-empty-description">
+                  Discover personalized events tailored to your taste
+                </p>
+                <button
+                  className="foryou-vibe-check-button"
+                  onClick={() => setShowOnboarding(true)}
+                >
+                  Vibe Check
+                </button>
+              </div>
+            </div>
+          ) : (
+            <EventPage
+              favoriteEvents={eventsToDisplay}
+              feedItemsResponse={feedItemsResponse}
+            />
+          )}
         </div>
 
         {!loadingHistory && historyEvents.length === 0 && (

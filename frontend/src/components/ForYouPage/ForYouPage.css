@@ -138,6 +138,63 @@
   font-weight: 500;
 }
 
+.foryou-empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 3rem 1.5rem;
+}
+
+.foryou-empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  text-align: center;
+  max-width: 600px;
+}
+
+.foryou-empty-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.foryou-empty-description {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.foryou-vibe-check-button {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #000000;
+  background: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 1.5rem 4rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 250px;
+}
+
+.foryou-vibe-check-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+}
+
+.foryou-vibe-check-button:active {
+  transform: scale(0.98);
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .foryou-section-header {
@@ -157,6 +214,20 @@
   .foryou-calendar-icon {
     width: 18px;
     height: 18px;
+  }
+
+  .foryou-empty-state {
+    min-height: 50vh;
+    padding: 2rem 1rem;
+  }
+
+  .foryou-empty-content {
+    gap: 1.5rem;
+  }
+
+  .foryou-vibe-check-button {
+    padding: 1.25rem 3rem;
+    min-width: 200px;
   }
 }
 
