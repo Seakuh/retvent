@@ -9,6 +9,30 @@ import { SimilarEvents } from "../EventDetail/SimilarEvents";
 import { SimilarArtists } from "./SimilarArtists";
 import Footer from "../../Footer/Footer";
 
+const ARTIST_HISTORY_KEY = "recentArtists";
+const MAX_HISTORY_SIZE = 20;
+
+const saveArtistToHistory = (artistName: string) => {
+  try {
+    const existingHistory = localStorage.getItem(ARTIST_HISTORY_KEY);
+    let history: string[] = existingHistory ? JSON.parse(existingHistory) : [];
+
+    // Entferne den Artist, falls er bereits existiert
+    history = history.filter((name) => name !== artistName);
+
+    // Füge den Artist am Anfang hinzu
+    history.unshift(artistName);
+
+    // Begrenze die Liste auf MAX_HISTORY_SIZE
+    history = history.slice(0, MAX_HISTORY_SIZE);
+
+    // Speichere die aktualisierte Liste
+    localStorage.setItem(ARTIST_HISTORY_KEY, JSON.stringify(history));
+  } catch (error) {
+    console.error("Failed to save artist to history:", error);
+  }
+};
+
 export const ArtistEvents: React.FC = () => {
   const { artistName } = useParams<{ artistName: string }>();
   const [events, setEvents] = useState<Event[]>([]);
@@ -17,6 +41,7 @@ export const ArtistEvents: React.FC = () => {
 
   useEffect(() => {
     if (artistName) {
+      saveArtistToHistory(artistName);
       fetchEventsByArtist();
     }
   }, [artistName]);
