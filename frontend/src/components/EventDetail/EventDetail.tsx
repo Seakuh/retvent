@@ -23,6 +23,30 @@ import { SimilarEvents } from "./SimilarEvents";
 import { TicketLinkButton } from "../TicketLink/TicketLinkButton";
 import Footer from "../../Footer/Footer";
 
+const EVENT_HISTORY_KEY = "recentEvents";
+const MAX_HISTORY_SIZE = 20;
+
+const saveEventToHistory = (eventId: string) => {
+  try {
+    const existingHistory = localStorage.getItem(EVENT_HISTORY_KEY);
+    let history: string[] = existingHistory ? JSON.parse(existingHistory) : [];
+
+    // Entferne die Event-ID, falls sie bereits existiert
+    history = history.filter((id) => id !== eventId);
+
+    // Füge die Event-ID am Anfang hinzu
+    history.unshift(eventId);
+
+    // Begrenze die Liste auf MAX_HISTORY_SIZE
+    history = history.slice(0, MAX_HISTORY_SIZE);
+
+    // Speichere die aktualisierte Liste
+    localStorage.setItem(EVENT_HISTORY_KEY, JSON.stringify(history));
+  } catch (error) {
+    console.error("Failed to save event to history:", error);
+  }
+};
+
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
   const { user } = useContext(UserContext);
@@ -37,15 +61,18 @@ export const EventDetail: React.FC = () => {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (event) {
+    if (event && eventId) {
       document.title = `${event.title} | EventScanner`;
       if (event?.hostId === user?.id) {
         console.log("event", event?.hostId, user?.id);
 
         setIsOwner(true);
       }
+
+      // Speichere die Event-ID im Local Storage
+      saveEventToHistory(eventId);
     }
-  }, [event]);
+  }, [event, eventId]);
 
   const handleAddToCalendar = () => {
     if (!event?.startDate) return;
