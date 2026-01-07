@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_URL, Event } from "../../utils";
 import "./ArtistEvents.css";
+import { EventListView } from "../Admin/EventListView";
+import { RealListItem } from "../EventGallery/Items/RealListItem";
 
 export const ArtistEvents: React.FC = () => {
   const { artistName } = useParams<{ artistName: string }>();
@@ -45,22 +47,8 @@ export const ArtistEvents: React.FC = () => {
     navigate(`/event/${eventId}`);
   };
 
-  const formatDate = (dateString?: string | Date) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("de-DE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   if (loading) {
-    return (
-      <div className="artist-event-container">
-        <div className="artist-event-loading">Events werden geladen...</div>
-      </div>
-    );
+    return <div className="artist-event-loading">Events werden geladen...</div>;
   }
 
   if (error) {
@@ -78,43 +66,13 @@ export const ArtistEvents: React.FC = () => {
       {events.length === 0 ? (
         <p className="artist-event-no-events">Keine Events gefunden.</p>
       ) : (
-        <ul className="artist-event-list">
+        <div className="artist-event-list">
           {events.map((event) => (
-            <li
-              key={event.id || event._id}
-              className="artist-event-item"
-              onClick={() => handleEventClick(event.id || event._id || "")}
-            >
-              <div className="artist-event-info">
-                {event.imageUrl && (
-                  <img
-                    src={event.imageUrl}
-                    alt={event.title}
-                    className="artist-event-image"
-                  />
-                )}
-                <div className="artist-event-details">
-                  <h3>{event.title}</h3>
-                  {event.description && (
-                    <p className="artist-event-description">
-                      {event.description.length > 150
-                        ? `${event.description.substring(0, 150)}...`
-                        : event.description}
-                    </p>
-                  )}
-                  <div className="artist-event-meta">
-                    {event.startDate && (
-                      <span>📅 {formatDate(event.startDate)}</span>
-                    )}
-                    {event.startTime && <span>⏰ {event.startTime}</span>}
-                    {event.city && <span>📍 {event.city}</span>}
-                    {event.category && <span>🎭 {event.category}</span>}
-                  </div>
-                </div>
-              </div>
-            </li>
+            <div className="artist-event-item" key={event.id}>
+                <RealListItem event={event} />
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
