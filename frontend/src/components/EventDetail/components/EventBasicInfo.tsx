@@ -21,8 +21,6 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
   startTime,
   city,
   address,
-  description,
-  category,
   handleAddToCalendar,
 }) => {
   return (
@@ -96,9 +94,6 @@ export const EventBasicInfo: React.FC<EventBasicInfoProps> = ({
           </div>
         </div>
       </button>
-      {/* <hr className="border-gray-700" /> */}
-      {/* <div className="event-basic-info-description"> */}
-      {/* <div className="event-description-text">{description}</div> */}
     </div>
   );
 };

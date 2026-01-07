@@ -5,6 +5,7 @@ import { Artist } from "../utils";
 import "./ArtistPage.css";
 import { PlayMusicCard } from "./PlayMusicCard";
 import { getArtist } from "./service";
+import { SocialSearchButtons } from "../components/EventDetail/components/SocialSearchButtons";
 export const ArtistPage = () => {
   const { artistName } = useParams();
   const [artist, setArtist] = useState<Artist | null>(null);
@@ -54,10 +55,13 @@ export const ArtistPage = () => {
 
   return (
     <div className="artist-page-container">
+      <div className="artist-page-header">
+        <h1 className="artist-page-title">{artist?.username}</h1>
+        <SocialSearchButtons title={artist?.username || ""} />
+      </div>
       <div className="artist-page-image-container">
         <img src={artist?.profileImageUrl} alt={artist?.username} />
       </div>
-      <h1>{artist?.username}</h1>
       <div className="artist-page-description-container">
         <p>{artist?.bio}</p>
       </div>

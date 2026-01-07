@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { API_URL, Event } from "../../utils";
 import "./ArtistEvents.css";
-import { EventListView } from "../Admin/EventListView";
 import { RealListItem } from "../EventGallery/Items/RealListItem";
 
 export const ArtistEvents: React.FC = () => {
@@ -10,7 +9,6 @@ export const ArtistEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (artistName) {
@@ -41,10 +39,6 @@ export const ArtistEvents: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleEventClick = (eventId: string) => {
-    navigate(`/event/${eventId}`);
   };
 
   if (loading) {

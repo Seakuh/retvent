@@ -37,11 +37,6 @@
   position: relative;
 }
 
-.artist-event-item:hover {
-  background: #f0f0f0;
-  border-color: #999;
-}
-
 .artist-event-item h3 {
   margin: 0 0 0.5rem;
 }
