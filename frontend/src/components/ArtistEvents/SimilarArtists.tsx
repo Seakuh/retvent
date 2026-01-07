@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Event } from "../../utils";
-import "./SimilarArtists.css";
+import { EventLineup } from "../EventDetail/components/EventLineup";
 
 interface SimilarArtistsProps {
   events: Event[];
@@ -37,18 +37,8 @@ export const SimilarArtists: React.FC<SimilarArtistsProps> = ({
   }
 
   return (
-    <div className="similar-artists-container">
-      <div className="similar-artists-list">
-        {similarArtists.map((artistName) => (
-          <button
-            key={artistName}
-            className="similar-artist-item"
-            onClick={() => navigate(`/artist/${encodeURIComponent(artistName)}/events`)}
-          >
-            {artistName}
-          </button>
-        ))}
-      </div>
+    <div>
+      <EventLineup lineup={similarArtists.map((artistName) => ({ name: artistName, _id: artistName }))} lineupPictureUrls={[]} />
     </div>
   );
 };

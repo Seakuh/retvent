@@ -7,6 +7,9 @@ import { SocialSearchButtons } from "../EventDetail/components/SocialSearchButto
 import { ChevronLeft } from "lucide-react";
 import { SimilarEvents } from "../EventDetail/SimilarEvents";
 import { SimilarArtists } from "./SimilarArtists";
+import { EventListItem } from "../EventGallery/Items/EventListItem";
+import { EventList } from "../EventList/EventList";
+import { TrendsListView } from "../EventPage/TrendsListView";
 
 export const ArtistEvents: React.FC = () => {
   const { artistName } = useParams<{ artistName: string }>();
