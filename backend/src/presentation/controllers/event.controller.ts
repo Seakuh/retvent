@@ -430,6 +430,11 @@ export class EventController {
     return this.eventService.getEventsByTag(tag);
   }
 
+  @Get('by-artist/:name')
+  async getEventsByArtist(@Param('name') name: string) {
+    return this.eventService.getEventsByArtistName(name);
+  }
+
   @Post('update/lineup/profile')
   @UseGuards(JwtAuthGuard)
   async updateLineupProfile(
