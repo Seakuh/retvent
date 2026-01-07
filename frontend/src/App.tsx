@@ -35,6 +35,7 @@ import { EventEmbedPage } from "./pages/EventEmbedPage";
 import { syncFavorites } from "./service";
 import "./utils/onboarding-helpers"; // Load onboarding debug helpers
 import { useVectorProfileResults } from "./hooks/useVectorProfileResults";
+import { ArtistEvents } from "./components/ArtistEvents/ArtistEvents";
 // const queryClient = new QueryClient({
 //   defaultOptions: {
 //     queries: {
@@ -119,6 +120,7 @@ const App: React.FC = () => {
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/profile/:artistName" element={<Profile />} />
+                  <Route path="/artist/:artistName/events" element={<ArtistEvents />} />
                   <Route path="/install-app" element={<PwaInstall />} />
                   <Route path="/search" element={<SearchPage />} />
                   <Route path="/ticket/:ticketId" element={<TicketPage />} />

@@ -1,0 +1,122 @@
+.artist-event-container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.artist-event-container h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.75rem;
+  color: var(--text-color, #333);
+}
+
+.artist-event-loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: var(--text-color, #666);
+}
+
+.artist-event-error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #d32f2f;
+  font-size: 1.1rem;
+}
+
+.artist-event-no-events {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: var(--text-color, #666);
+}
+
+.artist-event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.artist-event-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--background-color, #fff);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.artist-event-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary-color, #007bff);
+}
+
+.artist-event-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.artist-event-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.artist-event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.artist-event-details h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-color, #333);
+  font-weight: 600;
+}
+
+.artist-event-description {
+  margin: 0;
+  color: var(--text-color-secondary, #666);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.artist-event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-color-secondary, #666);
+}
+
+.artist-event-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .artist-event-list {
+    grid-template-columns: 1fr;
+  }
+
+  .artist-event-container {
+    padding: 0.5rem;
+  }
+
+  .artist-event-container h2 {
+    font-size: 1.5rem;
+  }
+}
+

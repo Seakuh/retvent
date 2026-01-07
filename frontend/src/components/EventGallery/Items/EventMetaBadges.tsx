@@ -1,4 +1,4 @@
-import { CalendarIcon, MapPin } from "lucide-react";
+import { CalendarIcon, CalendarPlus, MapPin } from "lucide-react";
 import { formatDate, getDaysUntilDate } from "../../../utils";
 import "./EventMetaBadges.css";
 
@@ -44,7 +44,7 @@ export const EventMetaBadges: React.FC<EventMetaBadgesProps> = ({
       </span>
       {startDate && (
         <span className="event-meta-badge event-meta-badge-date">
-          <CalendarIcon size={16} color="white" />
+          <CalendarPlus size={16} color="white" />
           {formatDateDisplay(startDate)}
         </span>
       )}

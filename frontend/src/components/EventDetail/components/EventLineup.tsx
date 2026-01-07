@@ -21,7 +21,7 @@ export const EventLineup: React.FC<{
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
 
   const handleOnArtistClick = (artist: LineupArtist) => {
-    navigate(`/profile/${artist.name}`);
+    navigate(`/artist/${encodeURIComponent(artist.name)}/events`);
   };
   const handleOnLineupClick = (lineupPictureUrl: string) => {
     setSelectedImageUrl(lineupPictureUrl);

@@ -210,7 +210,6 @@ export const EventDetail: React.FC = () => {
               handleAddToCalendar={handleAddToCalendar}
               />
             <TicketLinkButton event={event} />
-            {event.startDate && <CalendarButton event={event} />}
             <EventDescription
               title={event.title}
               description={event.description}
@@ -266,6 +265,8 @@ export const EventDetail: React.FC = () => {
           )}
            */}
           {host && <EventHost host={host} userId={event.hostId || ""} />}
+          {/* {event.startDate && <CalendarButton event={event} />} */}
+
         </div>
         {isOwner && <HostView eventId={eventId || ""} />}
 
