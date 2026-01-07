@@ -13,26 +13,13 @@
      ============================================================= */
   .event-detail {
     color: white;
-    background: var(--color-background);
+    background: #000000;
     display: flex;
     flex-direction: column;
   }
   
   .event-detail::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: var(--event-background-image);
-    background-size: cover;
-    background-position: center;
-    filter: blur(1.4rem);
-    opacity: 0.7;
-    z-index: -1;
-    animation: moveBackground 300s linear infinite;
-
+    display: none;
   }
   @keyframes moveBackground {
     0% {

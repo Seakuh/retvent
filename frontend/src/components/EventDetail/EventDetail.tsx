@@ -21,6 +21,7 @@ import "./EventDetail.css";
 import HelmetMeta from "./HelmMeta";
 import { SimilarEvents } from "./SimilarEvents";
 import { TicketLinkButton } from "../TicketLink/TicketLinkButton";
+import { CalendarButton } from "../TicketLink/CalendarButton";
 
 export const EventDetail: React.FC = () => {
   const { eventId } = useParams();
@@ -168,20 +169,20 @@ export const EventDetail: React.FC = () => {
               }`}
             />
           </button>
-        </div> */}
+          </div> */}
 
         <EventHero
           imageUrl={event.imageUrl}
           title={event.title}
           onImageClick={() => setShowImageModal(true)}
-        />
+          />
         <MetaBar {...event} />
         {/* <SponsoredDetail /> */}
         {/* <CommunitySection
           views={event.views ?? 0}
           commentCount={event.commentCount ?? 0}
           city={event.city ?? ""}
-        /> */}
+          /> */}
         <button className="back-button" onClick={handleBack}>
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -195,7 +196,7 @@ export const EventDetail: React.FC = () => {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-              >
+                >
                 <h1 className="event-title-detail">{event.title}</h1>
               </a>
             </div>
@@ -207,14 +208,15 @@ export const EventDetail: React.FC = () => {
               category={event.category}
               address={event.address}
               handleAddToCalendar={handleAddToCalendar}
-            />
-            {event.ticketLink && <TicketLinkButton href={event.ticketLink || ""} />}
+              />
+            <TicketLinkButton event={event} />
+            {event.startDate && <CalendarButton event={event} />}
             <EventDescription
               title={event.title}
               description={event.description}
               price={event.price}
               ticketLink={event.ticketLink}
-            />
+              />
           </div>
 
           {((event.lineup && event.lineup.length > 0) ||

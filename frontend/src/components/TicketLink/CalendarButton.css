@@ -1,0 +1,118 @@
+.calendar-button-container {
+  margin-top: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 2.2rem;
+  border-radius: 2.25rem;
+  border: 1.5px solid rgba(255, 66, 66, 0.35);
+  background: linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 0.92) 53%,
+    rgba(255, 66, 66, 0.07) 100%
+  ), 
+  radial-gradient(circle at 80% 70%, rgba(255, 66, 66, 0.26) 0%, transparent 67%);
+  box-shadow: 0 6px 30px rgba(255, 66, 66, 0.10), 0 1.5px 3.5px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(14px) brightness(1.08);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  transition: 
+    background 0.5s cubic-bezier(.21,1.02,.73,1), 
+    box-shadow 0.3s ease, 
+    border-color 0.2s;
+}
+.calendar-button-container::before {
+  content: "";
+  position: absolute;
+  left: -80%;
+  top: 0;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(112deg, rgba(255, 66, 66, 0.08) 0%, rgba(255,255,255,0.01) 100%);
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 1;
+}
+.calendar-button-container:hover::before {
+  opacity: 0.4;
+  animation: shimmer-slide-red 1.2s linear;
+}
+@keyframes shimmer-slide-red {
+  0% {
+    left: -80%;
+    opacity: 0;
+  }
+  30% {
+    left: 15%;
+    opacity: 1;
+  }
+  100% {
+    left: 120%;
+    opacity: 0;
+  }
+}
+
+.calendar-button-container:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 66, 66, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 66, 66, 0.2);
+}
+
+.calendar-button-container:active {
+  transform: translateY(0);
+}
+
+.calendar-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  color: rgb(255, 66, 66);
+}
+
+.calendar-button-container:hover .calendar-button-icon {
+  transform: scale(1.1);
+}
+
+.calendar-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.calendar-button-text {
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+.calendar-button-container:hover .calendar-button-text {
+  color: rgb(255, 66, 66);
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .calendar-button-container {
+    padding: 0.875rem 1.25rem;
+    gap: 0.625rem;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .calendar-button-text {
+    font-size: 0.95rem;
+  }
+
+  .calendar-emoji {
+    font-size: 1.125rem;
+  }
+}
+
