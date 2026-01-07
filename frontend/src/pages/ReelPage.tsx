@@ -273,17 +273,14 @@ const ReelPage: React.FC = () => {
             {event.lineup.map((artist, index) => (
               <div key={index} className="artist-item">
                 <div className="artist-info-container">
-                  <span className="artist-name">{artist.name}</span>
-                  <a
-                    href={`https://www.google.com/search?q=${encodeURIComponent(
-                      artist.name + " " + artist.role || " DJ"
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="linup-search-link"
+                  <span 
+                    className="artist-name"
+                    onClick={() => navigate(`/artist/${encodeURIComponent(artist.name)}/events`)}
+                    style={{ cursor: "pointer" }}
                   >
+                    {artist.name}
                     <ExternalLink className="h-5 w-5" />
-                  </a>
+                  </span>
                 </div>
                 {artist.startTime && (
                   <span className="artist-time">{artist.startTime}</span>

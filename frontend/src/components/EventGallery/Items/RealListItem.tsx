@@ -114,19 +114,28 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
           <h2 className="lineup-title">{event.title}</h2>
           <div className="artists-list">
             {event.lineup.map((artist, index) => (
-              <div key={index} className="artist-item">
+              <div 
+                key={index} 
+                className="artist-item"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/artist/${encodeURIComponent(artist.name)}/events`);
+                }}
+                style={{ cursor: "pointer" }}
+              >
                 <div className="artist-info-container">
                   <span className="artist-name">{artist.name}</span>
-                  <a
+                  {/* <a
                     href={`https://www.google.com/search?q=${encodeURIComponent(
                       artist.name + " " + artist.role || " DJ"
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="linup-search-link"
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <ExternalLink className="h-5 w-5" />
-                  </a>
+                  </a> */}
                 </div>
                 {artist.startTime && (
                   <span className="artist-time">{artist.startTime}</span>
