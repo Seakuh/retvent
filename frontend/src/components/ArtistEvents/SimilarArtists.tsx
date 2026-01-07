@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { Event } from "../../utils";
 import { EventLineup } from "../EventDetail/components/EventLineup";
 
@@ -12,7 +11,6 @@ export const SimilarArtists: React.FC<SimilarArtistsProps> = ({
   events,
   currentArtistName,
 }) => {
-  const navigate = useNavigate();
 
   const similarArtists = useMemo(() => {
     const artistsSet = new Set<string>();
