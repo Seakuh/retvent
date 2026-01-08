@@ -242,7 +242,17 @@ const ReelPage: React.FC = () => {
   };
 
   if (!events.length && isLoading) {
-    return <div className="reel-container">Lade Events...</div>;
+    return (
+      <div className="reel-container">
+        <button
+          onClick={() => navigate(-1)}
+          className="back-button"
+        >
+          <ChevronLeft className="h-5 w-5" />{" "}
+        </button>
+        Lade Events...
+      </div>
+    );
   }
 
   if (!events.length) {
