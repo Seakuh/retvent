@@ -375,6 +375,9 @@ const ReelPage: React.FC = () => {
 
           {/* Action Buttons rechts */}
           <div className="reel-actions">
+          <button onClick={handleBack} className="back-button">
+          <ChevronLeft className="h-5 w-5" />{" "}
+        </button>
             <button
               className={`action-btn like-btn ${
                 isFavorite(event._id!) ? "liked" : ""

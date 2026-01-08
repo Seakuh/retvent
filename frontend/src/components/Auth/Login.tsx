@@ -4,6 +4,7 @@ import { User, UserContext } from "../../contexts/UserContext";
 import { syncFavorites } from "../../service";
 import { AuthService } from "../../services/auth.service";
 import "./Auth.css";
+import { ChevronLeft } from "lucide-react";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -63,6 +64,9 @@ const Login: React.FC = () => {
 
   return (
     <div className="auth-container">
+            <button onClick={() => navigate("/")} className="back-button">
+          <ChevronLeft className="h-5 w-5" />{" "}
+        </button>
       <div className="auth-box">
         <h2>Login 🔑</h2>
         {error && <div className="error-message">{error}</div>}
