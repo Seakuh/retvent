@@ -14,9 +14,11 @@ export const EventEmbedGrid: React.FC = () => {
   // Host Id filter
   const hostId = searchParams.get("hostId");
 
-  // Background color filter
-  const backgroundParam = searchParams.get("background") || "0D0E23";
-  const background = backgroundParam.startsWith("#") ? backgroundParam : `#${backgroundParam}`;
+  // Background color filter - default transparent
+  const backgroundParam = searchParams.get("background");
+  const background = backgroundParam 
+    ? (backgroundParam.startsWith("#") ? backgroundParam : `#${backgroundParam}`)
+    : "transparent";
   
   // Secondary color for cards
   const secondaryColorParam = searchParams.get("secondaryColor") || "000000";
@@ -26,13 +28,17 @@ export const EventEmbedGrid: React.FC = () => {
   const limit = parseInt(searchParams.get("limit") || "999");
 
   useEffect(() => {
-    // Set background color
+    // Set background color (transparent if not specified)
     document.body.style.setProperty("background", background, "important");
     document.body.style.setProperty("background-color", background, "important");
-    document.body.style.setProperty("background-image", "none", "important");
+    if (background !== "transparent") {
+      document.body.style.setProperty("background-image", "none", "important");
+    }
     document.documentElement.style.setProperty("background", background, "important");
     document.documentElement.style.setProperty("background-color", background, "important");
-    document.documentElement.style.setProperty("background-image", "none", "important");
+    if (background !== "transparent") {
+      document.documentElement.style.setProperty("background-image", "none", "important");
+    }
 
     const root = document.getElementById("root");
     if (root) {
