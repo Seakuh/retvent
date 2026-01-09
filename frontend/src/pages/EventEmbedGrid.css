@@ -27,18 +27,13 @@
   flex-direction: column;
 }
 
-/* Ensure RealListItem fits properly */
-.event-embed-grid-item .real-list-item-container {
+/* Ensure EmbedGridCard fits properly */
+.event-embed-grid-item .embed-grid-card {
   width: 100%;
   max-width: 100%;
-  height: auto;
-  margin: 0;
-}
-
-.event-embed-grid-item .real-event-list-item {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Loading State */
@@ -77,28 +72,28 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Responsive Design - Always 3 columns on all screen sizes */
-/* Mobile - 3 columns with smaller gap */
+/* Responsive Design */
+/* Mobile - 1 column for better mobile experience */
 @media (max-width: 640px) {
   .event-embed-grid-container {
     padding: 1rem;
   }
 
   .event-embed-grid-wrapper {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 
-/* Tablet - 3 columns */
+/* Tablet - 2 columns */
 @media (min-width: 641px) and (max-width: 1024px) {
   .event-embed-grid-container {
     padding: 1.5rem;
   }
 
   .event-embed-grid-wrapper {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 }
 

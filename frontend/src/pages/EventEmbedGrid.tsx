@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Event } from "../utils";
 import "./EventEmbedGrid.css";
-import { RealListItem } from "../components/EventGallery/Items/RealListItem";
+import { EmbedGridCard } from "../components/EmbedGridCard/EmbedGridCard";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -17,6 +17,10 @@ export const EventEmbedGrid: React.FC = () => {
   // Background color filter
   const backgroundParam = searchParams.get("background") || "0D0E23";
   const background = backgroundParam.startsWith("#") ? backgroundParam : `#${backgroundParam}`;
+  
+  // Secondary color for cards
+  const secondaryColorParam = searchParams.get("secondaryColor") || "000000";
+  const secondaryColor = secondaryColorParam.startsWith("#") ? secondaryColorParam : `#${secondaryColorParam}`;
 
   // Parse query parameters
   const limit = parseInt(searchParams.get("limit") || "999");
@@ -103,7 +107,7 @@ export const EventEmbedGrid: React.FC = () => {
         <div className="event-embed-grid-wrapper">
           {events.map((event) => (
             <div key={event.id || event._id} className="event-embed-grid-item">
-              <RealListItem event={event} />
+              <EmbedGridCard event={event} secondaryColor={secondaryColor} />
             </div>
           ))}
         </div>
