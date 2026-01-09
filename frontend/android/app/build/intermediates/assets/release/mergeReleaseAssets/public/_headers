@@ -1,0 +1,9 @@
+# Headers for iframe embedding
+/events/embed
+  Content-Security-Policy: frame-ancestors *
+  X-Frame-Options: ALLOWALL
+
+# Protect all other routes from being embedded
+/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Frame-Options: SAMEORIGIN

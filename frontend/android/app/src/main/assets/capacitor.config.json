@@ -1,0 +1,5 @@
+{
+	"appId": "com.event.app",
+	"appName": "event scanner",
+	"webDir": "dist"
+}

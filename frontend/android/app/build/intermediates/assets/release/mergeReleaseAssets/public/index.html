@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+
+    <title>
+      EventScanner - Discover, Scan and Share Events in Your Location
+    </title>
+    <meta
+      name="description"
+      content="Event-Scanner is a platform to discover, share, and participate in events. Organize events, form groups, and connect with the community."
+    />
+    <meta
+      name="keywords"
+      content="events, event scanner, local events, event management, event sharing, group events, artists, community"
+    />
+    <meta name="author" content="EventScanner Team" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <!-- Favicon & Icons -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="favicons/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="64x64"
+      href="/favicons/favicon-64x64.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/favicons/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="128x128"
+      href="/favicons/favicon-128x128.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/favicons/favicon-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="512x512"
+      href="/favicons/favicon-512x512.png"
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="EventScanner" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta
+      property="og:title"
+      content="EventScanner - Discover & Share Events"
+    />
+    <meta
+      property="og:description"
+      content="Find and share events in your area. Join the EventScanner community and explore upcoming events together."
+    />
+    <meta
+      property="og:image"
+      content="https://event-scanner.com/og-image.png"
+    />
+    <meta property="og:url" content="https://event-scanner.com" />
+    <meta property="og:type" content="website" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "EventScanner",
+        "url": "https://event-scanner.com",
+        "applicationCategory": "EventManagement",
+        "description": "Find and discover events in your area. Connect with others, follow artists, and never miss out on your favorite events.",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "EventScanner Team"
+        }
+      }
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .then((registration) => {
+              console.log(
+                "Service Worker registered successfully:",
+                registration.scope
+              );
+            })
+            .catch((error) => {
+              console.error("Service Worker registration failed:", error);
+            });
+        });
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Cm7cDu_g.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BK6S5G8B.css">
+  </head>
+  <body>
+    <noscript>This website requires JavaScript to function properly.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
