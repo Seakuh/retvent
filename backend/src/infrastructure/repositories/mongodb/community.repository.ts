@@ -80,4 +80,42 @@ export class MongoCommunityRepository implements ICommunityRepository {
       { new: true },
     );
   }
+
+  /**
+   * Pinnt ein Event an die Community-Posts (nur für Admins)
+   * @param communityId - ID der Community
+   * @param eventId - ID des Events, das gepinnt werden soll
+   * @returns Aktualisierte Community oder null wenn nicht gefunden
+   */
+  async pinEventToCommunity(communityId: string, eventId: string) {
+    return this.communityModel.findByIdAndUpdate(
+      communityId,
+      { $addToSet: { pinnedEventIds: eventId } },
+      { new: true },
+    );
+  }
+
+  /**
+   * Entfernt ein Event aus den gepinnten Events einer Community
+   * @param communityId - ID der Community
+   * @param eventId - ID des Events, das entpinnt werden soll
+   * @returns Aktualisierte Community oder null wenn nicht gefunden
+   */
+  async unpinEventFromCommunity(communityId: string, eventId: string) {
+    return this.communityModel.findByIdAndUpdate(
+      communityId,
+      { $pull: { pinnedEventIds: eventId } },
+      { new: true },
+    );
+  }
+
+  /**
+   * Gibt alle gepinnten Event-IDs einer Community zurück
+   * @param communityId - ID der Community
+   * @returns Array von Event-IDs oder leeres Array
+   */
+  async getPinnedEvents(communityId: string): Promise<string[]> {
+    const community = await this.communityModel.findById(communityId);
+    return community?.pinnedEventIds || [];
+  }
 }

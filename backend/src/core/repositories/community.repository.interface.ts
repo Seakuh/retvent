@@ -9,4 +9,7 @@ export interface ICommunityRepository {
   delete(id: string): Promise<boolean>;
   addEventToCommunity(communityId: string, eventId: string): Promise<Community | null>;
   removeEventFromCommunity(communityId: string, eventId: string): Promise<Community | null>;
+  pinEventToCommunity(communityId: string, eventId: string): Promise<Community | null>;
+  unpinEventFromCommunity(communityId: string, eventId: string): Promise<Community | null>;
+  getPinnedEvents(communityId: string): Promise<string[]>;
 }

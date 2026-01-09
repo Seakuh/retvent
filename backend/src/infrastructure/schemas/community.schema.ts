@@ -15,4 +15,5 @@ export const CommunitySchema = new Schema({
   moderators: { type: [String], required: false },
   bannedUsers: { type: [String], required: false },
   eventIds: { type: [String], required: false },
+  pinnedEventIds: { type: [String], required: false },
 });

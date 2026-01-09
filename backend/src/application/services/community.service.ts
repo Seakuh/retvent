@@ -1,7 +1,9 @@
 import {
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { Community } from 'src/core/domain/community';
 import { MongoProfileRepository } from 'src/infrastructure/repositories/mongodb/profile.repository';
@@ -9,6 +11,8 @@ import { MongoUserRepository } from 'src/infrastructure/repositories/mongodb/use
 import { CreateCommunityDto } from 'src/presentation/dtos/create-community.dto';
 import { UpdateCommunityDto } from 'src/presentation/dtos/update-community.dto';
 import { MongoCommunityRepository } from '../../infrastructure/repositories/mongodb/community.repository';
+import { EventService } from './event.service';
+import { PostService } from '../../infrastructure/services/post.service';
 
 @Injectable()
 export class CommunityService {
@@ -16,6 +20,9 @@ export class CommunityService {
     private readonly communityRepository: MongoCommunityRepository,
     private readonly userRepository: MongoUserRepository,
     private readonly profileRepository: MongoProfileRepository,
+    @Inject(forwardRef(() => EventService))
+    private readonly eventService: EventService,
+    private readonly postService: PostService,
   ) {}
 
   async getCommunities() {
@@ -120,5 +127,145 @@ export class CommunityService {
     }
 
     return community.moderators.includes(userId) || community.admins.includes(userId);
+  }
+
+  /**
+   * Pinnt ein Event an die Community-Posts (nur für Admins)
+   * Überprüft, ob der User Admin der Community ist, bevor das Event gepinnt wird.
+   * 
+   * @param communityId - ID der Community
+   * @param eventId - ID des Events, das gepinnt werden soll
+   * @param userId - ID des Users, der die Aktion ausführt
+   * @returns Aktualisierte Community oder null wenn nicht gefunden
+   * @throws ForbiddenException wenn der User kein Admin ist
+   * @throws NotFoundException wenn die Community nicht gefunden wird
+   */
+  async pinEventToCommunity(
+    communityId: string,
+    eventId: string,
+    userId: string,
+  ): Promise<Community | null> {
+    const community = await this.findById(communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+
+    if (!community.admins.includes(userId)) {
+      throw new ForbiddenException(
+        'Only admins can pin events to community posts',
+      );
+    }
+
+    return this.communityRepository.pinEventToCommunity(communityId, eventId);
+  }
+
+  /**
+   * Entfernt ein Event aus den gepinnten Events einer Community (nur für Admins)
+   * 
+   * @param communityId - ID der Community
+   * @param eventId - ID des Events, das entpinnt werden soll
+   * @param userId - ID des Users, der die Aktion ausführt
+   * @returns Aktualisierte Community oder null wenn nicht gefunden
+   * @throws ForbiddenException wenn der User kein Admin ist
+   * @throws NotFoundException wenn die Community nicht gefunden wird
+   */
+  async unpinEventFromCommunity(
+    communityId: string,
+    eventId: string,
+    userId: string,
+  ): Promise<Community | null> {
+    const community = await this.findById(communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+
+    if (!community.admins.includes(userId)) {
+      throw new ForbiddenException(
+        'Only admins can unpin events from community posts',
+      );
+    }
+
+    return this.communityRepository.unpinEventFromCommunity(
+      communityId,
+      eventId,
+    );
+  }
+
+  /**
+   * Gibt alle gepinnten Events einer Community zurück
+   * 
+   * @param communityId - ID der Community
+   * @returns Array von Event-Objekten
+   * @throws NotFoundException wenn die Community nicht gefunden wird
+   */
+  async getPinnedEvents(communityId: string) {
+    const community = await this.findById(communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+
+    const pinnedEventIds = community.pinnedEventIds || [];
+    if (pinnedEventIds.length === 0) {
+      return [];
+    }
+
+    // Hole alle gepinnten Events
+    const events = await Promise.all(
+      pinnedEventIds.map((id) => this.eventService.getEventById(id)),
+    );
+
+    return events.filter((event) => event !== null);
+  }
+
+  /**
+   * Gibt die Dashboard-Daten für eine Community zurück
+   * Enthält gepinnte Events und neueste Posts (beide optional)
+   * 
+   * @param communityId - ID der Community
+   * @param options - Optionale Parameter für Posts (offset, limit)
+   * @returns Objekt mit gepinnten Events und neuesten Posts
+   * @throws NotFoundException wenn die Community nicht gefunden wird
+   */
+  async getCommunityDashboard(
+    communityId: string,
+    options?: {
+      includePinnedEvents?: boolean;
+      includeLatestPosts?: boolean;
+      postsOffset?: number;
+      postsLimit?: number;
+    },
+  ) {
+    const community = await this.findById(communityId);
+    if (!community) {
+      throw new NotFoundException('Community not found');
+    }
+
+    const {
+      includePinnedEvents = true,
+      includeLatestPosts = true,
+      postsOffset = 0,
+      postsLimit = 20,
+    } = options || {};
+
+    const result: {
+      pinnedEvents?: any[];
+      latestPosts?: any[];
+    } = {};
+
+    // Hole gepinnte Events wenn gewünscht
+    if (includePinnedEvents) {
+      result.pinnedEvents = await this.getPinnedEvents(communityId);
+    }
+
+    // Hole neueste Posts wenn gewünscht
+    if (includeLatestPosts) {
+      result.latestPosts = await this.postService.getCommunityPosts(
+        communityId,
+        postsOffset,
+        postsLimit,
+      );
+    }
+
+    return result;
   }
 }

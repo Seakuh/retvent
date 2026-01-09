@@ -11,6 +11,7 @@ export class Community {
   admins: string[];
   bannedUsers: string[];
   eventIds: string[];
+  pinnedEventIds?: string[];
   createdAt: Date;
   updatedAt: Date;
 }

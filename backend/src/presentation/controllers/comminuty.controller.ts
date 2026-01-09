@@ -6,6 +6,8 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -109,5 +111,77 @@ export class CommunityController {
   @UseGuards(CommunityHostGuard)
   async deleteCommunity(@Param('communityId') communityId: string, @Req() req) {
     return this.communityService.deleteCommunity(communityId, req.user.sub);
+  }
+
+  /**
+   * Pinnt ein Event an die Community-Posts (nur für Admins)
+   * POST /community/:communityId/pin-event
+   */
+  @Post(':communityId/pin-event')
+  @UseGuards(JwtAuthGuard)
+  async pinEventToCommunity(
+    @Param('communityId') communityId: string,
+    @Body() body: { eventId: string },
+    @Req() req,
+  ) {
+    return this.communityService.pinEventToCommunity(
+      communityId,
+      body.eventId,
+      req.user.sub,
+    );
+  }
+
+  /**
+   * Entfernt ein Event aus den gepinnten Events einer Community (nur für Admins)
+   * DELETE /community/:communityId/pin-event/:eventId
+   */
+  @Delete(':communityId/pin-event/:eventId')
+  @UseGuards(JwtAuthGuard)
+  async unpinEventFromCommunity(
+    @Param('communityId') communityId: string,
+    @Param('eventId') eventId: string,
+    @Req() req,
+  ) {
+    return this.communityService.unpinEventFromCommunity(
+      communityId,
+      eventId,
+      req.user.sub,
+    );
+  }
+
+  /**
+   * Gibt alle gepinnten Events einer Community zurück
+   * GET /community/:communityId/pinned-events
+   */
+  @Get(':communityId/pinned-events')
+  async getPinnedEvents(@Param('communityId') communityId: string) {
+    return this.communityService.getPinnedEvents(communityId);
+  }
+
+  /**
+   * Gibt die Dashboard-Daten für eine Community zurück
+   * Enthält gepinnte Events und neueste Posts (beide optional)
+   * GET /community/:communityId/dashboard
+   */
+  @Get(':communityId/dashboard')
+  async getCommunityDashboard(
+    @Param('communityId') communityId: string,
+    @Query('includePinnedEvents') includePinnedEvents?: string,
+    @Query('includeLatestPosts') includeLatestPosts?: string,
+    @Query('postsOffset') postsOffset?: number,
+    @Query('postsLimit') postsLimit?: number,
+  ) {
+    return this.communityService.getCommunityDashboard(communityId, {
+      includePinnedEvents:
+        includePinnedEvents === undefined
+          ? true
+          : includePinnedEvents === 'true',
+      includeLatestPosts:
+        includeLatestPosts === undefined
+          ? true
+          : includeLatestPosts === 'true',
+      postsOffset: postsOffset || 0,
+      postsLimit: postsLimit || 20,
+    });
   }
 }
