@@ -81,6 +81,7 @@ import { PostService } from './services/post.service';
 import { QdrantService } from './services/qdrant.service';
 import { ReplicateService } from './services/replicate.service';
 import { VideoService } from './services/video.service';
+import { SMTPServerService } from './services/smtp-server.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PokerGameService } from 'src/application/services/poker-game.service';
 import { PokerGameSchema } from 'src/core/domain/poker-game.schema';
@@ -88,6 +89,7 @@ import { PokerStatsService } from 'src/application/services/poker-stats.service'
 import { PokerInvitationService } from 'src/application/services/poker-invitation.service';
 import { PokerStatsSchema } from 'src/core/domain/poker-stats.schema';
 import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
+import { MailController } from 'src/presentation/controllers/mail.controller';
 @Module({
   imports: [
     CoreModule,
@@ -161,6 +163,7 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     GroupController,
     VoiceChatController,
     MessageController,
+    MailController,
     FeedController,
     AssessmentController,
     ArtistController,
@@ -175,6 +178,7 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     MessageService,
     ChatGPTService,
     MailService,
+    SMTPServerService,
     PostService,
     TicketsService,
     FeedService,
@@ -277,6 +281,7 @@ import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
     VideoService,
     MuxService,
     ReplicateService,
+    MailService,
     ChatGPTService,
     JwtAuthGuard,
     OwnerGuard,
