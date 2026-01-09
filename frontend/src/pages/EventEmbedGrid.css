@@ -1,0 +1,147 @@
+/* Container */
+.event-embed-grid-container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+}
+
+/* Grid Wrapper - Always 3 columns */
+.event-embed-grid-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Grid Item */
+.event-embed-grid-item {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure RealListItem fits properly */
+.event-embed-grid-item .real-list-item-container {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+.event-embed-grid-item .real-event-list-item {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+/* Loading State */
+.embed-grid-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.embed-grid-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: embed-grid-spin 1s linear infinite;
+}
+
+@keyframes embed-grid-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty State */
+.embed-grid-no-events {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Responsive Design - Always 3 columns on all screen sizes */
+/* Mobile - 3 columns with smaller gap */
+@media (max-width: 640px) {
+  .event-embed-grid-container {
+    padding: 1rem;
+  }
+
+  .event-embed-grid-wrapper {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+/* Tablet - 3 columns */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .event-embed-grid-container {
+    padding: 1.5rem;
+  }
+
+  .event-embed-grid-wrapper {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+/* Desktop - 3 columns */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .event-embed-grid-wrapper {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Large Desktop - 3 columns */
+@media (min-width: 1441px) {
+  .event-embed-grid-wrapper {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    max-width: 1600px;
+  }
+}
+
+/* Ultra-wide screens - still 3 columns but larger */
+@media (min-width: 1920px) {
+  .event-embed-grid-wrapper {
+    max-width: 1800px;
+    gap: 3rem;
+  }
+}
+
+/* Ensure proper aspect ratios and spacing */
+.event-embed-grid-item .real-event-list-item {
+  width: 100%;
+  height: auto;
+}
+
+/* Optimize images in grid */
+.event-embed-grid-item .real-event-thumbnail {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.event-embed-grid-item .real-event-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+

@@ -32,6 +32,7 @@ import { SearchPage } from "./pages/SearchPage";
 import { ShoppingPage } from "./pages/ShoppingPage";
 import { TicketPage } from "./pages/TicketPage";
 import { EventEmbedPage } from "./pages/EventEmbedPage";
+import { EventEmbedGrid } from "./pages/EventEmbedGrid";
 import { syncFavorites } from "./service";
 import "./utils/onboarding-helpers"; // Load onboarding debug helpers
 import { useVectorProfileResults } from "./hooks/useVectorProfileResults";
@@ -128,6 +129,7 @@ const App: React.FC = () => {
                   <Route path="/reel/:eventId" element={<ReelPage />} />
                   <Route path="/reel/" element={<ReelPage />} />
                   <Route path="/events/embed" element={<EventEmbedPage />} />
+                  <Route path="/events/embed-grid" element={<EventEmbedGrid />} />
                   <Route path="/imprint" element={<Imprint />} />
                   <Route
                     path="/group/invite/:userId/:tokenId"
