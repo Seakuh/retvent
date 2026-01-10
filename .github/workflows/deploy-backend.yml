@@ -69,6 +69,10 @@ jobs:
             echo 'QDRANT_USERS_COLLECTION'=${{secrets.QDRANT_USERS_COLLECTION}} >> .env
             echo 'EMBEDDING_DIM'=${{secrets.EMBEDDING_DIM}} >> .env
             echo 'EMBEDDING_DIM'=${{secrets.EMBEDDING_DIM}} >> .env
+            echo 'IMAP_HOST'=${{secrets.IMAP_HOST}} >> .env
+            echo 'IMAP_USER'=${{secrets.IMAP_USER}} >> .env
+            echo 'IMAP_PASSWORD'=${{secrets.IMAP_PASSWORD}} >> .env
+            
             chmod 600 .env
             
             # Restart PM2 process
