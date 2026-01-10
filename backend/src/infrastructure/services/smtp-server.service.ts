@@ -23,16 +23,23 @@ export class SMTPServerService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly configService: ConfigService,
     private readonly mailService: MailService,
-  ) {}
+  ) {
+    this.logger.log('🔧 SMTPServerService wird konstruiert...');
+  }
 
   /**
    * Startet den SMTP-Server beim Modul-Start
    */
   async onModuleInit() {
-    const portConfig = this.configService.get<string | number>('SMTP_PORT', 2525);
-    const port = typeof portConfig === 'string' ? parseInt(portConfig, 10) : portConfig;
-    const host = this.configService.get<string>('SMTP_HOST', '0.0.0.0');
-    const authRequired = this.configService.get<boolean>('SMTP_AUTH_REQUIRED', false);
+    this.logger.log('🔄 Initialisiere SMTP-Server...');
+    
+    try {
+      const portConfig = this.configService.get<string | number>('SMTP_PORT', 2525);
+      const port = typeof portConfig === 'string' ? parseInt(portConfig, 10) : portConfig;
+      const host = this.configService.get<string>('SMTP_HOST', '0.0.0.0');
+      const authRequired = this.configService.get<boolean>('SMTP_AUTH_REQUIRED', false);
+
+      this.logger.log(`📋 Konfiguration: Port=${port}, Host=${host}, Auth=${authRequired}`);
 
     const options: SMTPServerOptions = {
       // Server-Konfiguration
@@ -132,6 +139,16 @@ export class SMTPServerService implements OnModuleInit, OnModuleDestroy {
     this.smtpServer.on('error', (error) => {
       this.logger.error('SMTP-Server Fehler:', error);
     });
+
+    this.smtpServer.on('close', () => {
+      this.logger.log('SMTP-Server wurde geschlossen');
+    });
+
+    this.logger.log('✅ SMTP-Server-Instanz erstellt, starte Server...');
+    } catch (error) {
+      this.logger.error('❌ Fehler beim Initialisieren des SMTP-Servers:', error);
+      throw error;
+    }
   }
 
   /**

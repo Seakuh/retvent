@@ -82,6 +82,7 @@ import { QdrantService } from './services/qdrant.service';
 import { ReplicateService } from './services/replicate.service';
 import { VideoService } from './services/video.service';
 import { SMTPServerService } from './services/smtp-server.service';
+import { IMAPMailService } from './services/imap-mail.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PokerGameService } from 'src/application/services/poker-game.service';
 import { PokerGameSchema } from 'src/core/domain/poker-game.schema';
@@ -179,6 +180,7 @@ import { MailController } from 'src/presentation/controllers/mail.controller';
     ChatGPTService,
     MailService,
     SMTPServerService,
+    IMAPMailService,
     PostService,
     TicketsService,
     FeedService,
