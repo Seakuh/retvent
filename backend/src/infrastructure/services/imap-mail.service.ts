@@ -149,7 +149,7 @@ export class IMAPMailService implements OnModuleInit, OnModuleDestroy {
    * Ruft neue E-Mails vom Server ab
    * Wird regelmäßig per Cron-Job aufgerufen
    */
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_12_HOURS)
   async fetchNewEmails() {
     if (!this.isConnected || !this.imap) {
       this.logger.debug('IMAP nicht verbunden, überspringe Abruf');
