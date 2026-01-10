@@ -7,6 +7,7 @@ export class OptionalJwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context) as boolean | Promise<boolean>;
   }
 
+  // request handler
   handleRequest(err, user) {
     if (err || !user) {
       return null; // Keine Authentifizierung notwendig

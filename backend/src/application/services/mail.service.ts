@@ -116,10 +116,10 @@ export class MailService {
       this.logger.log('═══════════════════════════════════════════════════════');
       
       // Extrahiere und logge alle Bilder und Texte
-      await this.extractAndLogImagesAndText(email);
+      //await this.extractAndLogImagesAndText(email);
 
       // Extrahiere Events aus E-Mail und füge sie in die Datenbank ein
-      await this.extractAndCreateEventsFromEmail(email);
+      //await this.extractAndCreateEventsFromEmail(email);
     } catch (error) {
       this.logger.error('Fehler beim Loggen der empfangenen E-Mail:', error);
       throw error;
