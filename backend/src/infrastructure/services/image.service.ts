@@ -29,22 +29,40 @@ export class ImageService {
     });
   }
 
-  async uploadImageFromBuffer(imageBuffer: Buffer) {
+  async uploadImageFromBuffer(
+    imageBuffer: Buffer,
+    contentType: string = 'image/jpeg',
+    originalFilename?: string,
+  ): Promise<string> {
     try {
-      const fileExtension = 'jpg';
-      const fileName = `${uuidv4()}.${fileExtension}`;
+      // Bestimme Dateiendung aus Content-Type oder Original-Dateiname
+      let fileExtension = 'jpg';
+      
+      if (originalFilename) {
+        const ext = originalFilename.split('.').pop()?.toLowerCase();
+        if (ext && ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) {
+          fileExtension = ext;
+        }
+      } else if (contentType) {
+        // Extrahiere Extension aus Content-Type
+        const typeMap: Record<string, string> = {
+          'image/jpeg': 'jpg',
+          'image/jpg': 'jpg',
+          'image/png': 'png',
+          'image/gif': 'gif',
+          'image/webp': 'webp',
+          'image/svg+xml': 'svg',
+        };
+        fileExtension = typeMap[contentType] || 'jpg';
+      }
 
-      // console.log('Uploading image with credentials:', {
-      //   bucket: this.bucketName,
-      //   fileName,
-      //   contentType: 'image/jpeg',
-      // });
+      const fileName = `${uuidv4()}.${fileExtension}`;
 
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: `events/${fileName}`,
         Body: imageBuffer,
-        ContentType: 'image/jpeg',
+        ContentType: contentType,
         ACL: 'public-read',
       });
 

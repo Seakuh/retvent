@@ -223,11 +223,25 @@ export class IMAPMailService implements OnModuleInit, OnModuleDestroy {
                   html: parsed.html || undefined,
                   date: parsed.date || new Date(),
                   headers: this.parseHeaders(parsed.headers),
-                  attachments: parsed.attachments?.map((att) => ({
-                    filename: att.filename || 'unnamed',
-                    contentType: att.contentType || 'application/octet-stream',
-                    size: att.size || 0,
-                  })),
+                  attachments: await Promise.all(
+                    (parsed.attachments || []).map(async (att) => {
+                      let content: Buffer | undefined;
+                      try {
+                        // Lade den Anhang-Inhalt falls vorhanden
+                        if (att.content) {
+                          content = att.content;
+                        }
+                      } catch (error) {
+                        this.logger.warn(`Konnte Anhang-Inhalt nicht laden: ${att.filename}`);
+                      }
+                      return {
+                        filename: att.filename || 'unnamed',
+                        contentType: att.contentType || 'application/octet-stream',
+                        size: att.size || 0,
+                        content,
+                      };
+                    }),
+                  ),
                 };
 
                 // Leite die E-Mail an den MailService weiter
