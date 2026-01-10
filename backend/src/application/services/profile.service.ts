@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
   UploadedFile,
@@ -14,13 +15,17 @@ import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { ImageService } from 'src/infrastructure/services/image.service';
 import { CreateArtistDto } from 'src/presentation/dtos/create-artist.dto';
 import { QdrantService } from 'src/infrastructure/services/qdrant.service';
+import { AuthService } from 'src/infrastructure/services/auth.service';
 @Injectable()
 export class ProfileService {
+  private readonly logger = new Logger(ProfileService.name);
+
   constructor(
     private readonly profileRepository: MongoProfileRepository,
     private readonly imageService: ImageService,
     private readonly chatGptService: ChatGPTService,
     private readonly qdrantService: QdrantService,
+    private readonly authService: AuthService,
   ) {}
 
   getAllProfiles(limit: number, offset: number): Promise<Profile[]> {
@@ -230,6 +235,93 @@ export class ProfileService {
 
   async findByEmail(email: string): Promise<Profile | null> {
     return this.profileRepository.findByEmail(email);
+  }
+
+  /**
+   * Findet ein Profil anhand der E-Mail-Adresse oder erstellt ein neues
+   * 
+   * @param email - Die E-Mail-Adresse des Absenders
+   * @param username - Optional: Benutzername (wird aus E-Mail generiert falls nicht angegeben)
+   * @returns Das gefundene oder neu erstellte Profil
+   */
+  async findOrCreateProfileByEmail(
+    email: string,
+    username?: string,
+  ): Promise<Profile> {
+    // Versuche zuerst das Profil zu finden
+    let profile = await this.findByEmail(email);
+
+    if (profile) {
+      this.logger.log(`✅ Profil gefunden für E-Mail: ${email} (ID: ${profile.userId})`);
+      return profile;
+    }
+
+    // Profil existiert nicht, erstelle neues
+    this.logger.log(`📝 Erstelle neues Profil für E-Mail: ${email}`);
+
+    // Generiere Username aus E-Mail falls nicht angegeben
+    if (!username) {
+      username = this.generateUsernameFromEmail(email);
+    }
+
+    // Generiere sicheres Passwort
+    const password = this.generateSecurePassword();
+
+    try {
+      // Erstelle User und Profil über AuthService
+      const registrationResult = await this.authService.registerWithProfile({
+        email,
+        username,
+        password,
+      });
+
+      // Hole das neu erstellte Profil
+      profile = await this.findByUserId(registrationResult.user.id);
+
+      if (!profile) {
+        throw new Error('Profil konnte nicht nach Erstellung gefunden werden');
+      }
+
+      this.logger.log(`✅ Neues Profil erstellt: ${username} (ID: ${profile.userId})`);
+      return profile;
+    } catch (error: any) {
+      // Falls User bereits existiert (Race Condition), versuche nochmal zu finden
+      if (error.message?.includes('already exists') || error.message?.includes('User already exists')) {
+        this.logger.log(`⚠️ User existiert bereits, versuche Profil zu finden...`);
+        profile = await this.findByEmail(email);
+        if (profile) {
+          return profile;
+        }
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Generiert einen Benutzernamen aus einer E-Mail-Adresse
+   */
+  private generateUsernameFromEmail(email: string): string {
+    const emailPrefix = email.split('@')[0];
+    // Entferne Sonderzeichen und ersetze durch Unterstriche
+    const cleanUsername = emailPrefix
+      .replace(/[^a-zA-Z0-9]/g, '_')
+      .toLowerCase();
+    
+    return `${cleanUsername}`;
+  }
+
+  /**
+   * Generiert ein sicheres Passwort
+   */
+  private generateSecurePassword(): string {
+    const length = 16;
+    const charset =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    return password;
   }
 
   async findByUsernameOrEmail(

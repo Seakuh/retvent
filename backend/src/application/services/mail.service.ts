@@ -2,6 +2,10 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { ImageService } from '../../infrastructure/services/image.service';
+import { EventService } from './event.service';
+import { ProfileService } from './profile.service';
+import { ChatGPTService } from '../../infrastructure/services/chatgpt.service';
+import { Event } from '../../core/domain/event';
 
 export interface ReceivedEmail {
   from: string;
@@ -26,6 +30,9 @@ export class MailService {
   constructor(
     private readonly mailerService: MailerService,
     private readonly imageService: ImageService,
+    private readonly eventService: EventService,
+    private readonly profileService: ProfileService,
+    private readonly chatGptService: ChatGPTService,
   ) {}
 
   async sendEmail(to: string, subject: string, text: string, html?: string) {
@@ -110,6 +117,9 @@ export class MailService {
       
       // Extrahiere und logge alle Bilder und Texte
       await this.extractAndLogImagesAndText(email);
+
+      // Extrahiere Events aus E-Mail und füge sie in die Datenbank ein
+      await this.extractAndCreateEventsFromEmail(email);
     } catch (error) {
       this.logger.error('Fehler beim Loggen der empfangenen E-Mail:', error);
       throw error;
@@ -501,5 +511,198 @@ export class MailService {
       const match = url.match(/\/([^\/\?]+\.(jpg|jpeg|png|gif|webp|svg|bmp|ico))(\?|$)/i);
       return match ? match[1] : null;
     }
+  }
+
+  /**
+   * Extrahiert Events aus einer E-Mail und fügt sie in die Datenbank ein
+   * 
+   * Diese Funktion:
+   * - Findet oder erstellt ein Profil für den Absender
+   * - Extrahiert Event-Daten aus E-Mail-Text und Bildern
+   * - Erstellt Events in der Datenbank
+   * 
+   * @param email - Die empfangene E-Mail
+   */
+  async extractAndCreateEventsFromEmail(email: ReceivedEmail): Promise<void> {
+    try {
+      this.logger.log('═══════════════════════════════════════════════════════');
+      this.logger.log('📅 EVENT-EXTRAKTION AUS E-MAIL');
+      this.logger.log('═══════════════════════════════════════════════════════');
+
+      // 1. Extrahiere E-Mail-Adresse des Absenders
+      const senderEmail = this.extractEmailAddress(email.from);
+      if (!senderEmail) {
+        this.logger.warn('⚠️ Keine gültige E-Mail-Adresse im Absender gefunden');
+        return;
+      }
+
+      this.logger.log(`📧 Absender-E-Mail: ${senderEmail}`);
+
+      // 2. Finde oder erstelle Profil für Absender
+      const profile = await this.profileService.findOrCreateProfileByEmail(
+        senderEmail,
+      );
+      this.logger.log(`👤 Profil: ${profile.username} (ID: ${profile.userId})`);
+
+      // 3. Sammle alle Bild-URLs aus der E-Mail
+      const imageUrls: string[] = [];
+
+      // Bilder aus Anhängen
+      if (email.attachments) {
+        const imageAttachments = email.attachments.filter(
+          (att) => att.contentType?.startsWith('image/') && att.content,
+        );
+        for (const attachment of imageAttachments) {
+          if (attachment.content) {
+            try {
+              const imageUrl = await this.imageService.uploadImageFromBuffer(
+                attachment.content,
+                attachment.contentType || 'image/jpeg',
+                attachment.filename,
+              );
+              imageUrls.push(imageUrl);
+              this.logger.log(`📎 Bild aus Anhang hochgeladen: ${imageUrl}`);
+            } catch (error) {
+              this.logger.error(`Fehler beim Hochladen des Anhangs:`, error);
+            }
+          }
+        }
+      }
+
+      // Base64-Bilder aus HTML
+      if (email.html) {
+        const base64Images = this.extractBase64ImagesFromHtml(email.html);
+        for (const [index, base64Data] of base64Images.entries()) {
+          try {
+            const imageBuffer = Buffer.from(base64Data, 'base64');
+            const imageUrl = await this.imageService.uploadImageFromBuffer(
+              imageBuffer,
+              'image/png', // Base64-Bilder sind meist PNG
+              `email-image-${index + 1}.png`,
+            );
+            imageUrls.push(imageUrl);
+            this.logger.log(`📎 Base64-Bild hochgeladen: ${imageUrl}`);
+          } catch (error) {
+            this.logger.error(`Fehler beim Hochladen des Base64-Bildes:`, error);
+          }
+        }
+      }
+
+      // 4. Extrahiere Event-Daten aus Text und Bildern
+      const events: Partial<Event>[] = [];
+
+      // Versuche Events aus Text zu extrahieren
+      if (email.text || email.html) {
+        const emailText = email.text || this.extractTextFromHtml(email.html || '');
+        if (emailText && emailText.trim().length > 0) {
+          try {
+            this.logger.log('🤖 Extrahiere Events aus E-Mail-Text...');
+            const textEvents = await this.chatGptService.generateEventsFromText(
+              emailText,
+            );
+            events.push(...textEvents);
+            this.logger.log(`✅ ${textEvents.length} Event(s) aus Text extrahiert`);
+          } catch (error) {
+            this.logger.error('Fehler bei der Text-Extraktion:', error);
+          }
+        }
+      }
+
+      // Versuche Events aus Bildern zu extrahieren
+      for (const imageUrl of imageUrls) {
+        try {
+          this.logger.log(`🤖 Extrahiere Event aus Bild: ${imageUrl}`);
+          const flyerEvent = await this.chatGptService.extractEventFromFlyer(
+            imageUrl,
+          );
+          if (flyerEvent) {
+            flyerEvent.imageUrl = imageUrl; // Setze die hochgeladene Bild-URL
+            events.push(flyerEvent);
+            this.logger.log(`✅ Event aus Bild extrahiert: ${flyerEvent.title || 'Unbekannt'}`);
+          }
+        } catch (error) {
+          this.logger.error(`Fehler bei der Bild-Extraktion:`, error);
+        }
+      }
+
+      if (events.length === 0) {
+        this.logger.log('⚠️ Keine Events in der E-Mail gefunden');
+        return;
+      }
+
+      // 5. Erstelle Events in der Datenbank
+      this.logger.log(`📝 Erstelle ${events.length} Event(s) in der Datenbank...`);
+
+      for (const [index, eventData] of events.entries()) {
+        try {
+          // Bereite Event-Daten vor
+          const eventToCreate: Partial<Event> = {
+            ...eventData,
+            hostId: profile.userId || '',
+            hostUsername: profile.username,
+            hostImageUrl: profile.profileImageUrl,
+            email: senderEmail,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            regenstrations: 0,
+            registeredUserIds: [],
+          };
+
+          // Erstelle Event
+          const createdEvent = await this.eventService.create(eventToCreate);
+          this.logger.log(`✅ Event erstellt: ${createdEvent.title} (ID: ${createdEvent.id})`);
+
+          // Füge Event zum Profil hinzu
+          await this.profileService.addCreatedEvent(
+            profile.userId || '',
+            createdEvent.id,
+          );
+        } catch (error) {
+          this.logger.error(`Fehler beim Erstellen des Events ${index + 1}:`, error);
+        }
+      }
+
+      this.logger.log('═══════════════════════════════════════════════════════');
+      this.logger.log(`✅ Event-Extraktion abgeschlossen: ${events.length} Event(s) erstellt`);
+      this.logger.log('═══════════════════════════════════════════════════════');
+    } catch (error) {
+      this.logger.error('Fehler bei der Event-Extraktion aus E-Mail:', error);
+    }
+  }
+
+  /**
+   * Extrahiert die E-Mail-Adresse aus einem String (z.B. "Name <email@example.com>")
+   */
+  private extractEmailAddress(from: string): string | null {
+    // Versuche E-Mail-Adresse zu extrahieren
+    const emailMatch = from.match(/<([^>]+)>/) || from.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+    return emailMatch ? emailMatch[1] : null;
+  }
+
+  /**
+   * Extrahiert Text aus HTML (ohne Tags)
+   */
+  private extractTextFromHtml(html: string): string {
+    return html
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  /**
+   * Extrahiert Base64-Bilddaten aus HTML
+   */
+  private extractBase64ImagesFromHtml(html: string): string[] {
+    const base64Images: string[] = [];
+    const base64Regex = /data:image\/[^;]+;base64,([^"'\s]+)/gi;
+    let match;
+
+    while ((match = base64Regex.exec(html)) !== null) {
+      base64Images.push(match[1]);
+    }
+
+    return base64Images;
   }
 }
