@@ -10,25 +10,28 @@
   background: transparent;
 }
 
-/* Grid Wrapper - Always 3 columns */
+/* Grid Wrapper - Responsive columns with optimal card spacing */
 .event-embed-grid-wrapper {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+  gap: 24px; /* 8pt grid: 3 * 8px = 24px */
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
+  justify-content: center; /* Center cards in grid */
+  align-items: stretch; /* Ensure all items have equal height */
 }
 
-/* Grid Item */
+/* Grid Item - Equal Height */
 .event-embed-grid-item {
   width: 100%;
   min-width: 0;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
-/* Ensure EmbedGridCard fits properly */
+/* Ensure EmbedGridCard fits properly and fills height */
 .event-embed-grid-item .embed-grid-card {
   width: 100%;
   max-width: 100%;
@@ -98,28 +101,20 @@
   }
 }
 
-/* Desktop - 3 columns */
-@media (min-width: 1025px) and (max-width: 1440px) {
+/* Desktop - Auto-fit with max 3 columns */
+@media (min-width: 1025px) {
   .event-embed-grid-wrapper {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 360px));
+    gap: 24px;
+    max-width: 1200px; /* Optimal for 3 cards: 3 * 360px + 2 * 24px = 1128px */
   }
 }
 
-/* Large Desktop - 3 columns */
+/* Large Desktop - Maintains optimal spacing */
 @media (min-width: 1441px) {
   .event-embed-grid-wrapper {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2.5rem;
-    max-width: 1600px;
-  }
-}
-
-/* Ultra-wide screens - still 3 columns but larger */
-@media (min-width: 1920px) {
-  .event-embed-grid-wrapper {
-    max-width: 1800px;
-    gap: 3rem;
+    max-width: 1200px;
+    gap: 32px; /* Slightly more space on large screens */
   }
 }
 

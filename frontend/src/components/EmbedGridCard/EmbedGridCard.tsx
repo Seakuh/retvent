@@ -1,16 +1,14 @@
 import React from "react";
 import { Event, getImageProxyUrl } from "../../utils";
-import { Ticket } from "lucide-react";
 import "./EmbedGridCard.css";
+import TicketButton from "../Buttons/TicketButton";
 
 interface EmbedGridCardProps {
   event: Event;
-  secondaryColor?: string;
 }
 
 export const EmbedGridCard: React.FC<EmbedGridCardProps> = ({
   event,
-  secondaryColor = "#000000",
 }) => {
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString("de-DE", {
@@ -37,15 +35,14 @@ export const EmbedGridCard: React.FC<EmbedGridCardProps> = ({
     window.open(`${mainSiteUrl}event/${eventId}`, "_blank");
   };
 
-  const handleTicketClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
+  const getTicketUrl = (): string => {
     if (event.ticketLink) {
-      window.open(event.ticketLink, "_blank");
-      return;
+      return event.ticketLink;
     }
 
-    if (!event?.startDate) return;
+    if (!event?.startDate) {
+      return `https://www.google.com/search?q=${encodeURIComponent(event.title + " event tickets")}`;
+    }
 
     const formatDate = (date: Date) => {
       const year = date.getFullYear();
@@ -56,11 +53,9 @@ export const EmbedGridCard: React.FC<EmbedGridCardProps> = ({
 
     const startDate = new Date(event.startDate);
     const formattedDate = formatDate(startDate);
-
     const searchQuery = `${event.title} ${formattedDate} event tickets`;
-    const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
-
-    window.open(googleSearchUrl, "_blank");
+    
+    return `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
   };
 
   const eventIsToday = isToday(event.startDate || new Date());
@@ -69,7 +64,6 @@ export const EmbedGridCard: React.FC<EmbedGridCardProps> = ({
     <div
       className={`embed-grid-card ${eventIsToday ? "embed-grid-card-today" : ""}`}
       onClick={() => handleEventClick(event.id || event._id || "")}
-      style={{ backgroundColor: secondaryColor }}
     >
       <div className="embed-grid-card-image">
         <img
@@ -79,17 +73,32 @@ export const EmbedGridCard: React.FC<EmbedGridCardProps> = ({
         />
       </div>
       <div className="embed-grid-card-content">
+        {/* Title Section - High Visual Priority */}
         <h3 className="embed-grid-card-title">{event.title}</h3>
-        <div className="embed-grid-card-date">
-          {formatDate(event.startDate || new Date())}
-          {event.startTime && ` • ${event.startTime}`}
-          {eventIsToday && <span className="embed-grid-today-label"> • TODAY</span>}
-        </div>
-        <div className="embed-grid-ticket-button-container" onClick={handleTicketClick}>
-          <div className="embed-grid-ticket-icon">
-            <Ticket className="embed-grid-ticket-icon-svg" />
+        
+        {/* Secondary Information - Date & Time */}
+        <div className="embed-grid-card-meta">
+          <div className="embed-grid-card-date">
+            {formatDate(event.startDate || new Date())}
+            {event.startTime && ` • ${event.startTime}`}
           </div>
-          <span className="embed-grid-ticket-text">Get Tickets Now</span>
+          {eventIsToday && (
+            <span className="embed-grid-today-badge">TODAY</span>
+          )}
+        </div>
+        
+        {/* Description - Secondary Text (45-70 chars per line) */}
+        {event.description && (
+          <p className="embed-grid-card-description">
+            {event.description.length > 120 
+              ? `${event.description.substring(0, 120)}...` 
+              : event.description}
+          </p>
+        )}
+        
+        {/* Primary Action - Clear Focus */}
+        <div className="embed-grid-ticket-button-wrapper" onClick={(e) => e.stopPropagation()}>
+          <TicketButton href={getTicketUrl()} />
         </div>
       </div>
     </div>

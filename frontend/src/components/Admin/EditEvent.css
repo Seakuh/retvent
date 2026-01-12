@@ -216,7 +216,8 @@
 
 /* Neue Stile für Social Media und Lineup Sektionen */
 .social-media-section,
-.lineup-section {
+.lineup-section,
+.documents-section {
   background-color: #f9f9f9;
   padding: 1.5rem;
   border-radius: 8px;
@@ -224,7 +225,8 @@
 }
 
 .social-media-section h3,
-.lineup-section h3 {
+.lineup-section h3,
+.documents-section h3 {
   color: #333;
   margin-bottom: 1rem;
   font-size: 1.2rem;
@@ -265,6 +267,184 @@
 
 .remove-lineup-btn:hover {
   background-color: #cc0000;
+}
+
+/* Dokumente Drag & Drop Styles */
+.document-drop-zone {
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background-color: white;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.document-drop-zone:hover {
+  border-color: #4CAF50;
+  background-color: #f5f5f5;
+}
+
+.document-drop-zone.dragging {
+  border-color: #4CAF50;
+  background-color: #e8f5e9;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 1rem;
+  color: #4CAF50;
+  transition: transform 0.3s ease;
+}
+
+.document-drop-zone.dragging .upload-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.drop-zone-text {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.document-drop-zone.dragging .drop-zone-text {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.document-upload-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  border: none;
+}
+
+.document-upload-btn:hover {
+  background: linear-gradient(135deg, #45a049, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.document-list {
+  margin-top: 1.5rem;
+}
+
+.document-list h4 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.document-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.document-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateX(4px);
+}
+
+.document-icon {
+  width: 24px;
+  height: 24px;
+  color: #4CAF50;
+  flex-shrink: 0;
+}
+
+.document-link {
+  flex: 1;
+  color: #2196F3;
+  text-decoration: none;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.document-link:hover {
+  color: #1976D2;
+  text-decoration: underline;
+}
+
+.document-name {
+  flex: 1;
+  color: #333;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-size {
+  color: #666;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.remove-document-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #d32f2f;
+  flex-shrink: 0;
+}
+
+.remove-document-btn:hover {
+  background-color: #ffebee;
+  transform: scale(1.1);
+}
+
+.trash-icon,
+.remove-icon {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 768px) {
+  .document-drop-zone {
+    padding: 2rem 1rem;
+  }
+
+  .drop-zone-text {
+    font-size: 0.9rem;
+  }
+
+  .document-item {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .document-name,
+  .document-link {
+    width: 100%;
+  }
 }
 
 

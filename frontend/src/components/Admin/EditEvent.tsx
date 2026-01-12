@@ -1,9 +1,17 @@
-import { ChevronLeft } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { ChevronLeft, FileText, X, Upload, Trash2 } from "lucide-react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EventService } from "../../services/event.service";
 import { categories, Event } from "../../utils";
 import "./EditEvent.css";
+
+// DTO Types (TypeScript Interfaces) - für Backend-Validierung
+// Diese Typen entsprechen dem Backend UpdateEventDto:
+// - SocialMediaLinksDto
+// - LineupArtistDto
+// - CoordinatesDto
+// - LocationDto
+// - UpdateEventDto
 
 const EditEvent: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -11,10 +19,12 @@ const EditEvent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [documents, setDocuments] = useState<File[]>([]);
+  const [documentUrls, setDocumentUrls] = useState<string[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const eventService = new EventService();
 
-  const [formData, setFormData] = useState<Event>({
+  const [formData, setFormData] = useState<Partial<Event>>({
     title: "",
     description: "",
     startDate: "",
@@ -35,6 +45,7 @@ const EditEvent: React.FC = () => {
       twitter: "",
     },
     lineup: [],
+    documents: [],
   });
 
   useEffect(() => {
@@ -65,9 +76,13 @@ const EditEvent: React.FC = () => {
           twitter: event.socialMediaLinks?.twitter || "",
         },
         lineup: event.lineup || [],
+        documents: event.documents || [],
       });
       if (event.imageUrl) {
         setImagePreview(event.imageUrl);
+      }
+      if (event.documents) {
+        setDocumentUrls(event.documents);
       }
     } catch (err) {
       setError("Failed to fetch event details 😢");
@@ -104,7 +119,6 @@ const EditEvent: React.FC = () => {
     console.log("handleImageChange");
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -157,10 +171,79 @@ const EditEvent: React.FC = () => {
     setError(null);
 
     try {
+      // Dokumente hochladen falls vorhanden
+      if (documents.length > 0) {
+        const uploadedDocumentUrls = await Promise.all(
+          documents.map((doc) => eventService.uploadDocument(eventId!, doc))
+        );
+        formData.documents = [...(formData.documents || []), ...uploadedDocumentUrls];
+      }
+
       await eventService.updateEvent(eventId!, formData);
       navigate("/admin/events");
     } catch (err) {
       setError("Failed to update event 😢");
+    }
+  };
+
+  // Drag and Drop Handler für Dokumente
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    const validFiles = files.filter(
+      (file) => file.type.startsWith("application/") || file.type === "application/pdf"
+    );
+
+    if (validFiles.length > 0) {
+      setDocuments((prev) => [...prev, ...validFiles]);
+    }
+  }, []);
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(
+      (file) => file.type.startsWith("application/") || file.type === "application/pdf"
+    );
+    if (validFiles.length > 0) {
+      setDocuments((prev) => [...prev, ...validFiles]);
+    }
+  };
+
+  const removeDocument = (index: number) => {
+    setDocuments((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeDocumentUrl = async (index: number) => {
+    const urlToRemove = documentUrls[index];
+    try {
+      await eventService.deleteDocument(eventId!, urlToRemove);
+      setDocumentUrls((prev) => prev.filter((_, i) => i !== index));
+      setFormData((prev) => ({
+        ...prev,
+        documents: prev.documents?.filter((_: string, i: number) => i !== index),
+      }));
+    } catch (err) {
+      console.error("Failed to delete document:", err);
     }
   };
 
@@ -177,9 +260,7 @@ const EditEvent: React.FC = () => {
     );
   if (error) return <div className="error">{error}</div>;
 
-  async function handlePromptUpdate(
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ): Promise<void> {
+  async function handlePromptUpdate(): Promise<void> {
     setLoading(true);
     const prompt = document.getElementById(
       "edit-event-prompt"
@@ -261,7 +342,7 @@ const EditEvent: React.FC = () => {
           <button
             type="button"
             className="save-prompt-btn"
-            onClick={handlePromptUpdate}
+            onClick={() => handlePromptUpdate()}
           >
             Magic Update
           </button>
@@ -273,7 +354,7 @@ const EditEvent: React.FC = () => {
               type="date"
               id="startDate"
               name="startDate"
-              value={formData.startDate}
+              value={typeof formData.startDate === 'string' ? formData.startDate : formData.startDate instanceof Date ? formData.startDate.toISOString().split('T')[0] : ''}
               onChange={handleInputChange}
             />
           </div>
@@ -297,7 +378,7 @@ const EditEvent: React.FC = () => {
               type="date"
               id="endDate"
               name="endDate"
-              value={formData.endDate}
+              value={typeof formData.endDate === 'string' ? formData.endDate : formData.endDate instanceof Date ? formData.endDate.toISOString().split('T')[0] : ''}
               onChange={handleInputChange}
             />
           </div>
@@ -481,6 +562,85 @@ const EditEvent: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="documents-section">
+          <h3>Dokumente 📄</h3>
+          <div
+            className={`document-drop-zone ${isDragging ? "dragging" : ""}`}
+            onDragEnter={handleDragEnter}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <Upload className="upload-icon" />
+            <p className="drop-zone-text">
+              {isDragging
+                ? "Dokumente hier ablegen"
+                : "Dokumente hier ablegen oder klicken zum Auswählen"}
+            </p>
+            <input
+              type="file"
+              id="documents"
+              multiple
+              accept="application/pdf,.doc,.docx,.txt"
+              onChange={handleFileInput}
+              className="hidden-input"
+            />
+            <label htmlFor="documents" className="document-upload-btn">
+              Dateien auswählen
+            </label>
+          </div>
+
+          {documentUrls.length > 0 && (
+            <div className="document-list">
+              <h4>Vorhandene Dokumente:</h4>
+              {documentUrls.map((url, index) => (
+                <div key={`url-${index}`} className="document-item">
+                  <FileText className="document-icon" />
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="document-link"
+                  >
+                    {url.split("/").pop() || `Dokument ${index + 1}`}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => removeDocumentUrl(index)}
+                    className="remove-document-btn"
+                    title="Dokument löschen"
+                  >
+                    <Trash2 className="trash-icon" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {documents.length > 0 && (
+            <div className="document-list">
+              <h4>Neue Dokumente:</h4>
+              {documents.map((doc, index) => (
+                <div key={`file-${index}`} className="document-item">
+                  <FileText className="document-icon" />
+                  <span className="document-name">{doc.name}</span>
+                  <span className="document-size">
+                    ({(doc.size / 1024).toFixed(2)} KB)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeDocument(index)}
+                    className="remove-document-btn"
+                    title="Dokument entfernen"
+                  >
+                    <X className="remove-icon" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="form-actions">

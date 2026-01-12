@@ -14,7 +14,7 @@ const TicketButton: React.FC<TicketButtonProps> = ({ href }) => {
         rel="noopener noreferrer"
         className={styles.ticketButton}
       >
-        GET TICKETS NOW
+        TICKETS
       </a>
     </div>
   );

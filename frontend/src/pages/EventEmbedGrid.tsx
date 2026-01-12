@@ -14,15 +14,12 @@ export const EventEmbedGrid: React.FC = () => {
   // Host Id filter
   const hostId = searchParams.get("hostId");
 
-  // Background color filter - default transparent
+  // Background color filter - default transparent, black for localhost
+  const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
   const backgroundParam = searchParams.get("background");
   const background = backgroundParam 
     ? (backgroundParam.startsWith("#") ? backgroundParam : `#${backgroundParam}`)
-    : "transparent";
-  
-  // Secondary color for cards
-  const secondaryColorParam = searchParams.get("secondaryColor") || "000000";
-  const secondaryColor = secondaryColorParam.startsWith("#") ? secondaryColorParam : `#${secondaryColorParam}`;
+    : (isLocalhost ? "#000000" : "transparent");
 
   // Parse query parameters
   const limit = parseInt(searchParams.get("limit") || "999");
@@ -113,7 +110,7 @@ export const EventEmbedGrid: React.FC = () => {
         <div className="event-embed-grid-wrapper">
           {events.map((event) => (
             <div key={event.id || event._id} className="event-embed-grid-item">
-              <EmbedGridCard event={event} secondaryColor={secondaryColor} />
+              <EmbedGridCard event={event} />
             </div>
           ))}
         </div>

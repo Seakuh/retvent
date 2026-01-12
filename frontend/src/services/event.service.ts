@@ -100,7 +100,7 @@ export class EventService {
     }
   }
 
-  async updateEvent(eventId: string, event: Event): Promise<Event> {
+  async updateEvent(eventId: string, event: Partial<Event>): Promise<Event> {
     try {
       const response = await fetch(`${this.baseUrl}/${eventId}`, {
         method: "PUT",
@@ -143,6 +143,59 @@ export class EventService {
       return await response.json();
     } catch (error) {
       console.error("Update event prompt error:", error);
+      throw error;
+    }
+  }
+
+  async uploadDocument(eventId: string, file: File): Promise<string> {
+    const accessToken = localStorage.getItem("access_token");
+    try {
+      const formData = new FormData();
+      formData.append("document", file);
+      formData.append("eventId", eventId);
+
+      const response = await fetch(`${this.baseUrl}/${eventId}/documents`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to upload document");
+      }
+
+      const data = await response.json();
+      return data.url || data.documentUrl;
+    } catch (error) {
+      console.error("Upload document error:", error);
+      throw error;
+    }
+  }
+
+  async deleteDocument(eventId: string, documentUrl: string): Promise<void> {
+    const accessToken = localStorage.getItem("access_token");
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/${eventId}/documents`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ documentUrl }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to delete document");
+      }
+    } catch (error) {
+      console.error("Delete document error:", error);
       throw error;
     }
   }

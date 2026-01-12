@@ -224,7 +224,7 @@ export interface Event {
   endTime?: string;
   // Beziehungen
   hostId?: string;
-  host: {
+  host?: {
     username: string;
     profileImageUrl: string;
   };
@@ -268,6 +268,9 @@ export interface Event {
     coordinates: number[];
     city?: string;
   };
+
+  // documents
+  documents?: string[];
 }
 
 export const defaultProfileImage =
