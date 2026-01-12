@@ -1029,6 +1029,16 @@ export class MongoEventRepository implements IEventRepository {
       .exec();
   }
 
+  uploadEventDocuments(eventId: string, documentUrls: string[]) {
+    return this.eventModel
+      .findByIdAndUpdate(
+        eventId,
+        { $push: { documents: { $each: documentUrls } } },
+        { new: true },
+      )
+      .exec();
+  }
+
   updateLineupFromImage(
     eventId: string,
     lineUp: Partial<Array<{ name: string; role?: string; startTime?: string }>>,

@@ -16,4 +16,5 @@ export interface IEventRepository {
   removeArtist(eventId: string, artistId: string): Promise<Event | null>;
   updateEvent(id: string, eventData: UpdateEventDto): Promise<Event | null>;
   findByHostId(hostId: string): Promise<Event[]>;
+  uploadEventDocuments(eventId: string, documentUrls: string[]): Promise<any>;
 }

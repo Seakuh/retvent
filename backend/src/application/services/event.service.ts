@@ -1270,11 +1270,8 @@ export class EventService {
     // Lade Dokumente hoch
     const documentUrls = await this.documentService.uploadDocuments(documents);
 
-    // Füge Dokumente zum Event hinzu
-    const currentDocuments = event.documents || [];
-    const updatedDocuments = [...currentDocuments, ...documentUrls];
-
-    await this.eventRepository.update(eventId, { documents: updatedDocuments });
+    // Füge Dokumente zum Event hinzu (verwende $push für bessere Performance)
+    await this.eventRepository.uploadEventDocuments(eventId, documentUrls);
 
     const updatedEvent = await this.eventRepository.findById(eventId);
     return updatedEvent;
