@@ -19,7 +19,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor, AnyFilesInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
 import { Event } from '../../core/domain/event';
@@ -1113,6 +1113,58 @@ export class EventController {
       eventId,
       documents,
       req.user.id,
+    );
+  }
+
+  /**
+   * Ruft Dokumente eines Events ab
+   * GET /events/:eventId/documents
+   */
+  @Get(':eventId/documents')
+  async getEventDocuments(@Param('eventId') eventId: string) {
+    if (!eventId) {
+      throw new BadRequestException('eventId parameter is required');
+    }
+
+    const event = await this.eventService.getEventById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    return {
+      eventId: event.id,
+      eventTitle: event.title,
+      documents: event.documents || [],
+      documentCount: event.documents?.length || 0,
+    };
+  }
+
+  /**
+   * Fügt Dokumente zu einem Event hinzu
+   * POST /events/:eventId/documents
+   */
+  @Post(':eventId/documents')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(AnyFilesInterceptor())
+  async addDocumentsToEventPost(
+    @Param('eventId') eventId: string,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Request() req,
+  ) {
+    if (!req.user) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+    if (!eventId) {
+      throw new BadRequestException('eventId parameter is required');
+    }
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No documents provided');
+    }
+
+    return this.eventService.addDocumentsToEvent(
+      eventId,
+      files,
+      req.user.sub,
     );
   }
 
