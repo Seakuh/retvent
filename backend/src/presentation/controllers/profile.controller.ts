@@ -18,6 +18,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ProfileService } from 'src/application/services/profile.service';
 import { Profile, UserPreferences } from 'src/core/domain/profile';
 import { ImageService } from 'src/infrastructure/services/image.service';
+import { DocumentService } from 'src/infrastructure/services/document.service';
 import { UpdateUserProfileDto } from '../dtos/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { ProfileOwnerGuard } from '../guards/profile-owner.guard';

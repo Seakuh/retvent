@@ -168,4 +168,9 @@ export class UpdateEventDto {
   @IsArray()
   @IsString({ each: true })
   validators?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  documents?: string[];
 }
