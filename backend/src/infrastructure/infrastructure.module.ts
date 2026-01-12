@@ -76,6 +76,7 @@ import { ChatGPTService } from './services/chatgpt.service';
 import { GeolocationService } from './services/geolocation.service';
 import { GroovecastService } from './services/groovecast.service';
 import { ImageService } from './services/image.service';
+import { DocumentService } from './services/document.service';
 import { MuxService } from './services/mux.service';
 import { PostService } from './services/post.service';
 import { QdrantService } from './services/qdrant.service';
@@ -188,6 +189,7 @@ import { MailController } from 'src/presentation/controllers/mail.controller';
     VoiceChatGateway,
     EventEmbeddingService,
     ImageService,
+    DocumentService,
     AssessmentService,
     VideoService,
     MuxService,
@@ -279,6 +281,7 @@ import { MailController } from 'src/presentation/controllers/mail.controller';
     GroupService,
     VoiceChatService,
     ImageService,
+    DocumentService,
     AssessmentService,
     VideoService,
     MuxService,

@@ -13,6 +13,7 @@ export class Event implements IEvent {
   // Zeitliche Daten
   startDate: Date;
   startTime: string;
+  
   endDate?: Date;
   isSponsored?: boolean;
   endTime?: string;
@@ -64,6 +65,7 @@ export class Event implements IEvent {
   commentCount?: number;
 
   embedding?: number[];
+  documents?: string[];
 
   constructor(data: Partial<IEvent>) {
     Object.assign(this, data);

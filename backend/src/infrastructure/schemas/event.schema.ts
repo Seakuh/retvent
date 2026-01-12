@@ -34,6 +34,7 @@ export const EventSchema = new Schema(
     ticketLink: { type: String },
     lineupPictureUrl: { type: [String] },
     videoUrls: { type: [String] },
+    documents: { type: [String] },
     lineup: [
       new Schema({
         name: { type: String },

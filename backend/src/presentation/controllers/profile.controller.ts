@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -25,6 +26,7 @@ export class ProfileController {
   constructor(
     private readonly profileService: ProfileService,
     private readonly imageService: ImageService,
+    private readonly documentService: DocumentService,
   ) {}
 
   @Get(':slug')
@@ -266,5 +268,46 @@ export class ProfileController {
   @UseGuards(JwtAuthGuard)
   async shareProfile(@Body() body: { profileId: string }, @Req() req) {
     return this.profileService.shareProfile(body.profileId, req.user.id);
+  }
+
+  /**
+   * Fügt Dokumente zu einem Profil hinzu
+   * POST /profile/:profileId/documents
+   */
+  @Post(':profileId/documents')
+  @UseGuards(JwtAuthGuard, ProfileOwnerGuard)
+  @UseInterceptors(FilesInterceptor('documents', 10))
+  async addDocumentsToProfile(
+    @Param('profileId') profileId: string,
+    @UploadedFiles() documents: Express.Multer.File[],
+    @Req() req,
+  ) {
+    if (!documents || documents.length === 0) {
+      throw new BadRequestException('No documents provided');
+    }
+
+    return this.profileService.addDocumentsToProfile(
+      profileId,
+      documents,
+      req.user.id,
+    );
+  }
+
+  /**
+   * Entfernt ein Dokument von einem Profil
+   * DELETE /profile/:profileId/documents
+   */
+  @Delete(':profileId/documents')
+  @UseGuards(JwtAuthGuard, ProfileOwnerGuard)
+  async removeDocumentFromProfile(
+    @Param('profileId') profileId: string,
+    @Body() body: { documentUrl: string },
+    @Req() req,
+  ) {
+    return this.profileService.removeDocumentFromProfile(
+      profileId,
+      body.documentUrl,
+      req.user.id,
+    );
   }
 }

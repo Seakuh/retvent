@@ -21,4 +21,5 @@ export interface IProfile {
   updatedAt: Date;
   queue?: string;
   doorPolicy?: string;
+  documents?: string[];
 }

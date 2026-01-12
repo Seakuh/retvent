@@ -13,6 +13,7 @@ import {
 import { MongoProfileRepository } from 'src/infrastructure/repositories/mongodb/profile.repository';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { ImageService } from 'src/infrastructure/services/image.service';
+import { DocumentService } from 'src/infrastructure/services/document.service';
 import { CreateArtistDto } from 'src/presentation/dtos/create-artist.dto';
 import { QdrantService } from 'src/infrastructure/services/qdrant.service';
 import { AuthService } from 'src/infrastructure/services/auth.service';
@@ -23,6 +24,7 @@ export class ProfileService {
   constructor(
     private readonly profileRepository: MongoProfileRepository,
     private readonly imageService: ImageService,
+    private readonly documentService: DocumentService,
     private readonly chatGptService: ChatGPTService,
     private readonly qdrantService: QdrantService,
     private readonly authService: AuthService,
@@ -387,6 +389,74 @@ export class ProfileService {
     eventId: string,
   ): Promise<Profile | null> {
     return this.profileRepository.addCreatedEvent(userId, eventId);
+  }
+
+  /**
+   * Fügt Dokumente zu einem Profil hinzu
+   * 
+   * @param profileId - Die ID des Profils
+   * @param documents - Array von hochgeladenen Dokumenten
+   * @param userId - Die ID des Users (für Authorization)
+   * @returns Das aktualisierte Profil
+   */
+  async addDocumentsToProfile(
+    profileId: string,
+    documents: Express.Multer.File[],
+    userId: string,
+  ): Promise<Profile> {
+    const profile = await this.profileRepository.findById(profileId);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+    if (profile.userId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to add documents to this profile',
+      );
+    }
+
+    // Lade Dokumente hoch
+    const documentUrls = await this.documentService.uploadDocuments(documents);
+
+    // Füge Dokumente zum Profil hinzu
+    const currentDocuments = profile.documents || [];
+    const updatedDocuments = [...currentDocuments, ...documentUrls];
+
+    return this.profileRepository.update(profileId, {
+      documents: updatedDocuments,
+    } as Profile);
+  }
+
+  /**
+   * Entfernt ein Dokument von einem Profil
+   * 
+   * @param profileId - Die ID des Profils
+   * @param documentUrl - Die URL des zu entfernenden Dokuments
+   * @param userId - Die ID des Users (für Authorization)
+   * @returns Das aktualisierte Profil
+   */
+  async removeDocumentFromProfile(
+    profileId: string,
+    documentUrl: string,
+    userId: string,
+  ): Promise<Profile> {
+    const profile = await this.profileRepository.findById(profileId);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+    if (profile.userId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to remove documents from this profile',
+      );
+    }
+
+    const currentDocuments = profile.documents || [];
+    const updatedDocuments = currentDocuments.filter(
+      (doc) => doc !== documentUrl,
+    );
+
+    return this.profileRepository.update(profileId, {
+      documents: updatedDocuments,
+    } as Profile);
   }
 
   getProfilePageByUsername(slug: string): Profile | PromiseLike<Profile> {

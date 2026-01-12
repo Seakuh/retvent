@@ -34,4 +34,5 @@ export interface IEvent {
     };
   };
   embedding?: number[];
+  documents?: string[];
 }

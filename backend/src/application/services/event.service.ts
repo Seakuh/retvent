@@ -15,6 +15,7 @@ import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
 import { Event, EventWithHost } from '../../core/domain/event';
 import { MongoEventRepository } from '../../infrastructure/repositories/mongodb/event.repository';
 import { ImageService } from '../../infrastructure/services/image.service';
+import { DocumentService } from '../../infrastructure/services/document.service';
 import { MuxService } from '../../infrastructure/services/mux.service';
 import { ReplicateService } from '../../infrastructure/services/replicate.service';
 import { VideoService } from '../../infrastructure/services/video.service';
@@ -29,6 +30,7 @@ export class EventService {
   constructor(
     private readonly eventRepository: MongoEventRepository,
     private readonly imageService: ImageService,
+    private readonly documentService: DocumentService,
     private readonly chatGptService: ChatGPTService,
     private readonly geolocationService: GeolocationService,
     private readonly profileService: ProfileService,
@@ -1240,6 +1242,76 @@ export class EventService {
     await this.eventRepository.uploadEventVideo(eventId, videoUrl);
     await this.feedService.pushFeedItemFromEvent(event, 'video');
     return event;
+  }
+
+  /**
+   * Fügt Dokumente zu einem Event hinzu
+   * 
+   * @param eventId - Die ID des Events
+   * @param documents - Array von hochgeladenen Dokumenten
+   * @param userId - Die ID des Users (für Authorization)
+   * @returns Das aktualisierte Event
+   */
+  async addDocumentsToEvent(
+    eventId: string,
+    documents: Express.Multer.File[],
+    userId: string,
+  ) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to add documents to this event',
+      );
+    }
+
+    // Lade Dokumente hoch
+    const documentUrls = await this.documentService.uploadDocuments(documents);
+
+    // Füge Dokumente zum Event hinzu
+    const currentDocuments = event.documents || [];
+    const updatedDocuments = [...currentDocuments, ...documentUrls];
+
+    await this.eventRepository.update(eventId, { documents: updatedDocuments });
+
+    const updatedEvent = await this.eventRepository.findById(eventId);
+    return updatedEvent;
+  }
+
+  /**
+   * Entfernt ein Dokument von einem Event
+   * 
+   * @param eventId - Die ID des Events
+   * @param documentUrl - Die URL des zu entfernenden Dokuments
+   * @param userId - Die ID des Users (für Authorization)
+   * @returns Das aktualisierte Event
+   */
+  async removeDocumentFromEvent(
+    eventId: string,
+    documentUrl: string,
+    userId: string,
+  ) {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to remove documents from this event',
+      );
+    }
+
+    const currentDocuments = event.documents || [];
+    const updatedDocuments = currentDocuments.filter(
+      (doc) => doc !== documentUrl,
+    );
+
+    await this.eventRepository.update(eventId, { documents: updatedDocuments });
+
+    const updatedEvent = await this.eventRepository.findById(eventId);
+    return updatedEvent;
   }
 
   async getEventsByIds(

@@ -1090,6 +1090,54 @@ export class EventController {
     return this.eventService.uploadEventVideo(body.eventId, video, req.user.id);
   }
 
+  /**
+   * Fügt Dokumente zu einem Event hinzu
+   * POST /events/:eventId/addDocs
+   */
+  @Post(':eventId/addDocs')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('documents', 10))
+  async addDocumentsToEvent(
+    @Param('eventId') eventId: string,
+    @UploadedFiles() documents: Express.Multer.File[],
+    @Request() req,
+  ) {
+    if (!req.user) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+    if (!documents || documents.length === 0) {
+      throw new BadRequestException('No documents provided');
+    }
+
+    return this.eventService.addDocumentsToEvent(
+      eventId,
+      documents,
+      req.user.id,
+    );
+  }
+
+  /**
+   * Entfernt ein Dokument von einem Event
+   * DELETE /events/:eventId/documents
+   */
+  @Delete(':eventId/documents')
+  @UseGuards(JwtAuthGuard)
+  async removeDocumentFromEvent(
+    @Param('eventId') eventId: string,
+    @Body() body: { documentUrl: string },
+    @Request() req,
+  ) {
+    if (!req.user) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    return this.eventService.removeDocumentFromEvent(
+      eventId,
+      body.documentUrl,
+      req.user.id,
+    );
+  }
+
   @Put(':eventId/prompt')
   @UseGuards(JwtAuthGuard)
   async updateEventFromPrompt(

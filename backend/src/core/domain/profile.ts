@@ -33,6 +33,7 @@ export class Profile implements IProfile {
   releases?: string[]; // Spotify, Bandcamp etc.
   references?: string[]; // Club IDs oder Namen
   pressImages?: string[]; // Extra Galerie
+  documents?: string[]; // Dokumente-URLs
   constructor(data: Partial<IProfile>) {
     Object.assign(this, data);
   }
