@@ -62,6 +62,7 @@ export const EventSchema = new Schema(
     likeIds: [{ type: String }],
     city: { type: String },
     parentEventId: { type: Schema.Types.ObjectId, ref: 'Event', default: null },
+    commentsEnabled: { type: Boolean, default: true }, // Comments enabled by default
     location: {
       type: {
         type: String,

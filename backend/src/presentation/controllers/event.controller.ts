@@ -1005,6 +1005,33 @@ export class EventController {
     }
   }
 
+  /**
+   * Toggle comments enabled/disabled for an event
+   * PUT /events/:id/comments/toggle
+   */
+  @Put(':id/comments/toggle')
+  @UseGuards(JwtAuthGuard)
+  async toggleCommentsEnabled(
+    @Param('id') id: string,
+    @Request() req,
+  ) {
+    try {
+      const updatedEvent = await this.eventService.toggleCommentsEnabled(
+        id,
+        req.user.sub,
+      );
+      return {
+        message: `Comments ${updatedEvent.commentsEnabled ? 'enabled' : 'disabled'} successfully`,
+        commentsEnabled: updatedEvent.commentsEnabled,
+      };
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
+  }
+
   @Delete(':id/validators/:validatorId')
   @UseGuards(JwtAuthGuard)
   async removeValidatorFromEvent(@Param('id') id: string, @Request() req) {

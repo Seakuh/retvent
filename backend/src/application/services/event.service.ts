@@ -1457,6 +1457,19 @@ export class EventService {
     return this.eventRepository.update(id, eventData);
   }
 
+  async toggleCommentsEnabled(eventId: string, hostId: string): Promise<Event | null> {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== hostId) {
+      throw new ForbiddenException('Only the event host can toggle comments');
+    }
+    
+    const newStatus = !(event.commentsEnabled ?? true); // Default to true if undefined
+    return this.eventRepository.update(eventId, { commentsEnabled: newStatus } as UpdateEventDto);
+  }
+
   async delete(id: string): Promise<boolean> {
     // Get event to check for communityId
     const event = await this.eventRepository.findById(id);

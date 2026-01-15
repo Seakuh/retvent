@@ -53,6 +53,7 @@ export class Event implements IEvent {
   difficulty?: string;
   remoteUrl?: string;
   parentEventId?: string;
+  commentsEnabled?: boolean; // Whether comments are enabled for this event
   // Timestamps
   createdAt: Date;
   updatedAt: Date;

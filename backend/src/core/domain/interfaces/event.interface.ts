@@ -25,6 +25,7 @@ export interface IEvent {
   updatedAt: Date;
   email?: string;
   parentEventId?: string;
+  commentsEnabled?: boolean; // Whether comments are enabled for this event
   location?: {
     city?: string;
     address?: string;

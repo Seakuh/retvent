@@ -1,5 +1,6 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { MongoCommentRepository } from 'src/infrastructure/repositories/mongodb/comment.repository';
+import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
 import { CreateCommentDto } from '../../presentation/dtos/create-comment.dto';
 import { UserService } from './user.service';
 @Injectable()
@@ -7,6 +8,7 @@ export class CommentService {
   constructor(
     private readonly commentRepository: MongoCommentRepository,
     private readonly userService: UserService,
+    private readonly eventRepository: MongoEventRepository,
   ) {}
 
   getCommentsCountByUserId(userId: string) {
@@ -21,6 +23,18 @@ export class CommentService {
     comment: CreateCommentDto,
     userId: string,
   ) {
+    // Check if comments are enabled for this event
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    
+    // Default to true if undefined (for backward compatibility)
+    const commentsEnabled = event.commentsEnabled ?? true;
+    if (!commentsEnabled) {
+      throw new BadRequestException('Comments are disabled for this event');
+    }
+    
     if (userId !== 'public') {
       await this.userService.addUserPoints(userId, 5);
     }

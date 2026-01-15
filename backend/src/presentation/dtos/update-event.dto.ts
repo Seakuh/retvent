@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsNumber,
   IsObject,
   IsOptional,
@@ -173,4 +174,8 @@ export class UpdateEventDto {
   @IsArray()
   @IsString({ each: true })
   documents?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  commentsEnabled?: boolean;
 }

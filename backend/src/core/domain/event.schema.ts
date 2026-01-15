@@ -44,6 +44,7 @@ export interface IEvent extends Document {
   likeIds?: string[];
   validators?: string[]; // User IDs who can scan tickets at event entrance
   parentEventId?: string;
+  commentsEnabled?: boolean; // Whether comments are enabled for this event
   location?: {
     city?: string;
     address?: string;
@@ -92,7 +93,8 @@ const EventSchema = new Schema<IEvent>(
     website: { type: String },
     likeIds: [{ type: String }],
     validators: [{ type: String }], // User IDs who can scan tickets
-    parentEventId: { type: String, ref: 'Event', default: null }
+    parentEventId: { type: String, ref: 'Event', default: null },
+    commentsEnabled: { type: Boolean, default: true } // Comments enabled by default
   },
   {
     timestamps: true,
