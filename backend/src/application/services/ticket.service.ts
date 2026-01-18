@@ -377,9 +377,10 @@ export class TicketsService {
     console.log('ticketIds', ticketIds);
     const tickets = await this.ticketRepository.findTicketsIds(ticketIds);
     console.log('tickets', tickets);
-    const events = await this.eventRepository.getUserFavorites(
-      tickets.map((ticket) => ticket.eventId),
-    );
+    const eventIds = tickets
+      .map((ticket) => ticket.eventId)
+      .filter((id): id is string => Boolean(id));
+    const events = await this.eventRepository.getUserFavorites(eventIds);
     console.log('events', events);
     const eventMap = new Map(events.map((event) => [event.id, event]));
 

@@ -50,7 +50,17 @@ export class MongoEventRepository implements IEventRepository {
     return this.addCommentCountToEvents(events);
   }
   private async addCommentCountToEvents(events: any[]): Promise<Event[]> {
-    const eventIds = events.map((event) => event._id);
+    const eventIds = events
+      .map((event) => event?._id)
+      .filter((id) => id && Types.ObjectId.isValid(id));
+    
+    if (!eventIds.length) {
+      return events.map((event) => ({
+        ...this.toEntity(event),
+        commentCount: 0,
+      }));
+    }
+
     const commentCounts = await this.eventModel.aggregate([
       {
         $match: { _id: { $in: eventIds } },
@@ -699,8 +709,16 @@ export class MongoEventRepository implements IEventRepository {
     location?: string,
     category?: string,
   ): Promise<Event[]> {
+    // Filtere ungültige und undefined IDs
+    const validIds = eventIds
+      .filter((id) => id && typeof id === 'string' && Types.ObjectId.isValid(id));
+
+    if (!validIds.length) {
+      return [];
+    }
+
     const query: any = {
-      _id: { $in: eventIds },
+      _id: { $in: validIds },
     };
 
     if (dateRange?.startDate && dateRange?.endDate) {
