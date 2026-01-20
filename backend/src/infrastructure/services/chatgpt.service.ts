@@ -1129,4 +1129,86 @@ Die Biografie sollte Leser neugierig machen und Lust auf mehr wecken! auf englis
     });
     return response.choices[0]?.message?.content?.trim() || '';
   }
+
+  /**
+   * Generiert eine optimierte Profile-Bio mit passenden Emojis basierend auf dem ursprünglichen Bio-Text
+   * @param bioText - Der ursprüngliche Bio-Text
+   * @param profile - Das Profile-Objekt für Kontext
+   * @returns Eine optimierte Bio mit passenden Emojis
+   */
+  async generateOptimizedProfileBio(bioText: string, profile: any): Promise<string> {
+    const profileInfo = {
+      username: profile.username || '',
+      category: profile.category || '',
+      isArtist: profile.isArtist || false,
+      links: profile.links?.join(', ') || '',
+      sets: profile.sets?.join(', ') || '',
+      releases: profile.releases?.join(', ') || '',
+    };
+
+    const systemPrompt = `Du bist ein Experte für Social Media und Personal Branding. Deine Aufgabe ist es, einen Profil-Bio-Text zu optimieren und mit passenden Emojis anzureichern.
+
+### Profil-Informationen:
+- Username: ${profileInfo.username}
+- Kategorie: ${profileInfo.category}
+- Ist Künstler: ${profileInfo.isArtist ? 'Ja' : 'Nein'}
+- Links: ${profileInfo.links}
+- Sets/Mixes: ${profileInfo.sets}
+- Releases: ${profileInfo.releases}
+
+### Ursprünglicher Bio-Text:
+${bioText}
+
+### Anforderungen:
+1. **Verbessere den Text**: Mache ihn ansprechender, lebendiger und professioneller
+2. **Emojis**: Verwende 4-8 passende, subtile Emojis strategisch platziert (nicht übertreiben!)
+   - Passende Emojis je nach Profil-Typ (🎵 für Musiker, 🎨 für Künstler, 🎤 für DJs, 🎭 für Performer, etc.)
+   - Emojis sollten den Text ergänzen, nicht dominieren
+3. **Länge**: Behalte eine angemessene Länge (100-200 Wörter)
+4. **Stil**: 
+   - Persönlich und authentisch
+   - Professionell aber nicht steif
+   - Fängt die Persönlichkeit und den Stil des Profils ein
+5. **Struktur**: 
+   - Fesselnder Einstieg
+   - Klare Informationen über die Person/Künstler
+   - Call-to-Action oder Kontaktmöglichkeit am Ende
+6. **Sprache**: Auf Englisch schreiben
+
+### Wichtig:
+- Behalte die wichtigsten Informationen aus dem ursprünglichen Text
+- Füge keine falschen Informationen hinzu
+- Emojis sollten natürlich in den Textfluss integriert sein
+- Der Text sollte Leser neugierig machen und Interesse wecken
+
+Antworte NUR mit der optimierten Bio, ohne zusätzliche Erklärungen. auf englisch außer es steht explizit in der anforderung auf deutsch.`;
+
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: 'Du bist ein Experte für Social Media und Personal Branding. Du optimierst Profil-Beschreibungen mit passenden Emojis und ansprechender Sprache.',
+          },
+          { role: 'user', content: systemPrompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 400,
+      });
+
+      const optimizedBio = response.choices[0]?.message?.content?.trim() || '';
+      
+      // Fallback, falls keine Bio generiert wurde
+      if (!optimizedBio || optimizedBio.length < 50) {
+        return bioText; // Fallback zum ursprünglichen Text
+      }
+
+      return optimizedBio;
+    } catch (error) {
+      console.error('Fehler bei der Generierung der optimierten Bio:', error);
+      // Fallback zum ursprünglichen Text bei Fehler
+      return bioText;
+    }
+  }
 }

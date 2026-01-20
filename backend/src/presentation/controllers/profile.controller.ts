@@ -311,4 +311,23 @@ export class ProfileController {
       req.user.id,
     );
   }
+
+  /**
+   * Optimiert die Profile-Bio mit KI und speichert sie
+   * PUT /profile/:profileId/magic-bio
+   */
+  @Put(':profileId/magic-bio')
+  @UseGuards(JwtAuthGuard, ProfileOwnerGuard)
+  async updateProfileMagicBio(
+    @Param('profileId') profileId: string,
+    @Body() body: { bio: string },
+    @Req() req,
+  ) {
+    console.log('updateProfileMagicBio', profileId, body.bio, req.user.sub);
+    return this.profileService.updateProfileMagicBio(
+      profileId,
+      body.bio,
+      req.user.sub,
+    );
+  }
 }

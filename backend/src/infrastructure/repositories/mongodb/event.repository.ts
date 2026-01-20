@@ -838,7 +838,7 @@ export class MongoEventRepository implements IEventRepository {
       this.eventModel
         .find(filter)
         .select(
-          'id title imageUrl startDate startTime endDate  city views commentCount capacity registrations category difficulty',
+          'id title imageUrl startDate startTime endDate  city views commentCount capacity registrations category difficulty parentEventId',
         )
         .exec(),
       this.eventModel.countDocuments(filter),

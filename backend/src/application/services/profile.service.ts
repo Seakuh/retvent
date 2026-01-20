@@ -711,4 +711,39 @@ export class ProfileService {
     }
     return profile;
   }
+
+  /**
+   * Optimiert die Profile-Bio mit KI und speichert sie
+   * @param profileId - Die ID des Profils
+   * @param bioText - Der ursprüngliche Bio-Text
+   * @param userId - Die ID des Users (für Authorization)
+   * @returns Das aktualisierte Profil
+   */
+  async updateProfileMagicBio(
+    profileId: string,
+    bioText: string,
+    userId: string,
+  ): Promise<Profile | null> {
+    const profile = await this.profileRepository.findByUserId(userId);
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    if (profile.id !== profileId && profile.userId !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to update this profile',
+      );
+    }
+
+    // Generiere optimierte Bio mit ChatGPT
+    const optimizedBio = await this.chatGptService.generateOptimizedProfileBio(
+      bioText,
+      profile,
+    );
+
+    // Speichere die optimierte Bio im bio Feld
+    return this.profileRepository.update(userId, {
+      bio: optimizedBio,
+    });
+  }
 }
