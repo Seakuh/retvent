@@ -48,7 +48,107 @@ interface LineupMember {
   name: string;
   role?: string;
   startTime?: string;
+  endTime?: string;
 }
+
+// Time Picker Component
+interface TimePickerProps {
+  value: string;
+  onChange: (value: string) => void;
+  label?: string;
+}
+
+const TimePicker: React.FC<TimePickerProps> = ({ value, onChange, label }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [hours, setHours] = useState(value ? value.split(":")[0] : "00");
+  const [minutes, setMinutes] = useState(value ? value.split(":")[1] : "00");
+
+  const hourOptions = Array.from({ length: 24 }, (_, i) =>
+    i.toString().padStart(2, "0")
+  );
+  const minuteOptions = Array.from({ length: 12 }, (_, i) =>
+    (i * 5).toString().padStart(2, "0")
+  );
+
+  const handleConfirm = () => {
+    onChange(`${hours}:${minutes}`);
+    setIsOpen(false);
+  };
+
+  const displayValue = value || "--:--";
+
+  return (
+    <div className="time-picker-wrapper">
+      {label && <label className="time-picker-label">{label}</label>}
+      <button
+        type="button"
+        className="time-picker-trigger"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="time-picker-value">{displayValue}</span>
+        <span className="time-picker-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12,6 12,12 16,14" />
+          </svg>
+        </span>
+      </button>
+      {isOpen && (
+        <div className="time-picker-dropdown">
+          <div className="time-picker-columns">
+            <div className="time-picker-column">
+              <span className="time-picker-column-label">Hour</span>
+              <div className="time-picker-scroll">
+                {hourOptions.map((h) => (
+                  <button
+                    key={h}
+                    type="button"
+                    className={`time-picker-option ${hours === h ? "active" : ""}`}
+                    onClick={() => setHours(h)}
+                  >
+                    {h}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="time-picker-separator">:</div>
+            <div className="time-picker-column">
+              <span className="time-picker-column-label">Min</span>
+              <div className="time-picker-scroll">
+                {minuteOptions.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    className={`time-picker-option ${minutes === m ? "active" : ""}`}
+                    onClick={() => setMinutes(m)}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="time-picker-actions">
+            <button
+              type="button"
+              className="time-picker-cancel"
+              onClick={() => setIsOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="time-picker-confirm"
+              onClick={handleConfirm}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface EventFormData {
   title: string;
@@ -346,7 +446,7 @@ const EditEvent: React.FC = () => {
   const addLineupMember = () => {
     setFormData((prev) => ({
       ...prev,
-      lineup: [...(prev.lineup || []), { name: "", role: "", startTime: "" }],
+      lineup: [...(prev.lineup || []), { name: "", role: "", startTime: "", endTime: "" }],
     }));
   };
 
@@ -985,7 +1085,7 @@ const EditEvent: React.FC = () => {
             <div className="lineup-list">
               {formData.lineup?.map((member, index) => (
                 <div key={index} className="lineup-member">
-                  <div className="form-row">
+                  <div className="lineup-member-grid">
                     <div className="form-group">
                       <label>Name</label>
                       <input
@@ -1008,16 +1108,20 @@ const EditEvent: React.FC = () => {
                         placeholder="DJ, Band, etc."
                       />
                     </div>
-                    <div className="form-group">
-                      <label>Start Time</label>
-                      <input
-                        type="time"
-                        value={member.startTime || ""}
-                        onChange={(e) =>
-                          handleLineupChange(index, "startTime", e.target.value)
-                        }
-                      />
-                    </div>
+                    <TimePicker
+                      label="Start"
+                      value={member.startTime || ""}
+                      onChange={(value) =>
+                        handleLineupChange(index, "startTime", value)
+                      }
+                    />
+                    <TimePicker
+                      label="End"
+                      value={member.endTime || ""}
+                      onChange={(value) =>
+                        handleLineupChange(index, "endTime", value)
+                      }
+                    />
                     <button
                       type="button"
                       onClick={() => removeLineupMember(index)}
