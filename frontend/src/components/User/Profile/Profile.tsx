@@ -1,4 +1,4 @@
-import { ChevronLeft, LogOut, MoreVertical, Share2, User as UserIcon, Mail, FileText, Link as LinkIcon, Calendar, Moon, Sun, Sparkles } from "lucide-react";
+import { ChevronLeft, LogOut, MoreVertical, Share2, User as UserIcon, Mail, FileText, Link as LinkIcon, Calendar, Moon, Sun, Sparkles, X } from "lucide-react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
@@ -301,6 +301,17 @@ export const Profile: React.FC = () => {
   const handleEditEvent = useCallback((eventId: string) => {
     navigate(`/admin/events/edit/${eventId}`);
   }, [navigate]);
+
+  // Close modal on ESC key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && activeSection) {
+        setActiveSection(null);
+      }
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [activeSection]);
 
   const handleBack = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -612,7 +623,27 @@ export const Profile: React.FC = () => {
         {isOwnProfile && (
           <div className="profile-own-settings">
             <LevelSection points={points} />
-            {activeSection && (
+          </div>
+        )}
+
+        {/* Profile Edit Modal */}
+        {isOwnProfile && activeSection && (
+          <div className="profile-edit-modal-overlay" onClick={() => setActiveSection(null)}>
+            <div className="profile-edit-modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="profile-edit-modal-header">
+                <h2 className="profile-edit-modal-title">
+                  {activeSection === "username" && "Edit Username"}
+                  {activeSection === "email" && "Edit Email"}
+                  {activeSection === "bio" && "Edit Bio"}
+                  {activeSection === "links" && "Edit Links"}
+                </h2>
+                <button
+                  className="profile-edit-modal-close"
+                  onClick={() => setActiveSection(null)}
+                >
+                  <X size={20} />
+                </button>
+              </div>
               <div className="profile-info">
                 {activeSection === "username" && (
                   <div className="profile-info-item">
@@ -661,7 +692,7 @@ export const Profile: React.FC = () => {
                   {isUpdating ? "Updating..." : "Update Profile"}
                 </button>
               </div>
-            )}
+            </div>
           </div>
         )}
         

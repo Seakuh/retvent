@@ -65,11 +65,18 @@
   padding: 1rem;
   border-radius: 8px;
   margin-top: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .profile-info-bio p {
   margin: 0;
   line-height: 1.5;
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .member-since-profile {

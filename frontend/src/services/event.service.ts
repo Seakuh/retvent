@@ -2,8 +2,7 @@ import { Event } from "../utils";
 
 export class EventService {
   private baseUrl =
-    import.meta.env.VITE_API_URL + "events" ||
-    "http://localhost:4000" + "events";
+    (import.meta.env.VITE_API_URL || "http://localhost:4000/") + "events";
   private token = localStorage.getItem("access_token");
 
   private getHeaders(isFormData: boolean = false) {
@@ -196,6 +195,31 @@ export class EventService {
       }
     } catch (error) {
       console.error("Delete document error:", error);
+      throw error;
+    }
+  }
+
+  async updateEventMagicBio(eventId: string, bio: string): Promise<string> {
+    const accessToken = localStorage.getItem("access_token");
+    try {
+      const response = await fetch(`${this.baseUrl}/${eventId}/magic-bio`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ bio }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to generate magic bio");
+      }
+
+      const data = await response.json();
+      return data.bio || data.description || "";
+    } catch (error) {
+      console.error("Update event magic bio error:", error);
       throw error;
     }
   }

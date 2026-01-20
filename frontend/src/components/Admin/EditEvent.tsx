@@ -185,6 +185,7 @@ const EditEvent: React.FC = () => {
   const [documentUrls, setDocumentUrls] = useState<string[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [promptText, setPromptText] = useState("");
+  const [isGeneratingMagicBio, setIsGeneratingMagicBio] = useState(false);
   const eventService = new EventService();
 
   // Image Cropper States
@@ -320,6 +321,30 @@ const EditEvent: React.FC = () => {
         ...prev,
         [name]: value,
       }));
+    }
+  };
+
+  const handleGenerateMagicBio = async () => {
+    if (!eventId) return;
+    
+    setIsGeneratingMagicBio(true);
+    setError(null);
+    
+    try {
+      // Use current description as prompt, or empty string if none
+      const currentBio = formData.description || "";
+      const magicBio = await eventService.updateEventMagicBio(eventId, currentBio);
+      
+      // Update the description field with the generated bio
+      setFormData((prev) => ({
+        ...prev,
+        description: magicBio,
+      }));
+    } catch (err) {
+      console.error("Error generating magic bio:", err);
+      setError("Failed to generate magic bio. Please try again.");
+    } finally {
+      setIsGeneratingMagicBio(false);
     }
   };
 
@@ -781,6 +806,16 @@ const EditEvent: React.FC = () => {
             <div className="card-header">
               <FileText className="card-icon" />
               <span className="card-title">Description</span>
+              <button
+                type="button"
+                onClick={handleGenerateMagicBio}
+                disabled={isGeneratingMagicBio}
+                className="magic-bio-button"
+                title="Generate AI-optimized bio"
+              >
+                <Sparkles size={18} />
+                {isGeneratingMagicBio ? "Generating..." : "Magic Bio"}
+              </button>
             </div>
             <div className="form-group">
               <textarea
