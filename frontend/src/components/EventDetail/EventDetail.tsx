@@ -274,8 +274,8 @@ export const EventDetail: React.FC = () => {
           <ChevronLeft className="h-5 w-5" />
         </button>
 
-        {/* Owner Settings Menu */}
-        {isOwner && (
+        {/* Owner Settings Menu - only for logged in owner */}
+        {isOwner && user && (
           <div className="owner-settings-container" ref={ownerMenuRef}>
             <button
               className="owner-settings-btn"
