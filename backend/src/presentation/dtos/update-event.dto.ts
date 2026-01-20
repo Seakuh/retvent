@@ -73,6 +73,10 @@ export class UpdateEventDto {
 
   @IsOptional()
   @IsString()
+  communityId?: string;
+
+  @IsOptional()
+  @IsString()
   startDate?: string | Date;
 
   @IsOptional()
@@ -95,6 +99,7 @@ export class UpdateEventDto {
   @IsString()
   hostUsername?: string;
 
+
   @IsOptional()
   @IsString()
   city?: string;
@@ -114,14 +119,15 @@ export class UpdateEventDto {
   @IsOptional()
   ticketLink?: string;
 
-  @IsOptional()
-  @IsArray()
-  lineup?: Array<{ name: string; role?: string; startTime?: string }>;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   tags?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  isPrivate?: boolean;
 
   @IsOptional()
   website?: string;
@@ -130,6 +136,13 @@ export class UpdateEventDto {
   @IsArray()
   @IsString({ each: true })
   likeIds?: string[];
+
+  @IsOptional()
+  @IsNumber()
+  capacity?: number;
+
+
+
 
   @IsOptional()
   email?: string;
@@ -178,4 +191,21 @@ export class UpdateEventDto {
   @IsOptional()
   @IsBoolean()
   commentsEnabled?: boolean;
+
+  @IsOptional()
+  @IsString()
+  language?: string;
+
+  @IsOptional()
+  @IsString()
+  difficulty?: string;
+
+  @IsOptional()
+  @IsUrl()
+  remoteUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  parentEventId?: string;
+
 }
