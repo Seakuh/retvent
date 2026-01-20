@@ -824,6 +824,7 @@
      OWNER SETTINGS MENU
      ============================================================= */
   .owner-settings-container {
+    position: absolute;
     top: 2rem;
     right: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
     z-index: 10001;
@@ -905,12 +906,6 @@
   }
 
   @media (max-width: 768px) {
-    .owner-settings-container {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-    }
-
     .owner-settings-btn {
       padding: 0.5rem;
     }

@@ -79,12 +79,45 @@ export const EventDetail: React.FC = () => {
     };
   }, [showOwnerMenu]);
 
+  const handleFileUpload = (type: string) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = type === "video" ? "video/*" : "image/*";
+    fileInput.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file || !eventId) return;
+
+      const accessToken = localStorage.getItem("access_token");
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("eventId", eventId);
+
+      try {
+        const endpoint = type === "lineup"
+          ? "events/lineup/upload"
+          : type === "video"
+          ? "events/teaser/upload"
+          : "events/gifs/upload";
+
+        await fetch(`${import.meta.env.VITE_API_URL || 'https://api.event-scanner.com/'}${endpoint}`, {
+          method: "POST",
+          body: formData,
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        window.location.reload();
+      } catch (error) {
+        console.error("Upload error:", error);
+      }
+    };
+    fileInput.click();
+  };
+
   const ownerMenuItems = [
-    { icon: Megaphone, label: "Sponsor Event", action: () => navigate(`/admin/event/${eventId}/sponsor`) },
-    { icon: Pencil, label: "Edit Event", action: () => navigate(`/admin/event/${eventId}/edit`) },
-    { icon: Users, label: "Add Lineup", action: () => navigate(`/admin/event/${eventId}/lineup`) },
-    { icon: ImagePlus, label: "Add Pictures", action: () => navigate(`/admin/event/${eventId}/pictures`) },
-    { icon: Film, label: "Add Movies", action: () => navigate(`/admin/event/${eventId}/movies`) },
+    { icon: Megaphone, label: "Sponsor Event", action: () => navigate(`/advertising/${eventId}`) },
+    { icon: Pencil, label: "Edit Event", action: () => navigate(`/admin/events/edit/${eventId}`) },
+    { icon: Users, label: "Add Lineup", action: () => handleFileUpload("lineup") },
+    { icon: ImagePlus, label: "Add Pictures", action: () => handleFileUpload("images") },
+    { icon: Film, label: "Add Movies", action: () => handleFileUpload("video") },
   ];
 
   useEffect(() => {
