@@ -17,9 +17,11 @@ import {
   Music,
   Eye,
   Heart,
+  Crop,
 } from "lucide-react";
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Cropper, { Area } from "react-easy-crop";
 import { EventService } from "../../services/event.service";
 import { categories, Event } from "../../utils";
 import "./EditEvent.css";
@@ -83,6 +85,14 @@ const EditEvent: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [promptText, setPromptText] = useState("");
   const eventService = new EventService();
+
+  // Image Cropper States
+  const [showCropper, setShowCropper] = useState(false);
+  const [tempImage, setTempImage] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const [aspectRatio, setAspectRatio] = useState(16 / 9);
 
   const [formData, setFormData] = useState<EventFormData>({
     title: "",
@@ -213,17 +223,102 @@ const EditEvent: React.FC = () => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLoading(true);
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        setTempImage(reader.result as string);
+        setShowCropper(true);
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
       };
       reader.readAsDataURL(file);
-      eventService.updateEventImage(eventId!, file);
     }
-    setLoading(false);
+  };
+
+  const onCropComplete = useCallback(
+    (_croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    []
+  );
+
+  const createCroppedImage = async (
+    imageSrc: string,
+    pixelCrop: Area
+  ): Promise<Blob> => {
+    const image = new window.Image();
+    image.src = imageSrc;
+    await new Promise((resolve) => {
+      image.onload = resolve;
+    });
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      throw new Error("Could not get canvas context");
+    }
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Canvas is empty"));
+          }
+        },
+        "image/jpeg",
+        0.95
+      );
+    });
+  };
+
+  const handleCropApply = async () => {
+    if (!tempImage || !croppedAreaPixels) return;
+
+    setLoading(true);
+    try {
+      const croppedBlob = await createCroppedImage(tempImage, croppedAreaPixels);
+      const croppedUrl = URL.createObjectURL(croppedBlob);
+      setImagePreview(croppedUrl);
+
+      const file = new File([croppedBlob], "cropped-image.jpg", {
+        type: "image/jpeg",
+      });
+      await eventService.updateEventImage(eventId!, file);
+
+      setShowCropper(false);
+      setTempImage(null);
+    } catch (err) {
+      console.error("Error cropping image:", err);
+      setError("Failed to crop image");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    setTempImage(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
   };
 
   const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -382,12 +477,100 @@ const EditEvent: React.FC = () => {
         </div>
       )}
 
+      {/* Image Cropper Modal */}
+      {showCropper && tempImage && (
+        <div className="cropper-modal-overlay">
+          <div className="cropper-modal-header">
+            <span className="cropper-modal-title">Crop Image</span>
+            <button
+              type="button"
+              className="cropper-close-btn"
+              onClick={handleCropCancel}
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <div className="cropper-container">
+            <Cropper
+              image={tempImage}
+              crop={crop}
+              zoom={zoom}
+              aspect={aspectRatio}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+            />
+          </div>
+          <div className="cropper-controls">
+            <div className="aspect-ratio-controls">
+              <span className="aspect-ratio-label">Aspect Ratio</span>
+              <button
+                type="button"
+                className={`aspect-ratio-btn ${aspectRatio === 16 / 9 ? "active" : ""}`}
+                onClick={() => setAspectRatio(16 / 9)}
+              >
+                16:9
+              </button>
+              <button
+                type="button"
+                className={`aspect-ratio-btn ${aspectRatio === 4 / 3 ? "active" : ""}`}
+                onClick={() => setAspectRatio(4 / 3)}
+              >
+                4:3
+              </button>
+              <button
+                type="button"
+                className={`aspect-ratio-btn ${aspectRatio === 1 ? "active" : ""}`}
+                onClick={() => setAspectRatio(1)}
+              >
+                1:1
+              </button>
+              <button
+                type="button"
+                className={`aspect-ratio-btn ${aspectRatio === 9 / 16 ? "active" : ""}`}
+                onClick={() => setAspectRatio(9 / 16)}
+              >
+                9:16
+              </button>
+            </div>
+            <div className="zoom-control">
+              <span className="zoom-label">Zoom</span>
+              <input
+                type="range"
+                className="zoom-slider"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+              />
+            </div>
+            <div className="cropper-actions">
+              <button
+                type="button"
+                className="cropper-cancel-btn"
+                onClick={handleCropCancel}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="cropper-apply-btn"
+                onClick={handleCropApply}
+              >
+                Apply Crop
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="edit-event-header">
         <button onClick={handleBack} className="back-button">
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <h2>Edit Event</h2>
+        <h2>Edit Event: {formData.title || "Untitled"}</h2>
       </div>
 
       {/* Magic Update Section - Prominent at Top */}

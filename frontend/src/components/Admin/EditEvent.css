@@ -3,6 +3,8 @@
 /* Base Container */
 .edit-event-container {
   min-height: 100vh;
+  max-width: 80rem;
+  margin: 0 auto;
   background-color: #000000;
   color: #ffffff;
   padding: 2rem;
@@ -51,30 +53,14 @@
 .edit-event-header {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: center;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
+  margin-top: 4rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.back-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  color: #ffffff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
 
-.back-button:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  transform: translateX(-2px);
-}
 
 .edit-event-container h2 {
   font-size: 2rem;
@@ -82,7 +68,12 @@
   letter-spacing: -0.5px;
   color: #ffffff;
   margin: 0;
+  text-align: center;
 }
+
+
+
+
 
 /* Magic Update Section - Prominent at Top */
 .magic-update-section {
@@ -768,5 +759,213 @@
 
   .magic-update-section {
     padding: 1.5rem;
+  }
+}
+
+/* Image Cropper Modal */
+.cropper-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(10px);
+}
+
+.cropper-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cropper-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.cropper-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cropper-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.cropper-container {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  background-color: #000000;
+}
+
+.cropper-controls {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.zoom-control {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.zoom-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  min-width: 50px;
+}
+
+.zoom-slider {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  outline: none;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.zoom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.zoom-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.cropper-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.cropper-cancel-btn,
+.cropper-apply-btn {
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cropper-cancel-btn {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.cropper-cancel-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.cropper-apply-btn {
+  background-color: #ffffff;
+  border: none;
+  color: #000000;
+}
+
+.cropper-apply-btn:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: scale(1.02);
+}
+
+.cropper-apply-btn:active {
+  transform: scale(0.98);
+}
+
+/* Aspect Ratio Buttons */
+.aspect-ratio-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.aspect-ratio-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  min-width: 80px;
+}
+
+.aspect-ratio-btn {
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.aspect-ratio-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.aspect-ratio-btn.active {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .cropper-modal-header {
+    padding: 1rem;
+  }
+
+  .cropper-controls {
+    padding: 1rem;
+  }
+
+  .cropper-actions {
+    flex-direction: column;
+  }
+
+  .cropper-cancel-btn,
+  .cropper-apply-btn {
+    width: 100%;
+  }
+
+  .aspect-ratio-controls {
+    flex-wrap: wrap;
   }
 }
