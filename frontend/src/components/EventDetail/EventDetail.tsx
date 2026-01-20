@@ -1,5 +1,5 @@
-import { ChevronLeft } from "lucide-react";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { ChevronLeft, MoreVertical, Pencil, Users, ImagePlus, Film, Megaphone, X } from "lucide-react";
+import React, { useCallback, useContext, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { useEvent } from "../../hooks/useEvent"; // Custom Hook für Event-Fetching
@@ -55,10 +55,37 @@ export const EventDetail: React.FC = () => {
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
   const [isOwner, setIsOwner] = useState(false);
+  const [showOwnerMenu, setShowOwnerMenu] = useState(false);
+  const ownerMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0); // Falls die Seite nicht ganz oben startet
   }, [location.pathname]);
+
+  // Close owner menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ownerMenuRef.current && !ownerMenuRef.current.contains(event.target as Node)) {
+        setShowOwnerMenu(false);
+      }
+    };
+
+    if (showOwnerMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showOwnerMenu]);
+
+  const ownerMenuItems = [
+    { icon: Megaphone, label: "Sponsor Event", action: () => navigate(`/admin/event/${eventId}/sponsor`) },
+    { icon: Pencil, label: "Edit Event", action: () => navigate(`/admin/event/${eventId}/edit`) },
+    { icon: Users, label: "Add Lineup", action: () => navigate(`/admin/event/${eventId}/lineup`) },
+    { icon: ImagePlus, label: "Add Pictures", action: () => navigate(`/admin/event/${eventId}/pictures`) },
+    { icon: Film, label: "Add Movies", action: () => navigate(`/admin/event/${eventId}/movies`) },
+  ];
 
   useEffect(() => {
     if (event && eventId) {
@@ -213,6 +240,38 @@ export const EventDetail: React.FC = () => {
         <button className="back-button" onClick={handleBack}>
           <ChevronLeft className="h-5 w-5" />
         </button>
+
+        {/* Owner Settings Menu */}
+        {isOwner && (
+          <div className="owner-settings-container" ref={ownerMenuRef}>
+            <button
+              className="owner-settings-btn"
+              onClick={() => setShowOwnerMenu(!showOwnerMenu)}
+              title="Event Settings"
+            >
+              {showOwnerMenu ? <X className="h-5 w-5" /> : <MoreVertical className="h-5 w-5" />}
+            </button>
+
+            {showOwnerMenu && (
+              <div className="owner-menu">
+                {ownerMenuItems.map((item, index) => (
+                  <button
+                    key={index}
+                    className="owner-menu-item"
+                    onClick={() => {
+                      item.action();
+                      setShowOwnerMenu(false);
+                    }}
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    <item.icon className="owner-menu-icon" />
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="event-content">
           <div className="event-important-info-contain">

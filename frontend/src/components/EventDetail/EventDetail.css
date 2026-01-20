@@ -819,3 +819,107 @@
       height: auto;
     }
   }
+
+  /* =============================================================
+     OWNER SETTINGS MENU
+     ============================================================= */
+  .owner-settings-container {
+    top: 2rem;
+    right: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
+    z-index: 10001;
+  }
+
+  .owner-settings-btn {
+    background: black;
+    color: white;
+    padding: 0.7rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    border: none;
+  }
+
+  .owner-settings-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(var(--color-neon-blue-rgb), 0.3);
+  }
+
+  .owner-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .owner-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    animation: slideDownFade 0.2s ease forwards;
+    opacity: 0;
+    white-space: nowrap;
+  }
+
+  .owner-menu-item:last-child {
+    border-bottom: none;
+  }
+
+  .owner-menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .owner-menu-icon {
+    width: 16px;
+    height: 16px;
+    color: white;
+  }
+
+  @keyframes slideDownFade {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .owner-settings-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .owner-settings-btn {
+      padding: 0.5rem;
+    }
+
+    .owner-menu {
+      min-width: 150px;
+    }
+
+    .owner-menu-item {
+      padding: 0.75rem 1rem;
+    }
+  }
