@@ -463,17 +463,25 @@ const EditEvent: React.FC = () => {
     setError(null);
 
     try {
+      // Clone formData to avoid mutating state
+      const dataToSubmit = { ...formData };
+
+      // Remove imageUrl to avoid updating it
+      if ("imageUrl" in dataToSubmit) {
+        delete (dataToSubmit as any).imageUrl;
+      }
+
       if (documents.length > 0) {
         const uploadedDocumentUrls = await Promise.all(
           documents.map((doc) => eventService.uploadDocument(eventId!, doc))
         );
-        formData.documents = [
-          ...(formData.documents || []),
+        dataToSubmit.documents = [
+          ...(dataToSubmit.documents || []),
           ...uploadedDocumentUrls,
         ];
       }
 
-      await eventService.updateEvent(eventId!, formData as Partial<Event>);
+      await eventService.updateEvent(eventId!, dataToSubmit as Partial<Event>);
       navigate(`/event/${eventId}`);
     } catch (err) {
       setError("Failed to update event");
