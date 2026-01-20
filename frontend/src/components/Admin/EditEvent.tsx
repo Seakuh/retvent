@@ -474,7 +474,7 @@ const EditEvent: React.FC = () => {
       }
 
       await eventService.updateEvent(eventId!, formData as Partial<Event>);
-      navigate("/admin/events");
+      navigate(`/event/${eventId}`);
     } catch (err) {
       setError("Failed to update event");
     }
@@ -1229,14 +1229,15 @@ const EditEvent: React.FC = () => {
 
         {/* Form Actions */}
         <div className="form-actions">
-          <button
+          {/* <button
             type="button"
             onClick={() => navigate(`/event/${eventId}`)}
             className="view-btn"
             title="View Event"
           >
             <Eye size={18} />
-          </button>
+            View
+          </button> */}
           <button
             type="button"
             onClick={() => navigate("/admin/events")}
