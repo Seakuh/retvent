@@ -246,6 +246,9 @@
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
 }
 
 .form-group input,
@@ -469,6 +472,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .time-picker-label {
@@ -477,6 +481,7 @@
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  height: 1.25rem;
 }
 
 .time-picker-trigger {
@@ -786,14 +791,30 @@
   z-index: 100;
 }
 
+.view-btn,
 .cancel-btn,
 .save-btn {
-  padding: 1rem 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
   border-radius: 50px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.view-btn {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.view-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .cancel-btn {
@@ -981,11 +1002,16 @@
     gap: 0.5rem;
   }
 
+  .view-btn,
   .cancel-btn,
   .save-btn {
-    padding: 0.625rem 1.25rem;
+    padding: 0.625rem 1rem;
     font-size: 0.875rem;
     border-radius: 40px;
+  }
+
+  .view-btn {
+    padding: 0.625rem 0.875rem;
   }
 
   .magic-update-section {

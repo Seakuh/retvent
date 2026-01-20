@@ -18,6 +18,7 @@ import {
   Eye,
   Heart,
   Crop,
+  ExternalLink,
 } from "lucide-react";
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -1228,6 +1229,14 @@ const EditEvent: React.FC = () => {
 
         {/* Form Actions */}
         <div className="form-actions">
+          <button
+            type="button"
+            onClick={() => navigate(`/event/${eventId}`)}
+            className="view-btn"
+            title="View Event"
+          >
+            <Eye size={18} />
+          </button>
           <button
             type="button"
             onClick={() => navigate("/admin/events")}
