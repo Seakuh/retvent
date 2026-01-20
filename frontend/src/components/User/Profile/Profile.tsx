@@ -6,6 +6,7 @@ import { UserContext, type User as UserContextUser } from "../../../contexts/Use
 import { useTheme } from "../../../contexts/ThemeContext";
 import Footer from "../../../Footer/Footer";
 import {
+  API_URL,
   Comment as CommentType,
   defaultProfileImage,
   defaultUserPreferences,
@@ -84,6 +85,7 @@ export const Profile: React.FC = () => {
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [isGeneratingMagicBio, setIsGeneratingMagicBio] = useState(false);
   useEffect(() => {
     let isMounted = true;
 
@@ -301,6 +303,42 @@ export const Profile: React.FC = () => {
   const handleEditEvent = useCallback((eventId: string) => {
     navigate(`/admin/events/edit/${eventId}`);
   }, [navigate]);
+
+  const handleGenerateMagicBio = useCallback(async () => {
+    if (!currentUserId) return;
+    
+    setIsGeneratingMagicBio(true);
+    try {
+      // Use current bio as prompt, or empty string if none
+      const currentBio = changedFields.bio !== undefined ? changedFields.bio : (user?.bio || "");
+      const accessToken = localStorage.getItem("access_token");
+      
+      const response = await fetch(`${API_URL}profile/${currentUserId}/magic-bio`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ bio: currentBio }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to generate magic bio");
+      }
+
+      const data = await response.json();
+      const magicBio = data.bio || data.description || "";
+      
+      // Update the bio field with the generated bio
+      handleChange("bio", magicBio);
+    } catch (err) {
+      console.error("Error generating magic bio:", err);
+      alert(err instanceof Error ? err.message : "Failed to generate magic bio. Please try again.");
+    } finally {
+      setIsGeneratingMagicBio(false);
+    }
+  }, [currentUserId, changedFields.bio, user?.bio, handleChange]);
 
   // Close modal on ESC key
   useEffect(() => {
@@ -669,10 +707,23 @@ export const Profile: React.FC = () => {
                 )}
                 {activeSection === "bio" && (
                   <div className="profile-info-item">
-                    <div className="info-label">Bio</div>
+                    <div className="profile-info-item-header">
+                      <div className="info-label">Bio</div>
+                      <button
+                        type="button"
+                        onClick={handleGenerateMagicBio}
+                        disabled={isGeneratingMagicBio}
+                        className="magic-bio-button-profile"
+                        title="Generate AI-optimized bio"
+                      >
+                        <Sparkles size={16} />
+                        {isGeneratingMagicBio ? "Generating..." : "Magic Bio"}
+                      </button>
+                    </div>
                     <textarea
                       className="info-value"
                       placeholder={user.bio}
+                      value={changedFields.bio !== undefined ? changedFields.bio : (user?.bio || "")}
                       onChange={(e) => handleChange("bio", e.target.value)}
                     />
                   </div>

@@ -214,6 +214,12 @@
   margin-bottom: 1.25rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+}
+
+.card-header .card-title {
+  flex: 1;
+  min-width: 0;
 }
 
 .magic-bio-button {
@@ -230,6 +236,8 @@
   cursor: pointer;
   transition: all 0.2s ease;
   margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .magic-bio-button:hover:not(:disabled) {
