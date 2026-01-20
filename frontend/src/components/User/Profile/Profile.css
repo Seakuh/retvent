@@ -334,7 +334,7 @@
 }
 
 .profile-menu-trigger {
-  background: rgba(255, 255, 255, 0.1);
+  background: black;
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -347,9 +347,6 @@
   transition: all 0.2s ease;
 }
 
-.profile-menu-trigger:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
 
 .profile-menu-overlay {
   position: fixed;
@@ -366,7 +363,7 @@
   top: calc(100% + 8px);
   right: 0;
   min-width: 200px;
-  background: #1a1a1a;
+  background: black;
   backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 8px;

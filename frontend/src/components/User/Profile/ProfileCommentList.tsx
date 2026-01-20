@@ -18,6 +18,10 @@ export const ProfileCommentList = ({
     navigate(`/event/${eventId}`);
   };
 
+  if (!comments || comments.length === 0) {
+    return null;
+  }
+
   return (
     <div className="profile-comment-list">
       <h2 className="comments-by">latest comments by {userName}</h2>

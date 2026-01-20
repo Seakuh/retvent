@@ -56,8 +56,24 @@ export const Profile: React.FC = () => {
   const [commentsCount, setCommentsCount] = useState(0);
   
   // Own profile state
-  const currentUserId = localStorage.getItem("user.id") || JSON.parse(localStorage.getItem("user") || "{}").id;
-  const isOwnProfile = userId === currentUserId;
+  const getCurrentUserId = () => {
+    const userFromStorage = localStorage.getItem("user.id");
+    if (userFromStorage) return userFromStorage;
+    
+    try {
+      const userObj = localStorage.getItem("user");
+      if (userObj) {
+        const parsed = JSON.parse(userObj);
+        return parsed?.id || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user from localStorage:", e);
+    }
+    return null;
+  };
+  
+  const currentUserId = getCurrentUserId();
+  const isOwnProfile = userId === currentUserId && currentUserId !== null;
   const [points, setPoints] = useState<number>(0);
   const [isUpdating, setIsUpdating] = useState(false);
   const [changedFields, setChangedFields] = useState<Partial<ProfileType>>({});
@@ -82,25 +98,43 @@ export const Profile: React.FC = () => {
         setIsLoading(true);
         setError(null);
 
-        // Parallel fetching of profile and events
-        const [profileData, eventsData, feedData] = await Promise.all([
-          getProfile(userId),
+        // If own profile, fetch from /users/me/profile to get points
+        let profileData;
+        if (isOwnProfile && currentUserId) {
+          profileData = await meService.getMe(currentUserId);
+        } else {
+          profileData = await getProfile(userId);
+        }
+
+        // Parallel fetching of events and feed
+        const [eventsData, feedData] = await Promise.all([
           getUserEvents(userId),
           getProfileFeed(userId),
         ]);
-        fetchProfileComments(profileData?.userId || "").then(
-          ({ comments, count }) => {
-            setComments(comments);
-            setCommentsCount(count);
-          }
-        );
+        
+        // Fetch comments only if userId exists
+        if (profileData?.userId || profileData?.id) {
+          fetchProfileComments(profileData?.userId || profileData?.id || userId).then(
+            ({ comments, count }) => {
+              setComments(comments || []);
+              setCommentsCount(count || 0);
+            }
+          ).catch((error) => {
+            console.error("Error fetching profile comments:", error);
+            setComments([]);
+            setCommentsCount(0);
+          });
+        } else {
+          setComments([]);
+          setCommentsCount(0);
+        }
 
         if (isMounted) {
           setUser(profileData);
           setEvents(eventsData || []);
           setFeed(feedData || []);
           
-          // If own profile, set additional state
+          // If own profile, set additional state including points
           if (isOwnProfile && profileData) {
             setPoints(profileData.points || 0);
             setHeaderImage(profileData.headerImageUrl || fallBackProfileImage);
