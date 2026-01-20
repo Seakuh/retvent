@@ -484,7 +484,7 @@ export const Profile: React.FC = () => {
                     className="profile-menu-overlay"
                     onClick={() => setShowMenu(false)}
                   />
-                  <div className="profile-menu-dropdown">
+                  <div className="profile-menu-dropdown" onClick={(e) => e.stopPropagation()}>
                     <div
                       className="profile-menu-item"
                       onClick={() => {
@@ -577,7 +577,7 @@ export const Profile: React.FC = () => {
           ) : (
             <button
               onClick={() => shareProfile(userId || "")}
-              className="share-button"
+              className="share-button-profile"
               title="Share Profile"
             >
               <Share2 className="h-5 w-5" />
@@ -613,6 +613,7 @@ export const Profile: React.FC = () => {
                 <div className="upload-overlay">Uploading...</div>
               )}
             </div>
+            
           </>
         ) : (
           <>
@@ -620,6 +621,7 @@ export const Profile: React.FC = () => {
               headerImageUrl={user.headerImageUrl || defaultProfileImage}
               username={user.username}
             />
+            
             <div
               className="profile-bubble-container"
               onClick={(e) => {
@@ -647,6 +649,11 @@ export const Profile: React.FC = () => {
                   viewsCount={countEventViews()}
                 />
               </div>
+              {isOwnProfile && (
+          <div className="profile-own-settings">
+            <LevelSection points={points} />
+          </div>
+        )}
               {!isOwnProfile && (
                 <ActionComponent
                   isFollowingWIP={isFollowing}
@@ -658,11 +665,7 @@ export const Profile: React.FC = () => {
           </div>
         </div>
         
-        {isOwnProfile && (
-          <div className="profile-own-settings">
-            <LevelSection points={points} />
-          </div>
-        )}
+   
 
         {/* Profile Edit Modal */}
         {isOwnProfile && activeSection && (

@@ -168,16 +168,17 @@
     position: absolute;
     right: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
     z-index: 10;
+    top: 2rem;
     display: flex;
     gap: 0.75rem;
     flex-direction: column;
   }
   
   .share-button {
-    background: rgba(0, 0, 0, 0.7);
+    background: black;
     backdrop-filter: blur(8px);
     color: white;
-    padding: .9rem;
+    padding: 0.7rem;
     border-radius: 9999px;
     display: flex;
     align-items: center;

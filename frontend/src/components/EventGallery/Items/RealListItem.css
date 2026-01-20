@@ -289,7 +289,7 @@
   gap: 4px;
 }
 
-.share-button {
+.share-button-real-list-item {
   display: flex;
   margin-right: 0.5rem;
   cursor: pointer;

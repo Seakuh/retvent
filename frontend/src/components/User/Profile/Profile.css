@@ -344,11 +344,19 @@
   justify-content: center;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
-  top: 2rem;
-  z-index: 10000;
+  z-index: 800;
   right: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
 }
 
+.share-button-profile {
+  background: black;
+  color: white;
+  padding: 0.7rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .profile-menu-overlay {
   position: fixed;
@@ -356,21 +364,22 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 100000;
+  z-index: 999;
   background: transparent;
+  cursor: pointer;
 }
 
 .profile-menu-dropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
+  position: fixed;
+  top: calc(2rem + 48px + 8px);
+  right: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
   min-width: 200px;
   background: black;
   backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  z-index: 999;
+  z-index: 1000;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -516,11 +525,15 @@
     right: 1rem;
   }
   
+  .profile-menu-dropdown {
+    right: 1rem;
+  }
+  
   .profile-page-container .back-button {
     left: 1rem;
   }
   
-  .share-buttons {
+  .share-buttons-profile {
     right: 1rem;
   }
   
