@@ -78,6 +78,88 @@ const AdminEvents: React.FC = () => {
     navigate(-1);
   };
 
+  // Format date function
+  const formatEventDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return "Date not available";
+      }
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Date not available";
+    }
+  };
+
+  // Events nach Datum aufteilen
+  const now = new Date();
+  const upcomingEvents = events.filter((event) => {
+    const eventDate = new Date(event.startDate);
+    return eventDate >= now;
+  });
+  const pastEvents = events.filter((event) => {
+    const eventDate = new Date(event.startDate);
+    return eventDate < now;
+  });
+
+  // Events nach Datum sortieren (neueste zuerst für zukünftige, älteste zuerst für vergangene)
+  upcomingEvents.sort((a, b) => {
+    return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+  });
+  pastEvents.sort((a, b) => {
+    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+  });
+
+  const renderEventCard = (event: Event) => (
+    <div key={event.id} className="event-card-my-events">
+      {event.imageUrl && (
+        <div className="admin-event-image">
+          <img
+            src={
+              "https://img.event-scanner.com/insecure/q:50/rs:auto/plain/" +
+              event.imageUrl
+            }
+            loading="lazy"
+            alt={event.title}
+            onClick={() => handleEdit(event.id)}
+          />
+        </div>
+      )}
+      <div className="admin-event-content">
+        <h3 className="event-title">{event.title}</h3>
+        <div className="event-date-info">
+          <span className="event-date">{formatEventDate(event.startDate)}</span>
+          {event.startTime && <span className="event-time">{event.startTime}</span>}
+        </div>
+      </div>
+      <div className="event-actions-my-events">
+        <button
+          onClick={() => handleWatch(event)}
+          className="go-to-event-btn"
+        >
+          <Eye size={20} />
+        </button>
+        <button
+          onClick={() => handleEdit(event.id)}
+          className="edit-btn"
+        >
+          <Edit size={20} />
+        </button>
+        <button
+          onClick={() => handleDelete(event.id)}
+          className="delete-btn"
+        >
+          <Trash2 size={20} />
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="admin-events-container">
       <button onClick={handleBack} className="back-button">
@@ -86,46 +168,24 @@ const AdminEvents: React.FC = () => {
       {events.length === 0 ? (
         <p className="no-events">No events found.</p>
       ) : (
-        <div className="events-grid-my-events">
-          {events.map((event) => (
-            <div key={event.id} className="event-card-my-events">
-              {event.imageUrl && (
-                <div className="admin-event-image">
-                  <img
-                    src={
-                      "https://img.event-scanner.com/insecure/q:50/rs:auto/plain/" +
-                      event.imageUrl
-                    }
-                    loading="lazy"
-                    alt={event.title}
-                    onClick={() => handleEdit(event.id)}
-                  />
-                </div>
-              )}
-              <div className="admin-event-content"></div>
-              <div className="event-actions-my-events">
-                <button
-                  onClick={() => handleWatch(event)}
-                  className="go-to-event-btn"
-                >
-                  <Eye size={20} />
-                </button>
-                <button
-                  onClick={() => handleEdit(event.id)}
-                  className="edit-btn"
-                >
-                  <Edit size={20} />
-                </button>
-                <button
-                  onClick={() => handleDelete(event.id)}
-                  className="delete-btn"
-                >
-                  <Trash2 size={20} />
-                </button>
+        <>
+          {upcomingEvents.length > 0 && (
+            <div className="events-section">
+              <h2 className="section-title">Upcoming Events</h2>
+              <div className="events-grid-my-events">
+                {upcomingEvents.map(renderEventCard)}
               </div>
             </div>
-          ))}
-        </div>
+          )}
+          {pastEvents.length > 0 && (
+            <div className="events-section">
+              <h2 className="section-title">Past Events</h2>
+              <div className="events-grid-my-events">
+                {pastEvents.map(renderEventCard)}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
