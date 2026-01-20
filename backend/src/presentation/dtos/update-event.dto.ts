@@ -45,6 +45,24 @@ class CoordinatesDto {
   lng: number;
 }
 
+class AddressDto {
+  @IsOptional()
+  @IsString()
+  street?: string;
+
+  @IsOptional()
+  @IsString()
+  houseNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  postalCode?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
+}
+
 class LocationDto {
   @IsString()
   address: string;
@@ -103,6 +121,11 @@ export class UpdateEventDto {
   @IsOptional()
   @IsString()
   city?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AddressDto)
+  address?: AddressDto;
 
   @IsOptional()
   @IsString()

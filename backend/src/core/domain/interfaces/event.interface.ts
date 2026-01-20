@@ -34,6 +34,12 @@ export interface IEvent {
       lon?: number;
     };
   };
+  address?: {
+    street?: string;
+    houseNumber?: string;
+    postalCode?: string;
+    city?: string;
+  };
   embedding?: number[];
   documents?: string[];
 }

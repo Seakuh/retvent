@@ -20,4 +20,10 @@ export class Event {
   parentEventId?: string;
   createdAt: Date;
   updatedAt: Date;
+  address?: {
+    street?: string;
+    houseNumber?: string;
+    postalCode?: string;
+    city?: string;
+  };
 }

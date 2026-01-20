@@ -17,6 +17,12 @@ export interface IEvent extends Document {
   locationId?: string;
   category?: string;
   price?: string | number;
+  address?: {
+    street?: string;
+    houseNumber?: string;
+    postalCode?: string;
+    city?: string;
+  };
   communityId?: string;
   isSponsored?: boolean;
   ticketLink?: string;

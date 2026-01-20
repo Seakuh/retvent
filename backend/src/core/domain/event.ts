@@ -22,6 +22,12 @@ export class Event implements IEvent {
   hostUsername?: string;
   hostImageUrl?: string;
   city?: string;
+  address?: {
+    street?: string;
+    houseNumber?: string;
+    postalCode?: string;
+    city?: string;
+  };
   locationId?: string;
   category?: string;
   price?: string;
