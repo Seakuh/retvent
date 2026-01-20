@@ -140,16 +140,6 @@ onClick={() => setViewMode("Search")}
               <span className="hidden md:inline">Profile</span>
             </button>
 
-            <button
-              onClick={() => {
-                navigate(`/me`);
-              }}
-              className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
-            >
-              <Settings size={20} />
-              <span className="hidden md:inline">Settings</span>
-            </button>
-
 
             {/* <button
               onClick={() => {
@@ -269,13 +259,6 @@ onClick={() => setViewMode("Search")}
               className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
             >
               <UserIcon size={20} />
-            </button>
-
-            <button
-              onClick={() => navigate(`/me`)}
-              className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
-            >
-              <Settings size={20} />
             </button>
 
             <button

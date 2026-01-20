@@ -1,3 +1,4 @@
+import { Edit } from "lucide-react";
 import { Event } from "../../../utils";
 import "./EventGridItem.css";
 
@@ -5,6 +6,8 @@ interface EventGridItemProps {
   event: Event;
   handleEventClick: (id: string) => void;
   isPast?: boolean;
+  showEditIcon?: boolean;
+  onEditClick?: (eventId: string) => void;
 }
 
 /**
@@ -17,7 +20,16 @@ export const EventGridItem: React.FC<EventGridItemProps> = ({
   event,
   handleEventClick,
   isPast = false,
+  showEditIcon = false,
+  onEditClick,
 }) => {
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEditClick && event.id) {
+      onEditClick(event.id || event._id || "");
+    }
+  };
+
   return (
     <a
       key={event.id || event._id}
@@ -32,6 +44,15 @@ export const EventGridItem: React.FC<EventGridItemProps> = ({
           decoding="async"
           onLoad={(e) => e.currentTarget.classList.add("loaded")}
         />
+        {showEditIcon && (
+          <button
+            className="event-grid-item-edit-icon"
+            onClick={handleEdit}
+            title="Edit Event"
+          >
+            <Edit size={18} />
+          </button>
+        )}
       </div>
       {/* <div className="event-grid-item-info">
         <h2>{event.title}</h2>

@@ -6,9 +6,15 @@ import { EventGridItem } from "./Items/EventGridItem";
 interface EventGalleryProps {
   events: Event[];
   title: string;
+  showEditIcon?: boolean;
+  onEditClick?: (eventId: string) => void;
 }
 
-export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
+export const EventGalleryIII: React.FC<EventGalleryProps> = ({ 
+  events, 
+  showEditIcon = false,
+  onEditClick 
+}) => {
   const navigate = useNavigate();
   const sortAndGroupEvents = (events: Event[]) => {
     const today = new Date();
@@ -85,6 +91,8 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({ events }) => {
                 event={event}
                 handleEventClick={handleEventClick}
                 isPast={section === "past"}
+                showEditIcon={showEditIcon}
+                onEditClick={onEditClick}
               />
             ))}
           </div>

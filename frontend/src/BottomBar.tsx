@@ -56,7 +56,7 @@ export const BottomBar = ({
           <button
             onClick={() => {
               if (loggedIn) {
-                navigate(`/me`);
+                navigate(`/profile/${user.id}`);
               } else {
                 navigate("/login");
               }
