@@ -1,7 +1,7 @@
 import { Film, Home, Plus, Search, UserIcon } from "lucide-react";
 import "./BottomBar.css";
 import { useLandingSearch } from "./LandinSearchContext";
-import { User } from "./utils";
+import { User } from "./contexts/UserContext";
 
 interface BottomBarProps {
   setViewMode: (view: string) => void;
@@ -55,7 +55,7 @@ export const BottomBar = ({
 
           <button
             onClick={() => {
-              if (loggedIn) {
+              if (loggedIn && user?.id) {
                 navigate(`/profile/${user.id}`);
               } else {
                 navigate("/login");
