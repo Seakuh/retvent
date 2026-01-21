@@ -29,7 +29,11 @@ const HelmetMeta = ({ event, eventId }: HelmetMetaProps) => {
       <meta property="og:image" content={event.imageUrl} />
       <meta
         property="og:url"
-        content={`https://event-scanner.com/event/${eventId}`}
+        content={`https://event-scanner.com/event/${
+          (event as any).slug 
+            ? `${(event as any).slug}-${eventId}` 
+            : eventId
+        }`}
       />
       <meta property="og:site_name" content="EventScanner" />
 
@@ -41,7 +45,11 @@ const HelmetMeta = ({ event, eventId }: HelmetMetaProps) => {
       <meta name="twitter:image" content={event.imageUrl} />
       <meta
         name="twitter:url"
-        content={`https://event-scanner.com/event/${eventId}`}
+        content={`https://event-scanner.com/event/${
+          (event as any).slug 
+            ? `${(event as any).slug}-${eventId}` 
+            : eventId
+        }`}
       />
 
       {/* Additional Meta Tags */}
@@ -50,7 +58,11 @@ const HelmetMeta = ({ event, eventId }: HelmetMetaProps) => {
       <meta name="googlebot" content="index, follow" />
       <link
         rel="canonical"
-        href={`https://event-scanner.com/event/${eventId}`}
+        href={`https://event-scanner.com/event/${
+          (event as any).slug 
+            ? `${(event as any).slug}-${eventId}` 
+            : eventId
+        }`}
       />
     </Helmet>
   );
