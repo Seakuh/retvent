@@ -60,6 +60,14 @@ export class Event implements IEvent {
   remoteUrl?: string;
   parentEventId?: string;
   commentsEnabled?: boolean; // Whether comments are enabled for this event
+  location?: {
+    city?: string;
+    address?: string;
+    coordinates?: {
+      lat?: number;
+      lon?: number;
+    };
+  };
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
@@ -155,7 +163,7 @@ export class Event implements IEvent {
       soldOut?: boolean;
     }>;
   };
-  status?: 'draft' | 'published' | 'cancelled' | 'postponed';
+  status?: 'draft' | 'published' | 'cancelled' | 'postponed' | 'pending';
   moderationStatus?: 'pending' | 'approved' | 'rejected';
 
   constructor(data: Partial<IEvent>) {

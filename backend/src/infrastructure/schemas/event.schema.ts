@@ -218,7 +218,7 @@ export const EventSchema = new Schema(
     // ========== TECHNISCHE FELDER ==========
     status: {
       type: String,
-      enum: ['draft', 'published', 'cancelled', 'postponed'],
+      enum: ['draft', 'published', 'cancelled', 'postponed', 'pending'],
       default: 'published',
     },
     moderationStatus: {

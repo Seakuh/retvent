@@ -251,7 +251,7 @@ export class EventService {
         const hostImageUrl = profile?.profileImageUrl;
 
         // 5. Eventobjekt erstellen
-        const eventData = {
+        const eventData: any = {
           ...extractedEventData,
           imageUrl: uploadedImageUrl,
           uploadLat: lat,
@@ -1665,7 +1665,7 @@ export class EventService {
       }
 
       // 4. Create event with all available data
-      const eventData = {
+      const eventData: any = {
         ...extractedEventData,
         imageUrl: uploadedImageUrl,
         uploadLat: lat,
@@ -1718,7 +1718,7 @@ export class EventService {
       }
 
       // 4. Create event with all available data
-      const eventData = {
+      const eventData: any = {
         ...extractedEventData,
         imageUrl: uploadedImageUrl,
         uploadLat: lat,
@@ -1771,7 +1771,7 @@ export class EventService {
       }
 
       // 4. Create event with all available data
-      const eventData = {
+      const eventData: any = {
         ...extractedEventData,
         imageUrl: uploadedImageUrl,
         uploadLat: lat,
@@ -1829,7 +1829,7 @@ export class EventService {
       const hostImageUrl = profile.profileImageUrl;
 
       // 4. Create event with all available data
-      const eventData = {
+      const eventData: any = {
         ...extractedEventData,
         imageUrl: uploadedImageUrl,
         uploadLat: lat,
@@ -1847,7 +1847,7 @@ export class EventService {
         host: {
           profileImageUrl: hostImageUrl || undefined,
           username: profile.username || undefined,
-        },
+        } as any,
       };
 
       const createdEvent = await this.eventRepository.create(eventData);
