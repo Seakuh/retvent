@@ -245,6 +245,7 @@ interface EventFormData {
   socialMediaLinks: SocialMediaLinks;
   lineup: LineupMember[];
   documents: string[];
+  lineupPictureUrl?: string[];
   host?: Host;
   views?: number;
   likeIds?: string[];
@@ -269,6 +270,9 @@ const EditEvent: React.FC = () => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  const [showStickyTitle, setShowStickyTitle] = useState(false);
+  const [lineupPictures, setLineupPictures] = useState<string[]>([]);
+  const [uploadingLineupPicture, setUploadingLineupPicture] = useState(false);
   const navContainerRef = React.useRef<HTMLDivElement>(null);
   const eventService = new EventService();
 
@@ -309,6 +313,7 @@ const EditEvent: React.FC = () => {
     },
     lineup: [],
     documents: [],
+    lineupPictureUrl: [],
     host: undefined,
     views: 0,
     likeIds: [],
@@ -363,6 +368,9 @@ const EditEvent: React.FC = () => {
       ];
 
       const scrollPosition = window.scrollY + 150;
+
+      // Show sticky title when scrolled past hero section
+      setShowStickyTitle(window.scrollY > 300);
 
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = document.getElementById(sections[i]);
@@ -423,6 +431,7 @@ const EditEvent: React.FC = () => {
         host: event.host,
         views: event.views || 0,
         likeIds: event.likeIds || [],
+        lineupPictureUrl: event.lineupPictureUrl || [],
         priceDetails: (event as any).priceDetails || {
           amount: undefined,
           currency: "",
@@ -458,11 +467,47 @@ const EditEvent: React.FC = () => {
       if (event.documents) {
         setDocumentUrls(event.documents);
       }
+      if (event.lineupPictureUrl) {
+        setLineupPictures(event.lineupPictureUrl);
+      }
     } catch (err) {
       setError("Failed to fetch event details");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLineupPictureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !eventId) return;
+
+    setUploadingLineupPicture(true);
+    setError(null);
+
+    try {
+      const imageUrl = await eventService.uploadLineupPicture(eventId, file);
+      setLineupPictures((prev) => [...prev, imageUrl]);
+      // Update formData
+      setFormData((prev) => ({
+        ...prev,
+        lineupPictureUrl: [...(prev.lineupPictureUrl || []), imageUrl],
+      }));
+    } catch (err) {
+      console.error("Failed to upload lineup picture:", err);
+      setError("Failed to upload lineup picture");
+    } finally {
+      setUploadingLineupPicture(false);
+      // Reset input
+      e.target.value = "";
+    }
+  };
+
+  const removeLineupPicture = (index: number) => {
+    setLineupPictures((prev) => prev.filter((_, i) => i !== index));
+    setFormData((prev) => ({
+      ...prev,
+      lineupPictureUrl: prev.lineupPictureUrl?.filter((_, i) => i !== index) || [],
+    }));
   };
 
   const handleInputChange = (
@@ -1080,6 +1125,16 @@ const EditEvent: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Sticky Title Bar */}
+      {showStickyTitle && (
+        <div className="sticky-title-bar">
+          <button onClick={handleBack} className="sticky-back-button">
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <h1 className="sticky-title">{formData.title || "Untitled Event"}</h1>
+        </div>
+      )}
 
       {/* Navigation Menu */}
       <nav className="edit-event-nav">
@@ -2023,6 +2078,55 @@ const EditEvent: React.FC = () => {
               <Music className="card-icon" />
               <span className="card-title">Lineup</span>
             </div>
+
+            {/* <div className="lineup-pictures-section">
+              <div className="lineup-upload-card">
+                <label htmlFor="lineup-picture-upload" className="lineup-upload-area">
+                  <div className="lineup-upload-icon">
+                    <Upload size={32} />
+                  </div>
+                  <span className="lineup-upload-text">
+                    {uploadingLineupPicture ? "Uploading..." : "Lineup Bild hochladen"}
+                  </span>
+                  <span className="lineup-upload-hint">
+                    Klicken oder Datei hierher ziehen
+                  </span>
+                </label>
+                <input
+                  type="file"
+                  id="lineup-picture-upload"
+                  accept="image/*"
+                  onChange={handleLineupPictureUpload}
+                  className="hidden-input"
+                  disabled={uploadingLineupPicture}
+                />
+              </div>
+
+              {lineupPictures.length > 0 && (
+                <div className="lineup-pictures-grid">
+                  {lineupPictures.map((pictureUrl, index) => (
+                    <div key={index} className="lineup-picture-item">
+                      <div className="lineup-picture-preview-container">
+                        <img
+                          src={pictureUrl}
+                          alt={`Lineup ${index + 1}`}
+                          className="lineup-picture-preview"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeLineupPicture(index)}
+                          className="remove-lineup-picture-btn"
+                          title="Bild entfernen"
+                        >
+                          <X size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div> */}
+
             <div className="lineup-list">
               {formData.lineup?.map((member, index) => (
                 <div key={index} className="lineup-member">

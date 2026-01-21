@@ -61,6 +61,54 @@
   animation: fadeInUp 0.8s ease-out;
 }
 
+/* Sticky Title Bar */
+.sticky-title-bar {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background-color: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 2rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+.sticky-back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.sticky-back-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.sticky-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
 .hero-background {
   position: absolute;
   top: 0;
@@ -144,6 +192,17 @@
   from {
     opacity: 0;
     transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -1990,5 +2049,149 @@
 
   .toast-link {
     font-size: 0.6875rem;
+  }
+
+  .sticky-title-bar {
+    padding: 0.75rem 1rem;
+  }
+
+  .sticky-title {
+    font-size: 1rem;
+  }
+
+  .sticky-back-button {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Lineup Pictures Styles */
+.lineup-pictures-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lineup-upload-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.lineup-upload-area {
+  width: 100%;
+  max-width: 400px;
+  min-height: 200px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lineup-upload-area:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.lineup-upload-area:has(input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lineup-upload-icon {
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s ease;
+}
+
+.lineup-upload-area:hover .lineup-upload-icon {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.lineup-upload-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  text-align: center;
+}
+
+.lineup-upload-hint {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+.lineup-pictures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.lineup-picture-item {
+  width: 100%;
+}
+
+.lineup-picture-preview-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.lineup-picture-preview-container:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.lineup-picture-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-lineup-picture-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.remove-lineup-picture-btn:hover {
+  background-color: rgba(255, 0, 0, 0.8);
+  border-color: rgba(255, 0, 0, 0.6);
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .lineup-upload-area {
+    min-height: 150px;
+    padding: 1.5rem;
+  }
+
+  .lineup-pictures-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
   }
 }

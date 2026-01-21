@@ -223,4 +223,33 @@ export class EventService {
       throw error;
     }
   }
+
+  async uploadLineupPicture(eventId: string, file: File): Promise<string> {
+    const accessToken = localStorage.getItem("access_token");
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("eventId", eventId);
+
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:4000/";
+      const response = await fetch(`${baseUrl}events/lineup/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to upload lineup picture");
+      }
+
+      const data = await response.json();
+      return data.url || data.imageUrl || "";
+    } catch (error) {
+      console.error("Upload lineup picture error:", error);
+      throw error;
+    }
+  }
 }
