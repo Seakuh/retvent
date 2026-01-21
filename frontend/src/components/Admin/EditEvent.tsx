@@ -943,12 +943,40 @@ const EditEvent: React.FC = () => {
         </div>
       )}
 
-      {/* Header */}
-      <div className="edit-event-header">
-        <button onClick={handleBack} className="back-button">
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <h2>Edit Event: {formData.title || "Untitled"}</h2>
+      {/* Animated Hero Section */}
+      <div className="edit-event-hero">
+        <div className="hero-background">
+          <div className="hero-gradient"></div>
+          {imagePreview && (
+            <img src={imagePreview} alt="Event" className="hero-image" />
+          )}
+        </div>
+        <div className="hero-content">
+          <button onClick={handleBack} className="hero-back-button">
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <div className="hero-title-section">
+            <h1 className="hero-title">{formData.title || "Untitled Event"}</h1>
+            <p className="hero-subtitle">
+              {formData.city && <span className="hero-location">{formData.city}</span>}
+              {formData.startDate && (
+                <span className="hero-date">
+                  {typeof formData.startDate === "string" 
+                    ? new Date(formData.startDate).toLocaleDateString("de-DE", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                      })
+                    : new Date(formData.startDate).toLocaleDateString("de-DE", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                      })}
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Magic Update Section - Prominent at Top */}
@@ -979,6 +1007,14 @@ const EditEvent: React.FC = () => {
       <form onSubmit={handleSubmit} className="edit-event-form">
         {/* Dashboard Grid */}
         <div className="dashboard-grid">
+          {/* ========== KATEGORIE: GRUNDINFORMATIONEN ========== */}
+          <div className="category-section">
+            <h2 className="category-title">
+              <Tag className="category-icon" />
+              Grundinformationen
+            </h2>
+          </div>
+
           {/* Event Image Card */}
           <div className="admin-card">
             <div className="card-header">
@@ -1070,6 +1106,14 @@ const EditEvent: React.FC = () => {
                 placeholder="Describe your event..."
               />
             </div>
+          </div>
+
+          {/* ========== KATEGORIE: ZEIT & ORT ========== */}
+          <div className="category-section">
+            <h2 className="category-title">
+              <Calendar className="category-icon" />
+              Zeit & Ort
+            </h2>
           </div>
 
           {/* Date & Time Card */}
@@ -1184,6 +1228,14 @@ const EditEvent: React.FC = () => {
                 />
               </div>
             </div>
+          </div>
+
+          {/* ========== KATEGORIE: PREIS & TICKETS ========== */}
+          <div className="category-section">
+            <h2 className="category-title">
+              <DollarSign className="category-icon" />
+              Preis & Tickets
+            </h2>
           </div>
 
           {/* Pricing & Tickets Card */}
@@ -1398,6 +1450,14 @@ const EditEvent: React.FC = () => {
             </div>
           </div>
 
+          {/* ========== KATEGORIE: ERWEITERTE EINSTELLUNGEN ========== */}
+          <div className="category-section">
+            <h2 className="category-title">
+              <Sparkles className="category-icon" />
+              Erweiterte Einstellungen
+            </h2>
+          </div>
+
           {/* Vibe Card */}
           <div className="admin-card">
             <div className="card-header">
@@ -1509,6 +1569,14 @@ const EditEvent: React.FC = () => {
             </div>
           </div>
 
+          {/* ========== KATEGORIE: KONTAKT & LINKS ========== */}
+          <div className="category-section">
+            <h2 className="category-title">
+              <Mail className="category-icon" />
+              Kontakt & Links
+            </h2>
+          </div>
+
           {/* Contact Card */}
           <div className="admin-card">
             <div className="card-header">
@@ -1558,6 +1626,14 @@ const EditEvent: React.FC = () => {
             </div>
           </div>
 
+          {/* ========== KATEGORIE: STATISTIKEN & INFO ========== */}
+          <div className="category-section">
+            <h2 className="category-title">
+              <Eye className="category-icon" />
+              Statistiken & Info
+            </h2>
+          </div>
+
           {/* Host Info Card */}
           {formData.host && (
             <div className="admin-card">
@@ -1600,6 +1676,14 @@ const EditEvent: React.FC = () => {
                 <span className="stat-label">Tags</span>
               </div>
             </div>
+          </div>
+
+          {/* ========== KATEGORIE: EVENT-DETAILS ========== */}
+          <div className="category-section">
+            <h2 className="category-title">
+              <Music className="category-icon" />
+              Event-Details
+            </h2>
           </div>
 
           {/* Tags Card - Full Width */}
