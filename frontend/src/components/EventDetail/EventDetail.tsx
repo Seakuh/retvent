@@ -1,4 +1,4 @@
-import { ChevronLeft, MoreVertical, Pencil, Users, ImagePlus, Film, Megaphone, X } from "lucide-react";
+import { ChevronLeft, MoreVertical, Pencil, Users, ImagePlus, Film, Megaphone, X, Edit } from "lucide-react";
 import React, { useCallback, useContext, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -284,7 +284,7 @@ export const EventDetail: React.FC = () => {
               onClick={() => setShowOwnerMenu(!showOwnerMenu)}
               title="Event Settings"
             >
-              {showOwnerMenu ? <X className="h-5 w-5" /> : <MoreVertical className="h-5 w-5" />}
+              {showOwnerMenu ? <X className="h-5 w-5" /> : <Edit className="h-5 w-5" />}
             </button>
 
             {showOwnerMenu && (
