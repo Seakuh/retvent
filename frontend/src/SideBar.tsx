@@ -140,7 +140,6 @@ onClick={() => setViewMode("Search")}
               <span className="hidden md:inline">Profile</span>
             </button>
 
-            {loggedIn && (
               <button
                 onClick={() => {
                   navigate("/admin/events");
@@ -150,7 +149,6 @@ onClick={() => setViewMode("Search")}
                 <Calendar size={20} />
                 <span className="hidden md:inline">My Events</span>
               </button>
-            )}
 
             {/* <button
               onClick={() => {
