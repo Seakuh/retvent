@@ -9,6 +9,8 @@ import axios from 'axios';
 import { ChatGPTService } from 'src/infrastructure/services/chatgpt.service';
 import { GeolocationService } from 'src/infrastructure/services/geolocation.service';
 import { QdrantService } from 'src/infrastructure/services/qdrant.service';
+import { SlugService } from 'src/infrastructure/services/slug.service';
+import { AiEnrichmentService } from 'src/infrastructure/services/ai-enrichment.service';
 import { CreateFullEventDto } from 'src/presentation/dtos/create-full-event.dto';
 import { MapEventDto } from 'src/presentation/dtos/map-event.dto';
 import { UpdateEventDto } from 'src/presentation/dtos/update-event.dto';
@@ -41,6 +43,8 @@ export class EventService {
     private readonly communityService: CommunityService,
     private readonly replicateService: ReplicateService,
     private readonly muxService: MuxService,
+    private readonly slugService: SlugService,
+    private readonly aiEnrichmentService: AiEnrichmentService,
   ) {}
   getEventsByTag(tag: string) {
     return this.eventRepository.getEventsByTag(tag);
@@ -1154,6 +1158,26 @@ export class EventService {
     return this.eventRepository.findById(id);
   }
 
+  /**
+   * Findet ein Event anhand von ID oder Slug
+   * Unterstützt beide Formate:
+   * - "abc123" (nur ID)
+   * - "techno-party-berlin-2024-abc123" (Slug-ID)
+   */
+  async findEventByIdentifier(identifier: string): Promise<Event | null> {
+    // Prüfe ob es eine Slug-URL ist (enthält Bindestriche und endet mit ID)
+    const slugMatch = identifier.match(/^(.+)-([a-f0-9]{24})$/);
+    
+    if (slugMatch) {
+      // Slug-Format: slug-id
+      const [, slug, id] = slugMatch;
+      return this.eventRepository.findBySlugAndId(slug, id);
+    } else {
+      // Altes Format: nur ID
+      return this.eventRepository.findById(identifier);
+    }
+  }
+
   processEventImagesUploadV1(
     images: Express.Multer.File[],
     lonFromBodyCoordinates: any,
@@ -1401,7 +1425,7 @@ export class EventService {
       if (image) {
         imageUrl = await this.imageService.uploadImage(image);
       }
-      const eventWithImage = {
+      const eventWithImage: any = {
         ...eventData,
         imageUrl,
         createdAt: new Date(),
@@ -1420,6 +1444,39 @@ export class EventService {
             'Only moderators and admins can create community events',
           );
         }
+      }
+
+      // Slug-Generierung (falls nicht vorhanden)
+      if (!(eventWithImage as any).slug && eventWithImage.title && eventWithImage.city && eventWithImage.startDate) {
+        const slugs = await this.slugService.generateSlugsForEvent({
+          title: eventWithImage.title,
+          city: eventWithImage.city,
+          startDate: eventWithImage.startDate,
+          category: eventWithImage.category,
+          slug: (eventWithImage as any).slug,
+          citySlug: (eventWithImage as any).citySlug,
+          categorySlug: (eventWithImage as any).categorySlug,
+        });
+        Object.assign(eventWithImage, slugs);
+      }
+
+      // KI-Anreicherung (optional, graceful degradation)
+      try {
+        const enriched = this.aiEnrichmentService.enrichEvent({
+          title: eventWithImage.title,
+          description: eventWithImage.description,
+          category: eventWithImage.category,
+          city: eventWithImage.city,
+        });
+        Object.assign(eventWithImage, enriched);
+      } catch (error) {
+        console.error('KI-Anreicherung fehlgeschlagen:', error);
+        // Event wird trotzdem gespeichert
+      }
+
+      // Status setzen (falls nicht vorhanden)
+      if (!(eventWithImage as any).status) {
+        (eventWithImage as any).status = 'published';
       }
 
       const newEvent =
@@ -1831,7 +1888,13 @@ export class EventService {
   async searchEvents(params: {
     query?: string;
     city?: string;
+    citySlug?: string;
+    category?: string;
+    categorySlug?: string;
+    eventType?: string;
+    genre?: string;
     dateRange?: { startDate: string; endDate: string };
+    status?: string;
   }): Promise<Event[]> {
     return this.eventRepository.searchEvents(params);
   }

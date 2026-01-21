@@ -99,6 +99,132 @@ export const EventSchema = new Schema(
       },
     },
     embedding: { type: [Number], default: undefined },
+    // ========== SEO-FELDER ==========
+    slug: { type: String },
+    citySlug: { type: String },
+    shortDescription: { type: String },
+    region: { type: String },
+    timezone: { type: String },
+    categorySlug: { type: String },
+    subcategory: { type: String },
+    // Venue-Informationen
+    venue: {
+      name: { type: String },
+      venueId: { type: String },
+      venueSlug: { type: String },
+      capacity: { type: Number },
+      venueType: {
+        type: String,
+        enum: ['club', 'open-air', 'theater', 'stadium', 'other'],
+      },
+    },
+    // ========== SEMANTISCHE FELDER FÜR KI ==========
+    eventType: {
+      type: String,
+      enum: [
+        'concert',
+        'festival',
+        'club-night',
+        'theater',
+        'sports',
+        'workshop',
+        'networking',
+        'exhibition',
+        'conference',
+        'party',
+        'comedy',
+        'other',
+      ],
+    },
+    eventFormat: {
+      type: String,
+      enum: ['live', 'hybrid', 'online', 'outdoor', 'indoor'],
+    },
+    genre: [{ type: String }],
+    mood: [{ type: String }],
+    vibe: {
+      energy: { type: Number, min: 0, max: 100 },
+      intimacy: { type: Number, min: 0, max: 100 },
+      exclusivity: { type: Number, min: 0, max: 100 },
+      social: { type: Number, min: 0, max: 100 },
+    },
+    audience: {
+      ageRange: [{ type: Number }],
+      targetAudience: [{ type: String }],
+      accessibility: {
+        wheelchairAccessible: { type: Boolean },
+        hearingImpaired: { type: Boolean },
+        visualImpaired: { type: Boolean },
+      },
+    },
+    recurrence: {
+      pattern: {
+        type: String,
+        enum: ['single', 'daily', 'weekly', 'monthly', 'yearly', 'custom'],
+      },
+      interval: { type: Number },
+      endDate: { type: Date },
+      occurrences: { type: Number },
+    },
+    eventSeriesId: { type: String },
+    eventSeries: {
+      name: { type: String },
+      slug: { type: String },
+      totalEvents: { type: Number },
+    },
+    // Ähnliche Events (KI-generiert)
+    similarEventIds: [{ type: String }],
+    clusterId: { type: String },
+    // ========== COMMUNITY-FELDER ==========
+    likeCount: { type: Number, default: 0 },
+    shareCount: { type: Number, default: 0 },
+    rsvpCount: { type: Number, default: 0 },
+    groupActivity: {
+      activeGroups: { type: Number, default: 0 },
+      totalMessages: { type: Number, default: 0 },
+      lastActivity: { type: Date },
+    },
+    popularitySignals: {
+      trendingScore: { type: Number },
+      hotnessScore: { type: Number },
+      qualityScore: { type: Number },
+      engagementRate: { type: Number },
+    },
+    // ========== ORGANISATOR ==========
+    organizer: {
+      name: { type: String },
+      organizerId: { type: String },
+      organizerSlug: { type: String },
+      verified: { type: Boolean, default: false },
+    },
+    // ========== COMMERZIELLE FELDER ==========
+    priceDetails: {
+      amount: { type: Number },
+      currency: { type: String },
+      priceRange: {
+        type: String,
+        enum: ['free', 'low', 'medium', 'high', 'premium'],
+      },
+      ticketTypes: [
+        {
+          name: { type: String },
+          price: { type: Number },
+          currency: { type: String },
+          available: { type: Number },
+          soldOut: { type: Boolean },
+        },
+      ],
+    },
+    // ========== TECHNISCHE FELDER ==========
+    status: {
+      type: String,
+      enum: ['draft', 'published', 'cancelled', 'postponed'],
+      default: 'published',
+    },
+    moderationStatus: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+    },
   },
   {
     timestamps: true,
@@ -117,3 +243,13 @@ EventSchema.index({ title: 'text', description: 'text' });
 
 // Add a 2dsphere index for geospatial queries
 EventSchema.index({ 'location.coordinates': '2dsphere' });
+
+// ========== SEO INDEXES ==========
+EventSchema.index({ slug: 1 });
+EventSchema.index({ citySlug: 1 });
+EventSchema.index({ categorySlug: 1 });
+EventSchema.index({ eventType: 1 });
+EventSchema.index({ genre: 1 });
+EventSchema.index({ status: 1, startDate: 1 }); // Für Sitemap-Query
+EventSchema.index({ clusterId: 1 });
+EventSchema.index({ eventSeriesId: 1 });

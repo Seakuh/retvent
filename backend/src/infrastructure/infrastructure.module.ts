@@ -84,7 +84,10 @@ import { ReplicateService } from './services/replicate.service';
 import { VideoService } from './services/video.service';
 import { SMTPServerService } from './services/smtp-server.service';
 import { IMAPMailService } from './services/imap-mail.service';
+import { SlugService } from './services/slug.service';
+import { AiEnrichmentService } from './services/ai-enrichment.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { SitemapController } from '../presentation/controllers/sitemap.controller';
 import { PokerGameService } from 'src/application/services/poker-game.service';
 import { PokerGameSchema } from 'src/core/domain/poker-game.schema';
 import { PokerStatsService } from 'src/application/services/poker-stats.service';
@@ -170,6 +173,7 @@ import { MailController } from 'src/presentation/controllers/mail.controller';
     AssessmentController,
     ArtistController,
     TicketsController,
+    SitemapController,
   ],
   providers: [
     RegistrationService,
@@ -225,6 +229,8 @@ import { MailController } from 'src/presentation/controllers/mail.controller';
     UserService,
     GroovecastService,
     QdrantService,
+    SlugService,
+    AiEnrichmentService,
     {
       provide: 'IEventRepository',
       useClass: MongoEventRepository,

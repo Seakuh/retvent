@@ -74,6 +74,90 @@ export class Event implements IEvent {
   embedding?: number[];
   documents?: string[];
 
+  // SEO-Felder
+  slug?: string;
+  citySlug?: string;
+  shortDescription?: string;
+  region?: string;
+  country?: string;
+  timezone?: string;
+  categorySlug?: string;
+  subcategory?: string;
+  venue?: {
+    name?: string;
+    venueId?: string;
+    venueSlug?: string;
+    capacity?: number;
+    venueType?: 'club' | 'open-air' | 'theater' | 'stadium' | 'other';
+  };
+  eventType?: 'concert' | 'festival' | 'club-night' | 'theater' | 'sports' | 'workshop' | 'networking' | 'exhibition' | 'conference' | 'party' | 'comedy' | 'other';
+  eventFormat?: 'live' | 'hybrid' | 'online' | 'outdoor' | 'indoor';
+  genre?: string[];
+  mood?: string[];
+  vibe?: {
+    energy?: number;
+    intimacy?: number;
+    exclusivity?: number;
+    social?: number;
+  };
+  audience?: {
+    ageRange?: [number, number];
+    targetAudience?: string[];
+    accessibility?: {
+      wheelchairAccessible?: boolean;
+      hearingImpaired?: boolean;
+      visualImpaired?: boolean;
+    };
+  };
+  recurrence?: {
+    pattern?: 'single' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
+    interval?: number;
+    endDate?: Date;
+    occurrences?: number;
+  };
+  eventSeriesId?: string;
+  eventSeries?: {
+    name?: string;
+    slug?: string;
+    totalEvents?: number;
+  };
+  similarEventIds?: string[];
+  clusterId?: string;
+  likeCount?: number;
+  shareCount?: number;
+  rsvpCount?: number;
+  groupActivity?: {
+    activeGroups?: number;
+    totalMessages?: number;
+    lastActivity?: Date;
+  };
+  popularitySignals?: {
+    trendingScore?: number;
+    hotnessScore?: number;
+    qualityScore?: number;
+    engagementRate?: number;
+  };
+  organizer?: {
+    name?: string;
+    organizerId?: string;
+    organizerSlug?: string;
+    verified?: boolean;
+  };
+  priceDetails?: {
+    amount?: number;
+    currency?: string;
+    priceRange?: 'free' | 'low' | 'medium' | 'high' | 'premium';
+    ticketTypes?: Array<{
+      name?: string;
+      price?: number;
+      currency?: string;
+      available?: number;
+      soldOut?: boolean;
+    }>;
+  };
+  status?: 'draft' | 'published' | 'cancelled' | 'postponed';
+  moderationStatus?: 'pending' | 'approved' | 'rejected';
+
   constructor(data: Partial<IEvent>) {
     Object.assign(this, data);
   }

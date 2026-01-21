@@ -365,13 +365,25 @@ export class EventController {
   async searchEvents(
     @Query('query') query?: string,
     @Query('city') city?: string,
+    @Query('citySlug') citySlug?: string,
+    @Query('category') category?: string,
+    @Query('categorySlug') categorySlug?: string,
+    @Query('eventType') eventType?: string,
+    @Query('genre') genre?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
+    @Query('status') status?: string,
   ) {
     const searchParams = {
       query,
       city,
+      citySlug,
+      category,
+      categorySlug,
+      eventType,
+      genre,
       dateRange: startDate && endDate ? { startDate, endDate } : undefined,
+      status: status || 'published',
     };
     return this.eventService.searchEvents(searchParams);
   }
@@ -393,7 +405,12 @@ export class EventController {
 
   @Get('byId')
   async getEventById(@Query('id') id: string) {
-    return this.eventService.getEventById(id);
+    // Unterstützt sowohl alte ID-URLs als auch neue Slug-URLs
+    const event = await this.eventService.findEventByIdentifier(id);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    return event;
   }
 
   @Get('v2/byId')

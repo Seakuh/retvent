@@ -427,28 +427,61 @@ export class MongoEventRepository implements IEventRepository {
       )
       .exec();
 
-    if (!updatedEvent) {
+    return this.toEntity(updatedEvent);
+  }
+
+  /**
+   * Findet ein Event anhand von Slug und ID
+   */
+  async findBySlugAndId(slug: string, id: string): Promise<Event | null> {
+    try {
+      const event = await this.eventModel
+        .findOne({
+          slug,
+          $or: [{ _id: id }, { id: id }],
+        })
+        .select('-embedding')
+        .exec();
+      
+      if (!event) {
+        return null;
+      }
+
+      // Views erhöhen und Event mit Kommentar-Count laden
+      const updatedEvent = await this.eventModel
+        .findOneAndUpdate(
+          { slug, $or: [{ _id: id }, { id: id }] },
+          { $inc: { views: 1 } },
+          { new: true, setDefaultsOnInsert: true },
+        )
+        .exec();
+
+      if (!updatedEvent) {
+        return null;
+      }
+
+      // Event mit Kommentar-Count laden
+      const [eventWithComments] = await this.eventModel.aggregate([
+        { $match: { _id: updatedEvent._id } },
+        {
+          $lookup: {
+            from: 'comments',
+            localField: '_id',
+            foreignField: 'eventId',
+            as: 'comments',
+          },
+        },
+        {
+          $addFields: {
+            commentCount: { $size: '$comments' },
+          },
+        },
+      ]);
+
+      return eventWithComments ? this.toEntity(eventWithComments) : null;
+    } catch (error) {
       return null;
     }
-
-    const [eventWithComments] = await this.eventModel.aggregate([
-      { $match: { _id: updatedEvent._id } },
-      {
-        $lookup: {
-          from: 'comments',
-          localField: '_id',
-          foreignField: 'eventId',
-          as: 'comments',
-        },
-      },
-      {
-        $addFields: {
-          commentCount: { $size: '$comments' },
-        },
-      },
-    ]);
-
-    return this.toEntity(eventWithComments);
   }
 
   async findByLocationId(locationId: string): Promise<Event[]> {
@@ -870,22 +903,66 @@ export class MongoEventRepository implements IEventRepository {
   async searchEvents(params: {
     query?: string;
     city?: string;
+    citySlug?: string;
+    category?: string;
+    categorySlug?: string;
+    eventType?: string;
+    genre?: string;
     dateRange?: { startDate: string; endDate: string };
+    status?: string;
   }): Promise<Event[]> {
     const filter: any = {};
-    console.log('params', params.city);
-    // Alle Filter zusammen aufbauen
-    if (params.query) {
+    
+    // Status-Filter (Standard: published, aber auch abwärtskompatibel)
+    if (params.status) {
       filter.$or = [
-        { title: { $regex: params.query, $options: 'i' } },
-        { description: { $regex: params.query, $options: 'i' } },
+        { status: params.status },
+        { status: { $exists: false } }, // Für abwärtskompatibilität
+      ];
+    } else {
+      // Standard: nur published Events, aber auch Events ohne status-Feld
+      filter.$or = [
+        { status: 'published' },
+        { status: { $exists: false } },
       ];
     }
 
-    if (params.city) {
+    // Query-Filter (Titel/Beschreibung)
+    if (params.query) {
+      filter.$and = filter.$and || [];
+      filter.$and.push({
+        $or: [
+          { title: { $regex: params.query, $options: 'i' } },
+          { description: { $regex: params.query, $options: 'i' } },
+        ],
+      });
+    }
+
+    // Stadt-Filter (citySlug hat Priorität)
+    if (params.citySlug) {
+      filter.citySlug = params.citySlug;
+    } else if (params.city) {
       filter.city = { $regex: new RegExp(params.city, 'i') };
     }
 
+    // Kategorie-Filter (categorySlug hat Priorität)
+    if (params.categorySlug) {
+      filter.categorySlug = params.categorySlug;
+    } else if (params.category) {
+      filter.category = { $regex: new RegExp(params.category, 'i') };
+    }
+
+    // Event-Typ-Filter
+    if (params.eventType) {
+      filter.eventType = params.eventType;
+    }
+
+    // Genre-Filter
+    if (params.genre) {
+      filter.genre = { $in: [params.genre] };
+    }
+
+    // Datum-Filter
     if (params.dateRange) {
       filter.startDate = {
         $gte: new Date(params.dateRange.startDate),
