@@ -1054,7 +1054,7 @@ const EditEvent: React.FC = () => {
           )}
         </div>
         <div className="hero-content">
-          <button onClick={handleBack} className="hero-back-button">
+          <button onClick={handleBack} className="back-button">
             <ChevronLeft className="h-5 w-5" />
           </button>
           <div className="hero-title-section">
