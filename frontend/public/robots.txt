@@ -1,0 +1,70 @@
+# robots.txt für Event-Plattform
+# Optimiert für SEO & Crawl-Budget
+
+# Erlaubte Crawler
+User-agent: *
+Allow: /
+Allow: /event/
+Allow: /events/
+Allow: /event-series/
+Allow: /venue/
+Allow: /artist/
+Allow: /community/
+
+# Blockierte Bereiche (Privat, Thin Content, Admin)
+Disallow: /planner/
+Disallow: /search?
+Disallow: /api/
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+Disallow: /profile/
+Disallow: /ticket/
+Disallow: /reel/
+
+# Spezielle Regeln für Google
+User-agent: Googlebot
+Allow: /event/
+Allow: /events/
+Allow: /event-series/
+Allow: /venue/
+Allow: /artist/
+Allow: /community/
+Disallow: /planner/
+Disallow: /search?
+Disallow: /api/
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /ticket/
+Disallow: /reel/
+
+# Spezielle Regeln für Google Image Bot
+User-agent: Googlebot-Image
+Allow: /
+
+# Spezielle Regeln für Bing
+User-agent: Bingbot
+Allow: /event/
+Allow: /events/
+Allow: /event-series/
+Allow: /venue/
+Allow: /artist/
+Allow: /community/
+Disallow: /planner/
+Disallow: /search?
+Disallow: /api/
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /ticket/
+Disallow: /reel/
+
+# Crawl-Delay (optional, falls nötig)
+# Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://event-scanner.com/sitemap.xml
+Sitemap: https://event-scanner.com/sitemap-events.xml
+Sitemap: https://event-scanner.com/sitemap-cities.xml
+Sitemap: https://event-scanner.com/sitemap-venues.xml
+Sitemap: https://event-scanner.com/sitemap-artists.xml
+Sitemap: https://event-scanner.com/sitemap-communities.xml
