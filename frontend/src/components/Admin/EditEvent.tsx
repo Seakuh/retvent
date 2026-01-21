@@ -763,8 +763,7 @@ const EditEvent: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = async () => {
     setError(null);
 
     try {
@@ -787,10 +786,17 @@ const EditEvent: React.FC = () => {
       }
 
       await eventService.updateEvent(eventId!, dataToSubmit as Partial<Event>);
-      navigate(`/event/${eventId}`);
+      // Show success message or feedback
+      setError(null);
     } catch (err) {
       setError("Failed to update event");
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handleSave();
+    navigate(`/event/${eventId}`);
   };
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
@@ -1191,10 +1197,19 @@ const EditEvent: React.FC = () => {
         <div className="dashboard-grid">
           {/* ========== KATEGORIE: GRUNDINFORMATIONEN ========== */}
           <div id="grundinformationen" className="category-section">
-            <h2 className="category-title">
-              <Tag className="category-icon" />
-              Grundinformationen
-            </h2>
+            <div className="category-header">
+              <h2 className="category-title">
+                <Tag className="category-icon" />
+                Grundinformationen
+              </h2>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="category-save-btn"
+              >
+                Save
+              </button>
+            </div>
           </div>
 
           {/* Event Image Card */}
@@ -1292,10 +1307,19 @@ const EditEvent: React.FC = () => {
 
           {/* ========== KATEGORIE: ZEIT & ORT ========== */}
           <div id="zeit-ort" className="category-section">
-            <h2 className="category-title">
-              <Calendar className="category-icon" />
-              Zeit & Ort
-            </h2>
+            <div className="category-header">
+              <h2 className="category-title">
+                <Calendar className="category-icon" />
+                Zeit & Ort
+              </h2>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="category-save-btn"
+              >
+                Save
+              </button>
+            </div>
           </div>
 
           {/* Date & Time Card */}
@@ -1414,10 +1438,19 @@ const EditEvent: React.FC = () => {
 
           {/* ========== KATEGORIE: PREIS & TICKETS ========== */}
           <div id="preis-tickets" className="category-section">
-            <h2 className="category-title">
-              <DollarSign className="category-icon" />
-              Preis & Tickets
-            </h2>
+            <div className="category-header">
+              <h2 className="category-title">
+                <DollarSign className="category-icon" />
+                Preis & Tickets
+              </h2>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="category-save-btn"
+              >
+                Save
+              </button>
+            </div>
           </div>
 
           {/* Pricing & Tickets Card */}
@@ -1634,10 +1667,19 @@ const EditEvent: React.FC = () => {
 
           {/* ========== KATEGORIE: ERWEITERTE EINSTELLUNGEN ========== */}
           <div id="erweiterte-einstellungen" className="category-section">
-            <h2 className="category-title">
-              <Sparkles className="category-icon" />
-              Erweiterte Einstellungen
-            </h2>
+            <div className="category-header">
+              <h2 className="category-title">
+                <Sparkles className="category-icon" />
+                Erweiterte Einstellungen
+              </h2>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="category-save-btn"
+              >
+                Save
+              </button>
+            </div>
           </div>
 
           {/* Vibe Card */}
@@ -1752,11 +1794,20 @@ const EditEvent: React.FC = () => {
           </div>
 
           {/* ========== KATEGORIE: KONTAKT & LINKS ========== */}
-          <div className="category-section">
-            <h2 className="category-title">
-              <Mail className="category-icon" />
-              Kontakt & Links
-            </h2>
+          <div id="kontakt-links" className="category-section">
+            <div className="category-header">
+              <h2 className="category-title">
+                <Mail className="category-icon" />
+                Kontakt & Links
+              </h2>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="category-save-btn"
+              >
+                Save
+              </button>
+            </div>
           </div>
 
           {/* Contact Card */}
@@ -1810,10 +1861,19 @@ const EditEvent: React.FC = () => {
 
           {/* ========== KATEGORIE: STATISTIKEN & INFO ========== */}
           <div id="statistiken-info" className="category-section">
-            <h2 className="category-title">
-              <Eye className="category-icon" />
-              Statistiken & Info
-            </h2>
+            <div className="category-header">
+              <h2 className="category-title">
+                <Eye className="category-icon" />
+                Statistiken & Info
+              </h2>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="category-save-btn"
+              >
+                Save
+              </button>
+            </div>
           </div>
 
           {/* Host Info Card */}
@@ -1862,10 +1922,19 @@ const EditEvent: React.FC = () => {
 
           {/* ========== KATEGORIE: EVENT-DETAILS ========== */}
           <div id="event-details" className="category-section">
-            <h2 className="category-title">
-              <Music className="category-icon" />
-              Event-Details
-            </h2>
+            <div className="category-header">
+              <h2 className="category-title">
+                <Music className="category-icon" />
+                Event-Details
+              </h2>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="category-save-btn"
+              >
+                Save
+              </button>
+            </div>
           </div>
 
           {/* Tags Card - Full Width */}
