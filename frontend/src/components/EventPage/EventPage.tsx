@@ -101,6 +101,7 @@ export const EventPage = ({
 
   return (
     <div className="event-page-container">
+      
       <ExploreFeed feedItemsResponse={feedItemsResponse} />
       {/* <AdBanner /> */}
       {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}

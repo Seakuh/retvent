@@ -613,6 +613,9 @@ export const Profile: React.FC = () => {
                 <div className="upload-overlay">Uploading...</div>
               )}
             </div>
+            <div className="profile-own-settings">
+            <LevelSection points={points} />
+          </div>
             
           </>
         ) : (
@@ -649,11 +652,7 @@ export const Profile: React.FC = () => {
                   viewsCount={countEventViews()}
                 />
               </div>
-              {isOwnProfile && (
-          <div className="profile-own-settings">
-            <LevelSection points={points} />
-          </div>
-        )}
+  
               {!isOwnProfile && (
                 <ActionComponent
                   isFollowingWIP={isFollowing}
