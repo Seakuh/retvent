@@ -19,6 +19,8 @@ import {
   Heart,
   Crop,
   ExternalLink,
+  Phone,
+  Plus,
 } from "lucide-react";
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -50,6 +52,48 @@ interface LineupMember {
   role?: string;
   startTime?: string;
   endTime?: string;
+}
+
+interface TicketType {
+  name: string;
+  price: number;
+  currency: string;
+  available: number;
+  soldOut: boolean;
+}
+
+interface PriceDetails {
+  amount?: number;
+  currency?: string;
+  priceRange?: "free" | "low" | "medium" | "high" | "premium";
+  ticketTypes?: TicketType[];
+}
+
+interface Accessibility {
+  wheelchairAccessible?: boolean;
+  hearingImpaired?: boolean;
+  visualImpaired?: boolean;
+}
+
+interface Audience {
+  ageRange?: [number, number];
+  targetAudience?: string[];
+  accessibility?: Accessibility;
+}
+
+interface Vibe {
+  energy?: number; // 0-100
+  intimacy?: number; // 0-100
+  exclusivity?: number; // 0-100
+  social?: number; // 0-100
+}
+
+interface Venue {
+  name?: string;
+  venueId?: string;
+  venueSlug?: string;
+  capacity?: number;
+  venueType?: "club" | "open-air" | "theater" | "stadium" | "other";
 }
 
 // Time Picker Component
@@ -151,6 +195,34 @@ const TimePicker: React.FC<TimePickerProps> = ({ value, onChange, label }) => {
   );
 };
 
+// Slider Component for Vibe values
+interface SliderProps {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  min?: number;
+  max?: number;
+}
+
+const Slider: React.FC<SliderProps> = ({ label, value, onChange, min = 0, max = 100 }) => {
+  return (
+    <div className="slider-group">
+      <div className="slider-header">
+        <label className="slider-label">{label}</label>
+        <span className="slider-value">{value}</span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="slider-input"
+      />
+    </div>
+  );
+};
+
 interface EventFormData {
   title: string;
   description: string;
@@ -166,6 +238,7 @@ interface EventFormData {
   ticketLink: string;
   website?: string;
   email: string;
+  phone?: string;
   tags: string[];
   socialMediaLinks: SocialMediaLinks;
   lineup: LineupMember[];
@@ -173,6 +246,10 @@ interface EventFormData {
   host?: Host;
   views?: number;
   likeIds?: string[];
+  priceDetails?: PriceDetails;
+  audience?: Audience;
+  vibe?: Vibe;
+  venue?: Venue;
 }
 
 const EditEvent: React.FC = () => {
@@ -216,6 +293,7 @@ const EditEvent: React.FC = () => {
     ticketLink: "",
     website: "",
     email: "",
+    phone: "",
     tags: [],
     socialMediaLinks: {
       instagram: "",
@@ -227,6 +305,34 @@ const EditEvent: React.FC = () => {
     host: undefined,
     views: 0,
     likeIds: [],
+    priceDetails: {
+      amount: undefined,
+      currency: "",
+      priceRange: undefined,
+      ticketTypes: [],
+    },
+    audience: {
+      ageRange: undefined,
+      targetAudience: [],
+      accessibility: {
+        wheelchairAccessible: false,
+        hearingImpaired: false,
+        visualImpaired: false,
+      },
+    },
+    vibe: {
+      energy: 50,
+      intimacy: 50,
+      exclusivity: 50,
+      social: 50,
+    },
+    venue: {
+      name: "",
+      venueId: "",
+      venueSlug: "",
+      capacity: undefined,
+      venueType: undefined,
+    },
   });
 
   useEffect(() => {
@@ -267,6 +373,7 @@ const EditEvent: React.FC = () => {
         ticketLink: event.ticketLink || "",
         website: event.website || "",
         email: event.email || "",
+        phone: (event as any).phone || "",
         tags: event.tags || [],
         socialMediaLinks: {
           instagram: event.socialMediaLinks?.instagram || "",
@@ -278,6 +385,34 @@ const EditEvent: React.FC = () => {
         host: event.host,
         views: event.views || 0,
         likeIds: event.likeIds || [],
+        priceDetails: (event as any).priceDetails || {
+          amount: undefined,
+          currency: "",
+          priceRange: undefined,
+          ticketTypes: [],
+        },
+        audience: (event as any).audience || {
+          ageRange: undefined,
+          targetAudience: [],
+          accessibility: {
+            wheelchairAccessible: false,
+            hearingImpaired: false,
+            visualImpaired: false,
+          },
+        },
+        vibe: (event as any).vibe || {
+          energy: 50,
+          intimacy: 50,
+          exclusivity: 50,
+          social: 50,
+        },
+        venue: (event as any).venue || {
+          name: "",
+          venueId: "",
+          venueSlug: "",
+          capacity: undefined,
+          venueType: undefined,
+        },
       });
       if (event.imageUrl) {
         setImagePreview(event.imageUrl);
@@ -480,6 +615,115 @@ const EditEvent: React.FC = () => {
     setFormData((prev) => ({
       ...prev,
       lineup: prev.lineup?.filter((_, i) => i !== index),
+    }));
+  };
+
+  // Handler for Vibe sliders
+  const handleVibeChange = (field: keyof Vibe, value: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      vibe: {
+        ...prev.vibe,
+        [field]: value,
+      },
+    }));
+  };
+
+  // Handler for Price Details
+  const handlePriceDetailsChange = (field: keyof PriceDetails, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      priceDetails: {
+        ...prev.priceDetails,
+        [field]: value,
+      },
+    }));
+  };
+
+  // Handler for Ticket Types
+  const addTicketType = () => {
+    setFormData((prev) => ({
+      ...prev,
+      priceDetails: {
+        ...prev.priceDetails,
+        ticketTypes: [
+          ...(prev.priceDetails?.ticketTypes || []),
+          { name: "", price: 0, currency: "EUR", available: 0, soldOut: false },
+        ],
+      },
+    }));
+  };
+
+  const removeTicketType = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      priceDetails: {
+        ...prev.priceDetails,
+        ticketTypes: prev.priceDetails?.ticketTypes?.filter((_, i) => i !== index) || [],
+      },
+    }));
+  };
+
+  const handleTicketTypeChange = (index: number, field: keyof TicketType, value: any) => {
+    setFormData((prev) => {
+      const ticketTypes = [...(prev.priceDetails?.ticketTypes || [])];
+      ticketTypes[index] = {
+        ...ticketTypes[index],
+        [field]: value,
+      };
+      return {
+        ...prev,
+        priceDetails: {
+          ...prev.priceDetails,
+          ticketTypes,
+        },
+      };
+    });
+  };
+
+  // Handler for Audience
+  const handleAudienceChange = (field: keyof Audience, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      audience: {
+        ...prev.audience,
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleAccessibilityChange = (field: keyof Accessibility, value: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      audience: {
+        ...prev.audience,
+        accessibility: {
+          ...prev.audience?.accessibility,
+          [field]: value,
+        },
+      },
+    }));
+  };
+
+  const handleTargetAudienceChange = (value: string) => {
+    const audiences = value.split(",").map((a) => a.trim()).filter(Boolean);
+    setFormData((prev) => ({
+      ...prev,
+      audience: {
+        ...prev.audience,
+        targetAudience: audiences,
+      },
+    }));
+  };
+
+  // Handler for Venue
+  const handleVenueChange = (field: keyof Venue, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      venue: {
+        ...prev.venue,
+        [field]: value,
+      },
     }));
   };
 
@@ -972,6 +1216,299 @@ const EditEvent: React.FC = () => {
             </div>
           </div>
 
+          {/* Venue Card */}
+          <div className="admin-card">
+            <div className="card-header">
+              <MapPin className="card-icon" />
+              <span className="card-title">Venue</span>
+            </div>
+            <div className="form-group">
+              <label htmlFor="venue.name">Venue Name</label>
+              <input
+                type="text"
+                id="venue.name"
+                value={formData.venue?.name || ""}
+                onChange={(e) => handleVenueChange("name", e.target.value)}
+                placeholder="Venue name"
+              />
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="venue.venueId">Venue ID</label>
+                <input
+                  type="text"
+                  id="venue.venueId"
+                  value={formData.venue?.venueId || ""}
+                  onChange={(e) => handleVenueChange("venueId", e.target.value)}
+                  placeholder="Venue ID"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="venue.venueSlug">Venue Slug</label>
+                <input
+                  type="text"
+                  id="venue.venueSlug"
+                  value={formData.venue?.venueSlug || ""}
+                  onChange={(e) => handleVenueChange("venueSlug", e.target.value)}
+                  placeholder="venue-slug"
+                />
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="venue.capacity">Capacity</label>
+                <input
+                  type="number"
+                  id="venue.capacity"
+                  value={formData.venue?.capacity || ""}
+                  onChange={(e) => handleVenueChange("capacity", e.target.value ? Number(e.target.value) : undefined)}
+                  placeholder="1000"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="venue.venueType">Venue Type</label>
+                <select
+                  id="venue.venueType"
+                  value={formData.venue?.venueType || ""}
+                  onChange={(e) => handleVenueChange("venueType", e.target.value || undefined)}
+                >
+                  <option value="">Select venue type</option>
+                  <option value="club">Club</option>
+                  <option value="open-air">Open Air</option>
+                  <option value="theater">Theater</option>
+                  <option value="stadium">Stadium</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Price Details Card */}
+          <div className="admin-card">
+            <div className="card-header">
+              <DollarSign className="card-icon" />
+              <span className="card-title">Price Details</span>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="priceDetails.amount">Amount</label>
+                <input
+                  type="number"
+                  id="priceDetails.amount"
+                  value={formData.priceDetails?.amount || ""}
+                  onChange={(e) => handlePriceDetailsChange("amount", e.target.value ? Number(e.target.value) : undefined)}
+                  placeholder="0.00"
+                  step="0.01"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="priceDetails.currency">Currency</label>
+                <input
+                  type="text"
+                  id="priceDetails.currency"
+                  value={formData.priceDetails?.currency || ""}
+                  onChange={(e) => handlePriceDetailsChange("currency", e.target.value)}
+                  placeholder="EUR"
+                />
+              </div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="priceDetails.priceRange">Price Range</label>
+              <select
+                id="priceDetails.priceRange"
+                value={formData.priceDetails?.priceRange || ""}
+                onChange={(e) => handlePriceDetailsChange("priceRange", e.target.value || undefined)}
+              >
+                <option value="">Select price range</option>
+                <option value="free">Free</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="premium">Premium</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <div className="form-group-header">
+                <label>Ticket Types</label>
+                <button
+                  type="button"
+                  onClick={addTicketType}
+                  className="add-btn"
+                >
+                  <Plus size={16} />
+                  Add Ticket Type
+                </button>
+              </div>
+              {formData.priceDetails?.ticketTypes?.map((ticketType, index) => (
+                <div key={index} className="ticket-type-item">
+                  <div className="form-row">
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        value={ticketType.name}
+                        onChange={(e) => handleTicketTypeChange(index, "name", e.target.value)}
+                        placeholder="Ticket name"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="number"
+                        value={ticketType.price}
+                        onChange={(e) => handleTicketTypeChange(index, "price", Number(e.target.value))}
+                        placeholder="Price"
+                        step="0.01"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        value={ticketType.currency}
+                        onChange={(e) => handleTicketTypeChange(index, "currency", e.target.value)}
+                        placeholder="EUR"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="number"
+                        value={ticketType.available}
+                        onChange={(e) => handleTicketTypeChange(index, "available", Number(e.target.value))}
+                        placeholder="Available"
+                      />
+                    </div>
+                    <div className="form-group checkbox-group">
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={ticketType.soldOut}
+                          onChange={(e) => handleTicketTypeChange(index, "soldOut", e.target.checked)}
+                        />
+                        Sold Out
+                      </label>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeTicketType(index)}
+                      className="remove-btn"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Vibe Card */}
+          <div className="admin-card">
+            <div className="card-header">
+              <Sparkles className="card-icon" />
+              <span className="card-title">Vibe</span>
+            </div>
+            <div className="vibe-sliders">
+              <Slider
+                label="Energy"
+                value={formData.vibe?.energy || 50}
+                onChange={(value) => handleVibeChange("energy", value)}
+              />
+              <Slider
+                label="Intimacy"
+                value={formData.vibe?.intimacy || 50}
+                onChange={(value) => handleVibeChange("intimacy", value)}
+              />
+              <Slider
+                label="Exclusivity"
+                value={formData.vibe?.exclusivity || 50}
+                onChange={(value) => handleVibeChange("exclusivity", value)}
+              />
+              <Slider
+                label="Social"
+                value={formData.vibe?.social || 50}
+                onChange={(value) => handleVibeChange("social", value)}
+              />
+            </div>
+          </div>
+
+          {/* Audience Card */}
+          <div className="admin-card">
+            <div className="card-header">
+              <Users className="card-icon" />
+              <span className="card-title">Audience</span>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="audience.ageRangeMin">Age Range (Min)</label>
+                <input
+                  type="number"
+                  id="audience.ageRangeMin"
+                  value={formData.audience?.ageRange?.[0] || ""}
+                  onChange={(e) => {
+                    const min = e.target.value ? Number(e.target.value) : undefined;
+                    const max = formData.audience?.ageRange?.[1];
+                    handleAudienceChange("ageRange", min !== undefined || max !== undefined ? [min || 0, max || 100] : undefined);
+                  }}
+                  placeholder="18"
+                  min="0"
+                  max="100"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="audience.ageRangeMax">Age Range (Max)</label>
+                <input
+                  type="number"
+                  id="audience.ageRangeMax"
+                  value={formData.audience?.ageRange?.[1] || ""}
+                  onChange={(e) => {
+                    const max = e.target.value ? Number(e.target.value) : undefined;
+                    const min = formData.audience?.ageRange?.[0];
+                    handleAudienceChange("ageRange", min !== undefined || max !== undefined ? [min || 0, max || 100] : undefined);
+                  }}
+                  placeholder="35"
+                  min="0"
+                  max="100"
+                />
+              </div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="audience.targetAudience">Target Audience (comma-separated)</label>
+              <input
+                type="text"
+                id="audience.targetAudience"
+                value={formData.audience?.targetAudience?.join(", ") || ""}
+                onChange={(e) => handleTargetAudienceChange(e.target.value)}
+                placeholder="students, professionals, artists"
+              />
+            </div>
+            <div className="form-group">
+              <label>Accessibility</label>
+              <div className="accessibility-checkboxes">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={formData.audience?.accessibility?.wheelchairAccessible || false}
+                    onChange={(e) => handleAccessibilityChange("wheelchairAccessible", e.target.checked)}
+                  />
+                  Wheelchair Accessible
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={formData.audience?.accessibility?.hearingImpaired || false}
+                    onChange={(e) => handleAccessibilityChange("hearingImpaired", e.target.checked)}
+                  />
+                  Hearing Impaired
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={formData.audience?.accessibility?.visualImpaired || false}
+                    onChange={(e) => handleAccessibilityChange("visualImpaired", e.target.checked)}
+                  />
+                  Visual Impaired
+                </label>
+              </div>
+            </div>
+          </div>
+
           {/* Contact Card */}
           <div className="admin-card">
             <div className="card-header">
@@ -990,7 +1527,26 @@ const EditEvent: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="website">Website</label>
+              <label htmlFor="phone">Phone</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone || ""}
+                onChange={handleInputChange}
+                placeholder="+49 123 456789"
+              />
+            </div>
+          </div>
+
+          {/* Website Card */}
+          <div className="admin-card">
+            <div className="card-header">
+              <Link className="card-icon" />
+              <span className="card-title">Website</span>
+            </div>
+            <div className="form-group">
+              <label htmlFor="website">Website URL</label>
               <input
                 type="url"
                 id="website"
