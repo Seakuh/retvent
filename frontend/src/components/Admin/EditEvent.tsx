@@ -1,5 +1,6 @@
 import {
   ChevronLeft,
+  ChevronRight,
   FileText,
   X,
   Upload,
@@ -263,6 +264,10 @@ const EditEvent: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [promptText, setPromptText] = useState("");
   const [isGeneratingMagicBio, setIsGeneratingMagicBio] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("grundinformationen");
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+  const navContainerRef = React.useRef<HTMLDivElement>(null);
   const eventService = new EventService();
 
   // Image Cropper States
@@ -338,6 +343,37 @@ const EditEvent: React.FC = () => {
   useEffect(() => {
     fetchEventDetails();
   }, [eventId]);
+
+  // Track active section on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = [
+        "grundinformationen",
+        "zeit-ort",
+        "preis-tickets",
+        "kontakt-links",
+        "event-details",
+        "lineup",
+        "social-media",
+        "documents",
+        "erweiterte-einstellungen",
+        "statistiken-info",
+      ];
+
+      const scrollPosition = window.scrollY + 150;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(sections[i]);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const formatDateForInput = (dateValue: string | Date | undefined): string => {
     if (!dateValue) return "";
@@ -826,6 +862,60 @@ const EditEvent: React.FC = () => {
     navigate(-1);
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offset = 100; // Offset für sticky navigation
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const checkScrollButtons = () => {
+    if (navContainerRef.current) {
+      const container = navContainerRef.current;
+      setShowLeftArrow(container.scrollLeft > 0);
+      setShowRightArrow(
+        container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+      );
+    }
+  };
+
+  const scrollNav = (direction: "left" | "right") => {
+    if (navContainerRef.current) {
+      const scrollAmount = 300;
+      const currentScroll = navContainerRef.current.scrollLeft;
+      const newScroll =
+        direction === "left"
+          ? currentScroll - scrollAmount
+          : currentScroll + scrollAmount;
+
+      navContainerRef.current.scrollTo({
+        left: newScroll,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  useEffect(() => {
+    checkScrollButtons();
+    if (navContainerRef.current) {
+      navContainerRef.current.addEventListener("scroll", checkScrollButtons);
+      window.addEventListener("resize", checkScrollButtons);
+      return () => {
+        if (navContainerRef.current) {
+          navContainerRef.current.removeEventListener("scroll", checkScrollButtons);
+        }
+        window.removeEventListener("resize", checkScrollButtons);
+      };
+    }
+  }, []);
+
   const handlePromptUpdate = async (): Promise<void> => {
     if (!promptText.trim()) return;
     setLoading(true);
@@ -979,6 +1069,98 @@ const EditEvent: React.FC = () => {
         </div>
       </div>
 
+      {/* Navigation Menu */}
+      <nav className="edit-event-nav">
+        <button
+          className="nav-scroll-btn nav-scroll-left"
+          onClick={() => scrollNav("left")}
+          style={{ display: showLeftArrow ? "flex" : "none" }}
+          aria-label="Scroll left"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <div className="nav-container" ref={navContainerRef}>
+          <button
+            onClick={() => scrollToSection("grundinformationen")}
+            className={`nav-item ${activeSection === "grundinformationen" ? "active" : ""}`}
+          >
+            <Tag size={18} />
+            <span>Grundinformationen</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("zeit-ort")}
+            className={`nav-item ${activeSection === "zeit-ort" ? "active" : ""}`}
+          >
+            <Calendar size={18} />
+            <span>Zeit & Ort</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("preis-tickets")}
+            className={`nav-item ${activeSection === "preis-tickets" ? "active" : ""}`}
+          >
+            <DollarSign size={18} />
+            <span>Preis & Tickets</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("kontakt-links")}
+            className={`nav-item ${activeSection === "kontakt-links" ? "active" : ""}`}
+          >
+            <Mail size={18} />
+            <span>Kontakt & Links</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("event-details")}
+            className={`nav-item ${activeSection === "event-details" ? "active" : ""}`}
+          >
+            <Tag size={18} />
+            <span>Event-Details</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("lineup")}
+            className={`nav-item ${activeSection === "lineup" ? "active" : ""}`}
+          >
+            <Music size={18} />
+            <span>Lineup</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("social-media")}
+            className={`nav-item ${activeSection === "social-media" ? "active" : ""}`}
+          >
+            <Share2 size={18} />
+            <span>Social Media</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("documents")}
+            className={`nav-item ${activeSection === "documents" ? "active" : ""}`}
+          >
+            <FileText size={18} />
+            <span>Documents</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("erweiterte-einstellungen")}
+            className={`nav-item ${activeSection === "erweiterte-einstellungen" ? "active" : ""}`}
+          >
+            <Sparkles size={18} />
+            <span>Erweitert</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("statistiken-info")}
+            className={`nav-item ${activeSection === "statistiken-info" ? "active" : ""}`}
+          >
+            <Eye size={18} />
+            <span>Statistiken</span>
+          </button>
+        </div>
+        <button
+          className="nav-scroll-btn nav-scroll-right"
+          onClick={() => scrollNav("right")}
+          style={{ display: showRightArrow ? "flex" : "none" }}
+          aria-label="Scroll right"
+        >
+          <ChevronRight size={20} />
+        </button>
+      </nav>
+
       {/* Magic Update Section - Prominent at Top */}
       <div className="magic-update-section">
         <div className="magic-update-header">
@@ -1008,7 +1190,7 @@ const EditEvent: React.FC = () => {
         {/* Dashboard Grid */}
         <div className="dashboard-grid">
           {/* ========== KATEGORIE: GRUNDINFORMATIONEN ========== */}
-          <div className="category-section">
+          <div id="grundinformationen" className="category-section">
             <h2 className="category-title">
               <Tag className="category-icon" />
               Grundinformationen
@@ -1109,7 +1291,7 @@ const EditEvent: React.FC = () => {
           </div>
 
           {/* ========== KATEGORIE: ZEIT & ORT ========== */}
-          <div className="category-section">
+          <div id="zeit-ort" className="category-section">
             <h2 className="category-title">
               <Calendar className="category-icon" />
               Zeit & Ort
@@ -1231,7 +1413,7 @@ const EditEvent: React.FC = () => {
           </div>
 
           {/* ========== KATEGORIE: PREIS & TICKETS ========== */}
-          <div className="category-section">
+          <div id="preis-tickets" className="category-section">
             <h2 className="category-title">
               <DollarSign className="category-icon" />
               Preis & Tickets
@@ -1451,7 +1633,7 @@ const EditEvent: React.FC = () => {
           </div>
 
           {/* ========== KATEGORIE: ERWEITERTE EINSTELLUNGEN ========== */}
-          <div className="category-section">
+          <div id="erweiterte-einstellungen" className="category-section">
             <h2 className="category-title">
               <Sparkles className="category-icon" />
               Erweiterte Einstellungen
@@ -1627,7 +1809,7 @@ const EditEvent: React.FC = () => {
           </div>
 
           {/* ========== KATEGORIE: STATISTIKEN & INFO ========== */}
-          <div className="category-section">
+          <div id="statistiken-info" className="category-section">
             <h2 className="category-title">
               <Eye className="category-icon" />
               Statistiken & Info
@@ -1679,7 +1861,7 @@ const EditEvent: React.FC = () => {
           </div>
 
           {/* ========== KATEGORIE: EVENT-DETAILS ========== */}
-          <div className="category-section">
+          <div id="event-details" className="category-section">
             <h2 className="category-title">
               <Music className="category-icon" />
               Event-Details
@@ -1718,7 +1900,7 @@ const EditEvent: React.FC = () => {
           </div>
 
           {/* Social Media Card - Full Width */}
-          <div className="admin-card full-width">
+          <div id="social-media" className="admin-card full-width">
             <div className="card-header">
               <Share2 className="card-icon" />
               <span className="card-title">Social Media</span>
@@ -1761,7 +1943,7 @@ const EditEvent: React.FC = () => {
           </div>
 
           {/* Lineup Card - Full Width */}
-          <div className="admin-card full-width">
+          <div id="lineup" className="admin-card full-width">
             <div className="card-header">
               <Music className="card-icon" />
               <span className="card-title">Lineup</span>
@@ -1827,7 +2009,7 @@ const EditEvent: React.FC = () => {
           </div>
 
           {/* Documents Card - Full Width */}
-          <div className="admin-card full-width">
+          <div id="documents" className="admin-card full-width">
             <div className="card-header">
               <FileText className="card-icon" />
               <span className="card-title">Documents</span>
