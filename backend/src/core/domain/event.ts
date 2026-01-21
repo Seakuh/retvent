@@ -92,7 +92,7 @@ export class Event implements IEvent {
   categorySlug?: string;
   subcategory?: string;
   venue?: {
-    name?: string;
+    name: string;
     venueId?: string;
     venueSlug?: string;
     capacity?: number;
@@ -100,13 +100,13 @@ export class Event implements IEvent {
   };
   eventType?: 'concert' | 'festival' | 'club-night' | 'theater' | 'sports' | 'workshop' | 'networking' | 'exhibition' | 'conference' | 'party' | 'comedy' | 'other';
   eventFormat?: 'live' | 'hybrid' | 'online' | 'outdoor' | 'indoor';
-  genre?: string[];
-  mood?: string[];
+  genre?: ('techno' | 'house' | 'hip-hop' | 'rock' | 'pop' | 'jazz' | 'classical' | 'electronic' | 'indie' | 'other')[];
+  mood?: ('energetic' | 'chill' | 'romantic' | 'party' | 'intellectual' | 'family-friendly' | 'exclusive')[];
   vibe?: {
-    energy?: number;
-    intimacy?: number;
-    exclusivity?: number;
-    social?: number;
+    energy: number;        // 0-100
+    intimacy: number;      // 0-100 (klein vs. groß)
+    exclusivity: number;   // 0-100
+    social: number;        // 0-100 (sozial vs. fokussiert)
   };
   audience?: {
     ageRange?: [number, number];
@@ -118,15 +118,15 @@ export class Event implements IEvent {
     };
   };
   recurrence?: {
-    pattern?: 'single' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
+    pattern: 'single' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
     interval?: number;
     endDate?: Date;
     occurrences?: number;
   };
   eventSeriesId?: string;
   eventSeries?: {
-    name?: string;
-    slug?: string;
+    name: string;
+    slug: string;
     totalEvents?: number;
   };
   similarEventIds?: string[];
@@ -135,7 +135,7 @@ export class Event implements IEvent {
   shareCount?: number;
   rsvpCount?: number;
   groupActivity?: {
-    activeGroups?: number;
+    activeGroups: number;
     totalMessages?: number;
     lastActivity?: Date;
   };
@@ -146,7 +146,7 @@ export class Event implements IEvent {
     engagementRate?: number;
   };
   organizer?: {
-    name?: string;
+    name: string;
     organizerId?: string;
     organizerSlug?: string;
     verified?: boolean;
@@ -156,14 +156,14 @@ export class Event implements IEvent {
     currency?: string;
     priceRange?: 'free' | 'low' | 'medium' | 'high' | 'premium';
     ticketTypes?: Array<{
-      name?: string;
-      price?: number;
-      currency?: string;
+      name: string;
+      price: number;
+      currency: string;
       available?: number;
       soldOut?: boolean;
     }>;
   };
-  status?: 'draft' | 'published' | 'cancelled' | 'postponed' | 'pending';
+  status?: 'draft' | 'published' | 'cancelled' | 'postponed';
   moderationStatus?: 'pending' | 'approved' | 'rejected';
 
   constructor(data: Partial<IEvent>) {

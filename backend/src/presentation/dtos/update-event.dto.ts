@@ -2,11 +2,14 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsNumber,
   IsObject,
   IsOptional,
   IsString,
   IsUrl,
+  Max,
+  Min,
   ValidateNested,
 } from 'class-validator';
 
@@ -61,6 +64,10 @@ class AddressDto {
   @IsOptional()
   @IsString()
   city?: string;
+
+  @IsOptional()
+  @IsString()
+  country?: string;
 }
 
 class LocationDto {
@@ -70,6 +77,194 @@ class LocationDto {
   @ValidateNested()
   @Type(() => CoordinatesDto)
   coordinates: CoordinatesDto;
+}
+
+class VenueDto {
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  venueId?: string;
+
+  @IsOptional()
+  @IsString()
+  venueSlug?: string;
+
+  @IsOptional()
+  @IsNumber()
+  capacity?: number;
+
+  @IsOptional()
+  @IsEnum(['club', 'open-air', 'theater', 'stadium', 'other'])
+  venueType?: 'club' | 'open-air' | 'theater' | 'stadium' | 'other';
+}
+
+class VibeDto {
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  energy: number;
+
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  intimacy: number;
+
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  exclusivity: number;
+
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  social: number;
+}
+
+class AccessibilityDto {
+  @IsOptional()
+  @IsBoolean()
+  wheelchairAccessible?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  hearingImpaired?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  visualImpaired?: boolean;
+}
+
+class AudienceDto {
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  ageRange?: [number, number];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  targetAudience?: string[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AccessibilityDto)
+  accessibility?: AccessibilityDto;
+}
+
+class RecurrenceDto {
+  @IsEnum(['single', 'daily', 'weekly', 'monthly', 'yearly', 'custom'])
+  pattern: 'single' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
+
+  @IsOptional()
+  @IsNumber()
+  interval?: number;
+
+  @IsOptional()
+  endDate?: Date;
+
+  @IsOptional()
+  @IsNumber()
+  occurrences?: number;
+}
+
+class EventSeriesDto {
+  @IsString()
+  name: string;
+
+  @IsString()
+  slug: string;
+
+  @IsOptional()
+  @IsNumber()
+  totalEvents?: number;
+}
+
+class TicketTypeDto {
+  @IsString()
+  name: string;
+
+  @IsNumber()
+  price: number;
+
+  @IsString()
+  currency: string;
+
+  @IsOptional()
+  @IsNumber()
+  available?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  soldOut?: boolean;
+}
+
+class PriceDto {
+  @IsOptional()
+  @IsNumber()
+  amount?: number;
+
+  @IsOptional()
+  @IsString()
+  currency?: string;
+
+  @IsOptional()
+  @IsEnum(['free', 'low', 'medium', 'high', 'premium'])
+  priceRange?: 'free' | 'low' | 'medium' | 'high' | 'premium';
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TicketTypeDto)
+  ticketTypes?: TicketTypeDto[];
+}
+
+class GroupActivityDto {
+  @IsNumber()
+  activeGroups: number;
+
+  @IsOptional()
+  @IsNumber()
+  totalMessages?: number;
+
+  @IsOptional()
+  lastActivity?: Date;
+}
+
+class PopularitySignalsDto {
+  @IsOptional()
+  @IsNumber()
+  trendingScore?: number;
+
+  @IsOptional()
+  @IsNumber()
+  hotnessScore?: number;
+
+  @IsOptional()
+  @IsNumber()
+  qualityScore?: number;
+
+  @IsOptional()
+  @IsNumber()
+  engagementRate?: number;
+}
+
+class OrganizerDto {
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  organizerId?: string;
+
+  @IsOptional()
+  @IsString()
+  organizerSlug?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  verified?: boolean;
 }
 
 export class UpdateEventDto {
@@ -230,5 +425,151 @@ export class UpdateEventDto {
   @IsOptional()
   @IsString()
   parentEventId?: string;
+
+  // ========== NEUE SEO-FELDER (optional, abwärtskompatibel) ==========
+  
+  // URL-Struktur
+  @IsOptional()
+  @IsString()
+  slug?: string;                 // URL-freundlich (z.B. "techno-party-berlin-2024")
+  
+  @IsOptional()
+  @IsString()
+  citySlug?: string;             // URL-freundlich (z.B. "berlin")
+  
+  // Beschreibungen
+  @IsOptional()
+  @IsString()
+  shortDescription?: string;     // Meta-Description (max 160 Zeichen)
+  
+  // Geografische Daten
+  @IsOptional()
+  @IsString()
+  region?: string;              // Bundesland/Region
+  
+  @IsOptional()
+  @IsString()
+  country?: string;             // Land (z.B. "Deutschland")
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => VenueDto)
+  venue?: VenueDto;                 // Venue-Informationen
+  
+  // Zeitliche Daten
+  @IsOptional()
+  @IsString()
+  timezone?: string;             // Zeitzone (z.B. "Europe/Berlin")
+  
+  // Kategorisierung
+  @IsOptional()
+  @IsString()
+  categorySlug?: string;         // URL-freundlich
+  
+  @IsOptional()
+  @IsString()
+  subcategory?: string;         // Unterkategorie
+  
+  // ========== SEMANTISCHE FELDER FÜR KI (optional) ==========
+  
+  @IsOptional()
+  @IsEnum(['concert', 'festival', 'club-night', 'theater', 'sports', 'workshop', 'networking', 'exhibition', 'conference', 'party', 'comedy', 'other'])
+  eventType?: 'concert' | 'festival' | 'club-night' | 'theater' | 'sports' | 'workshop' | 'networking' | 'exhibition' | 'conference' | 'party' | 'comedy' | 'other';
+  
+  @IsOptional()
+  @IsEnum(['live', 'hybrid', 'online', 'outdoor', 'indoor'])
+  eventFormat?: 'live' | 'hybrid' | 'online' | 'outdoor' | 'indoor';
+  
+  @IsOptional()
+  @IsArray()
+  @IsEnum(['techno', 'house', 'hip-hop', 'rock', 'pop', 'jazz', 'classical', 'electronic', 'indie', 'other'], { each: true })
+  genre?: ('techno' | 'house' | 'hip-hop' | 'rock' | 'pop' | 'jazz' | 'classical' | 'electronic' | 'indie' | 'other')[];
+  
+  @IsOptional()
+  @IsArray()
+  @IsEnum(['energetic', 'chill', 'romantic', 'party', 'intellectual', 'family-friendly', 'exclusive'], { each: true })
+  mood?: ('energetic' | 'chill' | 'romantic' | 'party' | 'intellectual' | 'family-friendly' | 'exclusive')[];
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => VibeDto)
+  vibe?: VibeDto;
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AudienceDto)
+  audience?: AudienceDto;
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => RecurrenceDto)
+  recurrence?: RecurrenceDto;
+  
+  @IsOptional()
+  @IsString()
+  eventSeriesId?: string;
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => EventSeriesDto)
+  eventSeries?: EventSeriesDto;
+  
+  // Ähnliche Events (KI-generiert)
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  similarEventIds?: string[];
+  
+  @IsOptional()
+  @IsString()
+  clusterId?: string;
+  
+  // ========== COMMUNITY-FELDER (optional) ==========
+  
+  @IsOptional()
+  @IsNumber()
+  likeCount?: number;            // Anzahl Likes (alternativ zu likeIds?.length)
+  
+  @IsOptional()
+  @IsNumber()
+  shareCount?: number;          // Anzahl Shares
+  
+  @IsOptional()
+  @IsNumber()
+  rsvpCount?: number;           // Anzahl RSVPs
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => GroupActivityDto)
+  groupActivity?: GroupActivityDto;
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PopularitySignalsDto)
+  popularitySignals?: PopularitySignalsDto;
+  
+  // ========== ORGANISATOR (optional) ==========
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => OrganizerDto)
+  organizer?: OrganizerDto;
+  
+  // ========== COMMERZIELLE FELDER (optional) ==========
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PriceDto)
+  priceDetails?: PriceDto;         // Strukturierte Preisinformationen (alternativ zu price string)
+  
+  // ========== TECHNISCHE FELDER (optional) ==========
+  
+  @IsOptional()
+  @IsEnum(['draft', 'published', 'cancelled', 'postponed'])
+  status?: 'draft' | 'published' | 'cancelled' | 'postponed';
+  
+  @IsOptional()
+  @IsEnum(['pending', 'approved', 'rejected'])
+  moderationStatus?: 'pending' | 'approved' | 'rejected';
 
 }
