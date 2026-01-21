@@ -1141,8 +1141,7 @@ const EditEvent: React.FC = () => {
         <button
           className="nav-scroll-btn nav-scroll-left"
           onClick={() => scrollNav("left")}
-          style={{ display: showLeftArrow ? "flex" : "none" }}
-          aria-label="Scroll left"
+                   aria-label="Scroll left"
         >
           <ChevronLeft size={20} />
         </button>
@@ -1221,8 +1220,7 @@ const EditEvent: React.FC = () => {
         <button
           className="nav-scroll-btn nav-scroll-right"
           onClick={() => scrollNav("right")}
-          style={{ display: showRightArrow ? "flex" : "none" }}
-          aria-label="Scroll right"
+                   aria-label="Scroll right"
         >
           <ChevronRight size={20} />
         </button>
