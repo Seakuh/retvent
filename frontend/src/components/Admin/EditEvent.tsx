@@ -358,13 +358,13 @@ const EditEvent: React.FC = () => {
         "grundinformationen",
         "zeit-ort",
         "preis-tickets",
-        "kontakt-links",
-        "event-details",
-        "lineup",
-        "social-media",
-        "documents",
         "erweiterte-einstellungen",
+        "kontakt-links",
         "statistiken-info",
+        "event-details",
+        "social-media",
+        "lineup",
+        "documents",
       ];
 
       const scrollPosition = window.scrollY + 150;
@@ -973,6 +973,64 @@ const EditEvent: React.FC = () => {
     }
   }, []);
 
+  // Scroll to active section on initial load
+  useEffect(() => {
+    if (!loading && navContainerRef.current && activeSection) {
+      setTimeout(() => {
+        const activeButton = navContainerRef.current?.querySelector(
+          `[data-section="${activeSection}"]`
+        ) as HTMLElement;
+        
+        if (activeButton && navContainerRef.current) {
+          const container = navContainerRef.current;
+          const buttonLeft = activeButton.offsetLeft;
+          const containerWidth = container.clientWidth;
+          
+          // Center the active button in the container
+          container.scrollTo({
+            left: buttonLeft - containerWidth / 2 + activeButton.offsetWidth / 2,
+            behavior: "auto",
+          });
+        }
+      }, 300);
+    }
+  }, [loading]);
+
+  // Auto-scroll navigation to active section
+  useEffect(() => {
+    if (navContainerRef.current && activeSection) {
+      // Use setTimeout to ensure DOM is ready
+      setTimeout(() => {
+        const activeButton = navContainerRef.current?.querySelector(
+          `[data-section="${activeSection}"]`
+        ) as HTMLElement;
+        
+        if (activeButton && navContainerRef.current) {
+          const container = navContainerRef.current;
+          const buttonLeft = activeButton.offsetLeft;
+          const buttonWidth = activeButton.offsetWidth;
+          const containerWidth = container.clientWidth;
+          const scrollLeft = container.scrollLeft;
+          
+          // Check if button is outside visible area
+          if (buttonLeft < scrollLeft) {
+            // Button is to the left of visible area
+            container.scrollTo({
+              left: buttonLeft - 20,
+              behavior: "smooth",
+            });
+          } else if (buttonLeft + buttonWidth > scrollLeft + containerWidth) {
+            // Button is to the right of visible area
+            container.scrollTo({
+              left: buttonLeft + buttonWidth - containerWidth + 20,
+              behavior: "smooth",
+            });
+          }
+        }
+      }, 100);
+    }
+  }, [activeSection]);
+
   const handlePromptUpdate = async (): Promise<void> => {
     if (!promptText.trim()) return;
     setLoading(true);
@@ -1149,6 +1207,7 @@ const EditEvent: React.FC = () => {
           <button
             onClick={() => scrollToSection("grundinformationen")}
             className={`nav-item ${activeSection === "grundinformationen" ? "active" : ""}`}
+            data-section="grundinformationen"
           >
             <Tag size={18} />
             <span>Grundinformationen</span>
@@ -1156,6 +1215,7 @@ const EditEvent: React.FC = () => {
           <button
             onClick={() => scrollToSection("zeit-ort")}
             className={`nav-item ${activeSection === "zeit-ort" ? "active" : ""}`}
+            data-section="zeit-ort"
           >
             <Calendar size={18} />
             <span>Zeit & Ort</span>
@@ -1163,58 +1223,66 @@ const EditEvent: React.FC = () => {
           <button
             onClick={() => scrollToSection("preis-tickets")}
             className={`nav-item ${activeSection === "preis-tickets" ? "active" : ""}`}
+            data-section="preis-tickets"
           >
             <DollarSign size={18} />
             <span>Preis & Tickets</span>
           </button>
           <button
-            onClick={() => scrollToSection("kontakt-links")}
-            className={`nav-item ${activeSection === "kontakt-links" ? "active" : ""}`}
-          >
-            <Mail size={18} />
-            <span>Kontakt & Links</span>
-          </button>
-          <button
-            onClick={() => scrollToSection("event-details")}
-            className={`nav-item ${activeSection === "event-details" ? "active" : ""}`}
-          >
-            <Tag size={18} />
-            <span>Event-Details</span>
-          </button>
-          <button
-            onClick={() => scrollToSection("lineup")}
-            className={`nav-item ${activeSection === "lineup" ? "active" : ""}`}
-          >
-            <Music size={18} />
-            <span>Lineup</span>
-          </button>
-          <button
-            onClick={() => scrollToSection("social-media")}
-            className={`nav-item ${activeSection === "social-media" ? "active" : ""}`}
-          >
-            <Share2 size={18} />
-            <span>Social Media</span>
-          </button>
-          <button
-            onClick={() => scrollToSection("documents")}
-            className={`nav-item ${activeSection === "documents" ? "active" : ""}`}
-          >
-            <FileText size={18} />
-            <span>Documents</span>
-          </button>
-          <button
             onClick={() => scrollToSection("erweiterte-einstellungen")}
             className={`nav-item ${activeSection === "erweiterte-einstellungen" ? "active" : ""}`}
+            data-section="erweiterte-einstellungen"
           >
             <Sparkles size={18} />
             <span>Erweitert</span>
           </button>
           <button
+            onClick={() => scrollToSection("kontakt-links")}
+            className={`nav-item ${activeSection === "kontakt-links" ? "active" : ""}`}
+            data-section="kontakt-links"
+          >
+            <Mail size={18} />
+            <span>Kontakt & Links</span>
+          </button>
+          <button
             onClick={() => scrollToSection("statistiken-info")}
             className={`nav-item ${activeSection === "statistiken-info" ? "active" : ""}`}
+            data-section="statistiken-info"
           >
             <Eye size={18} />
             <span>Statistiken</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("event-details")}
+            className={`nav-item ${activeSection === "event-details" ? "active" : ""}`}
+            data-section="event-details"
+          >
+            <Tag size={18} />
+            <span>Event-Details</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("social-media")}
+            className={`nav-item ${activeSection === "social-media" ? "active" : ""}`}
+            data-section="social-media"
+          >
+            <Share2 size={18} />
+            <span>Social Media</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("lineup")}
+            className={`nav-item ${activeSection === "lineup" ? "active" : ""}`}
+            data-section="lineup"
+          >
+            <Music size={18} />
+            <span>Lineup</span>
+          </button>
+          <button
+            onClick={() => scrollToSection("documents")}
+            className={`nav-item ${activeSection === "documents" ? "active" : ""}`}
+            data-section="documents"
+          >
+            <FileText size={18} />
+            <span>Documents</span>
           </button>
         </div>
         <button

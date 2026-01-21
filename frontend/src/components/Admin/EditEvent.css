@@ -65,7 +65,7 @@
 .sticky-title-bar {
   position: sticky;
   top: 0;
-  z-index: 99;
+  z-index: 101;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -233,7 +233,11 @@
   animation: fadeInDown 0.5s ease-out;
   display: flex;
   align-items: center;
-  position: relative;
+}
+
+/* Navigation unter sticky-title-bar positionieren, wenn beide sticky sind */
+.sticky-title-bar ~ .edit-event-nav {
+  top: 70px;
 }
 
 .nav-container {
@@ -274,8 +278,6 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   color: #ffffff;
   cursor: pointer;
@@ -352,9 +354,11 @@
 }
 
 .nav-item.active {
-  background-color: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
   color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
 }
 
 .nav-item svg {
@@ -2062,6 +2066,11 @@
   .sticky-back-button {
     width: 36px;
     height: 36px;
+  }
+
+  /* Navigation unter sticky-title-bar auf mobilen Geräten */
+  .sticky-title-bar ~ .edit-event-nav {
+    top: 60px;
   }
 }
 
