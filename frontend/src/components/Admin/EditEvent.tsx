@@ -22,6 +22,7 @@ import {
   ExternalLink,
   Phone,
   Plus,
+  CheckCircle,
 } from "lucide-react";
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -267,6 +268,7 @@ const EditEvent: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("grundinformationen");
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const [showToast, setShowToast] = useState(false);
   const navContainerRef = React.useRef<HTMLDivElement>(null);
   const eventService = new EventService();
 
@@ -786,17 +788,21 @@ const EditEvent: React.FC = () => {
       }
 
       await eventService.updateEvent(eventId!, dataToSubmit as Partial<Event>);
-      // Show success message or feedback
+      // Show success toast
       setError(null);
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
     } catch (err) {
       setError("Failed to update event");
+      setShowToast(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await handleSave();
-    navigate(`/event/${eventId}`);
   };
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
@@ -2184,6 +2190,34 @@ const EditEvent: React.FC = () => {
           </button>
         </div>
       </form>
+
+      {/* Success Toast */}
+      {showToast && (
+        <div className="success-toast">
+          <div className="toast-content">
+            <CheckCircle className="toast-icon" size={20} />
+            <div className="toast-message">
+              <span className="toast-title">Änderungen gespeichert!</span>
+              <a
+                href={`/event/${eventId}`}
+                className="toast-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(`/event/${eventId}`);
+                }}
+              >
+                Zum Event →
+              </a>
+            </div>
+            <button
+              className="toast-close"
+              onClick={() => setShowToast(false)}
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
