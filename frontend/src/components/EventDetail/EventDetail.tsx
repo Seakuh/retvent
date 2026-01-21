@@ -19,6 +19,7 @@ import { MetaBar } from "./components/MetaBar";
 import { HostView } from "./components/OwnerComponent/HostView";
 import "./EventDetail.css";
 import HelmetMeta from "./HelmMeta";
+import { EventStructuredData } from "./EventStructuredData";
 import { SimilarEvents } from "./SimilarEvents";
 import { TicketLinkButton } from "../TicketLink/TicketLinkButton";
 import Footer from "../../Footer/Footer";
@@ -216,6 +217,7 @@ export const EventDetail: React.FC = () => {
   return (
     <div>
       <HelmetMeta event={event} eventId={eventId} />
+      <EventStructuredData event={event} eventId={eventId || ""} />
       <div
         className="event-detail"
         style={
