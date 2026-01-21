@@ -164,7 +164,7 @@ interface EventFormData {
   category: string;
   price: string;
   ticketLink: string;
-  website: string;
+  website?: string;
   email: string;
   tags: string[];
   socialMediaLinks: SocialMediaLinks;
@@ -995,7 +995,7 @@ const EditEvent: React.FC = () => {
                 type="url"
                 id="website"
                 name="website"
-                value={formData.website}
+                value={formData.website || ""}
                 onChange={handleInputChange}
                 placeholder="https://..."
               />

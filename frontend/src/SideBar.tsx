@@ -140,6 +140,17 @@ onClick={() => setViewMode("Search")}
               <span className="hidden md:inline">Profile</span>
             </button>
 
+            {loggedIn && (
+              <button
+                onClick={() => {
+                  navigate("/admin/events");
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-white w-full rounded-full"
+              >
+                <Calendar size={20} />
+                <span className="hidden md:inline">My Events</span>
+              </button>
+            )}
 
             {/* <button
               onClick={() => {
@@ -260,6 +271,15 @@ onClick={() => setViewMode("Search")}
             >
               <UserIcon size={20} />
             </button>
+
+            {loggedIn && (
+              <button
+                onClick={() => navigate("/admin/events")}
+                className="flex items-center justify-center px-2 py-2 text-white w-full hover:bg-white/10 rounded-full"
+              >
+                <Calendar size={20} />
+              </button>
+            )}
 
             <button
               onClick={() => navigate("/admin/events/create")}
