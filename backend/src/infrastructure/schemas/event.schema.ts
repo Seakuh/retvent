@@ -254,5 +254,6 @@ EventSchema.index({ categorySlug: 1 });
 EventSchema.index({ eventType: 1 });
 EventSchema.index({ genre: 1 });
 EventSchema.index({ status: 1, startDate: 1 }); // Für Sitemap-Query
+EventSchema.index({ status: 1, scheduledReleaseDate: 1 }); // Für Published-Events Filter (Performance)
 EventSchema.index({ clusterId: 1 });
 EventSchema.index({ eventSeriesId: 1 });

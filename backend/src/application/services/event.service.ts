@@ -902,6 +902,17 @@ export class EventService {
     now: Date,
   ): Event[] {
     return events.filter((event) => {
+      // Filtere Draft-Events und Events mit zukünftigem scheduledReleaseDate
+      if (event.status === 'draft') {
+        return false;
+      }
+      if (event.scheduledReleaseDate && new Date(event.scheduledReleaseDate) > now) {
+        return false;
+      }
+      // Nur published Events oder Events ohne Status (Abwärtskompatibilität)
+      if (event.status && event.status !== 'published') {
+        return false;
+      }
       // Datum-Filter
       if (filters.isUpcoming !== undefined && event.startDate) {
         const eventDate = new Date(event.startDate);

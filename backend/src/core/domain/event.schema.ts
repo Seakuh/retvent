@@ -514,6 +514,9 @@ EventSchema.index({ 'lineup.userId': 1 });
 // Index für Performance bei Geo-Queries
 EventSchema.index({ 'location.coordinates': '2dsphere' });
 
+// Index für Published-Events Filter (Performance-Optimierung)
+EventSchema.index({ status: 1, scheduledReleaseDate: 1 });
+
 // Pre-Hook für Debugging
 EventSchema.pre('save', function (next) {
   next();

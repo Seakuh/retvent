@@ -11,6 +11,54 @@ export class MongoEventRepository implements IEventRepository {
 
   constructor(@InjectModel('Event') private eventModel: Model<Event>) {}
 
+  /**
+   * Erstellt einen Filter für veröffentlichte Events
+   * Schließt Draft-Events und Events mit zukünftigem scheduledReleaseDate aus
+   * 
+   * OPTIMIERT: Vereinfachte Filter-Logik für bessere Performance
+   * - Nutzt bestehende Indizes (status, startDate)
+   * - Minimiert verschachtelte $or/$and Operationen
+   * 
+   * @param additionalFilter - Zusätzliche Filter-Bedingungen
+   * @returns MongoDB Filter-Objekt
+   */
+  private getPublishedEventsFilter(additionalFilter: any = {}): any {
+    const now = new Date();
+    
+    // Extrahiere $and aus additionalFilter falls vorhanden
+    const existingAnd = additionalFilter.$and || [];
+    delete additionalFilter.$and;
+    
+    // Optimierte Filter-Logik:
+    // 1. Status muss 'published' sein ODER nicht existieren (Abwärtskompatibilität)
+    // 2. Status darf NICHT 'draft' sein
+    // 3. scheduledReleaseDate muss nicht existieren ODER <= jetzt sein
+    return {
+      ...additionalFilter,
+      $and: [
+        ...existingAnd,
+        {
+          // Kombinierte Status-Bedingung: published ODER nicht vorhanden, aber NICHT draft
+          $or: [
+            { status: 'published' },
+            { status: { $exists: false } },
+          ],
+        },
+        {
+          status: { $ne: 'draft' },
+        },
+        {
+          // scheduledReleaseDate Filter: nur Events ohne Release-Datum oder mit erreichtem Datum
+          $or: [
+            { scheduledReleaseDate: { $exists: false } },
+            { scheduledReleaseDate: { $lte: now } },
+            { scheduledReleaseDate: null },
+          ],
+        },
+      ],
+    };
+  }
+
   async searchEventsWithUserInput(
     location: string,
     category: string,
@@ -39,8 +87,11 @@ export class MongoEventRepository implements IEventRepository {
       };
     }
 
+    // Nur veröffentlichte Events anzeigen
+    const filter = this.getPublishedEventsFilter(query);
+
     const events = await this.eventModel
-      .find(query)
+      .find(filter)
       .sort({ createdAt: -1 })
       .select(
         'id description title imageUrl isSponsored startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username',
@@ -99,8 +150,11 @@ export class MongoEventRepository implements IEventRepository {
       ];
     }
 
+    // Nur veröffentlichte Events anzeigen
+    const filter = this.getPublishedEventsFilter(query);
+
     return this.eventModel
-      .find(query)
+      .find(filter)
       .sort({ createdAt: -1 })
       .skip(offset)
       .select(
@@ -111,11 +165,15 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async getReelEvents(eventId?: string, offset?: number, limit?: number) {
+    const now = new Date();
+    const baseFilter = { startDate: { $gt: now } };
+    const publishedFilter = this.getPublishedEventsFilter(baseFilter);
+
     if (eventId) {
       const event = await this.eventModel.findById(eventId).exec();
       if (!event) {
         return this.eventModel
-          .find({ startDate: { $gt: new Date() } })
+          .find(publishedFilter)
           .sort({ startDate: 1 })
           .select(
             'id title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username commentCount tags',
@@ -124,11 +182,13 @@ export class MongoEventRepository implements IEventRepository {
           .skip(offset)
           .exec();
       }
+      // Prüfe ob das Event selbst veröffentlicht ist
+      const eventFilter = {
+        _id: { $ne: eventId },
+        ...publishedFilter,
+      };
       const otherEvents = await this.eventModel
-        .find({
-          _id: { $ne: eventId },
-          startDate: { $gt: new Date() },
-        })
+        .find(eventFilter)
         .sort({ startDate: 1 })
         .select(
           'id title imageUrl startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username commentCount tags',
@@ -136,11 +196,14 @@ export class MongoEventRepository implements IEventRepository {
         .limit(limit)
         .skip(offset)
         .exec();
-      return [event, ...otherEvents];
+      // Nur Event hinzufügen, wenn es veröffentlicht ist
+      const isPublished = (!event.status || event.status === 'published') &&
+        (!event.scheduledReleaseDate || event.scheduledReleaseDate <= now);
+      return isPublished ? [event, ...otherEvents] : otherEvents;
     }
 
     return this.eventModel
-      .find({ startDate: { $gt: new Date() } })
+      .find(publishedFilter)
       .sort({ startDate: 1 })
       .limit(limit)
       .skip(offset)
@@ -245,8 +308,10 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async findAllWithEmbedding(limit: number) {
+    const embeddingFilter = { embedding: { $exists: true } };
+    const filter = this.getPublishedEventsFilter(embeddingFilter);
     const events = await this.eventModel
-      .find({ embedding: { $exists: true } })
+      .find(filter)
       .sort({ createdAt: -1 })
       .limit(limit)
       .exec();
@@ -270,8 +335,10 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   findLatestEventsCity(city: string, limit: number) {
+    const cityFilter = { city: city };
+    const filter = this.getPublishedEventsFilter(cityFilter);
     return this.eventModel
-      .find({ city: city })
+      .find(filter)
       .sort({ createdAt: -1 })
       .limit(limit)
       .exec();
@@ -281,8 +348,10 @@ export class MongoEventRepository implements IEventRepository {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    const dateFilter = { startDate: { $gte: today } };
+    const filter = this.getPublishedEventsFilter(dateFilter);
     const events = await this.eventModel
-      .find({ startDate: { $gte: today } })
+      .find(filter)
       .exec();
     return this.addCommentCountToEvents(events);
   }
@@ -696,8 +765,9 @@ export class MongoEventRepository implements IEventRepository {
   }
 
   async findLatest(limit: number): Promise<Event[]> {
+    const filter = this.getPublishedEventsFilter();
     const events = await this.eventModel
-      .find()
+      .find(filter)
       .select(
         'id description title imageUrl lineup startDate city views tags commentCount',
       )
@@ -721,8 +791,9 @@ export class MongoEventRepository implements IEventRepository {
       query.city = { $regex: new RegExp(location, 'i') };
     }
 
+    const filter = this.getPublishedEventsFilter(query);
     const events = await this.eventModel
-      .find(query)
+      .find(filter)
       .select('id description title imageUrl startDate city views')
       .limit(limit)
       .sort({ createdAt: -1 })
@@ -914,17 +985,15 @@ export class MongoEventRepository implements IEventRepository {
     const filter: any = {};
     
     // Status-Filter (Standard: published, aber auch abwärtskompatibel)
-    if (params.status) {
+    // Wenn explizit ein Status angegeben ist, verwende diesen (z.B. für Admin-Ansichten)
+    if (params.status && params.status !== 'published') {
       filter.$or = [
         { status: params.status },
         { status: { $exists: false } }, // Für abwärtskompatibilität
       ];
     } else {
-      // Standard: nur published Events, aber auch Events ohne status-Feld
-      filter.$or = [
-        { status: 'published' },
-        { status: { $exists: false } },
-      ];
+      // Standard: verwende den Published-Filter (schließt Drafts und zukünftige Releases aus)
+      // Der Filter wird später durch getPublishedEventsFilter angewendet
     }
 
     // Query-Filter (Titel/Beschreibung)
@@ -970,8 +1039,13 @@ export class MongoEventRepository implements IEventRepository {
       };
     }
 
+    // Wende Published-Filter an, außer wenn explizit ein anderer Status angefordert wurde
+    const finalFilter = params.status && params.status !== 'published' 
+      ? filter 
+      : this.getPublishedEventsFilter(filter);
+
     const events = await this.eventModel
-      .find(filter)
+      .find(finalFilter)
       .select(
         'id description title imageUrl startDate city views commentCount lineupPictureUrl',
       )
@@ -985,8 +1059,10 @@ export class MongoEventRepository implements IEventRepository {
     skip: number = 0,
     limit: number = 10,
   ): Promise<Event[]> {
+    const cityFilter = { 'location.city': { $regex: new RegExp(city, 'i') } };
+    const filter = this.getPublishedEventsFilter(cityFilter);
     const events = await this.eventModel
-      .find({ 'location.city': { $regex: new RegExp(city, 'i') } })
+      .find(filter)
       .skip(skip)
       .limit(limit)
       .exec();
@@ -1030,18 +1106,20 @@ export class MongoEventRepository implements IEventRepository {
     distance: number,
     limit: number,
   ): Promise<Event[]> {
-    const events = await this.eventModel
-      .find({
-        'location.coordinates': {
-          $near: {
-            $geometry: {
-              type: 'Point',
-              coordinates: [lon, lat],
-            },
-            $maxDistance: distance * 1000, // Convert km to meters
+    const geoFilter = {
+      'location.coordinates': {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [lon, lat],
           },
+          $maxDistance: distance * 1000, // Convert km to meters
         },
-      })
+      },
+    };
+    const filter = this.getPublishedEventsFilter(geoFilter);
+    const events = await this.eventModel
+      .find(filter)
       .select('id description title imageUrl startDate city views commentCount')
       .limit(limit)
       .sort({ createdAt: -1 })
