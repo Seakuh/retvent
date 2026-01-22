@@ -8,17 +8,21 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Put,
   Query,
   Req,
+  Redirect,
   Request,
+  Res,
   UnauthorizedException,
   UploadedFile,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { FileInterceptor, FilesInterceptor, AnyFilesInterceptor } from '@nestjs/platform-express';
 import { EventMapper } from '../../application/mappers/event.mapper';
 import { EventService } from '../../application/services/event.service';
@@ -1694,5 +1698,301 @@ export class EventController {
       limit,
     );
     return results;
+  }
+
+  // ========================================================================
+  // PUBLIC EVENT ROUTES - Slug-basierte Event-Suche
+  // ========================================================================
+
+  /**
+   * Public Route: Findet Event anhand von slugAndId
+   * 
+   * POST /api/events (Create)
+   * PATCH /api/events/:eventId (Update)
+   * POST /api/events/:eventId/publish
+   * POST /api/events/:eventId/unpublish
+   * GET /api/events/:eventId (Edit-View)
+   * GET /api/events/:eventId/slugs (History/Redirects)
+   * POST /api/events/:eventId/slugs (Slug ändern + Redirect anlegen)
+   * 
+   * Controller-Flow für die Public Route:
+   * Schritt A: Parse slugAndId
+   *   - slugAndId endet immer mit -<shortId>
+   *   - Beispiel: berlin-techno-nacht-a3f9k2
+   *   - slug = berlin-techno-nacht
+   *   - shortId = a3f9k2
+   *   - Regel: Wenn kein - oder shortId ungültig → 404
+   * 
+   * Schritt B: Resolve Event über shortId (nicht über slug)
+   *   - DB Lookup: SELECT * FROM events WHERE short_id = ? AND status='published'
+   *   - Optional: zusätzlich tenant_id / Region / Sichtbarkeit prüfen
+   * 
+   * Schritt C: Canonical Check + Redirect (SEO)
+   *   - Compute canonical slug aus DB (pro locale)
+   *   - Canonical URL = /{locale}/events/{yyyy}/{mm}/{canonicalSlug}-{shortId}
+   *   - (yyyy/mm idealerweise aus start_at des Events)
+   *   - Wenn Request nicht canonical ist: 301 auf canonical URL
+   *   - Wenn canonical passt: 200 und Event ausliefern
+   * 
+   * @param slugAndId - Format: "berlin-techno-nacht-a3f9k2" (slug-shortId)
+   * @param locale - Locale (de/en), Standard: de
+   * @param res - Express Response für Redirects
+   * @returns Event oder 301 Redirect zur canonical URL
+   */
+  @Get('by-slug/:slugAndId')
+  async getEventBySlug(
+    @Param('slugAndId') slugAndId: string,
+    @Query('locale') locale: string = 'de',
+    @Res() res: Response,
+  ) {
+    // Schritt A: Parse slugAndId
+    // slugAndId endet immer mit -<shortId>
+    // Beispiel: berlin-techno-nacht-a3f9k2
+    const match = slugAndId.match(/^(.+)-([a-f0-9]{6})$/i);
+    
+    if (!match) {
+      throw new NotFoundException('Event not found - invalid slug format');
+    }
+
+    const [, , shortId] = match;
+    
+    // Validiere shortId Format
+    if (!shortId || !/^[a-f0-9]{6}$/i.test(shortId)) {
+      throw new NotFoundException('Event not found - invalid shortId');
+    }
+
+    // Schritt B: Resolve Event über shortId (nicht über slug)
+    const event = await this.eventService.findEventBySlugAndShortId(slugAndId);
+    
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    // Validiere locale
+    const validLocale = ['de', 'en'].includes(locale) ? locale : 'de';
+
+    // Schritt C: Canonical Check + Redirect (SEO)
+    // Compute canonical slug aus DB (pro locale)
+    const canonicalUrl = this.eventService.generateCanonicalUrl(event, validLocale);
+    
+    // Prüfe ob Request canonical ist
+    // Extrahiere slug aus slugAndId
+    const requestSlug = slugAndId.slice(0, -7); // Entferne "-shortId" (6 Zeichen + Bindestrich)
+    const canonicalSlug = event.slug || this.eventMapper['slugService']?.stringToSlug(event.title) || event.title.toLowerCase().replace(/\s+/g, '-');
+    const expectedSlugAndId = `${canonicalSlug}-${shortId}`;
+    
+    // Wenn slug nicht mit canonicalSlug übereinstimmt, redirect
+    if (slugAndId !== expectedSlugAndId && requestSlug !== canonicalSlug) {
+      // 301 Redirect zur canonical URL
+      return res.redirect(301, canonicalUrl);
+    }
+
+    // Wenn canonical passt: 200 und Event ausliefern
+    return res.json(event);
+  }
+
+  // ========================================================================
+  // ADMIN EVENT ROUTES - CRUD Operations
+  // ========================================================================
+  // 
+  // POST /api/events/create (Create) - bereits vorhanden bei Zeile 847
+  // PUT /api/events/:id (Update) - bereits vorhanden bei Zeile 925
+  // 
+  // Die folgenden neuen Endpoints erweitern die bestehende Funktionalität:
+
+  /**
+   * POST /api/events/:eventId/publish
+   * Veröffentlicht ein Event (Status auf 'published' setzen)
+   */
+  @Post(':eventId/publish')
+  @UseGuards(JwtAuthGuard)
+  async publishEvent(
+    @Param('eventId') eventId: string,
+    @Request() req,
+  ) {
+    try {
+      const event = await this.eventService.findByIdForUpdate(eventId);
+
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      if (event.hostId !== req.user.sub) {
+        throw new ForbiddenException('You can only publish your own events');
+      }
+
+      const updatedEvent = await this.eventService.update(eventId, {
+        status: 'published',
+      });
+
+      return {
+        message: 'Event published successfully',
+        event: updatedEvent,
+      };
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * POST /api/events/:eventId/unpublish
+   * Entfernt ein Event aus der Veröffentlichung (Status auf 'draft' setzen)
+   */
+  @Post(':eventId/unpublish')
+  @UseGuards(JwtAuthGuard)
+  async unpublishEvent(
+    @Param('eventId') eventId: string,
+    @Request() req,
+  ) {
+    try {
+      const event = await this.eventService.findByIdForUpdate(eventId);
+
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      if (event.hostId !== req.user.sub) {
+        throw new ForbiddenException('You can only unpublish your own events');
+      }
+
+      const updatedEvent = await this.eventService.update(eventId, {
+        status: 'draft',
+      });
+
+      return {
+        message: 'Event unpublished successfully',
+        event: updatedEvent,
+      };
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/events/:eventId/edit (Edit-View)
+   * Lädt ein Event für die Bearbeitung (inkl. alle Felder)
+   * Hinweis: GET /api/events/:eventId könnte mit anderen Routen kollidieren,
+   * daher verwenden wir /edit als spezifischere Route
+   */
+  @Get(':eventId/edit')
+  @UseGuards(JwtAuthGuard)
+  async getEventForEdit(
+    @Param('eventId') eventId: string,
+    @Request() req,
+  ) {
+    try {
+      const event = await this.eventService.findByIdForUpdate(eventId);
+
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      if (event.hostId !== req.user.sub) {
+        throw new ForbiddenException('You can only view your own events');
+      }
+
+      return event;
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * GET /api/events/:eventId/slugs (History/Redirects)
+   * Lädt die Slug-Historie und Redirects für ein Event
+   */
+  @Get(':eventId/slugs')
+  @UseGuards(JwtAuthGuard)
+  async getEventSlugs(
+    @Param('eventId') eventId: string,
+    @Request() req,
+  ) {
+    try {
+      const event = await this.eventService.findByIdForUpdate(eventId);
+
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      if (event.hostId !== req.user.sub) {
+        throw new ForbiddenException('You can only view slugs of your own events');
+      }
+
+      // TODO: Implementiere Slug-Historie wenn vorhanden
+      // Für jetzt: Rückgabe des aktuellen Slugs
+      const slugService = (this.eventService as any).slugService;
+      return {
+        currentSlug: event.slug,
+        canonicalSlug: event.slug || (slugService?.stringToSlug(event.title) || event.title.toLowerCase().replace(/\s+/g, '-')),
+        shortId: event.id.slice(-6),
+        history: [], // TODO: Slug-Historie implementieren
+        redirects: [], // TODO: Redirects implementieren
+      };
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * POST /api/events/:eventId/slugs (Slug ändern + Redirect anlegen)
+   * Ändert den Slug eines Events und legt einen Redirect an
+   */
+  @Post(':eventId/slugs')
+  @UseGuards(JwtAuthGuard)
+  async updateEventSlug(
+    @Param('eventId') eventId: string,
+    @Body() body: { slug: string },
+    @Request() req,
+  ) {
+    try {
+      const event = await this.eventService.findByIdForUpdate(eventId);
+
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      if (event.hostId !== req.user.sub) {
+        throw new ForbiddenException('You can only change slugs of your own events');
+      }
+
+      const oldSlug = event.slug;
+      const newSlug = body.slug;
+
+      // Validiere neuen Slug
+      if (!newSlug || newSlug.length < 3) {
+        throw new BadRequestException('Slug must be at least 3 characters long');
+      }
+
+      // TODO: Implementiere Redirect-Logik wenn vorhanden
+      // Für jetzt: Slug aktualisieren
+      const updatedEvent = await this.eventService.update(eventId, {
+        slug: newSlug,
+      });
+
+      return {
+        message: 'Slug updated successfully',
+        oldSlug,
+        newSlug,
+        event: updatedEvent,
+        redirectCreated: false, // TODO: Redirect-Logik implementieren
+      };
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
   }
 }

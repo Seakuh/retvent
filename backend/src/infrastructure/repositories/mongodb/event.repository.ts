@@ -1332,4 +1332,97 @@ export class MongoEventRepository implements IEventRepository {
       })
       .exec();
   }
+
+  /**
+   * Findet ein Event anhand der shortId (letzten 6 Zeichen der MongoDB ObjectId)
+   * @param shortId - Die letzten 6 Zeichen der MongoDB ObjectId (z.B. "a3f9k2")
+   * @returns Event oder null wenn nicht gefunden
+   * 
+   * Hinweis: MongoDB ObjectId kann nicht direkt mit Regex auf _id gefiltert werden.
+   * Wir verwenden eine Aggregation-Pipeline, um Events zu finden, deren _id mit shortId endet.
+   */
+  async findByShortId(shortId: string): Promise<Event | null> {
+    try {
+      // Validiere shortId Format (6 Zeichen, alphanumerisch)
+      if (!shortId || shortId.length !== 6 || !/^[a-f0-9]{6}$/i.test(shortId)) {
+        return null;
+      }
+
+      // Verwende Aggregation, um Events zu finden, deren _id mit shortId endet
+      // und die veröffentlicht sind
+      const publishedFilter = this.getPublishedEventsFilter();
+      
+      const [matchingEvent] = await this.eventModel.aggregate([
+        { $match: publishedFilter },
+        {
+          $addFields: {
+            idString: { $toString: '$_id' },
+          },
+        },
+        {
+          $addFields: {
+            lastSixChars: {
+              $substr: ['$idString', -6, 6],
+            },
+          },
+        },
+        {
+          $match: {
+            lastSixChars: { $regex: new RegExp(`^${shortId}$`, 'i') },
+          },
+        },
+        { $limit: 1 },
+      ]);
+
+      if (!matchingEvent) {
+        return null;
+      }
+
+      // Lade vollständiges Event
+      const event = await this.eventModel
+        .findById(matchingEvent._id)
+        .select('-embedding')
+        .exec();
+
+      if (!event) {
+        return null;
+      }
+
+      // Views erhöhen
+      const updatedEvent = await this.eventModel
+        .findOneAndUpdate(
+          { _id: event._id },
+          { $inc: { views: 1 } },
+          { new: true, setDefaultsOnInsert: true },
+        )
+        .exec();
+
+      if (!updatedEvent) {
+        return null;
+      }
+
+      // Event mit Kommentar-Count laden
+      const [eventWithComments] = await this.eventModel.aggregate([
+        { $match: { _id: updatedEvent._id } },
+        {
+          $lookup: {
+            from: 'comments',
+            localField: '_id',
+            foreignField: 'eventId',
+            as: 'comments',
+          },
+        },
+        {
+          $addFields: {
+            commentCount: { $size: '$comments' },
+          },
+        },
+      ]);
+
+      return eventWithComments ? this.toEntity(eventWithComments) : null;
+    } catch (error) {
+      console.error('Error finding event by shortId:', error);
+      return null;
+    }
+  }
 }

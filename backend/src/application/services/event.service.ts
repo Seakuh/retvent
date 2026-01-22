@@ -1189,6 +1189,51 @@ export class EventService {
     }
   }
 
+  /**
+   * Findet ein Event anhand von slugAndId (Format: slug-shortId)
+   * Parst slugAndId und lädt Event über shortId
+   * @param slugAndId - Format: "berlin-techno-nacht-a3f9k2" (slug-shortId)
+   * @returns Event oder null wenn nicht gefunden
+   */
+  async findEventBySlugAndShortId(slugAndId: string): Promise<Event | null> {
+    // Parse slugAndId: endet immer mit -<shortId>
+    // Beispiel: "berlin-techno-nacht-a3f9k2"
+    const match = slugAndId.match(/^(.+)-([a-f0-9]{6})$/i);
+    
+    if (!match) {
+      return null;
+    }
+
+    const [, , shortId] = match;
+    
+    // Validiere shortId Format
+    if (!shortId || !/^[a-f0-9]{6}$/i.test(shortId)) {
+      return null;
+    }
+
+    // Lade Event über shortId (nicht über slug)
+    return this.eventRepository.findByShortId(shortId);
+  }
+
+  /**
+   * Berechnet die Canonical URL für ein Event
+   * Format: /{locale}/events/{yyyy}/{mm}/{canonicalSlug}-{shortId}
+   * @param event - Das Event
+   * @param locale - Locale (de/en)
+   * @returns Canonical URL
+   */
+  generateCanonicalUrl(event: Event, locale: string = 'de'): string {
+    const shortId = event.id.slice(-6); // Letzten 6 Zeichen der ID
+    const canonicalSlug = event.slug || this.slugService.stringToSlug(event.title);
+    
+    // Extrahiere Jahr und Monat aus startDate
+    const startDate = new Date(event.startDate);
+    const year = startDate.getFullYear();
+    const month = String(startDate.getMonth() + 1).padStart(2, '0');
+    
+    return `/${locale}/events/${year}/${month}/${canonicalSlug}-${shortId}`;
+  }
+
   processEventImagesUploadV1(
     images: Express.Multer.File[],
     lonFromBodyCoordinates: any,
