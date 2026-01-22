@@ -293,6 +293,7 @@ import { ScheduledReleaseService } from 'src/application/services/scheduled-rele
     AssessmentService,
     VideoService,
     MuxService,
+    ScheduledReleaseService,
     ReplicateService,
     MailService,
     ChatGPTService,
