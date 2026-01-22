@@ -46,6 +46,73 @@ export class EventController {
     private readonly eventMapper: EventMapper,
   ) {}
 
+  // ========================================================================
+  // PUBLIC EVENT ROUTES - Slug-basierte Event-Suche
+  // Diese Route muss GANZ OBEN stehen, VOR allen anderen Routen!
+  // ========================================================================
+  /**
+   * Public Route: Findet Event anhand von slugAndId
+   * @param slugAndId - Format: "berlin-techno-nacht-a3f9k2" (slug-shortId)
+   * @param locale - Locale (de/en), Standard: de
+   * @param res - Express Response für Redirects
+   * @returns Event oder 301 Redirect zur canonical URL
+   */
+  @Get('by-slug/:slugAndId')
+  async getEventBySlug(
+    @Param('slugAndId') slugAndId: string,
+    @Query('locale') locale: string = 'de',
+    @Res() res: Response,
+  ) {
+    console.log('[getEventBySlug] Received request:', { slugAndId, locale });
+    
+    // Schritt A: Parse slugAndId
+    const match = slugAndId.match(/^(.+)-([a-f0-9]{6})$/i);
+    
+    if (!match) {
+      console.log('[getEventBySlug] Invalid slug format:', slugAndId);
+      throw new NotFoundException('Event not found - invalid slug format');
+    }
+
+    const [, , shortId] = match;
+    console.log('[getEventBySlug] Parsed shortId:', shortId);
+    
+    // Validiere shortId Format
+    if (!shortId || !/^[a-f0-9]{6}$/i.test(shortId)) {
+      console.log('[getEventBySlug] Invalid shortId format:', shortId);
+      throw new NotFoundException('Event not found - invalid shortId');
+    }
+
+    // Schritt B: Resolve Event über shortId (nicht über slug)
+    console.log('[getEventBySlug] Searching for event with shortId:', shortId);
+    const event = await this.eventService.findEventBySlugAndShortId(slugAndId);
+    
+    if (!event) {
+      console.log('[getEventBySlug] Event not found for shortId:', shortId);
+      throw new NotFoundException('Event not found');
+    }
+    
+    console.log('[getEventBySlug] Event found:', event.id);
+
+    // Validiere locale
+    const validLocale = ['de', 'en'].includes(locale) ? locale : 'de';
+
+    // Schritt C: Canonical Check + Redirect (SEO)
+    const canonicalUrl = this.eventService.generateCanonicalUrl(event, validLocale);
+    
+    // Prüfe ob Request canonical ist
+    const requestSlug = slugAndId.slice(0, -7);
+    const canonicalSlug = event.slug || this.eventMapper['slugService']?.stringToSlug(event.title) || event.title.toLowerCase().replace(/\s+/g, '-');
+    const expectedSlugAndId = `${canonicalSlug}-${shortId}`;
+    
+    // Wenn slug nicht mit canonicalSlug übereinstimmt, redirect
+    if (slugAndId !== expectedSlugAndId && requestSlug !== canonicalSlug) {
+      return res.redirect(301, canonicalUrl);
+    }
+
+    // Wenn canonical passt: 200 und Event ausliefern
+    return res.json(event);
+  }
+
   // get popular events number, @Query('lon') lon: number, @Query('limit') limit: number = 10) {
   @Get('popular/nearby')
   async getPopularEventsNearby(
@@ -422,6 +489,7 @@ export class EventController {
   async getEventByIdWithHostInformation(@Query('id') id: string) {
     return this.eventService.getEventByIdWithHostInformation(id);
   }
+
 
   @Post('favorite/byIds') // statt @Get
   async getEventsByIds(
@@ -1700,96 +1768,6 @@ export class EventController {
     return results;
   }
 
-  // ========================================================================
-  // PUBLIC EVENT ROUTES - Slug-basierte Event-Suche
-  // ========================================================================
-
-  /**
-   * Public Route: Findet Event anhand von slugAndId
-   * 
-   * POST /api/events (Create)
-   * PATCH /api/events/:eventId (Update)
-   * POST /api/events/:eventId/publish
-   * POST /api/events/:eventId/unpublish
-   * GET /api/events/:eventId (Edit-View)
-   * GET /api/events/:eventId/slugs (History/Redirects)
-   * POST /api/events/:eventId/slugs (Slug ändern + Redirect anlegen)
-   * 
-   * Controller-Flow für die Public Route:
-   * Schritt A: Parse slugAndId
-   *   - slugAndId endet immer mit -<shortId>
-   *   - Beispiel: berlin-techno-nacht-a3f9k2
-   *   - slug = berlin-techno-nacht
-   *   - shortId = a3f9k2
-   *   - Regel: Wenn kein - oder shortId ungültig → 404
-   * 
-   * Schritt B: Resolve Event über shortId (nicht über slug)
-   *   - DB Lookup: SELECT * FROM events WHERE short_id = ? AND status='published'
-   *   - Optional: zusätzlich tenant_id / Region / Sichtbarkeit prüfen
-   * 
-   * Schritt C: Canonical Check + Redirect (SEO)
-   *   - Compute canonical slug aus DB (pro locale)
-   *   - Canonical URL = /{locale}/events/{yyyy}/{mm}/{canonicalSlug}-{shortId}
-   *   - (yyyy/mm idealerweise aus start_at des Events)
-   *   - Wenn Request nicht canonical ist: 301 auf canonical URL
-   *   - Wenn canonical passt: 200 und Event ausliefern
-   * 
-   * @param slugAndId - Format: "berlin-techno-nacht-a3f9k2" (slug-shortId)
-   * @param locale - Locale (de/en), Standard: de
-   * @param res - Express Response für Redirects
-   * @returns Event oder 301 Redirect zur canonical URL
-   */
-  @Get('by-slug/:slugAndId')
-  async getEventBySlug(
-    @Param('slugAndId') slugAndId: string,
-    @Query('locale') locale: string = 'de',
-    @Res() res: Response,
-  ) {
-    // Schritt A: Parse slugAndId
-    // slugAndId endet immer mit -<shortId>
-    // Beispiel: berlin-techno-nacht-a3f9k2
-    const match = slugAndId.match(/^(.+)-([a-f0-9]{6})$/i);
-    
-    if (!match) {
-      throw new NotFoundException('Event not found - invalid slug format');
-    }
-
-    const [, , shortId] = match;
-    
-    // Validiere shortId Format
-    if (!shortId || !/^[a-f0-9]{6}$/i.test(shortId)) {
-      throw new NotFoundException('Event not found - invalid shortId');
-    }
-
-    // Schritt B: Resolve Event über shortId (nicht über slug)
-    const event = await this.eventService.findEventBySlugAndShortId(slugAndId);
-    
-    if (!event) {
-      throw new NotFoundException('Event not found');
-    }
-
-    // Validiere locale
-    const validLocale = ['de', 'en'].includes(locale) ? locale : 'de';
-
-    // Schritt C: Canonical Check + Redirect (SEO)
-    // Compute canonical slug aus DB (pro locale)
-    const canonicalUrl = this.eventService.generateCanonicalUrl(event, validLocale);
-    
-    // Prüfe ob Request canonical ist
-    // Extrahiere slug aus slugAndId
-    const requestSlug = slugAndId.slice(0, -7); // Entferne "-shortId" (6 Zeichen + Bindestrich)
-    const canonicalSlug = event.slug || this.eventMapper['slugService']?.stringToSlug(event.title) || event.title.toLowerCase().replace(/\s+/g, '-');
-    const expectedSlugAndId = `${canonicalSlug}-${shortId}`;
-    
-    // Wenn slug nicht mit canonicalSlug übereinstimmt, redirect
-    if (slugAndId !== expectedSlugAndId && requestSlug !== canonicalSlug) {
-      // 301 Redirect zur canonical URL
-      return res.redirect(301, canonicalUrl);
-    }
-
-    // Wenn canonical passt: 200 und Event ausliefern
-    return res.json(event);
-  }
 
   // ========================================================================
   // ADMIN EVENT ROUTES - CRUD Operations

@@ -1349,11 +1349,25 @@ export class MongoEventRepository implements IEventRepository {
       }
 
       // Verwende Aggregation, um Events zu finden, deren _id mit shortId endet
-      // und die veröffentlicht sind
-      const publishedFilter = this.getPublishedEventsFilter();
+      // Ignoriere scheduledReleaseDate Filter - suche nur nach Status
+      const simplePublishedFilter = {
+        $and: [
+          {
+            $or: [
+              { status: 'published' },
+              { status: { $exists: false } },
+            ],
+          },
+          {
+            status: { $ne: 'draft' },
+          },
+        ],
+      };
       
-      const [matchingEvent] = await this.eventModel.aggregate([
-        { $match: publishedFilter },
+      console.log('[findByShortId] Starting aggregation for shortId:', shortId);
+      
+      // Zuerst ohne Filter testen, um zu sehen ob das Event existiert
+      const [matchingEventWithoutFilter] = await this.eventModel.aggregate([
         {
           $addFields: {
             idString: { $toString: '$_id' },
@@ -1361,8 +1375,17 @@ export class MongoEventRepository implements IEventRepository {
         },
         {
           $addFields: {
+            idLength: { $strLenCP: '$idString' },
+          },
+        },
+        {
+          $addFields: {
             lastSixChars: {
-              $substr: ['$idString', -6, 6],
+              $substrCP: [
+                '$idString',
+                { $subtract: ['$idLength', 6] },
+                6,
+              ],
             },
           },
         },
@@ -1371,16 +1394,97 @@ export class MongoEventRepository implements IEventRepository {
             lastSixChars: { $regex: new RegExp(`^${shortId}$`, 'i') },
           },
         },
+        {
+          $project: {
+            _id: 1,
+            status: 1,
+            scheduledReleaseDate: 1,
+            lastSixChars: 1,
+          },
+        },
         { $limit: 1 },
       ]);
+      
+      console.log('[findByShortId] Event without filter:', matchingEventWithoutFilter ? 'Found' : 'Not found');
+      if (matchingEventWithoutFilter) {
+        console.log('[findByShortId] Event details:', {
+          _id: matchingEventWithoutFilter._id?.toString(),
+          status: matchingEventWithoutFilter.status,
+          scheduledReleaseDate: matchingEventWithoutFilter.scheduledReleaseDate,
+          lastSixChars: matchingEventWithoutFilter.lastSixChars,
+        });
+      }
+      
+      // Jetzt mit einfachem Filter (ohne scheduledReleaseDate)
+      const [matchingEvent] = await this.eventModel.aggregate([
+        { $match: simplePublishedFilter },
+        {
+          $addFields: {
+            idString: { $toString: '$_id' },
+          },
+        },
+        {
+          $addFields: {
+            idLength: { $strLenCP: '$idString' },
+          },
+        },
+        {
+          $addFields: {
+            lastSixChars: {
+              $substrCP: [
+                '$idString',
+                { $subtract: ['$idLength', 6] }, // Start-Index: Länge - 6
+                6, // Länge: 6 Zeichen
+              ],
+            },
+          },
+        },
+        {
+          $match: {
+            lastSixChars: { $regex: new RegExp(`^${shortId}$`, 'i') },
+          },
+        },
+        {
+          $project: {
+            _id: 1, // Stelle sicher, dass _id zurückgegeben wird
+          },
+        },
+        { $limit: 1 },
+      ]);
+      
+      console.log('[findByShortId] Aggregation result with simple filter:', matchingEvent ? 'Found' : 'Not found', matchingEvent);
+      
+      // Falls mit Filter nichts gefunden wird, aber ohne Filter schon, verwende das Event ohne Filter
+      const finalMatchingEvent = matchingEvent || matchingEventWithoutFilter;
 
-      if (!matchingEvent) {
+      if (!finalMatchingEvent || !finalMatchingEvent._id) {
+        console.warn('No matching event found for shortId:', shortId);
+        return null;
+      }
+
+      // Stelle sicher, dass _id ein ObjectId ist (nicht die shortId)
+      const eventId = finalMatchingEvent._id.toString();
+      
+      // Validiere, dass es eine vollständige ObjectId ist (24 Zeichen)
+      if (!eventId || eventId.length !== 24) {
+        console.error('Invalid eventId from aggregation:', {
+          eventId,
+          length: eventId?.length,
+          shortId,
+          matchingEvent: matchingEvent ? Object.keys(matchingEvent) : null,
+        });
+        return null;
+      }
+
+      // Validiere ObjectId Format (24 hexadezimale Zeichen)
+      if (!/^[a-f0-9]{24}$/i.test(eventId)) {
+        console.error('Invalid ObjectId format:', eventId);
         return null;
       }
 
       // Lade vollständiges Event
       const event = await this.eventModel
-        .findById(matchingEvent._id)
+        .findById(eventId)
         .select('-embedding')
         .exec();
 

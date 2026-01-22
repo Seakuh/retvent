@@ -1171,22 +1171,42 @@ export class EventService {
 
   /**
    * Findet ein Event anhand von ID oder Slug
-   * Unterstützt beide Formate:
-   * - "abc123" (nur ID)
-   * - "techno-party-berlin-2024-abc123" (Slug-ID)
+   * Unterstützt mehrere Formate:
+   * - "507f1f77bcf86cd799439011" (vollständige ObjectId - 24 Zeichen)
+   * - "b484de" (shortId - 6 Zeichen)
+   * - "techno-party-berlin-2024-507f1f77bcf86cd799439011" (Slug-ID mit vollständiger ID)
+   * - "techno-party-berlin-2024-b484de" (Slug-ID mit shortId)
    */
   async findEventByIdentifier(identifier: string): Promise<Event | null> {
     // Prüfe ob es eine Slug-URL ist (enthält Bindestriche und endet mit ID)
-    const slugMatch = identifier.match(/^(.+)-([a-f0-9]{24})$/);
+    const slugMatch = identifier.match(/^(.+)-([a-f0-9]{6,24})$/i);
     
     if (slugMatch) {
-      // Slug-Format: slug-id
+      // Slug-Format: slug-id oder slug-shortId
       const [, slug, id] = slugMatch;
-      return this.eventRepository.findBySlugAndId(slug, id);
-    } else {
-      // Altes Format: nur ID
+      
+      // Prüfe ob es eine vollständige ObjectId (24 Zeichen) oder shortId (6 Zeichen) ist
+      if (id.length === 24) {
+        // Vollständige ObjectId
+        return this.eventRepository.findBySlugAndId(slug, id);
+      } else if (id.length === 6) {
+        // shortId - verwende findByShortId
+        return this.eventRepository.findByShortId(id);
+      }
+    }
+    
+    // Prüfe ob es eine vollständige ObjectId ist (24 hexadezimale Zeichen)
+    if (/^[a-f0-9]{24}$/i.test(identifier)) {
       return this.eventRepository.findById(identifier);
     }
+    
+    // Prüfe ob es eine shortId ist (6 hexadezimale Zeichen)
+    if (/^[a-f0-9]{6}$/i.test(identifier)) {
+      return this.eventRepository.findByShortId(identifier);
+    }
+    
+    // Fallback: Versuche es als normale ID
+    return this.eventRepository.findById(identifier);
   }
 
   /**
@@ -1246,7 +1266,13 @@ export class EventService {
   async getEventByIdWithHostInformation(
     id: string,
   ): Promise<EventWithHost | null> {
-    const event = await this.eventRepository.findById(id);
+    // Unterstützt sowohl vollständige ObjectIds als auch shortIds
+    const event = await this.findEventByIdentifier(id);
+    
+    if (!event) {
+      return null;
+    }
+    
     const profile = await this.profileService.getEventProfile(event.hostId);
     return {
       ...event,
