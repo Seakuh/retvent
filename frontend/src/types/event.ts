@@ -215,4 +215,5 @@ export type ViewMode =
   | "Filter"
   | "Calendar"
   | "Search"
-  | "Trending";
+  | "Trending"
+  | "Now";

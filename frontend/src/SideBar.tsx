@@ -53,7 +53,7 @@ export const SideBar = ({
 
   const goStart = () => {
     console.log("GO START");
-    setViewMode("All");
+    setViewMode("Now");
   };
 
   return (

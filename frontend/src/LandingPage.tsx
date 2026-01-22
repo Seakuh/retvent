@@ -4,6 +4,7 @@ import { BottomBar } from "./BottomBar";
 import { FilterBar } from "./components/FilterBar/FilterBar";
 import { EventPage } from "./components/EventPage/EventPage";
 import { ForYouPage } from "./components/ForYouPage/ForYouPage";
+import { NowPage } from "./components/NowPage/NowPage";
 import { Trending } from "./components/Trending/Trending";
 import Onboarding from "./components/Onboarding/Onboarding";
 import OnboardingRecommendations from "./components/Onboarding/OnboardingRecommendations";
@@ -271,9 +272,17 @@ function LandingPage() {
         // Onboarding flow handled above
         return <LoadingSpinner />;
 
+      case "Now":
+        return (
+          <NowPage
+            favoriteEvents={events}
+            feedItemsResponse={feedItemsResponse}
+          />
+        );
+
       default:
         return (
-          <EventPage
+          <NowPage
             favoriteEvents={events}
             feedItemsResponse={feedItemsResponse}
           />

@@ -1,0 +1,244 @@
+.now-page {
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.now-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 0;
+  flex: 1;
+}
+
+/* Horizontal Navigation */
+.now-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+}
+
+.now-nav-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+}
+
+.now-nav-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Scroll Buttons */
+.now-nav-scroll-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  z-index: 10;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.now-nav-scroll-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.now-nav-scroll-left {
+  left: 0.5rem;
+}
+
+.now-nav-scroll-right {
+  right: 0.5rem;
+}
+
+.now-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.now-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.now-nav-item.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+.now-nav-item.active-scroll {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.now-nav-item svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.now-section {
+  scroll-margin-top: 120px;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+}
+
+.now-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.5rem;
+  margin-left: 1.5rem;
+}
+
+.now-section-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.now-section-icon {
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+}
+
+.now-section-title {
+  font-size: 1.75rem;
+  margin: 0;
+  font-weight: 600;
+  color: #ffffff;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.now-section-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 0.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-left: 0.25rem;
+}
+
+.now-empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.now-empty-message {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  margin: 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .now-nav-container {
+    padding: 0.75rem;
+  }
+
+  .now-nav-container::-webkit-scrollbar {
+    height: 4px;
+    display: block;
+  }
+
+  .now-nav-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .now-nav-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+  }
+
+  .now-nav-item {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .now-nav-scroll-btn {
+    display: none;
+  }
+
+  .now-section-header {
+    margin: 1rem;
+    gap: 0.75rem;
+  }
+
+  .now-section-title {
+    font-size: 1.5rem;
+  }
+
+  .now-section-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .now-section-badge {
+    min-width: 20px;
+    height: 20px;
+    font-size: 0.6875rem;
+    padding: 0 0.375rem;
+  }
+
+  .now-section {
+    scroll-margin-top: 80px;
+  }
+}
