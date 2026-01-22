@@ -97,7 +97,6 @@ export const Trending = ({
 
   return (
     <div className="event-page-container">
-      <AdBanner />
       {/* <CommunityList /> */}
       {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}
       <div className="event-page-section-container">

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Event, FeedResponse } from "../../utils";
 import { EventPage } from "../EventPage/EventPage";
+import { ExploreFeed } from "../Feed/ExploreFeed";
 import "./NowPage.css";
 
 interface NowPageProps {
@@ -44,21 +45,6 @@ export const NowPage: React.FC<NowPageProps> = ({
     return dates;
   }, []);
 
-  // Filter events by selected date
-  const filteredEvents = useMemo(() => {
-    if (!selectedDate) return favoriteEvents;
-
-    const selectedDateStart = new Date(selectedDate);
-    selectedDateStart.setHours(0, 0, 0, 0);
-    const selectedDateEnd = new Date(selectedDate);
-    selectedDateEnd.setHours(23, 59, 59, 999);
-
-    return favoriteEvents.filter((event) => {
-      if (!event.startDate) return false;
-      const eventDate = new Date(event.startDate);
-      return eventDate >= selectedDateStart && eventDate <= selectedDateEnd;
-    });
-  }, [favoriteEvents, selectedDate]);
 
   // Track active section on scroll
   useEffect(() => {
@@ -185,6 +171,9 @@ export const NowPage: React.FC<NowPageProps> = ({
       )}
 
       <div className="now-content-wrapper">
+        {feedItemsResponse && feedItemsResponse.length > 0 && (
+          <ExploreFeed feedItemsResponse={feedItemsResponse} />
+        )}
         {dateOptions.map((option) => {
           const dayEvents = favoriteEvents.filter((event) => {
             if (!event.startDate) return false;
@@ -208,7 +197,6 @@ export const NowPage: React.FC<NowPageProps> = ({
               {dayEvents.length > 0 ? (
                 <EventPage
                   favoriteEvents={dayEvents}
-                  feedItemsResponse={feedItemsResponse}
                 />
               ) : (
                 <div className="now-empty-state">

@@ -1,7 +1,6 @@
 import { Heart } from "lucide-react";
 import { lazy, Suspense, useMemo } from "react";
-import { Event, FeedResponse } from "../../utils";
-import { ExploreFeed } from "../Feed/ExploreFeed";
+import { Event } from "../../utils";
 import "./EventPage.css";
 
 // 🚀 Lazy load components for better performance
@@ -20,15 +19,14 @@ const calculationCache = new Map<string, CachedCalculation>();
 
 export const EventPage = ({
   favoriteEvents,
-  feedItemsResponse,
 }: {
   favoriteEvents: Event[];
-  feedItemsResponse: FeedResponse[];
 }) => {
   // ⚡ Memoize expensive calculations
   const { trendsEvents, groupedEvents } = useMemo(() => {
     const cacheKey = `events_${favoriteEvents.length}_${favoriteEvents
-      .map((e) => e.id)
+      .map((e) => e.id || e._id || "")
+      .filter(Boolean)
       .join(",")}`;
 
     const cached = calculationCache.get(cacheKey);
@@ -77,7 +75,9 @@ export const EventPage = ({
     // 🧹 Clean cache if it gets too large
     if (calculationCache.size > 50) {
       const firstKey = calculationCache.keys().next().value;
-      calculationCache.delete(firstKey);
+      if (firstKey) {
+        calculationCache.delete(firstKey);
+      }
     }
 
     return result;
@@ -101,8 +101,6 @@ export const EventPage = ({
 
   return (
     <div className="event-page-container">
-      
-      <ExploreFeed feedItemsResponse={feedItemsResponse} />
       {/* <AdBanner /> */}
       {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}
       {favoriteEvents.length === 0 && (

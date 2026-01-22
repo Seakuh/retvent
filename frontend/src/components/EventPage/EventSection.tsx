@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { Event } from "../../utils";
 import "./EventSection.css";
 import { TrendsListView } from "./TrendsListView";
+import { AdBanner } from "../../Advertisement/AdBanner/AdBanner";
 
 interface FilterOption {
   value: string;
@@ -126,6 +127,7 @@ export const EventSection = ({
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseLeave}
               >
+
                 {filterOptions.map((option) => {
                   const isActive = selectedFilter === option.value;
                   const labelWithoutHash = option.label.replace(/^#/, "");
@@ -193,11 +195,14 @@ export const EventSection = ({
       </div>
       {events.length > 0 && (
         <div className="event-list-container">
+            <AdBanner />
+
           {events.map((event, index) => (
             <div
               className="event-card-list-item"
               key={event.id || event._id}
             >
+
               <TrendsListView
                 event={event}
                 index={index}

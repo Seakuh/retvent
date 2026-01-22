@@ -227,14 +227,14 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
   // Check if recommended events section has no events
   const hasNoRecommendedEvents = eventsToDisplay.length === 0 && !loadingRecommended;
 
-  // Build navigation items based on available sections
+  // Build navigation items - always show all sections, even if empty
   const navigationItems = [
-    ...(upcomingFavoriteEvents.length > 0 ? [{ id: "foryou-upcoming", label: "Upcoming", icon: Calendar }] : []),
-    ...(recentArtists.length > 0 ? [{ id: "foryou-artists", label: "Artists", icon: Music, count: recentArtists.length }] : []),
-    ...(upcomingHistoryEvents.length > 0 ? [{ id: "foryou-history", label: "History", icon: Clock, count: upcomingHistoryEvents.length }] : []),
-    ...(pastHistoryEvents.length > 0 ? [{ id: "foryou-past-history", label: "Past", icon: History, count: pastHistoryEvents.length }] : []),
-    { id: "foryou-recommended", label: "Recommended", icon: Sparkles },
-    ...(pastFavoriteEvents.length > 0 ? [{ id: "foryou-past-events", label: "Past Events", icon: History }] : []),
+    { id: "foryou-upcoming", label: "Upcoming", icon: Calendar, count: upcomingFavoriteEvents.length, visible: true },
+    { id: "foryou-artists", label: "Artists", icon: Music, count: recentArtists.length, visible: true },
+    { id: "foryou-history", label: "History", icon: Clock, count: upcomingHistoryEvents.length, visible: true },
+    { id: "foryou-past-history", label: "Past", icon: History, count: pastHistoryEvents.length, visible: true },
+    { id: "foryou-recommended", label: "Recommended", icon: Sparkles, visible: true },
+    { id: "foryou-past-events", label: "Past Events", icon: History, visible: true },
   ];
 
   // Setup scroll buttons visibility
@@ -325,7 +325,7 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
                 >
                   <Icon size={18} />
                   <span>{item.label}</span>
-                  {item.count !== undefined && (
+                  {item.count !== undefined && item.count > 0 && (
                     <span className="foryou-nav-badge">{item.count}</span>
                   )}
                 </button>
@@ -495,7 +495,6 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
           ) : (
             <EventPage
               favoriteEvents={eventsToDisplay}
-              feedItemsResponse={feedItemsResponse}
             />
           )}
         </div>
