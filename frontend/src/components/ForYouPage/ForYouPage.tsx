@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Download } from "lucide-react";
+import { Download, Calendar, Clock, History, Music, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 import { Event, FeedResponse } from "../../utils";
 import { EventPage } from "../EventPage/EventPage";
 import Footer from "../../Footer/Footer";
@@ -29,6 +29,10 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [recommendedEvents, setRecommendedEvents] = useState<RecommendedEvent[]>([]);
   const [loadingRecommended, setLoadingRecommended] = useState(true);
+  const [activeSection, setActiveSection] = useState<string>("");
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+  const navContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,6 +74,47 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
 
     loadRecentArtists();
   }, []);
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offset = 120; // Offset für sticky navigation
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const checkScrollButtons = () => {
+    if (navContainerRef.current) {
+      const container = navContainerRef.current;
+      setShowLeftArrow(container.scrollLeft > 0);
+      setShowRightArrow(
+        container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+      );
+    }
+  };
+
+  const scrollNav = (direction: "left" | "right") => {
+    if (navContainerRef.current) {
+      const scrollAmount = 300;
+      const currentScroll = navContainerRef.current.scrollLeft;
+      const newScroll =
+        direction === "left"
+          ? currentScroll - scrollAmount
+          : currentScroll + scrollAmount;
+
+      navContainerRef.current.scrollTo({
+        left: newScroll,
+        behavior: "smooth",
+      });
+    }
+  };
+
 
   const handleArtistClick = (artistName: string) => {
     navigate(`/artist/${encodeURIComponent(artistName)}/events`);
@@ -181,6 +226,59 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
   // Check if recommended events section has no events
   const hasNoRecommendedEvents = eventsToDisplay.length === 0 && !loadingRecommended;
 
+  // Build navigation items based on available sections
+  const navigationItems = [
+    ...(upcomingFavoriteEvents.length > 0 ? [{ id: "foryou-upcoming", label: "Upcoming", icon: Calendar }] : []),
+    ...(recentArtists.length > 0 ? [{ id: "foryou-artists", label: "Artists", icon: Music, count: recentArtists.length }] : []),
+    ...(upcomingHistoryEvents.length > 0 ? [{ id: "foryou-history", label: "History", icon: Clock, count: upcomingHistoryEvents.length }] : []),
+    ...(pastHistoryEvents.length > 0 ? [{ id: "foryou-past-history", label: "Past", icon: History, count: pastHistoryEvents.length }] : []),
+    { id: "foryou-recommended", label: "Recommended", icon: Sparkles },
+    ...(pastFavoriteEvents.length > 0 ? [{ id: "foryou-past-events", label: "Past Events", icon: History }] : []),
+  ];
+
+  // Setup scroll buttons visibility
+  useEffect(() => {
+    checkScrollButtons();
+    if (navContainerRef.current) {
+      navContainerRef.current.addEventListener("scroll", checkScrollButtons);
+      window.addEventListener("resize", checkScrollButtons);
+      return () => {
+        if (navContainerRef.current) {
+          navContainerRef.current.removeEventListener("scroll", checkScrollButtons);
+        }
+        window.removeEventListener("resize", checkScrollButtons);
+      };
+    }
+  }, [navigationItems.length]);
+
+  // Track active section on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = [
+        "foryou-upcoming",
+        "foryou-artists",
+        "foryou-history",
+        "foryou-past-history",
+        "foryou-recommended",
+        "foryou-past-events",
+      ];
+
+      const scrollPosition = window.scrollY + 200;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(sections[i]);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Initial check
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [upcomingFavoriteEvents, recentArtists, upcomingHistoryEvents, pastHistoryEvents, pastFavoriteEvents]);
+
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
     // Reload the page or refresh data
@@ -202,18 +300,64 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
 
   return (
     <div className="foryou-page">
+      {/* Horizontal Navigation Bubbles */}
+      {navigationItems.length > 0 && (
+        <nav className="foryou-nav">
+          {showLeftArrow && (
+            <button
+              className="foryou-nav-scroll-btn foryou-nav-scroll-left"
+              onClick={() => scrollNav("left")}
+              aria-label="Scroll left"
+            >
+              <ChevronLeft size={20} />
+            </button>
+          )}
+          <div className="foryou-nav-container" ref={navContainerRef}>
+            {navigationItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`foryou-nav-item ${activeSection === item.id ? "active" : ""}`}
+                  data-section={item.id}
+                >
+                  <Icon size={18} />
+                  <span>{item.label}</span>
+                  {item.count !== undefined && (
+                    <span className="foryou-nav-badge">{item.count}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          {showRightArrow && (
+            <button
+              className="foryou-nav-scroll-btn foryou-nav-scroll-right"
+              onClick={() => scrollNav("right")}
+              aria-label="Scroll right"
+            >
+              <ChevronRight size={20} />
+            </button>
+          )}
+        </nav>
+      )}
+
       <div className="foryou-content-wrapper">
-        {feedItemsResponse && feedItemsResponse.length > 0 && (
+        {/* {feedItemsResponse && feedItemsResponse.length > 0 && (
           <ExploreFeed feedItemsResponse={feedItemsResponse} />
-        )}
+        )} */}
 
         {/* Upcoming Favorite Events */}
         {upcomingFavoriteEvents.length > 0 && (
-          <div className="foryou-section">
+          <div id="foryou-upcoming" className="foryou-section">
             <div className="foryou-section-header">
-              <h2 className="foryou-section-title">
-                Your upcoming events
-              </h2>
+              <div className="foryou-section-title-wrapper">
+                <Calendar className="foryou-section-icon" size={24} />
+                <h2 className="foryou-section-title">
+                  Upcoming
+                </h2>
+              </div>
               <button
                 className="foryou-calendar-button"
                 onClick={handleExportAllToCalendar}
@@ -233,12 +377,15 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
 
         {/* Recent Artists Section */}
         {recentArtists.length > 0 && (
-          <div className="foryou-section">
-                        <div className="foryou-section-header">
-
-            <h2 className="foryou-section-title">
-              Recently Viewed Artists ({recentArtists.length})
-            </h2>
+          <div id="foryou-artists" className="foryou-section">
+            <div className="foryou-section-header">
+              <div className="foryou-section-title-wrapper">
+                <Music className="foryou-section-icon" size={24} />
+                <h2 className="foryou-section-title">
+                  Artists
+                </h2>
+                <span className="foryou-section-badge">{recentArtists.length}</span>
+              </div>
             </div>
             <div className="foryou-artists-list">
               {recentArtists.map((artistName, index) => (
@@ -258,12 +405,15 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
         {historyEvents.length > 0 && (
           <>
             {upcomingHistoryEvents.length > 0 && (
-              <div className="foryou-section">
-                        <div className="foryou-section-header">
-
-                <h2 className="foryou-section-title">
-                  Recently Viewed - Upcoming ({upcomingHistoryEvents.length})
-                </h2>
+              <div id="foryou-history" className="foryou-section">
+                <div className="foryou-section-header">
+                  <div className="foryou-section-title-wrapper">
+                    <Clock className="foryou-section-icon" size={24} />
+                    <h2 className="foryou-section-title">
+                      History
+                    </h2>
+                    <span className="foryou-section-badge">{upcomingHistoryEvents.length}</span>
+                  </div>
                 </div>
                 <div className="foryou-events-list">
                   {upcomingHistoryEvents.map((event, index) => (
@@ -273,12 +423,15 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
               </div>
             )}
             {pastHistoryEvents.length > 0 && (
-              <div className="foryou-section">
-                        <div className="foryou-section-header">
-
-                <h2 className="foryou-section-title">
-                  Recently Viewed - Past ({pastHistoryEvents.length})
-                </h2>
+              <div id="foryou-past-history" className="foryou-section">
+                <div className="foryou-section-header">
+                  <div className="foryou-section-title-wrapper">
+                    <History className="foryou-section-icon" size={24} />
+                    <h2 className="foryou-section-title">
+                      Past
+                    </h2>
+                    <span className="foryou-section-badge">{pastHistoryEvents.length}</span>
+                  </div>
                 </div>
                 <div className="foryou-events-list">
                   {pastHistoryEvents.map((event, index) => (
@@ -295,11 +448,14 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
             <div className="loading-spinner"></div>
           </div>
         )}
-        <div className="foryou-section">    
+        <div id="foryou-recommended" className="foryou-section">    
           <div className="foryou-section-header">
-            <h2 className="foryou-section-title">
-              Recommended Events
-            </h2>
+            <div className="foryou-section-title-wrapper">
+              <Sparkles className="foryou-section-icon" size={24} />
+              <h2 className="foryou-section-title">
+                Recommended
+              </h2>
+            </div>
           </div>
           {hasNoRecommendedEvents ? (
             <div className="foryou-empty-state">
@@ -337,12 +493,14 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
 
         {/* Past Favorite Events */}
         {pastFavoriteEvents.length > 0 && (
-          <div className="foryou-section">
-                        <div className="foryou-section-header">
-
-            <h2 className="foryou-section-title">
-              Your past events
-            </h2>
+          <div id="foryou-past-events" className="foryou-section">
+            <div className="foryou-section-header">
+              <div className="foryou-section-title-wrapper">
+                <History className="foryou-section-icon" size={24} />
+                <h2 className="foryou-section-title">
+                  Past Events
+                </h2>
+              </div>
             </div>
             <div className="foryou-events-list">
               {pastFavoriteEvents.map((event, index) => (
