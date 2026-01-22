@@ -66,6 +66,43 @@ export const NowPage: React.FC<NowPageProps> = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, [dateOptions]);
 
+  // Auto-scroll navigation to active section
+  useEffect(() => {
+    if (!activeSection || !navContainerRef.current) return;
+
+    const activeButton = navContainerRef.current.querySelector(
+      `[data-section="${activeSection}"]`
+    ) as HTMLElement;
+    
+    if (activeButton) {
+      const container = navContainerRef.current;
+      const buttonLeft = activeButton.offsetLeft;
+      const buttonWidth = activeButton.offsetWidth;
+      const containerWidth = container.clientWidth;
+      const scrollLeft = container.scrollLeft;
+      
+      // Check if button is outside visible area
+      const buttonRight = buttonLeft + buttonWidth;
+      const visibleLeft = scrollLeft;
+      const visibleRight = scrollLeft + containerWidth;
+      
+      // Scroll if button is outside visible area
+      if (buttonLeft < visibleLeft) {
+        // Button is to the left of visible area
+        container.scrollTo({
+          left: buttonLeft - 20, // Add some padding
+          behavior: "smooth",
+        });
+      } else if (buttonRight > visibleRight) {
+        // Button is to the right of visible area
+        container.scrollTo({
+          left: buttonRight - containerWidth + 20, // Add some padding
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [activeSection]);
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
