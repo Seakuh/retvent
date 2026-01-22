@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  
+  <!-- Hauptseite - Höchste Priorität -->
+  <url>
+    <loc>https://event-scanner.com/</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Wichtige statische Seiten -->
+  <url>
+    <loc>https://event-scanner.com/about</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://event-scanner.com/privacy</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://event-scanner.com/terms</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://event-scanner.com/imprint</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Suchfunktion -->
+  <url>
+    <loc>https://event-scanner.com/search</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Embed-Seiten für Partner-Integration -->
+  <url>
+    <loc>https://event-scanner.com/events/embed</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://event-scanner.com/events/embed-grid</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- PWA Installation -->
+  <url>
+    <loc>https://event-scanner.com/install-app</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Kommentar-Richtlinien -->
+  <url>
+    <loc>https://event-scanner.com/comment-guidelines</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Shopping-Seite -->
+  <url>
+    <loc>https://event-scanner.com/shopping</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Reel-Seite -->
+  <url>
+    <loc>https://event-scanner.com/reel/</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Authentifizierung (niedrigere Priorität für SEO) -->
+  <url>
+    <loc>https://event-scanner.com/login</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://event-scanner.com/register</loc>
+    <lastmod>2025-01-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Hinweis: Dynamische Routen werden durch Server-Side Rendering oder 
+       eine dynamische Sitemap-Generierung hinzugefügt:
+       - /event/:eventId (täglich aktualisiert)
+       - /community/:communityId (wöchentlich aktualisiert)
+       - /category/:category (täglich aktualisiert)
+       - /profile/:userId (wöchentlich aktualisiert)
+       - /artist/:artistName/events (wöchentlich aktualisiert)
+       - /ticket/:ticketId (täglich aktualisiert)
+       - /reel/:eventId (täglich aktualisiert)
+  -->
+
+</urlset>

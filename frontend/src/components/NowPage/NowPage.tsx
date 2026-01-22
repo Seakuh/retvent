@@ -224,13 +224,13 @@ export const NowPage: React.FC<NowPageProps> = ({
 
           return (
             <div key={option.id} id={option.id} className="now-section">
-              <div className="now-section-header">
+              {/* <div className="now-section-header">
                 <div className="now-section-title-wrapper">
                   <Calendar className="now-section-icon" size={24} />
                   <h2 className="now-section-title">{option.label}</h2>
                   <span className="now-section-badge">{dayEvents.length}</span>
                 </div>
-              </div>
+              </div> */}
               {dayEvents.length > 0 ? (
                 <EventPage
                   favoriteEvents={dayEvents}
