@@ -1,5 +1,5 @@
 import React from "react";
-import { Event, getImageProxyUrl } from "../../utils";
+import { Event, getImageProxyUrl, getEventUrl } from "../../utils";
 import "./EmbedGridCard.css";
 import TicketButton from "../Buttons/TicketButton";
 
@@ -30,9 +30,9 @@ export const EmbedGridCard: React.FC<EmbedGridCardProps> = ({
     return eventDateStart.getTime() === todayStart.getTime();
   };
 
-  const handleEventClick = (eventId: string) => {
-    const mainSiteUrl = "https://event-scanner.com/";
-    window.open(`${mainSiteUrl}event/${eventId}`, "_blank");
+  const handleEventClick = (event: Event) => {
+    const eventUrl = getEventUrl(event);
+    window.open(`https://event-scanner.com${eventUrl}`, "_blank");
   };
 
   const getTicketUrl = (): string => {
@@ -63,7 +63,7 @@ export const EmbedGridCard: React.FC<EmbedGridCardProps> = ({
   return (
     <div
       className={`embed-grid-card ${eventIsToday ? "embed-grid-card-today" : ""}`}
-      onClick={() => handleEventClick(event.id || event._id || "")}
+      onClick={() => handleEventClick(event)}
     >
       <div className="embed-grid-card-image">
         <img

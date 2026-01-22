@@ -1,6 +1,6 @@
 import React from "react";
 import "./CalendarButton.css";
-import { Event } from "../../utils";
+import { Event, getEventUrl } from "../../utils";
 import { CalendarPlus } from "lucide-react";
 
 interface CalendarButtonProps {
@@ -23,9 +23,9 @@ export const CalendarButton: React.FC<CalendarButtonProps> = ({ event }) => {
     const formattedStart = formatDate(startDate.toISOString());
     const formattedEnd = formatDate(endDate.toISOString());
 
-    const eventId = event._id || event.id;
+    const eventUrl = getEventUrl(event);
     const description =
-      `${event.title} | \nhttps://event-scanner.com/event/${eventId}\n\n` +
+      `${event.title} | \nhttps://event-scanner.com${eventUrl}\n\n` +
       "\n-----------------------\nDescription\n" +
       (event.description || "") +
       " " +

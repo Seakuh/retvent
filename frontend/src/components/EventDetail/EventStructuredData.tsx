@@ -4,7 +4,7 @@
  */
 
 import { Helmet } from "react-helmet-async";
-import { Event } from "../../utils";
+import { Event, getEventUrl } from "../../utils";
 
 interface EventStructuredDataProps {
   event: Event;
@@ -16,6 +16,10 @@ export const EventStructuredData: React.FC<EventStructuredDataProps> = ({
   eventId,
 }) => {
   if (!event) return null;
+
+  // Verwende getEventUrl für konsistente URL-Generierung
+  const eventUrl = getEventUrl(event);
+  const fullUrl = `https://event-scanner.com${eventUrl}`;
 
   // Formatierung der Daten
   const formatDate = (date: Date | string | undefined): string => {
@@ -36,7 +40,7 @@ export const EventStructuredData: React.FC<EventStructuredDataProps> = ({
   const eventSchema = {
     "@context": "https://schema.org",
     "@type": "Event",
-    "@id": `https://event-scanner.com/event/${eventId}`,
+    "@id": fullUrl,
     name: event.title,
     description: event.description || event.title,
     image: event.imageUrl ? [event.imageUrl] : undefined,
@@ -116,7 +120,7 @@ export const EventStructuredData: React.FC<EventStructuredDataProps> = ({
   const interactionSchema = {
     "@context": "https://schema.org",
     "@type": "Event",
-    "@id": `https://event-scanner.com/event/${eventId}`,
+    "@id": fullUrl,
     name: event.title,
     interactionStatistic: [
       {
@@ -173,7 +177,7 @@ export const EventStructuredData: React.FC<EventStructuredDataProps> = ({
         position:
           (event.city ? 1 : 0) + (event.category ? 1 : 0) + 2,
         name: event.title,
-        item: `https://event-scanner.com/event/${eventId}`,
+        item: fullUrl,
       },
     ],
   };

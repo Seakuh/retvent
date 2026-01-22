@@ -1,5 +1,5 @@
 import { QRCodeCanvas } from "qrcode.react";
-import { Event } from "../../../utils";
+import { Event, getEventUrl } from "../../../utils";
 import "./GroupInviteModal.css";
 
 export const ShareModal = ({
@@ -9,6 +9,9 @@ export const ShareModal = ({
   onClose: () => void;
   event: Event;
 }) => {
+  const eventUrl = getEventUrl(event);
+  const fullUrl = `https://event-scanner.com${eventUrl}`;
+  
   return (
     <div className="group-invite-modal-container" onClick={() => onClose()}>
       <div
@@ -17,7 +20,7 @@ export const ShareModal = ({
       >
         <div className="qr-code-container">
           <QRCodeCanvas
-            value={`https://event-scanner.com/event/${event.id}`}
+            value={fullUrl}
             size={420}
             level="H"
             bgColor="#FFFFFF"

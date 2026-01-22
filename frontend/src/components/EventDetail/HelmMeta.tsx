@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { Event } from "../../utils";
+import { Event, getEventUrl } from "../../utils";
 interface HelmetMetaProps {
   event: Event;
   eventId: string;
@@ -14,6 +14,10 @@ const HelmetMeta = ({ event, eventId }: HelmetMetaProps) => {
     event.city || "TBA"
   }. ${event.description || ""}`;
 
+  // Verwende getEventUrl für konsistente URL-Generierung
+  const eventUrl = getEventUrl(event);
+  const fullUrl = `https://event-scanner.com${eventUrl}`;
+
   return (
     <Helmet>
       <title>{event.title} | EventScanner</title>
@@ -27,14 +31,7 @@ const HelmetMeta = ({ event, eventId }: HelmetMetaProps) => {
       <meta property="og:title" content={event.title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={event.imageUrl} />
-      <meta
-        property="og:url"
-        content={`https://event-scanner.com/event/${
-          (event as any).slug 
-            ? `${(event as any).slug}-${eventId}` 
-            : eventId
-        }`}
-      />
+      <meta property="og:url" content={fullUrl} />
       <meta property="og:site_name" content="EventScanner" />
 
       {/* Twitter */}
@@ -43,27 +40,13 @@ const HelmetMeta = ({ event, eventId }: HelmetMetaProps) => {
       <meta name="twitter:title" content={event.title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={event.imageUrl} />
-      <meta
-        name="twitter:url"
-        content={`https://event-scanner.com/event/${
-          (event as any).slug 
-            ? `${(event as any).slug}-${eventId}` 
-            : eventId
-        }`}
-      />
+      <meta name="twitter:url" content={fullUrl} />
 
       {/* Additional Meta Tags */}
       <meta name="author" content="EventScanner" />
       <meta name="robots" content="index, follow" />
       <meta name="googlebot" content="index, follow" />
-      <link
-        rel="canonical"
-        href={`https://event-scanner.com/event/${
-          (event as any).slug 
-            ? `${(event as any).slug}-${eventId}` 
-            : eventId
-        }`}
-      />
+      <link rel="canonical" href={fullUrl} />
     </Helmet>
   );
 };

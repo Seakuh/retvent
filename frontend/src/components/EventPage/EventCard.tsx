@@ -33,7 +33,43 @@ export const EventCard = ({ event }: { event: Event }) => {
     }
     // setIsLiked nicht nötig, da wir isFavorite vom Context nutzen
   };
-  const shareEventId = (
+  // Hilfsfunktion für "Copied" Meldung
+  const showCopiedMessage = () => {
+    const message = document.createElement("div");
+    message.textContent = "Copied";
+    message.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #000;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 10000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: fadeInOut 2s ease-in-out;
+    `;
+    
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-10px); }
+        20% { opacity: 1; transform: translateY(0); }
+        80% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-10px); }
+      }
+    `;
+    document.head.appendChild(style);
+    document.body.appendChild(message);
+    
+    setTimeout(() => {
+      message.remove();
+      style.remove();
+    }, 2000);
+  };
+
+  const shareEventId = async (
     e: React.MouseEvent<HTMLDivElement>,
     event: Event
   ) => {
@@ -41,24 +77,27 @@ export const EventCard = ({ event }: { event: Event }) => {
     e.stopPropagation();
 
     const eventUrl = getEventUrl(event);
+    const shareUrl = `https://event-scanner.com${eventUrl}`;
     const shareData = {
-      url: `https://event-scanner.com${eventUrl}`,
+      url: shareUrl,
     };
 
-    if (navigator.share) {
-      navigator
-        .share(shareData)
-        .catch((error) => console.log("Fehler beim Teilen:", error));
-    } else {
-      // Fallback für Browser ohne Web Share API
-      navigator.clipboard
-        .writeText(shareData.url)
-        .then(() => {
-          alert("Saved to clipboard!");
-        })
-        .catch(() => {
-          alert("Error saving to clipboard");
-        });
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(shareUrl);
+        showCopiedMessage();
+      }
+    } catch (error) {
+      // Wenn Share fehlschlägt, copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showCopiedMessage();
+      } catch (clipboardError) {
+        console.error("Failed to copy to clipboard:", clipboardError);
+      }
     }
   };
   return (
