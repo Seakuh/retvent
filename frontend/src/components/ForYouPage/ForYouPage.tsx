@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Download, Calendar, Clock, History, Music, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { Download, Calendar, Clock, History, Music, Sparkles, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import { Event, FeedResponse } from "../../utils";
 import { EventPage } from "../EventPage/EventPage";
 import Footer from "../../Footer/Footer";
@@ -32,6 +32,7 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
   const [activeSection, setActiveSection] = useState<string>("");
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const [isUpcomingExpanded, setIsUpcomingExpanded] = useState(false);
   const navContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -355,19 +356,38 @@ export const ForYouPage: React.FC<ForYouPageProps> = ({
               <div className="foryou-section-title-wrapper">
                 <Calendar className="foryou-section-icon" size={24} />
                 <h2 className="foryou-section-title">
-                  Upcoming
+                  Your Upcoming
                 </h2>
               </div>
-              <button
-                className="foryou-calendar-button"
-                onClick={handleExportAllToCalendar}
-                title="Add all upcoming events to calendar"
-              >
-                <Download className="foryou-calendar-icon" size={20}/>
-              </button>
+              <div className="foryou-section-actions">
+                <button
+                  className="foryou-expand-button"
+                  onClick={() => setIsUpcomingExpanded(!isUpcomingExpanded)}
+                  title={isUpcomingExpanded ? "Show less" : "Show all"}
+                >
+                  {isUpcomingExpanded ? (
+                    <>
+                      <ChevronUp size={18} />
+                      <span>Show less</span>
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown size={18} />
+                      <span>Show all ({upcomingFavoriteEvents.length})</span>
+                    </>
+                  )}
+                </button>
+                {/* <button
+                  className="foryou-calendar-button"
+                  onClick={handleExportAllToCalendar}
+                  title="Add all upcoming events to calendar"
+                >
+                  <Download className="foryou-calendar-icon" size={20}/>
+                </button> */}
+              </div>
             </div>
             <div className="foryou-events-list">
-              {upcomingFavoriteEvents.map((event, index) => (
+              {(isUpcomingExpanded ? upcomingFavoriteEvents : upcomingFavoriteEvents.slice(0, 3)).map((event, index) => (
                 <TrendsListView key={event.id || event._id || index} event={event} index={index} />
               ))}
             </div>
