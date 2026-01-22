@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Event } from "../../utils";
+import { Event, getEventUrl } from "../../utils";
 import "./EventGalleryIII.css";
 import { EventGridItem } from "./Items/EventGridItem";
 
@@ -55,9 +55,9 @@ export const EventGalleryIII: React.FC<EventGalleryProps> = ({
     };
   };
 
-  const handleEventClick = (eventId: string) => {
+  const handleEventClick = (event: Event) => {
     // Navigation zur Event-Detailseite
-    navigate(`/event/${eventId}`);
+    navigate(getEventUrl(event));
   };
 
   const groupedEvents = sortAndGroupEvents(events);

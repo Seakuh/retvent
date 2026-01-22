@@ -4,7 +4,7 @@ import "./EventGridItem.css";
 
 interface EventGridItemProps {
   event: Event;
-  handleEventClick: (id: string) => void;
+  handleEventClick: (event: Event) => void;
   isPast?: boolean;
   showEditIcon?: boolean;
   onEditClick?: (eventId: string) => void;
@@ -33,7 +33,7 @@ export const EventGridItem: React.FC<EventGridItemProps> = ({
   return (
     <a
       key={event.id || event._id}
-      onClick={() => handleEventClick(event.id || event._id || "")}
+      onClick={() => handleEventClick(event)}
       className={`event-grid-item ${isPast ? "past" : ""}`}
     >
       <div className="event-grid-item-image">

@@ -2,7 +2,7 @@ import { Eye, Heart, MessageCircle, Send } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
-import { Event, getDaysUntilDate } from "../../utils";
+import { Event, getDaysUntilDate, getEventUrl } from "../../utils";
 import { RealListItemProfileHeader } from "../EventGallery/Items/RealListItemProfileHeader";
 import "./EventCard.css";
 export const EventCard = ({ event }: { event: Event }) => {
@@ -35,13 +35,14 @@ export const EventCard = ({ event }: { event: Event }) => {
   };
   const shareEventId = (
     e: React.MouseEvent<HTMLDivElement>,
-    eventId: string
+    event: Event
   ) => {
     e.preventDefault();
     e.stopPropagation();
 
+    const eventUrl = getEventUrl(event);
     const shareData = {
-      url: `https://event-scanner.com/event/${eventId}`,
+      url: `https://event-scanner.com${eventUrl}`,
     };
 
     if (navigator.share) {
@@ -63,7 +64,7 @@ export const EventCard = ({ event }: { event: Event }) => {
   return (
     <div
       onClick={() => {
-        navigate(`/event/${event.id || event._id}`);
+        navigate(getEventUrl(event));
       }}
       className={`${
         event.isSponsored ? "sponsored-card" : ""
@@ -155,7 +156,7 @@ export const EventCard = ({ event }: { event: Event }) => {
             </div>
             <div className="event-card-user-interaction">
               <div className="event-card-user-interaction-right">
-                <div onClick={(e) => shareEventId(e, event.id!)}>
+                <div onClick={(e) => shareEventId(e, event)}>
                   <Send size={25} color="white" />
                 </div>
                 <div

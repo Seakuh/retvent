@@ -109,7 +109,8 @@ const App: React.FC = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/profile/:userId" element={<Profile />} />
-                  <Route path="/event/:eventId" element={<EventDetail />} />
+                  {/* Unterstützt sowohl slugAndId (slug-shortId) als auch nur eventId */}
+                  <Route path="/event/:slugAndId" element={<EventDetail />} />
                   <Route path="/community/:communityId" element={<CommunityDetailPage />} />
                   <Route path="/category/:category" element={<LandingPage />} />
                   <Route

@@ -23,6 +23,7 @@ import { EventStructuredData } from "./EventStructuredData";
 import { SimilarEvents } from "./SimilarEvents";
 import { TicketLinkButton } from "../TicketLink/TicketLinkButton";
 import Footer from "../../Footer/Footer";
+import { parseEventUrl, getEventUrl } from "../../utils";
 
 const EVENT_HISTORY_KEY = "recentEvents";
 const MAX_HISTORY_SIZE = 20;
@@ -49,9 +50,14 @@ const saveEventToHistory = (eventId: string) => {
 };
 
 export const EventDetail: React.FC = () => {
-  const { eventId } = useParams();
+  const { slugAndId } = useParams<{ slugAndId: string }>();
   const { user } = useContext(UserContext);
-  const { event, loading, error, host } = useEvent(eventId);
+  
+  // Parse slugAndId Parameter (kann slug-shortId oder nur eventId sein)
+  const parsedUrl = slugAndId ? parseEventUrl(slugAndId) : null;
+  const eventIdentifier = slugAndId || '';
+  
+  const { event, loading, error, host } = useEvent(eventIdentifier);
   const [showImageModal, setShowImageModal] = useState(false);
   const navigate = useNavigate();
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
@@ -86,6 +92,7 @@ export const EventDetail: React.FC = () => {
     fileInput.accept = type === "video" ? "video/*" : "image/*";
     fileInput.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
+      const eventId = event?.id || event?._id;
       if (!file || !eventId) return;
 
       const accessToken = localStorage.getItem("access_token");
@@ -114,26 +121,64 @@ export const EventDetail: React.FC = () => {
   };
 
   const ownerMenuItems = [
-    { icon: Megaphone, label: "Sponsor Event", action: () => navigate(`/advertising/${eventId}`) },
-    { icon: Pencil, label: "Edit Event", action: () => navigate(`/admin/events/edit/${eventId}`) },
+    { 
+      icon: Megaphone, 
+      label: "Sponsor Event", 
+      action: () => {
+        const eventId = event?.id || event?._id;
+        if (eventId) navigate(`/advertising/${eventId}`);
+      }
+    },
+    { 
+      icon: Pencil, 
+      label: "Edit Event", 
+      action: () => {
+        const eventId = event?.id || event?._id;
+        if (eventId) navigate(`/admin/events/edit/${eventId}`);
+      }
+    },
     { icon: Users, label: "Add Lineup", action: () => handleFileUpload("lineup") },
     { icon: ImagePlus, label: "Add Pictures", action: () => handleFileUpload("images") },
     { icon: Film, label: "Add Movies", action: () => handleFileUpload("video") },
   ];
 
+  // Redirect zu Slug-URL nur wenn Event geladen wurde UND Slug vorhanden ist
   useEffect(() => {
-    if (event && eventId) {
-      document.title = `${event.title} | EventScanner`;
-      if (event?.hostId === user?.id) {
-        console.log("event", event?.hostId, user?.id);
-
-        setIsOwner(true);
+    if (event && !loading && event.slug) {
+      const eventId = event.id || event._id || '';
+      if (!eventId) return;
+      
+      // Generiere die kanonische Slug-URL für das Event
+      const canonicalUrl = getEventUrl(event);
+      const currentUrl = `/event/${slugAndId}`;
+      
+      // Nur redirecten wenn:
+      // 1. Event hat einen Slug
+      // 2. Aktuelle URL ist nicht die kanonische Slug-URL
+      // 3. Aktuelle URL ist die alte ID-URL (nicht slug-basiert)
+      const isOldIdUrl = currentUrl === `/event/${eventId}`;
+      if (canonicalUrl !== currentUrl && isOldIdUrl) {
+        navigate(canonicalUrl, { replace: true });
+        return;
       }
-
-      // Speichere die Event-ID im Local Storage
-      saveEventToHistory(eventId);
     }
-  }, [event, eventId]);
+  }, [event, loading, slugAndId, navigate]);
+
+  useEffect(() => {
+    if (event) {
+      const eventId = event.id || event._id || '';
+      if (eventId) {
+        document.title = `${event.title} | EventScanner`;
+        if (event?.hostId === user?.id) {
+          console.log("event", event?.hostId, user?.id);
+          setIsOwner(true);
+        }
+
+        // Speichere die Event-ID im Local Storage
+        saveEventToHistory(eventId);
+      }
+    }
+  }, [event, user]);
 
   const handleAddToCalendar = () => {
     if (!event?.startDate) return;
@@ -150,8 +195,12 @@ export const EventDetail: React.FC = () => {
     const formattedStart = formatDate(startDate.toISOString());
     const formattedEnd = formatDate(endDate.toISOString());
 
+    const eventId = event.id || event._id || '';
+    const eventUrl = eventId ? getEventUrl(event) : '';
+    const fullUrl = eventUrl ? `https://event-scanner.com${eventUrl}` : '';
+    
     const description =
-      `${event.title} | \nhttps://event-scanner.com/event/${eventId}\n\n` +
+      `${event.title} | \n${fullUrl}\n\n` +
       "\n-----------------------\nDescription\n" +
       event.description +
       " " +
@@ -182,6 +231,7 @@ export const EventDetail: React.FC = () => {
   };
 
   function handleFavoriteClick(): void {
+    const eventId = event?.id || event?._id;
     if (!eventId) return;
 
     if (isFavorite(eventId)) {
@@ -214,10 +264,12 @@ export const EventDetail: React.FC = () => {
     return <EventDetailError message={error?.message} />;
   }
 
+  const eventId = event?.id || event?._id || '';
+  
   return (
     <div>
       <HelmetMeta event={event} eventId={eventId} />
-      <EventStructuredData event={event} eventId={eventId || ""} />
+      <EventStructuredData event={event} eventId={eventId} />
       <div
         className="event-detail"
         style={
@@ -389,9 +441,9 @@ export const EventDetail: React.FC = () => {
           {/* {event.startDate && <CalendarButton event={event} />} */}
 
         </div>
-        {isOwner && <HostView eventId={eventId || ""} />}
+        {isOwner && <HostView eventId={eventId} />}
 
-        <SimilarEvents eventId={eventId || ""} />
+        <SimilarEvents eventId={eventId} />
 
         {showImageModal && (
           <ImageModal
@@ -424,9 +476,9 @@ export const EventDetail: React.FC = () => {
           <CommunityBar event={event} />
         </div>
       </div>
-      <div>
+        <div>
         <EventGroups event={event} />
-        <CommentSection eventId={eventId || ""} />
+        <CommentSection eventId={eventId} />
       </div>
       <Footer />
     </div>

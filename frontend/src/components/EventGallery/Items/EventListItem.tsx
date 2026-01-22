@@ -1,6 +1,6 @@
 import { Eye, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Event, formatDate } from "../../../utils";
+import { Event, formatDate, getEventUrl } from "../../../utils";
 import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
 const DEFAULT_IMAGE =
   "https://images.vartakt.com/images/events/66e276a6-090d-4774-bc04-9f66ca56a0be.png";
@@ -20,7 +20,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({
     <div
       key={event.id}
       className={`event-list-item ${isPast ? "past-event" : ""}`}
-      onClick={() => navigate(`/event/${event.id || event._id}`)}
+      onClick={() => navigate(getEventUrl(event))}
     >
       <RealListItemProfileHeader
         profileUrl={event.hostImageUrl || event.imageUrl || ""}

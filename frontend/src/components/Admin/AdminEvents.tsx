@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminEvents.css";
 import { AdminService } from "./admin.service";
+import { getEventUrl } from "../../utils";
 
 interface Event {
   id: string;
@@ -58,7 +59,7 @@ const AdminEvents: React.FC = () => {
 
   const handleWatch = (event: Event) => {
     console.log("Watch event", event);
-    navigate(`/event/${event.id}`);
+    navigate(getEventUrl(event));
     // const eventUrl = `https://event-scanner.com/event/${event.id}`;
     // const messageText = encodeURIComponent(
     //   `🎉 Check out this event: ${event.title}\n` +

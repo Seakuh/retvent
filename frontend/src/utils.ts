@@ -211,6 +211,8 @@ export interface Event {
   id?: string;
   _id?: string;
   isSponsored?: boolean;
+  // SEO-Felder
+  slug?: string;                 // URL-freundlich (z.B. "techno-party-berlin-2024")
   // Titel
   title: string;
   // Beschreibung
@@ -769,3 +771,83 @@ export interface Ticket {
   status: string;
   createdAt: Date;
 }
+
+/**
+ * Generiert einen URL-freundlichen Slug aus einem Text
+ */
+export const generateSlugFromText = (text: string): string => {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Entferne diakritische Zeichen
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+    .substring(0, 100); // Maximal 100 Zeichen
+};
+
+/**
+ * Extrahiert den shortId (6-stellige hexadezimale ID) aus einer Event-ID
+ * Falls die ID bereits ein shortId ist, wird sie zurückgegeben
+ */
+export const extractShortId = (eventId: string): string => {
+  // Wenn die ID bereits 6 Zeichen lang ist und hexadezimal, verwende sie direkt
+  if (/^[a-f0-9]{6}$/i.test(eventId)) {
+    return eventId.toLowerCase();
+  }
+  
+  // Versuche, die letzten 6 Zeichen als shortId zu extrahieren
+  // Oder verwende einen Hash der ID (vereinfacht)
+  // In der Praxis sollte das Backend den shortId liefern
+  return eventId.slice(-6).toLowerCase().padStart(6, '0');
+};
+
+/**
+ * Generiert eine Event-URL mit Slug-Priorität
+ * Format: /event/{slug}-{shortId} wenn Slug vorhanden, sonst /event/{eventId}
+ */
+export const getEventUrl = (event: Event): string => {
+  const eventId = event.id || event._id || '';
+  if (!eventId) return '/event';
+  
+  // Nur wenn ein Slug vorhanden ist, verwende Slug-URL
+  // Die meisten Events haben noch keinen Slug, daher Fallback auf ID
+  if (event.slug) {
+    // Backend erwartet Format: slug-shortId
+    // Der shortId sollte vom Backend kommen
+    const shortId = extractShortId(eventId);
+    return `/event/${event.slug}-${shortId}`;
+  }
+  
+  // Fallback: Nur ID (für Events ohne Slug)
+  return `/event/${eventId}`;
+};
+
+/**
+ * Parst slugAndId aus der URL
+ * Format: "slug-shortId" oder nur "eventId"
+ * Gibt zurück: { slug: string | null, shortId: string | null, eventId: string }
+ */
+export const parseEventUrl = (urlParam: string): {
+  slug: string | null;
+  shortId: string | null;
+  eventId: string;
+} => {
+  // Prüfe ob Format slug-shortId (endet mit -[a-f0-9]{6})
+  const slugAndIdMatch = urlParam.match(/^(.+)-([a-f0-9]{6})$/i);
+  
+  if (slugAndIdMatch) {
+    const [, slug, shortId] = slugAndIdMatch;
+    return {
+      slug,
+      shortId: shortId.toLowerCase(),
+      eventId: urlParam, // Verwende den gesamten Parameter für Backend-Call
+    };
+  }
+  
+  // Fallback: Nur ID
+  return {
+    slug: null,
+    shortId: null,
+    eventId: urlParam,
+  };
+};

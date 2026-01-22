@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Event } from "../../types/event";
+import { getEventUrl } from "../../utils";
 import "./EventGallery.css";
 
 const DEFAULT_IMAGE =
@@ -26,7 +27,7 @@ export const EventGallery: React.FC<EventGalleryProps> = ({
           <div
             key={event.id}
             className={`image-card`}
-            onClick={() => navigate(`/event/${event.id || event._id}`)}
+            onClick={() => navigate(getEventUrl(event))}
           >
             <img
               src={event.imageUrl || DEFAULT_IMAGE}

@@ -2,7 +2,7 @@ import { Eye, Heart, MapPin } from "lucide-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
-import { Event } from "../../utils";
+import { Event, getEventUrl } from "../../utils";
 import "./TrendsListView.css";
 
 interface TrendsListViewProps {
@@ -22,7 +22,7 @@ export const TrendsListView: React.FC<TrendsListViewProps> = ({
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
 
   const handleEventClick = () => {
-    navigate(`/event/${event.id || event._id}`);
+    navigate(getEventUrl(event));
   };
 
   const handleLike = (e: React.MouseEvent<HTMLDivElement>) => {
