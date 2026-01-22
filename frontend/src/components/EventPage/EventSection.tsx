@@ -127,7 +127,6 @@ export const EventSection = ({
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseLeave}
               >
-
                 {filterOptions.map((option) => {
                   const isActive = selectedFilter === option.value;
                   const labelWithoutHash = option.label.replace(/^#/, "");
