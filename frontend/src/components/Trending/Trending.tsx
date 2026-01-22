@@ -4,6 +4,7 @@ import { Event, FeedResponse, categoriesToFilter } from "../../utils";
 import { eventService } from "../../services/api";
 import { EventSection } from "../EventPage/EventSection";
 import "./Trending.css";
+import { AdBanner } from "../../Advertisement/AdBanner/AdBanner";
 
 // Category mapping with emojis
 const categoryEmojiMap: Record<string, string> = {
@@ -96,7 +97,7 @@ export const Trending = ({
 
   return (
     <div className="event-page-container">
-      {/* <AdBanner /> */}
+      <AdBanner />
       {/* <CommunityList /> */}
       {/* <ReelTile events={favoriteEvents} direction="horizontal" /> */}
       <div className="event-page-section-container">
