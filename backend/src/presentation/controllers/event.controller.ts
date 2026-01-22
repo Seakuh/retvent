@@ -27,6 +27,7 @@ import { CreateEventDto } from '../dtos/create-event.dto';
 import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { VectorSearchFilterDto } from '../dtos/vector-search-filter.dto';
+import { PlanReleaseDto } from '../dtos/plan-release.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UploadGuard } from '../guards/upload.guard';
 import { CommunityEventGuard } from '../guards/community-event.guard';
@@ -1040,6 +1041,52 @@ export class EventController {
       return {
         message: `Comments ${updatedEvent.commentsEnabled ? 'enabled' : 'disabled'} successfully`,
         commentsEnabled: updatedEvent.commentsEnabled,
+      };
+    } catch (error) {
+      if (error.name === 'CastError' || error.kind === 'ObjectId') {
+        throw new NotFoundException('Event not found');
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Plant ein Release für ein Event
+   * POST /events/:id/plan-release
+   * Setzt das geplante Release-Datum und ändert den Status auf 'draft', falls noch nicht gesetzt
+   */
+  @Post(':id/plan-release')
+  @UseGuards(JwtAuthGuard)
+  async planRelease(
+    @Param('id') id: string,
+    @Body() planReleaseDto: PlanReleaseDto,
+    @Request() req,
+  ) {
+    try {
+      const releaseDate = new Date(planReleaseDto.releaseDate);
+      
+      if (isNaN(releaseDate.getTime())) {
+        throw new BadRequestException('Invalid release date format');
+      }
+
+      const updatedEvent = await this.eventService.planRelease(
+        id,
+        releaseDate,
+        req.user.sub,
+      );
+
+      if (!updatedEvent) {
+        throw new NotFoundException('Event not found');
+      }
+
+      return {
+        message: 'Release planned successfully',
+        event: {
+          id: updatedEvent.id,
+          title: updatedEvent.title,
+          status: updatedEvent.status,
+          scheduledReleaseDate: updatedEvent.scheduledReleaseDate,
+        },
       };
     } catch (error) {
       if (error.name === 'CastError' || error.kind === 'ObjectId') {

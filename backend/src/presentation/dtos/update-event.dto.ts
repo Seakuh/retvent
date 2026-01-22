@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
+  IsDateString,
   IsEnum,
   IsNumber,
   IsObject,
@@ -407,6 +408,22 @@ export class UpdateEventDto {
   documents?: string[];
 
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  lineupPictureUrl?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  videoUrls?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => LineupArtistDto)
+  lineup?: LineupArtistDto[];
+
+  @IsOptional()
   @IsBoolean()
   commentsEnabled?: boolean;
 
@@ -571,5 +588,9 @@ export class UpdateEventDto {
   @IsOptional()
   @IsEnum(['pending', 'approved', 'rejected'])
   moderationStatus?: 'pending' | 'approved' | 'rejected';
+
+  @IsOptional()
+  @IsDateString()
+  scheduledReleaseDate?: Date | string; // Geplantes Release-Datum für automatische Veröffentlichung
 
 }

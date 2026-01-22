@@ -95,6 +95,7 @@ import { PokerInvitationService } from 'src/application/services/poker-invitatio
 import { PokerStatsSchema } from 'src/core/domain/poker-stats.schema';
 import { PokerInvitationSchema } from 'src/core/domain/poker-invitation.schema';
 import { MailController } from 'src/presentation/controllers/mail.controller';
+import { ScheduledReleaseService } from 'src/application/services/scheduled-release.service';
 @Module({
   imports: [
     CoreModule,
@@ -192,6 +193,7 @@ import { MailController } from 'src/presentation/controllers/mail.controller';
     VoiceChatService,
     VoiceChatGateway,
     EventEmbeddingService,
+    ScheduledReleaseService,
     ImageService,
     DocumentService,
     AssessmentService,

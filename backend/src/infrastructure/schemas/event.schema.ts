@@ -225,6 +225,9 @@ export const EventSchema = new Schema(
       type: String,
       enum: ['pending', 'approved', 'rejected'],
     },
+    scheduledReleaseDate: {
+      type: Date, // Geplantes Release-Datum für automatische Veröffentlichung
+    },
   },
   {
     timestamps: true,

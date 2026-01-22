@@ -1527,6 +1527,60 @@ export class EventService {
     return this.eventRepository.update(eventId, { commentsEnabled: newStatus } as UpdateEventDto);
   }
 
+  /**
+   * Plant ein Release für ein Event - setzt das geplante Release-Datum
+   * und ändert den Status auf 'draft', falls noch nicht gesetzt
+   * @param eventId - Die ID des Events
+   * @param releaseDate - Das geplante Release-Datum
+   * @param hostId - Die ID des Event-Hosts (für Berechtigungsprüfung)
+   * @returns Das aktualisierte Event
+   */
+  async planRelease(eventId: string, releaseDate: Date, hostId: string): Promise<Event | null> {
+    const event = await this.eventRepository.findById(eventId);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+    if (event.hostId !== hostId) {
+      throw new ForbiddenException('Only the event host can plan a release');
+    }
+
+    // Prüfe, ob das Release-Datum in der Zukunft liegt
+    if (releaseDate <= new Date()) {
+      throw new BadRequestException('Release date must be in the future');
+    }
+
+    // Setze Status auf 'draft', falls noch nicht gesetzt
+    const updateData: UpdateEventDto = {
+      scheduledReleaseDate: releaseDate,
+      status: event.status || 'draft',
+    };
+
+    return this.eventRepository.update(eventId, updateData);
+  }
+
+  /**
+   * Veröffentlicht alle Events, deren scheduledReleaseDate erreicht wurde
+   * Wird von einem Cron-Job aufgerufen
+   * @returns Anzahl der veröffentlichten Events
+   */
+  async processScheduledReleases(): Promise<number> {
+    const now = new Date();
+    const events = await this.eventRepository.findEventsWithScheduledRelease(now);
+    
+    let publishedCount = 0;
+    for (const event of events) {
+      if (event.scheduledReleaseDate && event.scheduledReleaseDate <= now) {
+        await this.eventRepository.update(event.id, {
+          status: 'published',
+          scheduledReleaseDate: undefined, // Entferne das geplante Datum nach Veröffentlichung
+        } as UpdateEventDto);
+        publishedCount++;
+      }
+    }
+
+    return publishedCount;
+  }
+
   async delete(id: string): Promise<boolean> {
     // Get event to check for communityId
     const event = await this.eventRepository.findById(id);

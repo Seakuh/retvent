@@ -17,4 +17,5 @@ export interface IEventRepository {
   updateEvent(id: string, eventData: UpdateEventDto): Promise<Event | null>;
   findByHostId(hostId: string): Promise<Event[]>;
   uploadEventDocuments(eventId: string, documentUrls: string[]): Promise<any>;
+  findEventsWithScheduledRelease(now: Date): Promise<Event[]>;
 }

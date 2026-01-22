@@ -165,6 +165,7 @@ export class Event implements IEvent {
   };
   status?: 'draft' | 'published' | 'cancelled' | 'postponed';
   moderationStatus?: 'pending' | 'approved' | 'rejected';
+  scheduledReleaseDate?: Date; // Geplantes Release-Datum für automatische Veröffentlichung
 
   constructor(data: Partial<IEvent>) {
     Object.assign(this, data);

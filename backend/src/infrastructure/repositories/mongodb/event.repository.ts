@@ -1237,4 +1237,21 @@ export class MongoEventRepository implements IEventRepository {
       .sort({ startDate: 1 })
       .exec();
   }
+
+  // ------------------------------------------------------------
+  // SCHEDULED RELEASE
+  // ------------------------------------------------------------
+  /**
+   * Findet alle Events, die ein geplantes Release-Datum haben und noch nicht veröffentlicht wurden
+   * @param now - Aktuelles Datum/Zeit
+   * @returns Array von Events mit geplantem Release
+   */
+  async findEventsWithScheduledRelease(now: Date): Promise<Event[]> {
+    return this.eventModel
+      .find({
+        scheduledReleaseDate: { $exists: true, $lte: now },
+        status: { $ne: 'published' }, // Nur Events, die noch nicht veröffentlicht sind
+      })
+      .exec();
+  }
 }

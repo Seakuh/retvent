@@ -344,6 +344,7 @@ export interface IEvent extends Document {
   
   status?: "draft" | "published" | "cancelled" | "postponed";
   moderationStatus?: "pending" | "approved" | "rejected";
+  scheduledReleaseDate?: Date; // Geplantes Release-Datum für automatische Veröffentlichung
 }
 
 // Event Schema Definition
@@ -500,6 +501,7 @@ const EventSchema = new Schema<IEvent>(
     
     status: { type: String, enum: ['draft', 'published', 'cancelled', 'postponed'] },
     moderationStatus: { type: String, enum: ['pending', 'approved', 'rejected'] },
+    scheduledReleaseDate: { type: Date }, // Geplantes Release-Datum für automatische Veröffentlichung
   },
   {
     timestamps: true,
