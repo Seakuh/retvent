@@ -153,10 +153,74 @@
   justify-content: flex-end;
   padding: 2rem;
   color: #ffffff;
+  gap: 1rem;
+}
+
+.hero-title-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.back-button {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 4;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.schedule-release-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: #ff3b30;
+  border: none;
+  border-radius: 50px;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: fit-content;
+}
+
+.schedule-release-btn:hover {
+  background-color: #ff2d20;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
+}
+
+.schedule-release-btn:active {
+  transform: translateY(0);
 }
 
 .hero-title-section {
   animation: fadeInUp 0.8s ease-out 0.2s both;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .hero-title {
@@ -168,6 +232,14 @@
   line-height: 1.2;
 }
 
+.hero-subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
 .hero-subtitle {
   display: flex;
   align-items: center;
@@ -175,6 +247,8 @@
   font-size: 1.125rem;
   color: rgba(255, 255, 255, 0.8);
   margin: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .hero-location,
@@ -1899,11 +1973,25 @@
     font-size: 2rem;
   }
 
+  .hero-subtitle-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
   .hero-subtitle {
     font-size: 0.875rem;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    width: 100%;
+  }
+
+  .schedule-release-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
   }
 
   .hero-location,
@@ -2202,5 +2290,196 @@
   .lineup-pictures-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 1rem;
+  }
+
+  .schedule-release-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Release Planning Modal */
+.release-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.release-modal-content {
+  background-color: rgba(26, 26, 26, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.release-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.release-modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.release-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.release-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.release-modal-body {
+  padding: 2rem;
+}
+
+.release-date-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 1rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.release-date-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.35);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.release-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.release-error {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: rgba(255, 59, 48, 0.15);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  border-radius: 8px;
+  color: #ff3b30;
+  font-size: 0.875rem;
+}
+
+.release-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.release-modal-cancel,
+.release-modal-confirm {
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.release-modal-cancel {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.release-modal-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.release-modal-confirm {
+  background-color: #ff3b30;
+  border: none;
+  color: #ffffff;
+}
+
+.release-modal-confirm:hover:not(:disabled) {
+  background-color: #ff2d20;
+  transform: scale(1.02);
+}
+
+.release-modal-confirm:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.release-modal-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .release-modal-content {
+    max-width: 100%;
+    border-radius: 16px;
+  }
+
+  .release-modal-header,
+  .release-modal-body,
+  .release-modal-actions {
+    padding: 1.25rem;
+  }
+
+  .release-modal-title {
+    font-size: 1.25rem;
+  }
+
+  .release-modal-actions {
+    flex-direction: column;
+  }
+
+  .release-modal-cancel,
+  .release-modal-confirm {
+    width: 100%;
   }
 }

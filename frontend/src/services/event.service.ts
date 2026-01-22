@@ -252,4 +252,31 @@ export class EventService {
       throw error;
     }
   }
+
+  async planRelease(eventId: string, releaseDate: Date): Promise<Event> {
+    const accessToken = localStorage.getItem("access_token");
+    try {
+      const response = await fetch(`${this.baseUrl}/${eventId}/plan-release`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          releaseDate: releaseDate.toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to plan release");
+      }
+
+      const data = await response.json();
+      return data.event || data;
+    } catch (error) {
+      console.error("Plan release error:", error);
+      throw error;
+    }
+  }
 }

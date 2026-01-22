@@ -273,6 +273,10 @@ const EditEvent: React.FC = () => {
   const [showStickyTitle, setShowStickyTitle] = useState(false);
   const [lineupPictures, setLineupPictures] = useState<string[]>([]);
   const [uploadingLineupPicture, setUploadingLineupPicture] = useState(false);
+  const [showReleaseModal, setShowReleaseModal] = useState(false);
+  const [releaseDate, setReleaseDate] = useState<string>("");
+  const [isPlanningRelease, setIsPlanningRelease] = useState(false);
+  const [scheduledReleaseDate, setScheduledReleaseDate] = useState<Date | null>(null);
   const navContainerRef = React.useRef<HTMLDivElement>(null);
   const eventService = new EventService();
 
@@ -469,6 +473,12 @@ const EditEvent: React.FC = () => {
       }
       if (event.lineupPictureUrl) {
         setLineupPictures(event.lineupPictureUrl);
+      }
+      // Set scheduled release date if available
+      if ((event as any).scheduledReleaseDate) {
+        setScheduledReleaseDate(new Date((event as any).scheduledReleaseDate));
+      } else {
+        setScheduledReleaseDate(null);
       }
     } catch (err) {
       setError("Failed to fetch event details");
@@ -1044,6 +1054,49 @@ const EditEvent: React.FC = () => {
     }
   };
 
+  const handlePlanRelease = async () => {
+    if (!releaseDate || !eventId) return;
+    
+    setIsPlanningRelease(true);
+    setError(null);
+    
+    try {
+      const date = new Date(releaseDate);
+      await eventService.planRelease(eventId, date);
+      
+      // Erfolg-Toast anzeigen
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
+      
+      // Modal schließen und Event-Daten neu laden
+      setShowReleaseModal(false);
+      setReleaseDate("");
+      setScheduledReleaseDate(date);
+      await fetchEventDetails();
+    } catch (err: any) {
+      console.error("Error planning release:", err);
+      setError(err.message || "Failed to plan release");
+    } finally {
+      setIsPlanningRelease(false);
+    }
+  };
+
+  const openReleaseModal = () => {
+    // Wenn bereits ein Release-Datum vorhanden ist, im Modal vorausfüllen
+    if (scheduledReleaseDate) {
+      // Format: YYYY-MM-DDTHH:mm für datetime-local input
+      const year = scheduledReleaseDate.getFullYear();
+      const month = String(scheduledReleaseDate.getMonth() + 1).padStart(2, '0');
+      const day = String(scheduledReleaseDate.getDate()).padStart(2, '0');
+      const hours = String(scheduledReleaseDate.getHours()).padStart(2, '0');
+      const minutes = String(scheduledReleaseDate.getMinutes()).padStart(2, '0');
+      setReleaseDate(`${year}-${month}-${day}T${hours}:${minutes}`);
+    }
+    setShowReleaseModal(true);
+  };
+
   if (loading)
     return (
       <div className="loading-spinner-edit-event-container">
@@ -1162,24 +1215,43 @@ const EditEvent: React.FC = () => {
           </button>
           <div className="hero-title-section">
             <h1 className="hero-title">{formData.title || "Untitled Event"}</h1>
-            <p className="hero-subtitle">
-              {formData.city && <span className="hero-location">{formData.city}</span>}
-              {formData.startDate && (
-                <span className="hero-date">
-                  {typeof formData.startDate === "string" 
-                    ? new Date(formData.startDate).toLocaleDateString("de-DE", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric"
-                      })
-                    : new Date(formData.startDate).toLocaleDateString("de-DE", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric"
-                      })}
-                </span>
-              )}
-            </p>
+            <div className="hero-subtitle-row">
+              <p className="hero-subtitle">
+                {formData.city && <span className="hero-location">{formData.city}</span>}
+                {formData.startDate && (
+                  <span className="hero-date">
+                    {typeof formData.startDate === "string" 
+                      ? new Date(formData.startDate).toLocaleDateString("de-DE", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric"
+                        })
+                      : new Date(formData.startDate).toLocaleDateString("de-DE", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric"
+                        })}
+                  </span>
+                )}
+              </p>
+              <button
+                onClick={openReleaseModal}
+                className="schedule-release-btn"
+                type="button"
+              >
+                <Calendar size={18} />
+                {scheduledReleaseDate
+                  ? `Release: ${scheduledReleaseDate.toLocaleDateString("de-DE", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })} ${scheduledReleaseDate.toLocaleTimeString("de-DE", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}`
+                  : "Schedule Release"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -2360,6 +2432,58 @@ const EditEvent: React.FC = () => {
           </button>
         </div>
       </form>
+
+      {/* Release Planning Modal */}
+      {showReleaseModal && (
+        <div className="release-modal-overlay" onClick={() => setShowReleaseModal(false)}>
+          <div className="release-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="release-modal-header">
+              <h2 className="release-modal-title">Plan Release</h2>
+              <button
+                type="button"
+                className="release-modal-close"
+                onClick={() => setShowReleaseModal(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="release-modal-body">
+              <div className="form-group">
+                <label htmlFor="releaseDate">Release Date</label>
+                <input
+                  type="datetime-local"
+                  id="releaseDate"
+                  value={releaseDate}
+                  onChange={(e) => setReleaseDate(e.target.value)}
+                  className="release-date-input"
+                />
+              </div>
+              {error && <div className="release-error">{error}</div>}
+            </div>
+            <div className="release-modal-actions">
+              <button
+                type="button"
+                className="release-modal-cancel"
+                onClick={() => {
+                  setShowReleaseModal(false);
+                  setReleaseDate("");
+                  setError(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="release-modal-confirm"
+                onClick={handlePlanRelease}
+                disabled={!releaseDate || isPlanningRelease}
+              >
+                {isPlanningRelease ? "Planning..." : "Plan Release"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Success Toast */}
       {showToast && (
