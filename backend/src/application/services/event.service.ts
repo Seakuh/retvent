@@ -1960,6 +1960,31 @@ export class EventService {
         } as any,
       };
 
+      // Slug-Generierung (falls nicht vorhanden und alle benötigten Daten vorhanden sind)
+      // startDate kann als String (YYYY-MM-DD) oder Date kommen, konvertiere zu Date falls nötig
+      if (!eventData.slug && eventData.title && eventData.city && eventData.startDate) {
+        try {
+          // Konvertiere startDate zu Date falls es ein String ist
+          const startDateForSlug = eventData.startDate instanceof Date 
+            ? eventData.startDate 
+            : new Date(eventData.startDate);
+          
+          const slugs = await this.slugService.generateSlugsForEvent({
+            title: eventData.title,
+            city: eventData.city,
+            startDate: startDateForSlug,
+            category: eventData.category,
+            slug: eventData.slug,
+            citySlug: eventData.citySlug,
+            categorySlug: eventData.categorySlug,
+          });
+          Object.assign(eventData, slugs);
+        } catch (error) {
+          console.warn('Failed to generate slugs for event:', error);
+          // Event wird trotzdem ohne Slugs gespeichert
+        }
+      }
+
       const createdEvent = await this.eventRepository.create(eventData);
       await this.profileService.addCreatedEvent(userId, createdEvent.id);
       await this.userService.addUserPoints(userId, 20);
