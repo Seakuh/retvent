@@ -1364,8 +1364,6 @@ export class MongoEventRepository implements IEventRepository {
         ],
       };
       
-      console.log('[findByShortId] Starting aggregation for shortId:', shortId);
-      
       // Zuerst ohne Filter testen, um zu sehen ob das Event existiert
       const [matchingEventWithoutFilter] = await this.eventModel.aggregate([
         {
@@ -1405,16 +1403,6 @@ export class MongoEventRepository implements IEventRepository {
         { $limit: 1 },
       ]);
       
-      console.log('[findByShortId] Event without filter:', matchingEventWithoutFilter ? 'Found' : 'Not found');
-      if (matchingEventWithoutFilter) {
-        console.log('[findByShortId] Event details:', {
-          _id: matchingEventWithoutFilter._id?.toString(),
-          status: matchingEventWithoutFilter.status,
-          scheduledReleaseDate: matchingEventWithoutFilter.scheduledReleaseDate,
-          lastSixChars: matchingEventWithoutFilter.lastSixChars,
-        });
-      }
-      
       // Jetzt mit einfachem Filter (ohne scheduledReleaseDate)
       const [matchingEvent] = await this.eventModel.aggregate([
         { $match: simplePublishedFilter },
@@ -1452,13 +1440,10 @@ export class MongoEventRepository implements IEventRepository {
         { $limit: 1 },
       ]);
       
-      console.log('[findByShortId] Aggregation result with simple filter:', matchingEvent ? 'Found' : 'Not found', matchingEvent);
-      
       // Falls mit Filter nichts gefunden wird, aber ohne Filter schon, verwende das Event ohne Filter
       const finalMatchingEvent = matchingEvent || matchingEventWithoutFilter;
 
       if (!finalMatchingEvent || !finalMatchingEvent._id) {
-        console.warn('No matching event found for shortId:', shortId);
         return null;
       }
 
@@ -1467,18 +1452,11 @@ export class MongoEventRepository implements IEventRepository {
       
       // Validiere, dass es eine vollständige ObjectId ist (24 Zeichen)
       if (!eventId || eventId.length !== 24) {
-        console.error('Invalid eventId from aggregation:', {
-          eventId,
-          length: eventId?.length,
-          shortId,
-          matchingEvent: matchingEvent ? Object.keys(matchingEvent) : null,
-        });
         return null;
       }
 
       // Validiere ObjectId Format (24 hexadezimale Zeichen)
       if (!/^[a-f0-9]{24}$/i.test(eventId)) {
-        console.error('Invalid ObjectId format:', eventId);
         return null;
       }
 
@@ -1525,7 +1503,6 @@ export class MongoEventRepository implements IEventRepository {
 
       return eventWithComments ? this.toEntity(eventWithComments) : null;
     } catch (error) {
-      console.error('Error finding event by shortId:', error);
       return null;
     }
   }

@@ -63,35 +63,26 @@ export class EventController {
     @Query('locale') locale: string = 'de',
     @Res() res: Response,
   ) {
-    console.log('[getEventBySlug] Received request:', { slugAndId, locale });
-    
     // Schritt A: Parse slugAndId
     const match = slugAndId.match(/^(.+)-([a-f0-9]{6})$/i);
     
     if (!match) {
-      console.log('[getEventBySlug] Invalid slug format:', slugAndId);
       throw new NotFoundException('Event not found - invalid slug format');
     }
 
     const [, , shortId] = match;
-    console.log('[getEventBySlug] Parsed shortId:', shortId);
     
     // Validiere shortId Format
     if (!shortId || !/^[a-f0-9]{6}$/i.test(shortId)) {
-      console.log('[getEventBySlug] Invalid shortId format:', shortId);
       throw new NotFoundException('Event not found - invalid shortId');
     }
 
     // Schritt B: Resolve Event über shortId (nicht über slug)
-    console.log('[getEventBySlug] Searching for event with shortId:', shortId);
     const event = await this.eventService.findEventBySlugAndShortId(slugAndId);
     
     if (!event) {
-      console.log('[getEventBySlug] Event not found for shortId:', shortId);
       throw new NotFoundException('Event not found');
     }
-    
-    console.log('[getEventBySlug] Event found:', event.id);
 
     // Validiere locale
     const validLocale = ['de', 'en'].includes(locale) ? locale : 'de';
