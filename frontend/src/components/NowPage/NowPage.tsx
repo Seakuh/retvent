@@ -3,6 +3,7 @@ import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Event, FeedResponse } from "../../utils";
 import { EventPage } from "../EventPage/EventPage";
 import { ExploreFeed } from "../Feed/ExploreFeed";
+import { RealListItem } from "../EventGallery/Items/RealListItem";
 import "./NowPage.css";
 
 interface NowPageProps {
@@ -222,7 +223,7 @@ export const NowPage: React.FC<NowPageProps> = ({
             return eventDate >= dayStart && eventDate <= dayEnd;
           });
 
-          return (
+              return (
             <div key={option.id} id={option.id} className="now-section">
               {/* <div className="now-section-header">
                 <div className="now-section-title-wrapper">
@@ -232,9 +233,21 @@ export const NowPage: React.FC<NowPageProps> = ({
                 </div>
               </div> */}
               {dayEvents.length > 0 ? (
-                <EventPage
-                  favoriteEvents={dayEvents}
-                />
+                <div className="now-events-container">
+                  {dayEvents.map((event) => (
+                    <div key={event.id || event._id} className="now-event-item">
+                      <div className="now-event-item-left">
+                        <RealListItem event={event} />
+                      </div>
+                      <div className="now-event-item-right">
+                        <div className="now-event-description">
+                          <h3 className="now-event-description-title">{event.title}</h3>
+                          <p className="now-event-description-text">{event.description}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <div className="now-empty-state">
                   <p className="now-empty-message">
