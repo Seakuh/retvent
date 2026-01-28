@@ -21,9 +21,11 @@
   top: 0;
   z-index: 100;
   width: 100%;
-  backdrop-filter: blur(20px);
+  /* Replaced expensive backdrop-filter with solid background for better performance */
   display: flex;
   align-items: center;
+  /* Prevent layout shift from sticky positioning */
+  contain: layout style;
 }
 
 .now-nav-container {
@@ -44,7 +46,7 @@
   display: none;
 }
 
-/* Scroll Buttons */
+/* Scroll Buttons - Always visible to prevent CLS */
 .now-nav-scroll-btn {
   display: flex;
   align-items: center;
@@ -56,12 +58,19 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
   flex-shrink: 0;
   z-index: 10;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  /* GPU acceleration for smooth animations */
+  will-change: opacity;
+}
+
+.now-nav-scroll-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .now-nav-scroll-btn:hover {
@@ -89,7 +98,8 @@
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  /* Specific transitions instead of 'all' for better performance */
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -98,7 +108,7 @@
   background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
   color: #ffffff;
-  transform: translateY(-2px);
+  /* Removed transform to prevent layout shift */
 }
 
 .now-nav-item.active {

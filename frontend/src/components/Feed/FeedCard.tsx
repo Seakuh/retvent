@@ -28,6 +28,9 @@ export const FeedCard = ({
             }
             alt={feed.profileName || "Profile"}
             loading="lazy"
+            width={96}
+            height={96}
+            decoding="async"
           />
         </div>
       </div>

@@ -64,8 +64,10 @@
 
 .loading-spinner {
   font-size: 2rem;
-  animation: spin 1s linear infinite;
+  animation: event-page-spin 1s linear infinite;
   margin-bottom: 1rem;
+  /* GPU acceleration for smooth spinner */
+  will-change: transform;
 }
 
 .error-icon {
@@ -73,7 +75,7 @@
   margin-bottom: 1rem;
 }
 
-@keyframes spin {
+@keyframes event-page-spin {
   from {
     transform: rotate(0deg);
   }

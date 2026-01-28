@@ -32,6 +32,13 @@
   color: white;
   cursor: pointer;
   z-index: 10;
+  /* Transition for smooth hide/show */
+  transition: opacity 0.2s ease;
+}
+
+.scroll-button.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .scroll-button-left {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Event, FeedResponse } from "../../utils";
 import { EventPage } from "../EventPage/EventPage";
@@ -46,25 +46,43 @@ export const NowPage: React.FC<NowPageProps> = ({
   }, []);
 
 
-  // Track active section on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = dateOptions.map((opt) => opt.id);
-      const scrollPosition = window.scrollY + 200;
+  // Debounced scroll handler for better performance
+  const handleScroll = useCallback(() => {
+    const sections = dateOptions.map((opt) => opt.id);
+    const scrollPosition = window.scrollY + 200;
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = document.getElementById(sections[i]);
-        if (section && section.offsetTop <= scrollPosition) {
-          setActiveSection(sections[i]);
-          break;
-        }
+    for (let i = sections.length - 1; i >= 0; i--) {
+      const section = document.getElementById(sections[i]);
+      if (section && section.offsetTop <= scrollPosition) {
+        setActiveSection(sections[i]);
+        break;
+      }
+    }
+  }, [dateOptions]);
+
+  // Track active section on scroll with debouncing
+  useEffect(() => {
+    let rafId: number;
+    let ticking = false;
+
+    const onScroll = () => {
+      if (!ticking) {
+        rafId = requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     handleScroll(); // Initial check
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [dateOptions]);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [handleScroll]);
 
   // Auto-scroll navigation to active section
   useEffect(() => {
@@ -167,15 +185,13 @@ export const NowPage: React.FC<NowPageProps> = ({
       {/* Horizontal Navigation Bubbles */}
       {dateOptions.length > 0 && (
         <nav className="now-nav">
-          {showLeftArrow && (
-            <button
-              className="now-nav-scroll-btn now-nav-scroll-left"
-              onClick={() => scrollNav("left")}
-              aria-label="Scroll left"
-            >
-              <ChevronLeft size={20} />
-            </button>
-          )}
+          <button
+            className={`now-nav-scroll-btn now-nav-scroll-left ${!showLeftArrow ? 'hidden' : ''}`}
+            onClick={() => scrollNav("left")}
+            aria-label="Scroll left"
+          >
+            <ChevronLeft size={20} />
+          </button>
           <div className="now-nav-container" ref={navContainerRef}>
             {dateOptions.map((option) => {
               const isSelected =
@@ -195,15 +211,13 @@ export const NowPage: React.FC<NowPageProps> = ({
               );
             })}
           </div>
-          {showRightArrow && (
-            <button
-              className="now-nav-scroll-btn now-nav-scroll-right"
-              onClick={() => scrollNav("right")}
-              aria-label="Scroll right"
-            >
-              <ChevronRight size={20} />
-            </button>
-          )}
+          <button
+            className={`now-nav-scroll-btn now-nav-scroll-right ${!showRightArrow ? 'hidden' : ''}`}
+            onClick={() => scrollNav("right")}
+            aria-label="Scroll right"
+          >
+            <ChevronRight size={20} />
+          </button>
         </nav>
       )}
 

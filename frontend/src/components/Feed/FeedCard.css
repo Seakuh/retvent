@@ -5,59 +5,63 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  /* Reserve space to prevent CLS */
+  min-width: 6rem;
+  min-height: 8rem;
 }
 
 .profile-card-border {
-    position: relative;  /* Neu */
-    width: 6rem;
-    height: 6rem;
-    border-radius: 50%;
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  /* Static gradient border instead of animated - better performance */
+  background: linear-gradient(135deg,
+              rgba(var(--color-neon-blue-rgb), 0.8),
+              rgba(var(--color-neon-purple-rgb), 0.8));
+  padding: 3px;
 }
 
-/* Neue Klasse für den rotierenden Rahmen */
+/* Simplified border effect - no animation for better performance */
 .profile-card-border::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 50%;
-    padding: 3px;
-    background: linear-gradient(315deg,
-                rgba(var(--color-neon-blue-rgb), 0.8),
-                rgba(var(--color-neon-purple-rgb), 0.8));
-    animation: spin 4s linear infinite;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, 
-                 linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg,
+              rgba(var(--color-neon-blue-rgb), 0.9),
+              rgba(var(--color-neon-purple-rgb), 0.9));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-card-border:hover::before {
+  opacity: 1;
 }
 
 .profile-card-inner {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Ensure inner is above the pseudo-element */
+  position: relative;
+  z-index: 1;
 }
-  
+
 .profile-card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-  
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  /* Fixed dimensions to prevent CLS */
+  aspect-ratio: 1 / 1;
 }
 
 .profile-card-username {
@@ -80,11 +84,12 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    min-width: 4.5rem;
+    min-height: 6rem;
   }
 
   .profile-card-border {
     width: 4.5rem;
     height: 4.5rem;
   }
-
 }

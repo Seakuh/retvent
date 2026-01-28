@@ -93,7 +93,6 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   };
 
   const renderLineup = (event: Event) => {
-    console.log(event.lineup);
     if (!event.lineup || event.lineup.length === 0) {
       return (
         <div className="lineup-container" onClick={handleLineupClick}>
@@ -165,10 +164,12 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
      
         <div className="real-event-thumbnail">
           <img
-            src={`https://img.event-scanner.com/insecure/rs:fit:935/q:70/plain/${event.imageUrl}@webp`}
+            src={`https://img.event-scanner.com/insecure/rs:fit:470/q:70/plain/${event.imageUrl}@webp`}
             alt={event.title}
             loading="lazy"
             decoding="async"
+            width={470}
+            height={353}
           />
         </div>
         <div className="event-meta-container">

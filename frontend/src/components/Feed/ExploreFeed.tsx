@@ -23,9 +23,14 @@ export const ExploreFeed = ({ feedItemsResponse }: ExploreFeedProps) => {
     setIsFeedModalOpen,
   } = useFeed();
 
-  setFeedItems(feedItemsResponse || []);
-
   const scrollContainer = useRef<HTMLDivElement>(null);
+
+  // Move setFeedItems to useEffect to avoid render-time side effects
+  useEffect(() => {
+    if (feedItemsResponse && feedItemsResponse.length > 0) {
+      setFeedItems(feedItemsResponse);
+    }
+  }, [feedItemsResponse, setFeedItems]);
 
   const checkScrollPosition = () => {
     const el = scrollContainer.current;
@@ -53,7 +58,8 @@ export const ExploreFeed = ({ feedItemsResponse }: ExploreFeedProps) => {
     const el = scrollContainer.current;
     if (!el) return;
 
-    el.addEventListener("scroll", checkScrollPosition);
+    // Use passive listener for better scroll performance
+    el.addEventListener("scroll", checkScrollPosition, { passive: true });
     checkScrollPosition(); // initialer Check
 
     return () => el.removeEventListener("scroll", checkScrollPosition);
@@ -81,14 +87,13 @@ export const ExploreFeed = ({ feedItemsResponse }: ExploreFeedProps) => {
 
   return (
     <div className="explore-feed-wrapper">
-      {!isAtStart && (
-        <button
-          className="scroll-button scroll-button-left"
-          onClick={() => scroll("left")}
-        >
-          <ChevronLeft />
-        </button>
-      )}
+      <button
+        className={`scroll-button scroll-button-left ${isAtStart ? 'hidden' : ''}`}
+        onClick={() => scroll("left")}
+        aria-label="Scroll left"
+      >
+        <ChevronLeft />
+      </button>
 
       <div ref={scrollContainer} className="explore-feed-container">
         {feedItems.map((feed) => (
@@ -101,14 +106,13 @@ export const ExploreFeed = ({ feedItemsResponse }: ExploreFeedProps) => {
         ))}
       </div>
 
-      {!isAtEnd && (
-        <button
-          className="scroll-button scroll-button-right"
-          onClick={() => scroll("right")}
-        >
-          <ChevronRight />
-        </button>
-      )}
+      <button
+        className={`scroll-button scroll-button-right ${isAtEnd ? 'hidden' : ''}`}
+        onClick={() => scroll("right")}
+        aria-label="Scroll right"
+      >
+        <ChevronRight />
+      </button>
 
       {isFeedModalOpen && (
         <FeedModal
