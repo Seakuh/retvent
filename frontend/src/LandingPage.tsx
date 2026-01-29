@@ -20,6 +20,7 @@ import { SearchPage } from "./pages/SearchPage";
 import { SideBar } from "./SideBar";
 import { ViewMode } from "./types/event";
 import { UploadModal } from "./UploadModal/UploadModal";
+import "./LandingPage.css";
 
 // ============================================================================
 // LOADING SPINNER COMPONENT
@@ -313,27 +314,37 @@ function LandingPage() {
       <HelmetMeta />
 
       {/* Desktop Sidebar Navigation */}
-      <div className="fixed left-0 top-0 h-screen w-64 z-50 hidden md:block">
-        <SideBar
-          setSearchPerformed={setSearchPerformed}
-          setSearchState={setSearchState}
-          setIsSearchOpen={setIsSearchOpen}
-          isSearchOpen={isSearchOpen}
-          isUploadOpen={isUploadOpen}
-          setViewMode={setViewMode}
-          showUploads={showUploads}
-          setShowUploads={setShowUploads}
-          handleOnUpload={handleOnUpload}
-          handleInstallClick={handleInstallClick}
-          handleLogout={handleLogout}
-          loggedIn={loggedIn}
-          user={user}
-          setIsUploadOpen={setIsUploadOpen}
-        />
-      </div>
 
       {/* Main Content Area */}
-      <div className="md:ml-64">
+      <div className="md:ml-64 landing-page-content-wrapper" style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width: '100%',
+        maxWidth: '100%',
+        overflowX: 'hidden',
+        boxSizing: 'border-box',
+        minWidth: 0
+      }}>
+        <div className="fixed left-0 top-0 h-screen w-64 z-50 hidden md:block">
+          <SideBar
+            setSearchPerformed={setSearchPerformed}
+            setSearchState={setSearchState}
+            setIsSearchOpen={setIsSearchOpen}
+            isSearchOpen={isSearchOpen}
+            isUploadOpen={isUploadOpen}
+            setViewMode={setViewMode}
+            showUploads={showUploads}
+            setShowUploads={setShowUploads}
+            handleOnUpload={handleOnUpload}
+            handleInstallClick={handleInstallClick}
+            handleLogout={handleLogout}
+            loggedIn={loggedIn}
+            user={user}
+            setIsUploadOpen={setIsUploadOpen}
+          />
+        </div>
         {/* Mobile Bottom Navigation */}
         <BottomBar
           setViewMode={handleViewChange}
@@ -344,25 +355,45 @@ function LandingPage() {
           navigate={navigate}
         />
 
-        {/* Main Content */}
-        <main className="max-w-7xl mx-auto md:pb-0">
+        {/* Main Content - Zentriert unabhängig von Sidebar */}
+        <main className="md:pb-0 landing-page-main-content" style={{ 
+          maxWidth: 'var(--content-max-width)', 
+          width: '100%',
+          paddingLeft: '1rem',
+          paddingRight: '1rem',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'stretch',
+          overflowX: 'hidden',
+          minWidth: 0
+        }}>
           {/* Filter Bar (City + Category) - Hidden in Search view */}
           {viewMode !== "Search" && (
-            <FilterBar
-              location={location}
-              category={category}
-              dateRange={dateRange}
-              favoriteEvents={favoriteEvents}
-              viewMode={viewMode}
-              onLocationChange={handleLocationChange}
-              onCategoryChange={handleCategoryChange}
-              onDateChange={handleDateChange}
-              onViewModeChange={handleViewChange}
-            />
+            <div style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+              <FilterBar
+                location={location}
+                category={category}
+                dateRange={dateRange}
+                favoriteEvents={favoriteEvents}
+                viewMode={viewMode}
+                onLocationChange={handleLocationChange}
+                onCategoryChange={handleCategoryChange}
+                onDateChange={handleDateChange}
+                onViewModeChange={handleViewChange}
+              />
+            </div>
           )}
 
           {/* Dynamic Content Based on View Mode */}
-          {renderContent}
+          <div style={{ 
+            width: '100%', 
+            maxWidth: '100%', 
+            boxSizing: 'border-box', 
+            overflowX: 'hidden'
+          }}>
+            {renderContent}
+          </div>
         </main>
 
         {/* Upload Modal */}
@@ -373,7 +404,16 @@ function LandingPage() {
         />
 
         {/* Footer */}
-        <Footer />
+        <div className="landing-page-main-content" style={{ 
+          maxWidth: 'var(--content-max-width)', 
+          width: '100%',
+          paddingLeft: '1rem',
+          paddingRight: '1rem',
+          boxSizing: 'border-box',
+          overflowX: 'hidden'
+        }}>
+          <Footer />
+        </div>
       </div>
     </>
   );

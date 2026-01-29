@@ -1,0 +1,21 @@
+/* LandingPage spezifische Styles für Zentrierung */
+
+/* Desktop: Main Content zentrieren unabhängig von Sidebar */
+@media (min-width: 768px) {
+  /* Der Container mit md:ml-64 hat bereits den linken Margin (256px) */
+  /* Wir zentrieren den Content im verfügbaren Bereich */
+  .landing-page-main-content {
+    max-width: var(--content-max-width);
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100%;
+  }
+  
+  /* Container für den Main Content Bereich - zentriert den Content */
+  .landing-page-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+}

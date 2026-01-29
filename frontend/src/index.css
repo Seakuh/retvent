@@ -16,6 +16,7 @@
   --color-neon-blue-dark: #007bff;
   --color-neon-blue-dark-2: #000033;
   --color-grey-box: #0f0f0f;
+  --content-max-width: 1200px;
 }
 
 :root[data-theme="classic"] {
@@ -33,10 +34,34 @@
   --color-neon-blue-dark-2: #000000;
 }
 
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
 body {
   background: linear-gradient(135deg, #000046 0%, #000000 100%);
   font-family: system-ui, -apple-system, sans-serif;
   transition: background 0.3s ease;
+  width: 100%;
+  max-width: 100vw;
 }
 
 body[data-theme="classic"],
