@@ -256,11 +256,12 @@ export const NowPage: React.FC<NowPageProps> = ({
                   </div>
                 </>
               ) : (
-                <div className="now-empty-state">
-                  <p className="now-empty-message">
-                    No events scheduled for {option.label.toLowerCase()}
-                  </p>
-                </div>
+                // <div className="now-empty-state">
+                //   <p className="now-empty-message">
+                //     No events scheduled for {option.label.toLowerCase()}
+                //   </p>
+                // </div>
+                null
               )}
             </div>
           );
