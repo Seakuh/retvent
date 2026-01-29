@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import EventGalleryIII from "../components/EventGallery/EventGalleryIII";
 import { defaultProfileImage, Event, Profile } from "../utils";
 import "./SearchPage.css";
-import { searchNew, searchProfiles } from "./service";
+import { searchArtists, searchNew, searchProfiles } from "./service";
 export const SearchPage: FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [events, setEvents] = useState<Event[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [artists, setArtists] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [topTags, setTopTags] = useState<[string, number][]>([]);
@@ -63,11 +64,18 @@ export const SearchPage: FC = () => {
     console.log("Profiles", results);
   }, [searchTerm]);
 
+  const fetchArtists = useCallback(async () => {
+    const results = await searchArtists(searchTerm);
+    setArtists(results);
+    console.log("Artists", results);
+  }, [searchTerm]);
+
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       offsetRef.current = 0;
       fetchEvents(0);
       fetchProfiles();
+      fetchArtists();
     }, 500);
 
     return () => clearTimeout(debounceTimer);
@@ -119,6 +127,16 @@ export const SearchPage: FC = () => {
           )}
         </div> */}
       </div>
+      {artists.length > 0 && (
+        <div className="search-page-artists-container">
+          {artists.map((artist) => (
+            <div key={artist} className="search-page-artist-card">
+              <img src={defaultProfileImage} alt={artist} />
+              <h3>{artist}</h3>
+            </div>
+          ))}
+        </div>
+      )}
       {profiles.length > 0 && (
         <div className="search-page-profiles-container">
           {profiles.map((profile) => (

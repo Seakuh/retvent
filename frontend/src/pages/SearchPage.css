@@ -131,3 +131,13 @@
   .search-page-tag{
     color: var(--color-neon-blue);
   }
+
+  .search-page-artists-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }

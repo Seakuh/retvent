@@ -101,4 +101,24 @@ export const getEvent = async (eventId: string): Promise<Event> => {
     console.error("🚨 Error fetching event:", error);
     return {} as Event;
   }
+
+  
+};
+
+
+// SEARCH ARTISTS
+export const searchArtists = async (query: string): Promise<string[]> => {
+  try {
+    const response = await fetch(`${API_URL}events/search/artists?query=${encodeURIComponent(query)}`);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to search artists: ${response.status} ${response.statusText}`
+      );
+    }
+    const data = await response.json();
+    return data as string[];
+  } catch (error) {
+    console.error("Error searching artists:", error);
+    return [];
+  }
 };
