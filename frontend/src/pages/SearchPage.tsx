@@ -127,53 +127,74 @@ export const SearchPage: FC = () => {
           )}
         </div> */}
       </div>
-      {artists.length > 0 && (
-        <div className="search-page-artists-container">
-          {artists.map((artist) => (
-            <div key={artist} className="search-page-artist-card">
-              <img src={defaultProfileImage} alt={artist} />
-              <h3>{artist}</h3>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Profiles Section */}
       {profiles.length > 0 && (
-        <div className="search-page-profiles-container">
-          {profiles.map((profile) => (
-            <div key={profile.id}>
-              <div
-                className="search-profile-card-inner"
-                onClick={() => {
-                  navigate(`/profile/${profile.userId}`);
-                }}
-              >
-                <img
-                  className="search-profile-card-image"
-                  src={
-                    profile.profileImageUrl
-                      ? `https://img.event-scanner.com/insecure/rs:fill:96:96/plain/${profile.profileImageUrl}@webp`
-                      : defaultProfileImage
-                  }
-                  loading="lazy"
-                />
+        <div className="search-page-section">
+          <h2 className="search-page-section-title">Profiles</h2>
+          <div className="search-page-profiles-container">
+            {profiles.map((profile) => (
+              <div key={profile.id}>
+                <div
+                  className="search-profile-card-inner"
+                  onClick={() => {
+                    navigate(`/profile/${profile.userId}`);
+                  }}
+                >
+                  <img
+                    className="search-profile-card-image"
+                    src={
+                      profile.profileImageUrl
+                        ? `https://img.event-scanner.com/insecure/rs:fill:96:96/plain/${profile.profileImageUrl}@webp`
+                        : defaultProfileImage
+                    }
+                    loading="lazy"
+                  />
+                </div>
+                <div className="profile-card-username-container">
+                  <h3 className="profile-card-username">
+                    {profile.username || "Profile"}
+                  </h3>
+                </div>
               </div>
-              <div className="profile-card-username-container">
-                <h3 className="profile-card-username">
-                  {profile.username || "Profile"}
-                </h3>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
+      {/* Artists Section */}
+      {artists.length > 0 && (
+        <div className="search-page-section">
+          <h2 className="search-page-section-title">Artists</h2>
+          <div className="search-page-artists-container">
+            {artists.map((artist, index) => {
+              // Handle both string and object types
+              const artistName = typeof artist === 'string' ? artist : (artist as any)?.name || String(artist);
+              return (
+                <div 
+                  key={`${artistName}-${index}`} 
+                  className="search-page-artist-card"
+                  onClick={() => navigate(`/artist/${encodeURIComponent(artistName)}/events`)}
+                >
+                  <img src={defaultProfileImage} alt={artistName} />
+                  <h3>{artistName}</h3>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Events Section */}
       {events.length === 0 && !loading ? (
         <div className="no-results">
           <Rabbit size={150} strokeWidth={1.5} />
           <p></p>
         </div>
       ) : (
-        <EventGalleryIII events={events} title="" />
+        <div className="search-page-section">
+          <h2 className="search-page-section-title">Events</h2>
+          <EventGalleryIII events={events} title="" />
+        </div>
       )}
 
       {loading && <div className="loading-text">Loading...</div>}
