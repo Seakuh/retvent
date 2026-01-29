@@ -161,13 +161,12 @@ export const SearchPage: FC = () => {
         </div>
       )}
 
-      {/* Artists Section */}
-      {artists.length > 0 && (
+      {/* Artists Section - nur anzeigen wenn gesucht wird */}
+      {searchTerm && artists.length > 0 && (
         <div className="search-page-section">
           <h2 className="search-page-section-title">Artists</h2>
           <div className="search-page-artists-container">
             {artists.map((artist, index) => {
-              // Handle both string and object types
               const artistName = typeof artist === 'string' ? artist : (artist as any)?.name || String(artist);
               return (
                 <div 
@@ -175,8 +174,7 @@ export const SearchPage: FC = () => {
                   className="search-page-artist-card"
                   onClick={() => navigate(`/artist/${encodeURIComponent(artistName)}/events`)}
                 >
-                  <img src={defaultProfileImage} alt={artistName} />
-                  <h3>{artistName}</h3>
+                  <span className="search-page-artist-name">{artistName}</span>
                 </div>
               );
             })}
