@@ -28,6 +28,7 @@ import { CommunityService } from './community.service';
 @Injectable()
 export class EventService {
 
+
   
   constructor(
     private readonly eventRepository: MongoEventRepository,
@@ -2674,5 +2675,7 @@ export class EventService {
     return paginatedResults;
   }
 
-
+  searchArtists(query: string) {
+    return this.eventRepository.searchArtists(query);
+  }
 }

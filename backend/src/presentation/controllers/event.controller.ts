@@ -1964,4 +1964,12 @@ export class EventController {
       throw error;
     }
   }
+
+  // SEARCH ARTISTS
+  // ------------------------------------------------------------
+
+  @Get('search/artists')
+  async searchArtists(@Query('query') query: string) {
+    return this.eventService.searchArtists(query);
+  }
 }

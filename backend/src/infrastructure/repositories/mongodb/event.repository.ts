@@ -9,6 +9,7 @@ import { IEventRepository } from '../../../core/repositories/event.repository.in
 @Injectable()
 export class MongoEventRepository implements IEventRepository {
 
+
   constructor(@InjectModel('Event') private eventModel: Model<Event>) {}
 
   /**
@@ -1506,4 +1507,78 @@ export class MongoEventRepository implements IEventRepository {
       return null;
     }
   }
-}
+
+  /**
+   * Findet ein Event anhand des Ticket-Links (für Duplikat-Check)
+   * @param ticketLink - Der Ticket-Link des Events
+   * @returns Event oder null wenn nicht gefunden
+   */
+  async findByTicketLink(ticketLink: string): Promise<Event | null> {
+    try {
+      const event = await this.eventModel
+        .findOne({ ticketLink })
+        .select('-embedding')
+        .exec();
+
+      return event ? this.toEntity(event) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Findet ein Event anhand von Titel und Datum (für Duplikat-Check)
+   * @param title - Der Titel des Events
+   * @param date - Das Datum des Events
+   * @returns Event oder null wenn nicht gefunden
+   */
+  async findByTitleAndDate(title: string, date: Date): Promise<Event | null> {
+    try {
+      // Suche Events mit ähnlichem Titel und gleichem Datum (Toleranz: ±1 Tag)
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const event = await this.eventModel
+        .findOne({
+          title: { $regex: new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') },
+          startDate: {
+            $gte: startOfDay,
+            $lte: endOfDay,
+          },
+        })
+        .select('-embedding')
+        .exec();
+
+      return event ? this.toEntity(event) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+ 
+
+    private escapeRegex(s: string) {
+      return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    
+    async searchArtists(query: string): Promise<string[]> {
+      const q = query.trim();
+      if (!q) return [];
+    
+      const regex = new RegExp(`^${this.escapeRegex(q)}`, 'i'); // beginnt mit
+    
+      const docs = await this.eventModel
+        .find({ 'lineup.name': regex })
+        .limit(10)
+        .select('lineup.name')
+        .lean()
+        .exec();
+    
+      // optional: wirklich nur die passenden Namen zurückgeben + dedupe
+      const names = docs.flatMap(d => d.lineup.map(l => l.name));
+      return [...new Set(names.filter(n => regex.test(n)))].slice(0, 10);
+    }
+    
+  }
