@@ -20,31 +20,51 @@ export const NowPage: React.FC<NowPageProps> = ({
   const [showRightArrow, setShowRightArrow] = useState(true);
   const navContainerRef = useRef<HTMLDivElement>(null);
 
-  // Generate date options (today + next 7 days)
+  // Generate date options from actual event dates
   const dateOptions = useMemo(() => {
-    const dates: { date: Date; id: string; label: string }[] = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
 
-    for (let i = 0; i < 8; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
+    // Get unique dates from events
+    const uniqueDatesMap = new Map<string, Date>();
+    favoriteEvents.forEach((event) => {
+      if (event.startDate) {
+        const eventDate = new Date(event.startDate);
+        eventDate.setHours(0, 0, 0, 0);
+        const dateKey = eventDate.toISOString().split("T")[0];
+        if (!uniqueDatesMap.has(dateKey)) {
+          uniqueDatesMap.set(dateKey, eventDate);
+        }
+      }
+    });
+
+    // Sort dates chronologically
+    const sortedDates = Array.from(uniqueDatesMap.values()).sort(
+      (a, b) => a.getTime() - b.getTime()
+    );
+
+    // Create date options with labels
+    return sortedDates.map((date) => {
       const id = `now-${date.toISOString().split("T")[0]}`;
-      const label =
-        i === 0
-          ? "Today"
-          : i === 1
-          ? "Tomorrow"
-          : date.toLocaleDateString("de-DE", {
-              weekday: "short",
-              day: "numeric",
-              month: "short",
-            });
-      dates.push({ date, id, label });
-    }
-    return dates;
-  }, []);
+      let label: string;
 
+      if (date.getTime() === today.getTime()) {
+        label = "Today";
+      } else if (date.getTime() === tomorrow.getTime()) {
+        label = "Tomorrow";
+      } else {
+        label = date.toLocaleDateString("de-DE", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+        });
+      }
+
+      return { date, id, label };
+    });
+  }, [favoriteEvents]);
 
   // Track active section on scroll
   useEffect(() => {
@@ -62,7 +82,7 @@ export const NowPage: React.FC<NowPageProps> = ({
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initial check
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, [dateOptions]);
 
@@ -73,30 +93,26 @@ export const NowPage: React.FC<NowPageProps> = ({
     const activeButton = navContainerRef.current.querySelector(
       `[data-section="${activeSection}"]`
     ) as HTMLElement;
-    
+
     if (activeButton) {
       const container = navContainerRef.current;
       const buttonLeft = activeButton.offsetLeft;
       const buttonWidth = activeButton.offsetWidth;
       const containerWidth = container.clientWidth;
       const scrollLeft = container.scrollLeft;
-      
-      // Check if button is outside visible area
+
       const buttonRight = buttonLeft + buttonWidth;
       const visibleLeft = scrollLeft;
       const visibleRight = scrollLeft + containerWidth;
-      
-      // Scroll if button is outside visible area
+
       if (buttonLeft < visibleLeft) {
-        // Button is to the left of visible area
         container.scrollTo({
-          left: buttonLeft - 20, // Add some padding
+          left: buttonLeft - 20,
           behavior: "smooth",
         });
       } else if (buttonRight > visibleRight) {
-        // Button is to the right of visible area
         container.scrollTo({
-          left: buttonRight - containerWidth + 20, // Add some padding
+          left: buttonRight - containerWidth + 20,
           behavior: "smooth",
         });
       }
@@ -224,23 +240,8 @@ export const NowPage: React.FC<NowPageProps> = ({
 
           return (
             <div key={option.id} id={option.id} className="now-section">
-              {/* <div className="now-section-header">
-                <div className="now-section-title-wrapper">
-                  <Calendar className="now-section-icon" size={24} />
-                  <h2 className="now-section-title">{option.label}</h2>
-                  <span className="now-section-badge">{dayEvents.length}</span>
-                </div>
-              </div> */}
-              {dayEvents.length > 0 ? (
-                <EventPage
-                  favoriteEvents={dayEvents}
-                />
-              ) : (
-                <div className="now-empty-state">
-                  <p className="now-empty-message">
-                    No events scheduled for {option.label.toLowerCase()}
-                  </p>
-                </div>
+              {dayEvents.length > 0 && (
+                <EventPage favoriteEvents={dayEvents} />
               )}
             </div>
           );
