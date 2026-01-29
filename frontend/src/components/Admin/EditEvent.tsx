@@ -1214,7 +1214,7 @@ const EditEvent: React.FC = () => {
             <ChevronLeft className="h-5 w-5" />
           </button>
           <div className="hero-title-section">
-            <h1 className="hero-title">{formData.title || "Untitled Event"}</h1>
+            <h1 className="hero-title" onClick={() => navigate(`/event/${eventId}`)}>{formData.title || "Untitled Event"}</h1>
             <div className="hero-subtitle-row">
               <p className="hero-subtitle">
                 {formData.city && <span className="hero-location">{formData.city}</span>}
@@ -1262,7 +1262,7 @@ const EditEvent: React.FC = () => {
           <button onClick={handleBack} className="sticky-back-button">
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <h1 className="sticky-title">{formData.title || "Untitled Event"}</h1>
+          <h1 className="sticky-title" onClick={() => navigate(`/event/${eventId}`)}>{formData.title || "Untitled Event"}</h1>
         </div>
       )}
 

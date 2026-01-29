@@ -107,6 +107,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: 1;
+  cursor: pointer;
 }
 
 .hero-background {
@@ -230,6 +231,7 @@
   margin: 0 0 0.5rem 0;
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
   line-height: 1.2;
+  cursor: pointer;
 }
 
 .hero-subtitle-row {

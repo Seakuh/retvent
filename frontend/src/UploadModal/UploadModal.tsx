@@ -276,7 +276,7 @@ export const UploadModal = ({
       {isProcessing && <ProcessingAnimation />}
 
       {/* Navigation after successful upload */}
-      {uploadedEvent && <Navigate to={`/event/${uploadedEvent.id}`} />}
+      {uploadedEvent && <Navigate to={`admin/events/edit/${uploadedEvent.id}`} />}
 
       {/* Error dialog for upload failures */}
       {error && <ErrorDialog message={error} onClose={() => setError(null)} />}
