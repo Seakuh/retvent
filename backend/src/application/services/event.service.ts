@@ -2678,4 +2678,35 @@ export class EventService {
   searchArtists(query: string) {
     return this.eventRepository.searchArtists(query);
   }
+
+
+  // ------------------------------------------------------------
+  // GET EVENTS BY FROM EVERYWHERE
+  // ------------------------------------------------------------
+  async getEventsByFromEverywhere(query: string) {
+
+    const eventsServerSide = await this.eventRepository.findAll();
+    
+    
+    // get events from word wide web 
+
+    // 1. interpret query as a search query
+    const searchQuery = await this.chatGptService.createEmbeddingV2(query);
+
+    // 2. Search on qdrant
+    const events = await this.qdrantService.searchEventsSimilar({
+      vector: searchQuery,
+      limit: 10,
+      withPayload: true,
+    });
+
+    return events;
+
+    // 1. Search on google 
+    
+    // 2. Search on meetup
+
+
+
+  }
 }
