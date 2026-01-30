@@ -3,9 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { RealListItem } from "../components/EventGallery/Items/RealListItem";
 import { API_URL, Event, IRegion } from "../utils";
 import "./RegionPage.css";
-import { getRegion, getRegionEvents, uploadRegionLogo, uploadRegionImages } from "./service";
+import { getRegion, getRegionEvents, uploadRegionLogo, uploadRegionImages, getSimilarRegions } from "./service";
 import { ChevronLeft, Plus, Navigation, X, Info, Edit, MapPin } from "lucide-react";
 import { RegionSearchModal } from "./RegionSearchModal";
+import Footer from "../Footer/Footer";
 
 export const RegionPage = () => {
   const { regionSlug } = useParams();
@@ -24,6 +25,7 @@ export const RegionPage = () => {
   const [showAllArtists, setShowAllArtists] = useState(false);
   const [bubblesToShow, setBubblesToShow] = useState(4);
   const [isMobile, setIsMobile] = useState(false);
+  const [similarRegions, setSimilarRegions] = useState<IRegion[]>([]);
   const navigate = useNavigate();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const imagesInputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +45,11 @@ export const RegionPage = () => {
           if (fetchedRegion.id) {
             const regionEvents = await getRegionEvents(fetchedRegion.id);
             setEvents(regionEvents);
+            
+            // Ähnliche Regionen laden
+            const similar = await getSimilarRegions(fetchedRegion.id, 6);
+            // Aktuelle Region aus den ähnlichen Regionen entfernen
+            setSimilarRegions(similar.filter(r => r.id !== fetchedRegion.id));
           }
         } else {
           setNotFound(true);
@@ -720,6 +727,23 @@ export const RegionPage = () => {
         />
       </div>
 
+      {similarRegions.length > 0 && (
+        <div className="region-page-similar-section">
+          <h3 className="region-page-similar-title">Ähnliche Städte</h3>
+          <div className="region-page-similar-container">
+            {similarRegions.map((similarRegion) => (
+              <span
+                key={similarRegion.id}
+                className="region-page-similar-bubble"
+                onClick={() => navigate(`/region/${similarRegion.slug}`)}
+              >
+                {similarRegion.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+<Footer />
     </div>
   );
 };

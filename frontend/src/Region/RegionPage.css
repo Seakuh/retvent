@@ -848,7 +848,8 @@
   .region-page-bubbles-title,
   .region-page-artists-title,
   .region-page-vibe-title,
-  .region-page-events-title-header {
+  .region-page-events-title-header,
+  .region-page-similar-title {
     font-size: 1.5rem;
     margin: 1rem;
     margin-left: 1rem;
@@ -857,7 +858,8 @@
   /* Bubbles und Artists Sections Padding anpassen */
   .region-page-bubbles-section,
   .region-page-artists-section,
-  .region-page-vibe-section {
+  .region-page-vibe-section,
+  .region-page-similar-section {
     padding: 0 1rem;
   }
 
@@ -920,4 +922,74 @@
   .region-page-artist-bubble {
     flex-shrink: 0;
   }
+
+  /* Ähnliche Regionen auf Mobile */
+  .region-page-similar-container {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: none;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .region-page-similar-container::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .region-page-similar-bubble {
+    flex-shrink: 0;
+  }
+}
+
+/* Ähnliche Regionen Sektion */
+.region-page-similar-section {
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  padding: 0 2rem;
+}
+
+.region-page-similar-title {
+  font-size: 2.5rem;
+  margin: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  text-align: left;
+  line-height: 1.2;
+  margin-left: 1.5rem;
+}
+
+.region-page-similar-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+}
+
+.region-page-similar-bubble {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.region-page-similar-bubble:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }

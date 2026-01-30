@@ -32,17 +32,24 @@ export const getRegionEvents = async (regionId: string): Promise<any[]> => {
   }
 };
 
-export const searchRegions = async (query: string): Promise<IRegion[]> => {
+export const searchRegions = async (
+  query: string,
+  signal?: AbortSignal
+): Promise<IRegion[]> => {
   try {
     const response = await fetch(
-      `${API_URL}regions/search?query=${encodeURIComponent(query)}`
+      `${API_URL}regions/search?query=${encodeURIComponent(query)}`,
+      { signal }
     );
     if (!response.ok) {
       return [];
     }
     const data = await response.json();
     return data.regions || data || [];
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      throw error;
+    }
     console.error("Error searching regions:", error);
     return [];
   }
@@ -117,5 +124,25 @@ export const uploadRegionImages = async (
   } catch (error) {
     console.error("Error uploading region images:", error);
     throw error;
+  }
+};
+
+export const getSimilarRegions = async (
+  regionId: string,
+  limit: number = 6
+): Promise<IRegion[]> => {
+  try {
+    const response = await fetch(
+      `${API_URL}regions/${regionId}/similar?limit=${limit}`
+    );
+    if (!response.ok) {
+      // Fallback: Suche nach Regionen im selben Land
+      return [];
+    }
+    const data = await response.json();
+    return data.regions || data || [];
+  } catch (error) {
+    console.error("Error fetching similar regions:", error);
+    return [];
   }
 };

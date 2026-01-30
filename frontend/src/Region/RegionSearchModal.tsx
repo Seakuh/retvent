@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { searchRegions } from "./service";
 import { IRegion } from "../utils";
 import "./RegionSearchModal.css";
@@ -22,32 +22,82 @@ export const RegionSearchModal: React.FC<RegionSearchModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const internalInputRef = useRef<HTMLInputElement>(null);
   const inputRef = externalInputRef || internalInputRef;
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchTerm("");
+      setRegionSuggestions([]);
+      setSelectedIndex(-1);
+      setIsLoading(false);
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    }
+  }, [isOpen]);
+
+  // Focus input when modal opens
   useEffect(() => {
     if (isOpen && inputRef.current) {
-      inputRef.current.focus();
+      // Small delay to ensure modal is rendered
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
-  }, [isOpen, inputRef]);
+  }, [isOpen]);
 
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const performSearch = useCallback(async (value: string) => {
+    // Cancel previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    if (value.length === 0) {
+      setRegionSuggestions([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    try {
+      const regions = await searchRegions(value, controller.signal);
+      // Only update if request wasn't cancelled
+      if (!controller.signal.aborted) {
+        setRegionSuggestions(regions);
+        setIsLoading(false);
+      }
+    } catch (error: any) {
+      // Ignore abort errors
+      if (error.name !== 'AbortError' && !controller.signal.aborted) {
+        console.error("Error searching regions:", error);
+        setRegionSuggestions([]);
+        setIsLoading(false);
+      }
+    }
+  }, []);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
     setSelectedIndex(-1);
 
-    if (value.length > 0) {
-      setIsLoading(true);
-      try {
-        const regions = await searchRegions(value);
-        setRegionSuggestions(regions);
-      } catch (error) {
-        console.error("Error searching regions:", error);
-        setRegionSuggestions([]);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      setRegionSuggestions([]);
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
     }
+
+    // Debounce search
+    searchTimeoutRef.current = setTimeout(() => {
+      performSearch(value);
+    }, 300);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -60,20 +110,37 @@ export const RegionSearchModal: React.FC<RegionSearchModalProps> = ({
       e.preventDefault();
       setSelectedIndex((prev) => (prev > -1 ? prev - 1 : -1));
     } else if (e.key === "Enter") {
+      e.preventDefault();
       if (selectedIndex >= 0 && regionSuggestions[selectedIndex]) {
         const region = regionSuggestions[selectedIndex];
         onSelectRegion(region.slug);
+        onClose();
       } else if (regionSuggestions.length > 0) {
         onSelectRegion(regionSuggestions[0].slug);
+        onClose();
       }
     } else if (e.key === "Escape") {
+      e.preventDefault();
       onClose();
     }
   };
 
   const handleRegionClick = (region: IRegion) => {
     onSelectRegion(region.slug);
+    onClose();
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   if (!isOpen) return null;
 
@@ -81,8 +148,9 @@ export const RegionSearchModal: React.FC<RegionSearchModalProps> = ({
     <div
       className="region-search-modal-overlay"
       onClick={(e) => {
-        e.stopPropagation();
-        onClose();
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
       }}
     >
       <div
@@ -95,7 +163,7 @@ export const RegionSearchModal: React.FC<RegionSearchModalProps> = ({
           value={searchTerm}
           onChange={handleSearch}
           onKeyDown={handleKeyDown}
-          placeholder="Search for regions..."
+          placeholder="Region suchen..."
           className="region-search-input"
           autoFocus
         />
@@ -104,11 +172,11 @@ export const RegionSearchModal: React.FC<RegionSearchModalProps> = ({
             <div className="loading-spinner"></div>
           </div>
         )}
-        {regionSuggestions.length > 0 && (
+        {!isLoading && regionSuggestions.length > 0 && (
           <ul className="region-search-suggestions-list">
             {regionSuggestions.map((region, index) => (
               <li
-                key={`region-${region.id}`}
+                key={`region-${region.id || region.slug || index}`}
                 className={index === selectedIndex ? "selected" : ""}
                 onClick={() => handleRegionClick(region)}
                 onMouseEnter={() => setSelectedIndex(index)}
@@ -121,9 +189,9 @@ export const RegionSearchModal: React.FC<RegionSearchModalProps> = ({
             ))}
           </ul>
         )}
-        {searchTerm.length > 0 && regionSuggestions.length === 0 && !isLoading && (
+        {!isLoading && searchTerm.length > 0 && regionSuggestions.length === 0 && (
           <div className="region-search-no-results">
-            <p>No regions found</p>
+            <p>Keine Regionen gefunden</p>
           </div>
         )}
       </div>
