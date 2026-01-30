@@ -17,6 +17,7 @@ export const CommentSchema = new Schema({
   eventId: { type: Types.ObjectId, ref: 'Event', required: false },
   communityId: { type: Types.ObjectId, ref: 'Community', required: false },
   postId: { type: Types.ObjectId, ref: 'Post', required: false },
+  regionId: { type: Types.ObjectId, ref: 'Region', required: false },
   parentId: { type: Types.ObjectId, ref: 'Comment', default: null },
   likeIds: { type: [String], default: [] },
 });

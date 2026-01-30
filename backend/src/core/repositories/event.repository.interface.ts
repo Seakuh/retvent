@@ -19,4 +19,5 @@ export interface IEventRepository {
   uploadEventDocuments(eventId: string, documentUrls: string[]): Promise<any>;
   findEventsWithScheduledRelease(now: Date): Promise<Event[]>;
   findByShortId(shortId: string): Promise<Event | null>;
+  findByRegionId(regionId: string): Promise<Event[]>;
 }

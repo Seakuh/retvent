@@ -1436,6 +1436,10 @@ export class EventService {
     return this.eventRepository.findByLocationId(locationId);
   }
 
+  async findByRegionId(regionId: string): Promise<Event[]> {
+    return this.eventRepository.findByRegionId(regionId);
+  }
+
   async findLatest(limit: number = 10): Promise<Event[]> {
     return this.eventRepository.findLatest(limit);
   }

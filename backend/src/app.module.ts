@@ -20,6 +20,7 @@ import { TicketsController } from './presentation/controllers/tickets.controller
 import { UserController } from './presentation/controllers/user.controller';
 import { VoiceChatController } from './presentation/controllers/voice-chat.controller';
 import { MailController } from './presentation/controllers/mail.controller';
+import { RegionController } from './presentation/controllers/region.controller';
 const MONGODB_URI = 'mongodb://localhost:27017';
 @Module({
   imports: [
@@ -45,6 +46,7 @@ const MONGODB_URI = 'mongodb://localhost:27017';
     RegistrationController,
     VoiceChatController,
     MailController,
+    RegionController,
   ],
 })
 export class AppModule {}

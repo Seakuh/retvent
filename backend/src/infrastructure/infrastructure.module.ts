@@ -37,6 +37,8 @@ import { EventService } from '../application/services/event.service';
 import { LocationService } from '../application/services/location.service';
 import { RegistrationService } from '../application/services/registration.service';
 import { UserService } from '../application/services/user.service';
+import { RegionService } from '../application/services/region.service';
+import { RegionSeoService } from '../application/services/region-seo.service';
 import { CoreModule } from '../core/core.module';
 import { BcryptService } from '../core/services/bcrypt.service';
 import { AssessmentController } from '../presentation/controllers/assessment.controller';
@@ -61,6 +63,7 @@ import { MongoPostRepository } from './repositories/mongodb/post.repository';
 import { MongoProfileRepository } from './repositories/mongodb/profile.repository';
 import { MongoTicketRepository } from './repositories/mongodb/ticket.repository';
 import { MongoUserRepository } from './repositories/mongodb/user.repository';
+import { MongoRegionRepository } from './repositories/mongodb/region.repository';
 import { CommentSchema } from './schemas/comment.schema';
 import { CommunitySchema } from './schemas/community.schema';
 import { EventSchema } from './schemas/event.schema';
@@ -71,6 +74,8 @@ import { LocationSchema } from './schemas/location.schema';
 import { PostSchema } from './schemas/post.schema';
 import { ProfileSchema } from './schemas/profile.schema';
 import { UserSchema } from './schemas/user.schema';
+import { RegionSchema } from './schemas/region.schema';
+import { RegionVibeRatingSchema } from './schemas/region-vibe-rating.schema';
 import { AuthService } from './services/auth.service';
 import { ChatGPTService } from './services/chatgpt.service';
 import { GeolocationService } from './services/geolocation.service';
@@ -154,6 +159,8 @@ import { ScheduledReleaseService } from 'src/application/services/scheduled-rele
       { name: 'Post', schema: PostSchema },
       { name: 'PeerAssessment', schema: PeerAssessmentSchema },
       { name: 'SelfAssessment', schema: SelfAssessmentSchema },
+      { name: 'Region', schema: RegionSchema },
+      { name: 'RegionVibeRating', schema: RegionVibeRatingSchema },
     ]),
   ],
   controllers: [
@@ -202,6 +209,8 @@ import { ScheduledReleaseService } from 'src/application/services/scheduled-rele
     ReplicateService,
     GeolocationService,
     LocationService,
+    RegionService,
+    RegionSeoService,
     AuthService,
     PokerGameService,
     PokerStatsService,
@@ -220,6 +229,7 @@ import { ScheduledReleaseService } from 'src/application/services/scheduled-rele
     MongoPostRepository,
     MongoFeedRepository,
     MongoTicketRepository,
+    MongoRegionRepository,
     JwtStrategy,
     JwtAuthGuard,
     OwnerGuard,
@@ -244,6 +254,10 @@ import { ScheduledReleaseService } from 'src/application/services/scheduled-rele
     {
       provide: 'ILocationRepository',
       useClass: MongoLocationRepository,
+    },
+    {
+      provide: 'IRegionRepository',
+      useClass: MongoRegionRepository,
     },
     {
       provide: 'IUserRepository',
@@ -284,6 +298,7 @@ import { ScheduledReleaseService } from 'src/application/services/scheduled-rele
     ChatGPTService,
     FeedService,
     LocationService,
+    RegionService,
     AuthService,
     CommunityService,
     GroupService,
@@ -303,6 +318,7 @@ import { ScheduledReleaseService } from 'src/application/services/scheduled-rele
     'IEventRepository',
     'ICommunityRepository',
     'ILocationRepository',
+    'IRegionRepository',
     'IUserRepository',
     'ICommentRepository',
     'IProfileRepository',
@@ -316,6 +332,7 @@ import { ScheduledReleaseService } from 'src/application/services/scheduled-rele
     MongoCommunityRepository,
     MongoProfileRepository,
     MongoLocationRepository,
+    MongoRegionRepository,
     MongoPostRepository,
     MongoGrooveCastRepository,
     MongoCommentRepository,

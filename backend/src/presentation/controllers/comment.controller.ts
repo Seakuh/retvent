@@ -79,6 +79,35 @@ export class CommentController {
   async deleteComment(@Param('commentId') commentId: string, @Req() req: any) {
     return this.commentService.deleteComment(commentId, req.user.sub);
   }
+
+  @Get('/region/:regionId')
+  async getCommentsByRegionId(@Param('regionId') regionId: string) {
+    return this.commentService.findByRegionId(regionId);
+  }
+
+  @Get('/region/v2/:regionId')
+  async getCommentsByRegionIdWithUser(@Param('regionId') regionId: string) {
+    return this.commentService.findByRegionIdWithUser(regionId);
+  }
+
+  @Post('/region/:regionId')
+  @UseGuards(CommentGuard)
+  async createCommentToRegion(
+    @Param('regionId') regionId: string,
+    @Body() comment: CreateCommentDto,
+    @Req() req: any,
+  ) {
+    if (!comment || typeof comment.text !== 'string') {
+      throw new BadRequestException('The comment must contain a text');
+    }
+
+    if (!regionId || typeof regionId !== 'string') {
+      throw new BadRequestException('A valid region ID is required');
+    }
+
+    const userId = req.user?.id || 'public';
+    return this.commentService.createCommentToRegion(regionId, comment, userId);
+  }
 }
 
 // export const updateComment = async (comment: Comment) => {

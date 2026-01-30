@@ -104,6 +104,7 @@ export const EventSchema = new Schema(
     citySlug: { type: String },
     shortDescription: { type: String },
     region: { type: String },
+    regionId: { type: String, index: true }, // Referenz zur Region-Collection
     timezone: { type: String },
     categorySlug: { type: String },
     subcategory: { type: String },

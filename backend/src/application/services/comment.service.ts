@@ -1,14 +1,17 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { MongoCommentRepository } from 'src/infrastructure/repositories/mongodb/comment.repository';
 import { MongoEventRepository } from 'src/infrastructure/repositories/mongodb/event.repository';
 import { CreateCommentDto } from '../../presentation/dtos/create-comment.dto';
 import { UserService } from './user.service';
+import { IRegionRepository } from '../../core/repositories/region.repository.interface';
 @Injectable()
 export class CommentService {
   constructor(
     private readonly commentRepository: MongoCommentRepository,
     private readonly userService: UserService,
     private readonly eventRepository: MongoEventRepository,
+    @Inject('IRegionRepository')
+    private readonly regionRepository: IRegionRepository,
   ) {}
 
   getCommentsCountByUserId(userId: string) {
@@ -133,5 +136,60 @@ export class CommentService {
       throw new ForbiddenException('You are not the owner of this comment');
     }
     return this.commentRepository.delete(commentId);
+  }
+
+  async createCommentToRegion(
+    regionId: string,
+    comment: CreateCommentDto,
+    userId: string,
+  ) {
+    // Prüfe ob Region existiert
+    const region = await this.regionRepository.findById(regionId);
+    if (!region) {
+      throw new NotFoundException('Region not found');
+    }
+
+    if (userId !== 'public') {
+      await this.userService.addUserPoints(userId, 5);
+    }
+    return this.commentRepository.createCommentToRegion(
+      regionId,
+      comment,
+      userId,
+    );
+  }
+
+  async findByRegionId(regionId: string) {
+    const comments = await this.commentRepository.findByRegionId(regionId);
+    if (!comments || comments.length === 0) {
+      return [];
+    }
+    return comments;
+  }
+
+  async findByRegionIdWithUser(regionId: string) {
+    const comments = await this.commentRepository.findByRegionId(regionId);
+    if (!comments || comments.length === 0) {
+      return [];
+    }
+
+    return await Promise.all(
+      comments.map(async (comment) => {
+        const { username, profileImageUrl } =
+          await this.userService.getUsernameAndProfilePicture(comment.userId);
+
+        return {
+          id: comment.id,
+          text: comment.text,
+          createdAt: comment.createdAt,
+          userId: comment.userId,
+          regionId: comment.regionId,
+          parentId: comment.parentId,
+          likeIds: comment.likeIds || [],
+          username: username ?? '',
+          profileImageUrl: profileImageUrl ?? '',
+        };
+      }),
+    );
   }
 }

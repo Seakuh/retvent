@@ -559,6 +559,12 @@ export class MongoEventRepository implements IEventRepository {
     return events.map((event) => this.toEntity(event));
   }
 
+  async findByRegionId(regionId: string): Promise<Event[]> {
+    const filter = this.getPublishedEventsFilter({ regionId });
+    const events = await this.eventModel.find(filter).exec();
+    return events.map((event) => this.toEntity(event));
+  }
+
   async findByOrganizerId(organizerId: string): Promise<Event[]> {
     const events = await this.eventModel.find({ organizerId }).exec();
     return events.map((event) => this.toEntity(event));

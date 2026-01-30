@@ -90,6 +90,23 @@ export class MongoCommentRepository implements ICommentRepository {
   async findByEventId(eventId: string): Promise<DomainComment[]> {
     return this.commentModel.find({ eventId });
   }
+
+  async findByRegionId(regionId: string): Promise<DomainComment[]> {
+    return this.commentModel.find({ regionId }).sort({ createdAt: -1 });
+  }
+
+  async createCommentToRegion(
+    regionId: string,
+    comment: CreateCommentDto,
+    userId: string,
+  ) {
+    return this.commentModel.create({
+      ...comment,
+      regionId,
+      userId,
+      createdAt: new Date(),
+    });
+  }
   
   async countCommentsByEventId(eventId: string): Promise<number> {
     return this.commentModel.countDocuments({ eventId });

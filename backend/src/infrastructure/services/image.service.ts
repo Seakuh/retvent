@@ -2,6 +2,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 @Injectable()
 export class ImageService {
@@ -102,5 +103,66 @@ export class ImageService {
     }
   }
 
-  // async uploadImagToBucket(image: Express.Multer.File): Promise<string> {
+  /**
+   * Lädt ein Bild von einer externen URL herunter und speichert es auf Hetzner Storage.
+   * @param imageUrl - Die URL des Bildes
+   * @param timeoutMs - Timeout in Millisekunden (Standard: 15000)
+   * @returns Die neue URL auf Hetzner Storage oder null bei Fehler
+   */
+  async downloadAndUploadFromUrl(
+    imageUrl: string,
+    timeoutMs: number = 15000,
+  ): Promise<string | null> {
+    try {
+      // Validiere URL
+      const url = new URL(imageUrl);
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        console.warn(`Invalid protocol for image URL: ${imageUrl}`);
+        return null;
+      }
+
+      // Download image
+      const response = await axios.get(imageUrl, {
+        responseType: 'arraybuffer',
+        timeout: timeoutMs,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120.0.0.0',
+          'Accept': 'image/*,*/*;q=0.8',
+        },
+        maxRedirects: 5,
+        validateStatus: (status) => status >= 200 && status < 300,
+      });
+
+      const buffer = Buffer.from(response.data);
+
+      // Bestimme Content-Type
+      let contentType = response.headers['content-type'] || 'image/jpeg';
+      // Falls Content-Type mehrere Werte hat (z.B. "image/jpeg; charset=utf-8")
+      contentType = contentType.split(';')[0].trim();
+
+      // Extrahiere Dateiname aus URL für Extension
+      const urlPath = url.pathname;
+      const originalFilename = urlPath.split('/').pop() || 'image.jpg';
+
+      // Upload zu Hetzner
+      const newUrl = await this.uploadImageFromBuffer(buffer, contentType, originalFilename);
+
+      return newUrl;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+          console.warn(`Timeout downloading image from ${imageUrl}`);
+        } else if (error.response?.status === 404) {
+          console.warn(`Image not found at ${imageUrl}`);
+        } else if (error.response?.status === 403) {
+          console.warn(`Access forbidden for image at ${imageUrl}`);
+        } else {
+          console.warn(`Failed to download image from ${imageUrl}: ${error.message}`);
+        }
+      } else {
+        console.warn(`Error processing image from ${imageUrl}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+      return null;
+    }
+  }
 }
