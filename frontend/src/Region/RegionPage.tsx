@@ -451,12 +451,7 @@ export const RegionPage = () => {
                   <span className="region-google-search-text">GOOGLE</span>
                 </button>
               </div>
-              <div className="region-page-events-header">
-                <h2 className="region-page-events-title-header">
-                  Upcoming Events
-                  <span className="region-page-events-count-header">({events.length})</span>
-                </h2>
-              </div>
+              {/*  */}
             </div>
           </div>
         </div>
@@ -615,10 +610,14 @@ export const RegionPage = () => {
         />
       )}
 
-      <div
-        className="region-page-events-container"
-        ref={eventsContainerRef}
-      >
+      <div className="region-page-events-section">
+        <h3 className="region-page-events-title-header">
+          Upcoming Events ({events.length})
+        </h3>
+        <div
+          className="region-page-events-container"
+          ref={eventsContainerRef}
+        >
         {events.length > 0 ? (
           <div className="region-page-events-list">
             {events.map((event) => (
@@ -633,6 +632,7 @@ export const RegionPage = () => {
         ) : (
           <p className="region-page-no-events">Keine Events gefunden</p>
         )}
+        </div>
       </div>
 
       <div

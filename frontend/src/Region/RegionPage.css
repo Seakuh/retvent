@@ -761,28 +761,31 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.region-page-events-title-header {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.region-page-events-section {
   width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding: 0 2rem;
 }
 
-.region-page-events-count-header {
-  font-size: 1rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
+.region-page-events-title-header {
+  font-size: 2.5rem;
+  margin: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  text-align: left;
+  line-height: 1.2;
+  margin-left: 1.5rem;
+  margin-bottom: 0;
 }
 
 .region-page-events-container {
   width: 100%;
-  max-width: 80rem;
-  margin: 0 auto;
-  padding: 2rem;
+  padding: 0 1.5rem;
   background: #000000;
 }
 
