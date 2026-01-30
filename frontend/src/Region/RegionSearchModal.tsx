@@ -71,7 +71,28 @@ export const RegionSearchModal: React.FC<RegionSearchModalProps> = ({
       const regions = await searchRegions(value, controller.signal);
       // Only update if request wasn't cancelled
       if (!controller.signal.aborted) {
-        setRegionSuggestions(regions);
+        // Filtere Regionen strikt - nur wenn der Suchbegriff am Anfang steht oder als Wort-Boundary
+        const searchLower = value.toLowerCase().trim();
+        const escapedSearch = searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        
+        const filteredRegions = regions.filter((region) => {
+          const nameLower = region.name.toLowerCase();
+          const slugLower = region.slug.toLowerCase();
+          const countryLower = region.country?.toLowerCase() || "";
+          
+          // Prüfe ob der Suchbegriff am Anfang steht
+          const nameStartsWith = nameLower.startsWith(searchLower);
+          const slugStartsWith = slugLower.startsWith(searchLower);
+          const countryStartsWith = countryLower.startsWith(searchLower);
+          
+          // Oder als Wort-Boundary (nach Leerzeichen, Bindestrich, etc.) - aber nicht mitten im Wort
+          const nameWordMatch = nameLower.match(new RegExp(`(^|\\s|-|_)${escapedSearch}`, 'i'));
+          const slugWordMatch = slugLower.match(new RegExp(`(^|\\s|-|_)${escapedSearch}`, 'i'));
+          
+          return nameStartsWith || slugStartsWith || countryStartsWith || nameWordMatch || slugWordMatch;
+        });
+        
+        setRegionSuggestions(filteredRegions);
         setIsLoading(false);
       }
     } catch (error: any) {
