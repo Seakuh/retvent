@@ -6,9 +6,6 @@ import "./RegionPage.css";
 import { getRegion, getRegionEvents, uploadRegionLogo, uploadRegionImages } from "./service";
 import { ChevronLeft, Plus, Navigation, X, Info, Edit } from "lucide-react";
 import { RegionSearchModal } from "./RegionSearchModal";
-import "leaflet/dist/leaflet.css";
-import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
-import { Icon, divIcon } from "leaflet";
 
 export const RegionPage = () => {
   const { regionSlug } = useParams();
@@ -21,10 +18,12 @@ export const RegionPage = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
   const [showRegionSearchModal, setShowRegionSearchModal] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const imagesInputRef = useRef<HTMLInputElement>(null);
   const regionSearchInputRef = useRef<HTMLInputElement>(null);
+  const eventsContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const fetchRegion = async () => {
       if (!regionSlug) return;
@@ -53,6 +52,71 @@ export const RegionPage = () => {
 
     fetchRegion();
   }, [regionSlug]);
+
+  // Scroll-Listener für Glassmorphism-Effekt
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Scroll zu Event mit bestimmten Tag/Category
+  const handleBubbleClick = (bubble: string) => {
+    const offset = 150; // Offset für sticky header
+    
+    // Finde das erste Event mit diesem Tag oder Category
+    const matchingEvent = events.find((event) => {
+      const tagMatch = event.tags?.some(
+        (tag) => tag.toLowerCase() === bubble.toLowerCase()
+      );
+      const categoryMatch =
+        event.category?.toLowerCase() === bubble.toLowerCase();
+      return tagMatch || categoryMatch;
+    });
+
+    if (matchingEvent && eventsContainerRef.current) {
+      const eventId = matchingEvent.id || matchingEvent._id;
+      const eventElement = document.querySelector(
+        `[data-event-id="${eventId}"]`
+      ) as HTMLElement;
+
+      if (eventElement) {
+        const elementPosition = eventElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+      } else {
+        // Falls Element noch nicht gerendert, zum Events-Container scrollen
+        if (eventsContainerRef.current) {
+          const containerPosition =
+            eventsContainerRef.current.getBoundingClientRect().top;
+          const offsetPosition =
+            containerPosition + window.pageYOffset - offset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
+      }
+    } else if (eventsContainerRef.current) {
+      // Falls kein Event gefunden, zum Events-Container scrollen
+      const containerPosition =
+        eventsContainerRef.current.getBoundingClientRect().top;
+      const offsetPosition = containerPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
 
   const handleLogoUpload = async (file: File) => {
     if (!region?.id) return;
@@ -168,6 +232,33 @@ export const RegionPage = () => {
     }
   };
 
+  // Sammle alle Tags und Categories aus den Events
+  const getAllTagsAndCategories = () => {
+    const tagsSet = new Set<string>();
+    const categoriesSet = new Set<string>();
+
+    events.forEach((event) => {
+      if (event.tags && Array.isArray(event.tags)) {
+        event.tags.forEach((tag) => {
+          if (tag && tag.trim()) {
+            tagsSet.add(tag.trim());
+          }
+        });
+      }
+      if (event.category && event.category.trim()) {
+        categoriesSet.add(event.category.trim());
+      }
+    });
+
+    return {
+      tags: Array.from(tagsSet),
+      categories: Array.from(categoriesSet),
+    };
+  };
+
+  const { tags, categories } = getAllTagsAndCategories();
+  const allBubbles = [...categories, ...tags];
+
   if (isLoading) {
     return (
       <div className="loading-container">
@@ -192,7 +283,7 @@ export const RegionPage = () => {
             <button onClick={() => navigate("/")} className="back-button">
         <ChevronLeft className="h-5 w-5" />{" "}
       </button>
-      <div className="region-page-header">
+      <div className={`region-page-header ${isScrolled ? "scrolled" : ""}`}>
         <div className="region-page-header-content">
           <div className="region-page-logo-container" onClick={handleLogoClick}>
             {region.logoUrl ? (
@@ -279,33 +370,19 @@ export const RegionPage = () => {
         </div>
       </div>
 
-      {/* {region.coordinates && (
-        <div className="region-page-map-container">
-          <MapContainer
-            center={[region.coordinates.latitude, region.coordinates.longitude]}
-            zoom={10}
-            className="region-page-map"
-            zoomControl={true}
-            scrollWheelZoom={true}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker
-              position={[region.coordinates.latitude, region.coordinates.longitude]}
-              icon={divIcon({
-                className: 'region-marker-icon',
-                html: '<div class="region-marker-pin"></div>',
-                iconSize: [20, 20],
-                iconAnchor: [10, 20],
-              })}
+      {allBubbles.length > 0 && (
+        <div className="region-page-bubbles-container">
+          {allBubbles.map((bubble, index) => (
+            <span
+              key={index}
+              className="region-page-bubble"
+              onClick={() => handleBubbleClick(bubble)}
             >
-              <Popup>{region.name}</Popup>
-            </Marker>
-          </MapContainer>
+              {bubble}
+            </span>
+          ))}
         </div>
-      )} */}
+      )}
 
       {region.vibe && (
         <div className="region-page-vibe-container">
@@ -406,11 +483,19 @@ export const RegionPage = () => {
         />
       )}
 
-      <div className="region-page-events-container">
+      <div
+        className="region-page-events-container"
+        ref={eventsContainerRef}
+      >
         {events.length > 0 ? (
           <div className="region-page-events-list">
             {events.map((event) => (
-              <RealListItem key={event.id || event._id} event={event} />
+              <div
+                key={event.id || event._id}
+                data-event-id={event.id || event._id}
+              >
+                <RealListItem event={event} />
+              </div>
             ))}
           </div>
         ) : (
