@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { RealListItem } from "../components/EventGallery/Items/RealListItem";
-import { Event, IRegion } from "../utils";
+import { API_URL, Event, IRegion } from "../utils";
 import "./RegionPage.css";
 import { getRegion, getRegionEvents, uploadRegionLogo, uploadRegionImages } from "./service";
-import { ChevronLeft, Plus, Navigation, X, Info, Edit } from "lucide-react";
+import { ChevronLeft, Plus, Navigation, X, Info, Edit, MapPin } from "lucide-react";
 import { RegionSearchModal } from "./RegionSearchModal";
 
 export const RegionPage = () => {
@@ -19,6 +19,8 @@ export const RegionPage = () => {
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
   const [showRegionSearchModal, setShowRegionSearchModal] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showAllBubbles, setShowAllBubbles] = useState(false);
+  const [showAllArtists, setShowAllArtists] = useState(false);
   const navigate = useNavigate();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const imagesInputRef = useRef<HTMLInputElement>(null);
@@ -232,6 +234,71 @@ export const RegionPage = () => {
     }
   };
 
+  const handleSetUserLocation = async () => {
+    if (!region?.id) return;
+
+    if (!navigator.geolocation) {
+      alert("Geolocation wird von Ihrem Browser nicht unterstützt.");
+      return;
+    }
+
+    try {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          // Update region coordinates
+          const token = localStorage.getItem("access_token");
+          const headers: HeadersInit = {
+            "Content-Type": "application/json",
+          };
+          if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+          }
+
+          try {
+            const response = await fetch(`${API_URL}regions/${region.id}`, {
+              method: "PATCH",
+              headers: headers,
+              body: JSON.stringify({
+                coordinates: {
+                  latitude,
+                  longitude,
+                },
+              }),
+            });
+
+            if (response.ok) {
+              const updatedRegion = await response.json();
+              setRegion(updatedRegion);
+            } else {
+              throw new Error("Failed to update region");
+            }
+          } catch (error) {
+            console.error("Error updating region coordinates:", error);
+            alert("Fehler beim Aktualisieren der Koordinaten.");
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          if (error.code === error.PERMISSION_DENIED) {
+            alert("Standortzugriff wurde verweigert. Bitte erlauben Sie den Zugriff in Ihren Browsereinstellungen.");
+          } else {
+            alert("Fehler beim Abrufen Ihres Standorts.");
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } catch (error) {
+      console.error("Error requesting location:", error);
+      alert("Fehler beim Anfordern des Standorts.");
+    }
+  };
+
   // Sammle alle Tags und Categories aus den Events
   const getAllTagsAndCategories = () => {
     const tagsSet = new Set<string>();
@@ -336,6 +403,13 @@ export const RegionPage = () => {
                   >
                     <Edit size={18} />
                   </button>
+                  <button
+                    className="region-page-location-icon-inline"
+                    onClick={handleSetUserLocation}
+                    aria-label="Set to my location"
+                  >
+                    <MapPin size={18} />
+                  </button>
                 </div>
                 <div className="region-page-header-icons">
                   {(region.description || region.introText) && (
@@ -387,14 +461,11 @@ export const RegionPage = () => {
           </div>
         </div>
       </div>
-
-
-
       {allArtists.length > 0 && (
-        <div className="region-page-artists-section">
+        <div className={`region-page-artists-section ${showAllArtists ? "show-all" : ""}`}>
           <h3 className="region-page-artists-title">Upcoming Artists</h3>
           <div className="region-page-artists-container">
-            {allArtists.map((artist, index) => (
+            {(showAllArtists ? allArtists : allArtists.slice(0, 5)).map((artist, index) => (
               <span
                 key={index}
                 className="region-page-artist-bubble"
@@ -404,16 +475,24 @@ export const RegionPage = () => {
               </span>
             ))}
           </div>
+          {allArtists.length > 5 && (
+            <button
+              className="region-page-show-more-button"
+              onClick={() => setShowAllArtists(!showAllArtists)}
+            >
+              {showAllArtists ? "Less" : "More..."}
+            </button>
+          )}
         </div>
       )}
 
-      {region.vibe && (
-        <div className="region-page-vibe-section">
-          <h3 className="region-page-vibe-title">Upcoming Vibe</h3>
-          {allBubbles.length > 0 && (
-        <div className="region-page-bubbles-section">
+
+
+      {allBubbles.length > 0 && (
+        <div className={`region-page-bubbles-section ${showAllBubbles ? "show-all" : ""}`}>
+          <h3 className="region-page-bubbles-title">Upcoming Vibe</h3>
           <div className="region-page-bubbles-container">
-            {allBubbles.map((bubble, index) => (
+            {(showAllBubbles ? allBubbles : allBubbles.slice(0, 5)).map((bubble, index) => (
               <span
                 key={index}
                 className="region-page-bubble"
@@ -423,8 +502,20 @@ export const RegionPage = () => {
               </span>
             ))}
           </div>
+          {allBubbles.length > 5 && (
+            <button
+              className="region-page-show-more-button"
+              onClick={() => setShowAllBubbles(!showAllBubbles)}
+            >
+              {showAllBubbles ? "Less" : "More..."}
+            </button>
+          )}
         </div>
       )}
+
+
+      {region.vibe && (
+        <div className="region-page-vibe-section">
           <div className="region-page-vibe-container">
             <div className="region-page-vibe-details">
               {region.vibe.energy !== undefined && (
