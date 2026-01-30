@@ -86,13 +86,26 @@ export const RegionPage = () => {
   useEffect(() => {
     const updateHeaderHeight = () => {
       if (headerRef.current) {
-        setHeaderHeight(headerRef.current.offsetHeight);
+        const height = headerRef.current.offsetHeight;
+        setHeaderHeight(height);
+        // Set CSS variable on document root
+        document.documentElement.style.setProperty('--header-height', `${height}px`);
       }
     };
 
+    // Initial calculation
     updateHeaderHeight();
+    
+    // Update on resize
     window.addEventListener("resize", updateHeaderHeight);
-    return () => window.removeEventListener("resize", updateHeaderHeight);
+    
+    // Update when region changes (header content might change)
+    const timeoutId = setTimeout(updateHeaderHeight, 100);
+    
+    return () => {
+      window.removeEventListener("resize", updateHeaderHeight);
+      clearTimeout(timeoutId);
+    };
   }, [region]);
 
   // Anzahl der Bubbles basierend auf Bildschirmgröße
@@ -876,7 +889,7 @@ export const RegionPage = () => {
       {dateOptions.length > 0 && (
         <nav 
           className="region-date-nav"
-          style={{ '--header-height': `${headerHeight}px` } as React.CSSProperties}
+          style={{ top: `${headerHeight}px` } as React.CSSProperties}
         >
           {showLeftArrow && (
             <button
