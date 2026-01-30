@@ -13,6 +13,7 @@ import { VibeRatingDto } from '../../presentation/dtos/vibe-rating.dto';
 import { ImageService } from '../../infrastructure/services/image.service';
 import { GeolocationService } from '../../infrastructure/services/geolocation.service';
 import { SlugService } from '../../infrastructure/services/slug.service';
+import { ChatGPTService } from '../../infrastructure/services/chatgpt.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RegionVibeRatingDocument } from '../../infrastructure/schemas/region-vibe-rating.schema';
@@ -28,6 +29,7 @@ export class RegionService {
     private readonly imageService: ImageService,
     private readonly geolocationService: GeolocationService,
     private readonly slugService: SlugService,
+    private readonly chatGptService: ChatGPTService,
     @InjectModel('RegionVibeRating')
     private readonly vibeRatingModel: Model<RegionVibeRatingDocument>,
     @Inject(forwardRef(() => 'IEventRepository'))
@@ -434,6 +436,7 @@ export class RegionService {
 
   /**
    * Verknüpft ein Event automatisch mit einer Region
+   * Erstellt automatisch eine neue Region, wenn keine gefunden wird
    * @param eventId - ID des Events
    * @param event - Event-Daten für Region-Suche
    * @returns Die zugeordnete Region oder null
@@ -454,6 +457,10 @@ export class RegionService {
       coordinates?: { lat?: number; lon?: number };
       uploadLat?: number;
       uploadLon?: number;
+      category?: string;
+      eventType?: string;
+      genre?: string[];
+      country?: string;
     },
   ): Promise<Region | null> {
     const region = await this.findRegionForEvent(event);
@@ -462,7 +469,85 @@ export class RegionService {
       await this.regionRepository.addEvent(region.id, eventId);
       return region;
     }
-    return null;
+
+    // Keine Region gefunden - erstelle automatisch eine neue
+    console.log('Keine Region gefunden, erstelle neue Region für Event:', eventId);
+    
+    try {
+      // Bestimme Region-Name (Stadt oder Adresse)
+      const regionName = 
+        event.location?.city || 
+        event.city || 
+        event.address?.city || 
+        'Unbekannte Region';
+
+      // Extrahiere Koordinaten
+      let coordinates: { latitude: number; longitude: number } | undefined;
+      if (event.location?.coordinates?.lat && event.location?.coordinates?.lon) {
+        coordinates = {
+          latitude: event.location.coordinates.lat,
+          longitude: event.location.coordinates.lon,
+        };
+      } else if (event.coordinates?.lat && event.coordinates?.lon) {
+        coordinates = {
+          latitude: event.coordinates.lat,
+          longitude: event.coordinates.lon,
+        };
+      } else if (event.uploadLat && event.uploadLon) {
+        coordinates = {
+          latitude: event.uploadLat,
+          longitude: event.uploadLon,
+        };
+      } else if (event.address?.street || event.location?.address) {
+        // Versuche Koordinaten aus Adresse zu holen
+        const address = event.address?.street || event.location?.address || '';
+        const coords = await this.geolocationService.getCoordinates(address);
+        if (coords) {
+          coordinates = {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          };
+        }
+      }
+
+      // Generiere Beschreibung und Vibe mit ChatGPT
+      const regionInfo = await this.chatGptService.generateRegionDescriptionAndVibe({
+        name: regionName,
+        city: event.location?.city || event.city || event.address?.city,
+        country: event.country,
+        address: event.address?.street || event.location?.address,
+        coordinates,
+        eventContext: {
+          category: event.category,
+          eventType: event.eventType,
+          genre: event.genre,
+        },
+      });
+
+      // Erstelle neue Region
+      const createRegionDto: CreateRegionDto = {
+        name: regionName,
+        description: regionInfo.description,
+        address: event.address?.street || event.location?.address,
+        country: event.country,
+        coordinates: coordinates ? {
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+        } : undefined,
+        vibe: regionInfo.vibe,
+      };
+
+      const newRegion = await this.createRegion(createRegionDto);
+
+      // Füge Event zur neuen Region hinzu
+      await this.regionRepository.addEvent(newRegion.id, eventId);
+
+      console.log(`Neue Region "${regionName}" erstellt und Event ${eventId} zugeordnet`);
+      return newRegion;
+    } catch (error) {
+      console.error('Fehler beim automatischen Erstellen einer Region:', error);
+      return null;
+    }
   }
 
   /**

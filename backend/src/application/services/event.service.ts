@@ -1588,7 +1588,7 @@ export class EventService {
         (eventWithImage as any).status = 'published';
       }
 
-      // Automatische Region-Zuordnung
+      // Automatische Region-Zuordnung (nur suchen, nicht erstellen - wird nach Event-Erstellung gemacht)
       try {
         const region = await this.regionService.findRegionForEvent({
           location: eventWithImage.location,
@@ -1630,6 +1630,10 @@ export class EventService {
             address: newEvent.address,
             uploadLat: (newEvent as any).uploadLat,
             uploadLon: (newEvent as any).uploadLon,
+            category: newEvent.category,
+            eventType: (newEvent as any).eventType,
+            genre: (newEvent as any).genre,
+            country: (newEvent as any).country,
           };
           
           // Extrahiere coordinates aus verschiedenen möglichen Stellen
@@ -2119,6 +2123,9 @@ export class EventService {
 
       // Add feed item to feed
       await this.feedService.pushFeedItemFromEvent(createdEvent, 'event');
+
+      // auto assign event to region
+       this.regionService.autoAssignEventToRegion(createdEvent.id, createdEvent);
       return createdEvent;
     } catch (error) {
       console.error('Failed to process event image upload:', error);

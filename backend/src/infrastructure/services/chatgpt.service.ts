@@ -713,6 +713,122 @@ End with greetings from Berlin and a signature (e.g., “Much love, [Your Name] 
     return response.choices[0]?.message?.content || '';
   }
 
+  /**
+   * Generiert eine Regions-Beschreibung und Vibe-Werte basierend auf Event-Daten
+   * @param regionData - Daten über die Region (Stadt, Land, Koordinaten, etc.)
+   * @returns Objekt mit description und vibe
+   */
+  async generateRegionDescriptionAndVibe(regionData: {
+    name: string;
+    city?: string;
+    country?: string;
+    parentRegion?: string;
+    address?: string;
+    coordinates?: { lat?: number; lon?: number };
+    eventContext?: {
+      category?: string;
+      eventType?: string;
+      genre?: string[];
+    };
+  }): Promise<{
+    description: string;
+    vibe: {
+      energy: number;
+      intimacy: number;
+      exclusivity: number;
+      social: number;
+    };
+  }> {
+    const contextInfo = [];
+    if (regionData.city) contextInfo.push(`Stadt: ${regionData.city}`);
+    if (regionData.country) contextInfo.push(`Land: ${regionData.country}`);
+    if (regionData.parentRegion) contextInfo.push(`Region/State: ${regionData.parentRegion}`);
+    if (regionData.address) contextInfo.push(`Adresse: ${regionData.address}`);
+    if (regionData.eventContext?.category) contextInfo.push(`Event-Kategorie: ${regionData.eventContext.category}`);
+    if (regionData.eventContext?.eventType) contextInfo.push(`Event-Typ: ${regionData.eventContext.eventType}`);
+    if (regionData.eventContext?.genre?.length) contextInfo.push(`Genres: ${regionData.eventContext.genre.join(', ')}`);
+
+    const prompt = `Du bist ein Experte für Event-Regionen und lokale Kultur. 
+    
+Basierend auf folgenden Informationen über die Region "${regionData.name}":
+${contextInfo.join('\n')}
+
+Erstelle:
+1. Eine ansprechende Regions-Beschreibung (150-250 Wörter) auf Deutsch, die:
+   - Den Charakter und die Atmosphäre der Region beschreibt
+   - Typische Event-Locations und Hotspots erwähnt
+   - Die kulturelle Vielfalt und das Nachtleben hervorhebt
+   - Menschen dazu einlädt, Events in dieser Region zu entdecken
+   - Natürlich und authentisch klingt (kein Marketing-Sprech)
+
+2. Vibe-Bewertungen (jeweils 0-100):
+   - energy: Wie energiegeladen ist die Region? (0 = sehr ruhig, 100 = sehr energiegeladen)
+   - intimacy: Wie intim/persönlich ist die Atmosphäre? (0 = sehr groß/öffentlich, 100 = sehr intim/privat)
+   - exclusivity: Wie exklusiv ist die Region? (0 = sehr zugänglich, 100 = sehr exklusiv)
+   - social: Wie sozial ist die Region? (0 = sehr fokussiert/individuell, 100 = sehr sozial/gemeinschaftlich)
+
+Antworte NUR mit einem gültigen JSON-Objekt auf englisch im folgenden Format (keine zusätzlichen Erklärungen):
+{
+  "description": "Die Beschreibung der Region...",
+  "vibe": {
+    "energy": 75,
+    "intimacy": 60,
+    "exclusivity": 40,
+    "social": 85
+  }
+}`;
+
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: 'Du bist ein Experte für Event-Regionen und lokale Kultur. Antworte immer nur mit gültigem JSON, keine zusätzlichen Erklärungen.',
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.7,
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error('Keine Antwort von ChatGPT erhalten');
+      }
+
+      const parsed = JSON.parse(content);
+      
+      // Validiere und normalisiere die Vibe-Werte
+      const vibe = {
+        energy: Math.max(0, Math.min(100, Math.round(parsed.vibe?.energy || 50))),
+        intimacy: Math.max(0, Math.min(100, Math.round(parsed.vibe?.intimacy || 50))),
+        exclusivity: Math.max(0, Math.min(100, Math.round(parsed.vibe?.exclusivity || 50))),
+        social: Math.max(0, Math.min(100, Math.round(parsed.vibe?.social || 50))),
+      };
+
+      return {
+        description: parsed.description || `Die Region ${regionData.name} bietet eine vielfältige Event-Landschaft mit zahlreichen Möglichkeiten für kulturelle und soziale Aktivitäten.`,
+        vibe,
+      };
+    } catch (error) {
+      this.logger.error('Fehler bei Region-Generierung mit ChatGPT:', error);
+      // Fallback-Werte
+      return {
+        description: `Die Region ${regionData.name} bietet eine vielfältige Event-Landschaft mit zahlreichen Möglichkeiten für kulturelle und soziale Aktivitäten.`,
+        vibe: {
+          energy: 50,
+          intimacy: 50,
+          exclusivity: 50,
+          social: 50,
+        },
+      };
+    }
+  }
+
   // ============================================
   // POKER GAME LOGIC
   // ============================================
