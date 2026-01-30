@@ -3,7 +3,8 @@ export interface IComment {
   text: string;
   createdAt: Date;
   userId: string;
-  eventId: string;
+  eventId?: string;
+  regionId?: string;
   parentId: string;
   likeIds: string[];
 }

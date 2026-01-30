@@ -207,4 +207,18 @@ export class RegionController {
   ): Promise<SEOContent> {
     return this.regionSeoService.generateSeoContent(id, options);
   }
+
+  @Post('auto-assign-events')
+  @UseGuards(JwtAuthGuard)
+  async autoAssignEventsToRegions(
+    @Query('batchSize') batchSize?: number,
+  ) {
+    const assigned = await this.regionService.autoAssignEventsToRegions(
+      batchSize ? parseInt(batchSize.toString()) : 100,
+    );
+    return {
+      message: `${assigned} Events wurden automatisch Regionen zugeordnet`,
+      assignedCount: assigned,
+    };
+  }
 }

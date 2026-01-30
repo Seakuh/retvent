@@ -25,6 +25,7 @@ import { FeedService } from './feed.service';
 import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 import { CommunityService } from './community.service';
+import { RegionService } from './region.service';
 @Injectable()
 export class EventService {
 
@@ -46,6 +47,7 @@ export class EventService {
     private readonly muxService: MuxService,
     private readonly slugService: SlugService,
     private readonly aiEnrichmentService: AiEnrichmentService,
+    private readonly regionService: RegionService,
   ) {}
   getEventsByTag(tag: string) {
     return this.eventRepository.getEventsByTag(tag);
@@ -1533,6 +1535,26 @@ export class EventService {
         }
       }
 
+      // Automatische Region-Zuordnung
+      try {
+        const region = await this.regionService.findRegionForEvent({
+          location: eventWithImage.location,
+          city: eventWithImage.city,
+          address: eventWithImage.address,
+          coordinates: eventWithImage.coordinates,
+          uploadLat: eventWithImage.uploadLat,
+          uploadLon: eventWithImage.uploadLon,
+        });
+
+        if (region) {
+          eventWithImage.regionId = region.id;
+          // Event wird später zur Region hinzugefügt, nachdem es erstellt wurde
+        }
+      } catch (error) {
+        console.warn('Fehler bei automatischer Region-Zuordnung:', error);
+        // Fehler nicht weiterwerfen, Event-Erstellung soll trotzdem funktionieren
+      }
+
       // Slug-Generierung (falls nicht vorhanden)
       if (!(eventWithImage as any).slug && eventWithImage.title && eventWithImage.city && eventWithImage.startDate) {
         const slugs = await this.slugService.generateSlugsForEvent({
@@ -1566,8 +1588,72 @@ export class EventService {
         (eventWithImage as any).status = 'published';
       }
 
+      // Automatische Region-Zuordnung
+      try {
+        const region = await this.regionService.findRegionForEvent({
+          location: eventWithImage.location,
+          city: eventWithImage.city,
+          address: eventWithImage.address,
+          coordinates: eventWithImage.coordinates,
+          uploadLat: eventWithImage.uploadLat,
+          uploadLon: eventWithImage.uploadLon,
+        });
+
+        if (region) {
+          eventWithImage.regionId = region.id;
+        }
+      } catch (error) {
+        console.warn('Fehler bei automatischer Region-Zuordnung:', error);
+        // Fehler nicht weiterwerfen, Event-Erstellung soll trotzdem funktionieren
+      }
+
       const newEvent =
         await this.eventRepository.createEventFromFormData(eventWithImage);
+
+      // Automatisch Event zur Region hinzufügen, falls regionId gesetzt wurde
+      const eventRegionId = (newEvent as any).regionId;
+      if (eventRegionId) {
+        try {
+          await this.regionService.addEventToRegion(eventRegionId, newEvent.id);
+        } catch (error) {
+          console.warn(
+            `Fehler beim Hinzufügen von Event ${newEvent.id} zur Region ${eventRegionId}:`,
+            error,
+          );
+        }
+      } else {
+        // Versuche nachträglich eine Region zu finden und zuzuordnen
+        try {
+          const eventData: any = {
+            location: newEvent.location,
+            city: newEvent.city,
+            address: newEvent.address,
+            uploadLat: (newEvent as any).uploadLat,
+            uploadLon: (newEvent as any).uploadLon,
+          };
+          
+          // Extrahiere coordinates aus verschiedenen möglichen Stellen
+          if (newEvent.location?.coordinates) {
+            eventData.coordinates = newEvent.location.coordinates;
+          } else if ((newEvent as any).coordinates) {
+            eventData.coordinates = (newEvent as any).coordinates;
+          }
+          
+          const region = await this.regionService.autoAssignEventToRegion(
+            newEvent.id,
+            eventData,
+          );
+          if (region) {
+            // Update Event mit regionId
+            await this.eventRepository.update(newEvent.id, {
+              regionId: region.id,
+            } as any);
+            (newEvent as any).regionId = region.id;
+          }
+        } catch (error) {
+          console.warn('Fehler bei nachträglicher Region-Zuordnung:', error);
+        }
+      }
 
       // Auto-Link to Community if communityId is present
       if (newEvent.communityId) {

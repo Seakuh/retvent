@@ -339,4 +339,184 @@ export class RegionService {
   async getAllRegions(): Promise<Region[]> {
     return this.regionRepository.findAll();
   }
+
+  /**
+   * Findet automatisch die passende Region für ein Event basierend auf:
+   * 1. Geografischen Koordinaten (Radius-Suche)
+   * 2. Stadt-Name
+   * 3. Adresse
+   * 
+   * @param event - Event mit Koordinaten, Stadt oder Adresse
+   * @returns Region oder null wenn keine passende gefunden wurde
+   */
+  async findRegionForEvent(event: {
+    location?: {
+      coordinates?: { lat?: number; lon?: number };
+      city?: string;
+      address?: string;
+    };
+    city?: string;
+    address?: {
+      city?: string;
+      street?: string;
+    };
+    coordinates?: { lat?: number; lon?: number };
+    uploadLat?: number;
+    uploadLon?: number;
+  }): Promise<Region | null> {
+    // Extrahiere Koordinaten aus verschiedenen möglichen Feldern
+    let lat: number | undefined;
+    let lon: number | undefined;
+
+    if (event.location?.coordinates) {
+      lat = event.location.coordinates.lat;
+      lon = event.location.coordinates.lon;
+    } else if (event.coordinates) {
+      lat = event.coordinates.lat;
+      lon = event.coordinates.lon;
+    } else if (event.uploadLat && event.uploadLon) {
+      lat = event.uploadLat;
+      lon = event.uploadLon;
+    }
+
+    // Strategie 1: Koordinaten-basierte Suche (Radius 50km)
+    if (lat && lon) {
+      const nearbyRegions = await this.regionRepository.findByCoordinates(
+        lat,
+        lon,
+        50, // 50km Radius
+      );
+      if (nearbyRegions.length > 0) {
+        // Nimm die nächstgelegene Region
+        return nearbyRegions[0];
+      }
+    }
+
+    // Strategie 2: Stadt-basierte Suche
+    const cityName =
+      event.location?.city ||
+      event.city ||
+      event.address?.city;
+    
+    if (cityName) {
+      // Suche nach Regionen mit passendem Namen oder Stadt
+      const allRegions = await this.regionRepository.findAll();
+      const matchingRegion = allRegions.find(
+        (region) =>
+          region.name.toLowerCase() === cityName.toLowerCase() ||
+          region.name.toLowerCase().includes(cityName.toLowerCase()) ||
+          cityName.toLowerCase().includes(region.name.toLowerCase()),
+      );
+      if (matchingRegion) {
+        return matchingRegion;
+      }
+    }
+
+    // Strategie 3: Adress-basierte Suche (falls Adresse vorhanden)
+    if (event.location?.address || event.address) {
+      const address = event.location?.address || event.address?.street;
+      if (address) {
+        const allRegions = await this.regionRepository.findAll();
+        const matchingRegion = allRegions.find(
+          (region) =>
+            region.address &&
+            (region.address.toLowerCase().includes(address.toLowerCase()) ||
+              address.toLowerCase().includes(region.address.toLowerCase())),
+        );
+        if (matchingRegion) {
+          return matchingRegion;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Verknüpft ein Event automatisch mit einer Region
+   * @param eventId - ID des Events
+   * @param event - Event-Daten für Region-Suche
+   * @returns Die zugeordnete Region oder null
+   */
+  async autoAssignEventToRegion(
+    eventId: string,
+    event: {
+      location?: {
+        coordinates?: { lat?: number; lon?: number };
+        city?: string;
+        address?: string;
+      };
+      city?: string;
+      address?: {
+        city?: string;
+        street?: string;
+      };
+      coordinates?: { lat?: number; lon?: number };
+      uploadLat?: number;
+      uploadLon?: number;
+    },
+  ): Promise<Region | null> {
+    const region = await this.findRegionForEvent(event);
+    if (region) {
+      // Füge Event zur Region hinzu
+      await this.regionRepository.addEvent(region.id, eventId);
+      return region;
+    }
+    return null;
+  }
+
+  /**
+   * Verknüpft alle Events ohne Region automatisch mit passenden Regionen
+   * @param batchSize - Anzahl der Events pro Batch
+   * @returns Anzahl der verknüpften Events
+   */
+  async autoAssignEventsToRegions(batchSize: number = 100): Promise<number> {
+    // Hole alle Events ohne regionId
+    // Verwende eine spezielle Query-Methode falls vorhanden, sonst findAll und filtern
+    let allEvents: Event[];
+    try {
+      // Versuche eine Methode zu finden, die Events ohne regionId zurückgibt
+      allEvents = await this.eventRepository.findAll();
+    } catch (error) {
+      console.error('Fehler beim Laden der Events:', error);
+      return 0;
+    }
+    
+    const eventsToProcess = allEvents
+      .filter((event) => !event.regionId)
+      .slice(0, batchSize);
+
+    let assignedCount = 0;
+
+    for (const event of eventsToProcess.slice(0, batchSize)) {
+      try {
+        const region = await this.findRegionForEvent({
+          location: event.location,
+          city: event.city,
+          address: event.address,
+          coordinates: event.coordinates,
+          uploadLat: event.uploadLat,
+          uploadLon: event.uploadLon,
+        });
+
+        if (region) {
+          // Update Event mit regionId
+          await this.eventRepository.update(event.id, {
+            regionId: region.id,
+          } as any);
+
+          // Füge Event zur Region hinzu
+          await this.regionRepository.addEvent(region.id, event.id);
+          assignedCount++;
+        }
+      } catch (error) {
+        console.error(
+          `Fehler beim Zuordnen von Event ${event.id} zu Region:`,
+          error,
+        );
+      }
+    }
+
+    return assignedCount;
+  }
 }

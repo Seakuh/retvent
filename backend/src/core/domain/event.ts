@@ -87,6 +87,7 @@ export class Event implements IEvent {
   citySlug?: string;
   shortDescription?: string;
   region?: string;
+  regionId?: string;
   country?: string;
   timezone?: string;
   categorySlug?: string;

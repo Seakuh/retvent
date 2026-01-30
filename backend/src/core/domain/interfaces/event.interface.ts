@@ -40,6 +40,13 @@ export interface IEvent {
     postalCode?: string;
     city?: string;
   };
+  coordinates?: {
+    lat?: number;
+    lon?: number;
+  };
+  uploadLat?: number;
+  uploadLon?: number;
   embedding?: number[];
   documents?: string[];
+  regionId?: string;
 }
