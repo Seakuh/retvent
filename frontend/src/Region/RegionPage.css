@@ -11,10 +11,25 @@
   min-height: 100vh;
 }
 
+.region-page-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 2rem;
+  padding-top: 1rem;
+  background: #000000;
+  z-index: 100;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  transition: all 0.3s ease;
+}
+
 .region-page-container .back-button {
-  position: fixed;
-  top: 2rem;
-  left: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
+  position: absolute;
+  top: 1rem;
+  left: 2rem;
   background: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -25,7 +40,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10001;
+  z-index: 101;
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.2s ease;
 }
@@ -33,20 +48,6 @@
 .region-page-container .back-button:hover {
   background: rgba(0, 0, 0, 0.9);
   border-color: rgba(255, 255, 255, 0.4);
-}
-
-.region-page-header {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  margin-bottom: 0;
-  padding: 2rem;
-  background: #000000;
-  z-index: 100;
-  margin-left: 0;
-  margin-right: 0;
-  margin-top: 0;
-  transition: all 0.3s ease;
 }
 
 .region-page-header.scrolled {
@@ -59,10 +60,11 @@
 .region-page-header-content {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   gap: 1.5rem;
   max-width: 80rem;
   margin: 0 auto;
+  padding-left: 3.5rem; /* Platz für Back-Button */
 }
 
 .region-page-logo-container {
@@ -862,6 +864,19 @@
   /* Header Padding auf Mobile */
   .region-page-header {
     padding: 1rem;
+    padding-top: 0.5rem;
+    top: 0;
+  }
+
+  .region-page-header-content {
+    padding-left: 3rem; /* Weniger Platz auf Mobile */
+  }
+
+  /* Back Button auf Mobile */
+  .region-page-container .back-button {
+    top: 0.5rem;
+    left: 1rem;
+    padding: 0.5rem;
   }
 
   .region-page-header-content {
@@ -877,5 +892,32 @@
   /* Title kleiner auf Mobile */
   .region-page-title {
     font-size: 1.5rem;
+  }
+
+  /* Horizontales Scrollen für Bubbles auf Mobile */
+  .region-page-bubbles-container,
+  .region-page-artists-container {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: none;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox - Scrollbar verstecken */
+    -ms-overflow-style: none; /* IE und Edge - Scrollbar verstecken */
+  }
+
+  /* Webkit-basierte Browser (Chrome, Safari) - Scrollbar verstecken */
+  .region-page-bubbles-container::-webkit-scrollbar,
+  .region-page-artists-container::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* Bubbles nicht schrumpfen lassen auf Mobile */
+  .region-page-bubble,
+  .region-page-artist-bubble {
+    flex-shrink: 0;
   }
 }

@@ -17,11 +17,13 @@ export const RegionPage = () => {
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
+  const [showVibeModal, setShowVibeModal] = useState(false);
   const [showRegionSearchModal, setShowRegionSearchModal] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAllBubbles, setShowAllBubbles] = useState(false);
   const [showAllArtists, setShowAllArtists] = useState(false);
   const [bubblesToShow, setBubblesToShow] = useState(4);
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const imagesInputRef = useRef<HTMLInputElement>(null);
@@ -69,7 +71,9 @@ export const RegionPage = () => {
   // Anzahl der Bubbles basierend auf Bildschirmgröße
   useEffect(() => {
     const updateBubblesToShow = () => {
-      setBubblesToShow(window.innerWidth > 768 ? 5 : 4);
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      setBubblesToShow(mobile ? 4 : 5);
     };
 
     updateBubblesToShow();
@@ -377,10 +381,10 @@ export const RegionPage = () => {
 
   return (
     <div className="region-page-container">
-            <button onClick={() => navigate("/")} className="back-button">
-        <ChevronLeft className="h-5 w-5" />{" "}
-      </button>
       <div className={`region-page-header ${isScrolled ? "scrolled" : ""}`}>
+        <button onClick={() => navigate("/")} className="back-button">
+          <ChevronLeft className="h-5 w-5" />
+        </button>
         <div className="region-page-header-content">
           <div className="region-page-logo-container" onClick={handleLogoClick}>
             {region.logoUrl ? (
@@ -415,20 +419,26 @@ export const RegionPage = () => {
                   >
                     <Edit size={18} />
                   </button>
-                  <button
+                  {/* <button
                     className="region-page-location-icon-inline"
                     onClick={handleSetUserLocation}
                     aria-label="Set to my location"
                   >
                     <MapPin size={18} />
-                  </button>
+                  </button> */}
                 </div>
                 <div className="region-page-header-icons">
-                  {(region.description || region.introText) && (
+                  {(region.description || region.introText || region.vibe) && (
                     <button
                       className="region-page-info-icon"
-                      onClick={() => setShowDescriptionModal(true)}
-                      aria-label="Show description"
+                      onClick={() => {
+                        if (region.vibe) {
+                          setShowVibeModal(true);
+                        } else {
+                          setShowDescriptionModal(true);
+                        }
+                      }}
+                      aria-label="Show info"
                     >
                       <Info size={20} />
                     </button>
@@ -472,7 +482,7 @@ export const RegionPage = () => {
         <div className={`region-page-artists-section ${showAllArtists ? "show-all" : ""}`}>
           <h3 className="region-page-artists-title">Upcoming Artists</h3>
           <div className="region-page-artists-container">
-            {(showAllArtists ? allArtists : allArtists.slice(0, bubblesToShow)).map((artist, index) => (
+            {(isMobile ? allArtists : (showAllArtists ? allArtists : allArtists.slice(0, bubblesToShow))).map((artist, index) => (
               <span
                 key={index}
                 className="region-page-artist-bubble"
@@ -482,7 +492,7 @@ export const RegionPage = () => {
               </span>
             ))}
           </div>
-          {allArtists.length > bubblesToShow && (
+          {!isMobile && allArtists.length > bubblesToShow && (
             <button
               className="region-page-show-more-button"
               onClick={() => setShowAllArtists(!showAllArtists)}
@@ -499,7 +509,7 @@ export const RegionPage = () => {
         <div className={`region-page-bubbles-section ${showAllBubbles ? "show-all" : ""}`}>
           <h3 className="region-page-bubbles-title">Upcoming Vibe</h3>
           <div className="region-page-bubbles-container">
-            {(showAllBubbles ? allBubbles : allBubbles.slice(0, bubblesToShow)).map((bubble, index) => (
+            {(isMobile ? allBubbles : (showAllBubbles ? allBubbles : allBubbles.slice(0, bubblesToShow))).map((bubble, index) => (
               <span
                 key={index}
                 className="region-page-bubble"
@@ -509,7 +519,7 @@ export const RegionPage = () => {
               </span>
             ))}
           </div>
-          {allBubbles.length > bubblesToShow && (
+          {!isMobile && allBubbles.length > bubblesToShow && (
             <button
               className="region-page-show-more-button"
               onClick={() => setShowAllBubbles(!showAllBubbles)}
@@ -521,70 +531,6 @@ export const RegionPage = () => {
       )}
 
 
-      {/* {region.vibe && (
-        <div className="region-page-vibe-section">
-          <div className="region-page-vibe-container">
-            <div className="region-page-vibe-details">
-              {region.vibe.energy !== undefined && (
-                <div className="region-page-vibe-item">
-                  <div className="region-page-vibe-label">
-                    <span>⚡ Energy</span>
-                    <span className="region-page-vibe-value">{region.vibe.energy}%</span>
-                  </div>
-                  <div className="region-page-vibe-progress-bar">
-                    <div 
-                      className="region-page-vibe-progress-fill" 
-                      style={{ width: `${region.vibe.energy}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-              {region.vibe.intimacy !== undefined && (
-                <div className="region-page-vibe-item">
-                  <div className="region-page-vibe-label">
-                    <span>💫 Intimacy</span>
-                    <span className="region-page-vibe-value">{region.vibe.intimacy}%</span>
-                  </div>
-                  <div className="region-page-vibe-progress-bar">
-                    <div 
-                      className="region-page-vibe-progress-fill" 
-                      style={{ width: `${region.vibe.intimacy}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-              {region.vibe.exclusivity !== undefined && (
-                <div className="region-page-vibe-item">
-                  <div className="region-page-vibe-label">
-                    <span>✨ Exclusivity</span>
-                    <span className="region-page-vibe-value">{region.vibe.exclusivity}%</span>
-                  </div>
-                  <div className="region-page-vibe-progress-bar">
-                    <div 
-                      className="region-page-vibe-progress-fill" 
-                      style={{ width: `${region.vibe.exclusivity}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-              {region.vibe.social !== undefined && (
-                <div className="region-page-vibe-item">
-                  <div className="region-page-vibe-label">
-                    <span>👥 Social</span>
-                    <span className="region-page-vibe-value">{region.vibe.social}%</span>
-                  </div>
-                  <div className="region-page-vibe-progress-bar">
-                    <div 
-                      className="region-page-vibe-progress-fill" 
-                      style={{ width: `${region.vibe.social}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )} */}
 
       {showDescriptionModal && (
         <div className="region-page-description-modal-overlay" onClick={() => setShowDescriptionModal(false)}>
@@ -606,6 +552,90 @@ export const RegionPage = () => {
                 <p>{region.description}</p>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {showVibeModal && region.vibe && (
+        <div className="region-page-description-modal-overlay" onClick={() => setShowVibeModal(false)}>
+          <div className="region-page-description-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="region-page-description-modal-close"
+              onClick={() => setShowVibeModal(false)}
+            >
+              <X size={24} />
+            </button>
+            <h2>Vibe - {region.h1 || region.name}</h2>
+            {region.introText && (
+              <div className="region-page-description-modal-section">
+                <p>{region.introText}</p>
+              </div>
+            )}
+            {region.description && (
+              <div className="region-page-description-modal-section">
+                <p>{region.description}</p>
+              </div>
+            )}
+            <div className="region-page-vibe-container">
+              <div className="region-page-vibe-details">
+                {region.vibe.energy !== undefined && (
+                  <div className="region-page-vibe-item">
+                    <div className="region-page-vibe-label">
+                      <span>⚡ Energy</span>
+                      <span className="region-page-vibe-value">{region.vibe.energy}%</span>
+                    </div>
+                    <div className="region-page-vibe-progress-bar">
+                      <div 
+                        className="region-page-vibe-progress-fill" 
+                        style={{ width: `${region.vibe.energy}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+                {region.vibe.intimacy !== undefined && (
+                  <div className="region-page-vibe-item">
+                    <div className="region-page-vibe-label">
+                      <span>💫 Intimacy</span>
+                      <span className="region-page-vibe-value">{region.vibe.intimacy}%</span>
+                    </div>
+                    <div className="region-page-vibe-progress-bar">
+                      <div 
+                        className="region-page-vibe-progress-fill" 
+                        style={{ width: `${region.vibe.intimacy}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+                {region.vibe.exclusivity !== undefined && (
+                  <div className="region-page-vibe-item">
+                    <div className="region-page-vibe-label">
+                      <span>✨ Exclusivity</span>
+                      <span className="region-page-vibe-value">{region.vibe.exclusivity}%</span>
+                    </div>
+                    <div className="region-page-vibe-progress-bar">
+                      <div 
+                        className="region-page-vibe-progress-fill" 
+                        style={{ width: `${region.vibe.exclusivity}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+                {region.vibe.social !== undefined && (
+                  <div className="region-page-vibe-item">
+                    <div className="region-page-vibe-label">
+                      <span>👥 Social</span>
+                      <span className="region-page-vibe-value">{region.vibe.social}%</span>
+                    </div>
+                    <div className="region-page-vibe-progress-bar">
+                      <div 
+                        className="region-page-vibe-progress-fill" 
+                        style={{ width: `${region.vibe.social}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -654,7 +684,7 @@ export const RegionPage = () => {
         onDrop={handleDrop}
         onClick={() => imagesInputRef.current?.click()}
       >
-        {region.images && region.images.length > 0 ? (
+        {/* {region.images && region.images.length > 0 ? (
           <>
             {region.images.slice(0, 3).map((image, index) => (
               <div key={index} className="region-page-image-item-small">
@@ -674,7 +704,7 @@ export const RegionPage = () => {
           <div className="region-page-add-image-placeholder-small">
             <Plus size={20} />
           </div>
-        )}
+        )} */}
         {isUploadingImages && (
           <div className="region-page-upload-overlay">
             <div className="loading-spinner"></div>
