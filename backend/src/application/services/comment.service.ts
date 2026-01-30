@@ -183,7 +183,7 @@ export class CommentService {
           text: comment.text,
           createdAt: comment.createdAt,
           userId: comment.userId,
-          regionId: comment.regionId,
+          regionId: (comment as any).regionId,
           parentId: comment.parentId,
           likeIds: comment.likeIds || [],
           username: username ?? '',

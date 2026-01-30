@@ -445,7 +445,8 @@ export class MongoEventRepository implements IEventRepository {
       ...rest,
       id: _id.toString(),
       city: event.city || event.location?.city, // Fallback to location.city
-    };
+      regionId: event.regionId, // Ensure regionId is included
+    } as Event;
   }
 
   async findByIds(ids: string[]): Promise<Event[]> {

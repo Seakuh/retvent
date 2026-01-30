@@ -490,14 +490,22 @@ export class RegionService {
 
     for (const event of eventsToProcess.slice(0, batchSize)) {
       try {
-        const region = await this.findRegionForEvent({
+        const eventData: any = {
           location: event.location,
           city: event.city,
           address: event.address,
-          coordinates: event.coordinates,
-          uploadLat: event.uploadLat,
-          uploadLon: event.uploadLon,
-        });
+          uploadLat: (event as any).uploadLat,
+          uploadLon: (event as any).uploadLon,
+        };
+        
+        // Extrahiere coordinates aus verschiedenen möglichen Stellen
+        if (event.location?.coordinates) {
+          eventData.coordinates = event.location.coordinates;
+        } else if ((event as any).coordinates) {
+          eventData.coordinates = (event as any).coordinates;
+        }
+        
+        const region = await this.findRegionForEvent(eventData);
 
         if (region) {
           // Update Event mit regionId

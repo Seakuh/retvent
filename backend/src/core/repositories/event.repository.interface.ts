@@ -20,4 +20,5 @@ export interface IEventRepository {
   findEventsWithScheduledRelease(now: Date): Promise<Event[]>;
   findByShortId(shortId: string): Promise<Event | null>;
   findByRegionId(regionId: string): Promise<Event[]>;
+  findAll(): Promise<Event[]>;
 }

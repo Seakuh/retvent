@@ -301,6 +301,7 @@ import { ScheduledReleaseService } from 'src/application/services/scheduled-rele
     RegionService,
     AuthService,
     CommunityService,
+    RegionSeoService,
     GroupService,
     VoiceChatService,
     ImageService,
