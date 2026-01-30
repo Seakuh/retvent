@@ -552,8 +552,7 @@
   margin-left: 1.5rem;
   padding: 0.5rem 1rem;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 9999px;
+  border: none;
   color: white;
   font-size: 0.85rem;
   font-weight: 500;
@@ -562,8 +561,7 @@
 }
 
 .region-page-show-more-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
+  opacity: 0.7;
 }
 
 .region-page-vibe-section {
@@ -715,14 +713,6 @@
   transform: translateY(-1px);
 }
 
-.region-google-search-button {
-  /* Inherits from .pill-button */
-}
-
-.region-navigation-button {
-  /* Inherits from .pill-button */
-}
-
 .region-google-search-icon {
   width: 20px;
   height: 20px;
@@ -837,5 +827,55 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Mobile Optimierungen */
+@media (max-width: 768px) {
+  /* Events volle Breite ohne Padding */
+  .region-page-events-section {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .region-page-events-container {
+    padding: 0;
+  }
+
+  /* Titel kleiner auf Mobile */
+  .region-page-bubbles-title,
+  .region-page-artists-title,
+  .region-page-vibe-title,
+  .region-page-events-title-header {
+    font-size: 1.5rem;
+    margin: 1rem;
+    margin-left: 1rem;
+  }
+
+  /* Bubbles und Artists Sections Padding anpassen */
+  .region-page-bubbles-section,
+  .region-page-artists-section,
+  .region-page-vibe-section {
+    padding: 0 1rem;
+  }
+
+  /* Header Padding auf Mobile */
+  .region-page-header {
+    padding: 1rem;
+  }
+
+  .region-page-header-content {
+    gap: 1rem;
+  }
+
+  /* Logo kleiner auf Mobile */
+  .region-page-logo-container {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  /* Title kleiner auf Mobile */
+  .region-page-title {
+    font-size: 1.5rem;
   }
 }

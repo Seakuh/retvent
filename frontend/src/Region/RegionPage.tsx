@@ -21,6 +21,7 @@ export const RegionPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAllBubbles, setShowAllBubbles] = useState(false);
   const [showAllArtists, setShowAllArtists] = useState(false);
+  const [bubblesToShow, setBubblesToShow] = useState(4);
   const navigate = useNavigate();
   const logoInputRef = useRef<HTMLInputElement>(null);
   const imagesInputRef = useRef<HTMLInputElement>(null);
@@ -63,6 +64,17 @@ export const RegionPage = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Anzahl der Bubbles basierend auf Bildschirmgröße
+  useEffect(() => {
+    const updateBubblesToShow = () => {
+      setBubblesToShow(window.innerWidth > 768 ? 5 : 4);
+    };
+
+    updateBubblesToShow();
+    window.addEventListener("resize", updateBubblesToShow);
+    return () => window.removeEventListener("resize", updateBubblesToShow);
   }, []);
 
   // Scroll zu Event mit bestimmten Tag/Category
@@ -433,7 +445,7 @@ export const RegionPage = () => {
                 </div>
               </div>
               <div className="region-page-actions">
-                <button
+                {/* <button
                   className="region-google-search-button pill-button"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -449,7 +461,7 @@ export const RegionPage = () => {
                     className="region-google-search-icon"
                   />
                   <span className="region-google-search-text">GOOGLE</span>
-                </button>
+                </button> */}
               </div>
               {/*  */}
             </div>
@@ -460,7 +472,7 @@ export const RegionPage = () => {
         <div className={`region-page-artists-section ${showAllArtists ? "show-all" : ""}`}>
           <h3 className="region-page-artists-title">Upcoming Artists</h3>
           <div className="region-page-artists-container">
-            {(showAllArtists ? allArtists : allArtists.slice(0, 5)).map((artist, index) => (
+            {(showAllArtists ? allArtists : allArtists.slice(0, bubblesToShow)).map((artist, index) => (
               <span
                 key={index}
                 className="region-page-artist-bubble"
@@ -470,7 +482,7 @@ export const RegionPage = () => {
               </span>
             ))}
           </div>
-          {allArtists.length > 5 && (
+          {allArtists.length > bubblesToShow && (
             <button
               className="region-page-show-more-button"
               onClick={() => setShowAllArtists(!showAllArtists)}
@@ -487,7 +499,7 @@ export const RegionPage = () => {
         <div className={`region-page-bubbles-section ${showAllBubbles ? "show-all" : ""}`}>
           <h3 className="region-page-bubbles-title">Upcoming Vibe</h3>
           <div className="region-page-bubbles-container">
-            {(showAllBubbles ? allBubbles : allBubbles.slice(0, 5)).map((bubble, index) => (
+            {(showAllBubbles ? allBubbles : allBubbles.slice(0, bubblesToShow)).map((bubble, index) => (
               <span
                 key={index}
                 className="region-page-bubble"
@@ -497,7 +509,7 @@ export const RegionPage = () => {
               </span>
             ))}
           </div>
-          {allBubbles.length > 5 && (
+          {allBubbles.length > bubblesToShow && (
             <button
               className="region-page-show-more-button"
               onClick={() => setShowAllBubbles(!showAllBubbles)}
@@ -509,7 +521,7 @@ export const RegionPage = () => {
       )}
 
 
-      {region.vibe && (
+      {/* {region.vibe && (
         <div className="region-page-vibe-section">
           <div className="region-page-vibe-container">
             <div className="region-page-vibe-details">
@@ -572,7 +584,7 @@ export const RegionPage = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {showDescriptionModal && (
         <div className="region-page-description-modal-overlay" onClick={() => setShowDescriptionModal(false)}>
