@@ -33,32 +33,71 @@ const CityBarModal: React.FC<CityBarModalProps> = ({
   }, [isOpen]);
 
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const value = e.target.value.trim();
     setSearchTerm(value);
     setSelectedIndex(-1);
 
     if (value.length > 0) {
+      const searchLower = value.toLowerCase();
+      
       // Suche nach Regionen
       try {
         const regions = await searchRegions(value);
-        setRegionSuggestions(regions);
+        // Filtere Regionen strikt - nur wenn der Suchbegriff am Anfang steht oder als Wort-Boundary
+        const filteredRegions = regions.filter((region) => {
+          const nameLower = region.name.toLowerCase();
+          const slugLower = region.slug.toLowerCase();
+          const countryLower = region.country?.toLowerCase() || "";
+          
+          // Escape special regex characters
+          const escapedSearch = searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          
+          // Prüfe ob der Suchbegriff am Anfang steht
+          const nameStartsWith = nameLower.startsWith(searchLower);
+          const slugStartsWith = slugLower.startsWith(searchLower);
+          const countryStartsWith = countryLower.startsWith(searchLower);
+          
+          // Oder als Wort-Boundary (nach Leerzeichen, Bindestrich, etc.) - aber nicht mitten im Wort
+          const nameWordMatch = nameLower.match(new RegExp(`(^|\\s|-|_)${escapedSearch}`, 'i'));
+          const slugWordMatch = slugLower.match(new RegExp(`(^|\\s|-|_)${escapedSearch}`, 'i'));
+          
+          return nameStartsWith || slugStartsWith || countryStartsWith || nameWordMatch || slugWordMatch;
+        });
+        setRegionSuggestions(filteredRegions);
 
-        // Fallback: Lokale Städte-Suche
+        // Lokale Städte-Suche - nur wenn am Anfang oder als Wort-Boundary
         const filtered = allLocations
-          .filter((location) =>
-            location.toLowerCase().includes(value.toLowerCase())
-          )
+          .filter((location) => {
+            const locationLower = location.toLowerCase();
+            if (locationLower === searchLower) return false;
+            
+            // Escape special regex characters
+            const escapedSearch = searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            
+            // Muss am Anfang stehen oder als Wort-Boundary
+            const startsWith = locationLower.startsWith(searchLower);
+            const wordMatch = locationLower.match(new RegExp(`(^|\\s|-|_)${escapedSearch}`, 'i'));
+            return startsWith || wordMatch;
+          })
           .slice(0, 5);
         setSuggestions(filtered);
       } catch (error) {
         console.error("Error searching regions:", error);
-        // Fallback zu lokalen Städten
+        // Fallback zu lokalen Städten - nur wenn am Anfang oder als Wort-Boundary
+        const escapedSearch = searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const filtered = allLocations
-          .filter((location) =>
-            location.toLowerCase().includes(value.toLowerCase())
-          )
+          .filter((location) => {
+            const locationLower = location.toLowerCase();
+            if (locationLower === searchLower) return false;
+            
+            // Muss am Anfang stehen oder als Wort-Boundary
+            const startsWith = locationLower.startsWith(searchLower);
+            const wordMatch = locationLower.match(new RegExp(`(^|\\s|-|_)${escapedSearch}`, 'i'));
+            return startsWith || wordMatch;
+          })
           .slice(0, 5);
         setSuggestions(filtered);
+        setRegionSuggestions([]);
       }
     } else {
       setSuggestions([]);
@@ -67,16 +106,17 @@ const CityBarModal: React.FC<CityBarModalProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const totalSuggestions = regionSuggestions.length + suggestions.length;
+    
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedIndex((prev) =>
-        prev < suggestions.length - 1 ? prev + 1 : prev
+        prev < totalSuggestions - 1 ? prev + 1 : prev
       );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedIndex((prev) => (prev > -1 ? prev - 1 : -1));
     } else if (e.key === "Enter") {
-      const totalSuggestions = regionSuggestions.length + suggestions.length;
       if (selectedIndex >= 0 && selectedIndex < regionSuggestions.length) {
         // Region ausgewählt
         const region = regionSuggestions[selectedIndex];
@@ -91,6 +131,9 @@ const CityBarModal: React.FC<CityBarModalProps> = ({
         // Wenn eine Region gefunden wird, zuerst Region versuchen
         if (regionSuggestions.length > 0) {
           navigate(`/region/${regionSuggestions[0].slug}`);
+          onClose();
+        } else if (suggestions.length > 0) {
+          onSearch(suggestions[0]);
           onClose();
         } else {
           onSearch(searchTerm);
