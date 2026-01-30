@@ -516,7 +516,6 @@ export class RegionService {
         city: event.location?.city || event.city || event.address?.city,
         country: event.country,
         address: event.address?.street || event.location?.address,
-        coordinates,
         eventContext: {
           category: event.category,
           eventType: event.eventType,
