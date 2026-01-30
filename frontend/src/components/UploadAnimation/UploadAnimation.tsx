@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 import "./UploadAnimation.css";
 
 interface UploadAnimationProps {
@@ -12,16 +13,34 @@ export const UploadAnimation: React.FC<UploadAnimationProps> = ({
 }) => {
   useEffect(() => {
     if (isUploading) {
+      // Verhindere Scrollen komplett
       document.body.style.overflow = "hidden";
-      document.body.style.pointerEvents = "none";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.height = "100%";
+      document.body.style.touchAction = "none";
+      document.documentElement.style.overflow = "hidden";
+      document.documentElement.style.height = "100%";
     } else {
+      // Stelle Scrollen wieder her
       document.body.style.overflow = "";
-      document.body.style.pointerEvents = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.height = "";
+      document.body.style.touchAction = "";
+      document.documentElement.style.overflow = "";
+      document.documentElement.style.height = "";
     }
 
     return () => {
+      // Cleanup: Stelle alles wieder her
       document.body.style.overflow = "";
-      document.body.style.pointerEvents = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.height = "";
+      document.body.style.touchAction = "";
+      document.documentElement.style.overflow = "";
+      document.documentElement.style.height = "";
     };
   }, [isUploading]);
 
@@ -29,30 +48,51 @@ export const UploadAnimation: React.FC<UploadAnimationProps> = ({
     return null;
   }
 
-  return (
-    <div className="upload-container">
-      <div
-        className={`fixed inset-0 flex items-center justify-center z-50 bg-white/10 backdrop-blur-lg transition-opacity duration-300 ${
-          isUploading ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <div className="p-10 rounded-3xl w-96 text-center">
-          {/* <div className="w-28 h-28 mx-auto mb-6 flex items-center justify-center text-4xl rocket-animation">
-          <span role="img" aria-label="Rocket">🚀</span>
-        </div> */}
+  const overlayContent = (
+    <div className="upload-overlay">
+      {/* Animierte Hintergrund-Effekte */}
+      <div className="upload-bg-effects">
+        <div className="upload-glow-orb upload-glow-1"></div>
+        <div className="upload-glow-orb upload-glow-2"></div>
+        <div className="upload-glow-orb upload-glow-3"></div>
+      </div>
 
-          <div className="h-3 bg-gray-800 rounded-full overflow-hidden mb-4">
+      {/* Hauptcontainer */}
+      <div className="upload-container">
+        {/* Upload Icon/Animation */}
+        <div className="upload-icon-wrapper">
+          <div className="upload-icon-ring upload-icon-ring-1"></div>
+          <div className="upload-icon-ring upload-icon-ring-2"></div>
+          <div className="upload-icon-core">
+            <span className="upload-icon-emoji" role="img" aria-label="Upload">
+              🚀
+            </span>
+          </div>
+        </div>
+
+        {/* Fortschrittsanzeige */}
+        <div className="upload-progress-section">
+          <div className="upload-progress-bar">
             <div
-              className="h-full bg-gradient-to-r from-blue-500 via-pink-500 to-purple-500 rounded-full transition-all duration-500"
+              className="upload-progress-fill"
               style={{ width: `${progress}%` }}
             ></div>
+            <div className="upload-progress-shine"></div>
           </div>
-
-          <p className="text-white font-bold text-xl">
-            🎉 Event is uploading... {progress}%
-          </p>
+          <div className="upload-progress-text">
+            <span className="upload-progress-percent">{progress}%</span>
+            <span className="upload-progress-label">Event wird hochgeladen...</span>
+          </div>
         </div>
+
+        {/* Zusätzliche Info */}
+        <p className="upload-info-text">
+          Bitte warten, während dein Event hochgeladen wird
+        </p>
       </div>
     </div>
   );
+
+  // Rendere direkt im body mit Portal, um sicherzustellen, dass kein Container den z-index beeinflusst
+  return createPortal(overlayContent, document.body);
 };
