@@ -4,8 +4,9 @@ import { RealListItem } from "../components/EventGallery/Items/RealListItem";
 import { API_URL, Event, IRegion } from "../utils";
 import "./RegionPage.css";
 import { getRegion, getRegionEvents, uploadRegionLogo, uploadRegionImages, getSimilarRegions } from "./service";
-import { ChevronLeft, Plus, Navigation, X, Info, Edit, MapPin, Calendar, ChevronRight } from "lucide-react";
+import { ChevronLeft, Plus, Navigation, X, Info, Edit, MapPin, Calendar, ChevronRight, ArrowDown, ArrowBigDownDash, ArrowDown01, ArrowDownCircle, ArrowBigDown, ArrowDownRightFromSquareIcon, ChevronDown } from "lucide-react";
 import { RegionSearchModal } from "./RegionSearchModal";
+import { RegionHelmet } from "./RegionHelmet";
 import Footer from "../Footer/Footer";
 
 export const RegionPage = () => {
@@ -614,6 +615,7 @@ export const RegionPage = () => {
 
   return (
     <div className="region-page-container">
+      <RegionHelmet region={region} eventsCount={events.length} />
       <div className={`region-page-header ${isScrolled ? "scrolled" : ""}`} ref={headerRef}>
         <button onClick={() => navigate("/")} className="back-button">
           <ChevronLeft className="h-5 w-5" />
@@ -650,7 +652,7 @@ export const RegionPage = () => {
                     onClick={() => setShowRegionSearchModal(true)}
                     aria-label="Change region"
                   >
-                    <Edit size={18} />
+                    <ChevronDown size={18} />
                   </button>
                   {/* <button
                     className="region-page-location-icon-inline"
