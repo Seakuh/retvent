@@ -12,6 +12,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor, AnyFilesInterceptor } from '@nestjs/platform-express';
 import { RegionService } from '../../application/services/region.service';
@@ -220,5 +221,30 @@ export class RegionController {
       message: `${assigned} Events wurden automatisch Regionen zugeordnet`,
       assignedCount: assigned,
     };
+  }
+
+  @Post(':id/images')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('images', 10))
+  async uploadImages(
+    @Param('id') id: string,
+    @UploadedFiles() images?: Express.Multer.File[],
+  ) {
+    if (!images || images.length === 0) {
+      throw new BadRequestException('Keine Bilder zum Hochladen bereitgestellt');
+    }
+    return this.regionService.uploadImages(id, images);
+  }
+
+  @Post(':id/logo')
+  @UseInterceptors(FileInterceptor('logo'))
+  async uploadLogo(
+    @Param('id') id: string,
+    @UploadedFile() logo?: Express.Multer.File,
+  ) {
+    if (!logo) {
+      throw new BadRequestException('Kein Logo zum Hochladen bereitgestellt');
+    }
+    return this.regionService.uploadLogo(id, logo);
   }
 }

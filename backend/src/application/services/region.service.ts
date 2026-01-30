@@ -611,4 +611,40 @@ export class RegionService {
 
     return assignedCount;
   }
+
+  async uploadImages(
+    regionId: string,
+    images: Express.Multer.File[],
+  ): Promise<Region> {
+    const region = await this.getRegionById(regionId);
+
+    // Lade alle Images hoch
+    const imageUrls: string[] = [];
+    for (const image of images) {
+      const url = await this.imageService.uploadImage(image);
+      imageUrls.push(url);
+    }
+
+    // Füge die neuen Images zu den bestehenden hinzu
+    const existingImages = region.images || [];
+    const updatedImages = [...existingImages, ...imageUrls];
+
+    return this.regionRepository.update(regionId, {
+      images: updatedImages,
+    });
+  }
+
+  async uploadLogo(
+    regionId: string,
+    logo: Express.Multer.File,
+  ): Promise<Region> {
+    await this.getRegionById(regionId);
+
+    // Lade Logo hoch
+    const logoUrl = await this.imageService.uploadImage(logo);
+
+    return this.regionRepository.update(regionId, {
+      logoUrl,
+    });
+  }
 }

@@ -1613,50 +1613,55 @@ export class EventService {
       // Automatisch Event zur Region hinzufügen, falls regionId gesetzt wurde
       const eventRegionId = (newEvent as any).regionId;
       if (eventRegionId) {
-        try {
-          await this.regionService.addEventToRegion(eventRegionId, newEvent.id);
-        } catch (error) {
-          console.warn(
-            `Fehler beim Hinzufügen von Event ${newEvent.id} zur Region ${eventRegionId}:`,
-            error,
-          );
-        }
+        // Im Hintergrund ausführen, nicht blockierend
+        void (async () => {
+          try {
+            await this.regionService.addEventToRegion(eventRegionId, newEvent.id);
+          } catch (error) {
+            console.warn(
+              `Fehler beim Hinzufügen von Event ${newEvent.id} zur Region ${eventRegionId}:`,
+              error,
+            );
+          }
+        })();
       } else {
-        // Versuche nachträglich eine Region zu finden und zuzuordnen
-        try {
-          const eventData: any = {
-            location: newEvent.location,
-            city: newEvent.city,
-            address: newEvent.address,
-            uploadLat: (newEvent as any).uploadLat,
-            uploadLon: (newEvent as any).uploadLon,
-            category: newEvent.category,
-            eventType: (newEvent as any).eventType,
-            genre: (newEvent as any).genre,
-            country: (newEvent as any).country,
-          };
-          
-          // Extrahiere coordinates aus verschiedenen möglichen Stellen
-          if (newEvent.location?.coordinates) {
-            eventData.coordinates = newEvent.location.coordinates;
-          } else if ((newEvent as any).coordinates) {
-            eventData.coordinates = (newEvent as any).coordinates;
+        // Versuche nachträglich eine Region zu finden und zuzuordnen (im Hintergrund)
+        void (async () => {
+          try {
+            const eventData: any = {
+              location: newEvent.location,
+              city: newEvent.city,
+              address: newEvent.address,
+              uploadLat: (newEvent as any).uploadLat,
+              uploadLon: (newEvent as any).uploadLon,
+              category: newEvent.category,
+              eventType: (newEvent as any).eventType,
+              genre: (newEvent as any).genre,
+              country: (newEvent as any).country,
+            };
+            
+            // Extrahiere coordinates aus verschiedenen möglichen Stellen
+            if (newEvent.location?.coordinates) {
+              eventData.coordinates = newEvent.location.coordinates;
+            } else if ((newEvent as any).coordinates) {
+              eventData.coordinates = (newEvent as any).coordinates;
+            }
+            
+            const region = await this.regionService.autoAssignEventToRegion(
+              newEvent.id,
+              eventData,
+            );
+            if (region) {
+              // Update Event mit regionId im Hintergrund
+              await this.eventRepository.update(newEvent.id, {
+                regionId: region.id,
+              } as any);
+              console.log(`Event ${newEvent.id} wurde im Hintergrund der Region ${region.id} zugeordnet`);
+            }
+          } catch (error) {
+            console.warn('Fehler bei nachträglicher Region-Zuordnung im Hintergrund:', error);
           }
-          
-          const region = await this.regionService.autoAssignEventToRegion(
-            newEvent.id,
-            eventData,
-          );
-          if (region) {
-            // Update Event mit regionId
-            await this.eventRepository.update(newEvent.id, {
-              regionId: region.id,
-            } as any);
-            (newEvent as any).regionId = region.id;
-          }
-        } catch (error) {
-          console.warn('Fehler bei nachträglicher Region-Zuordnung:', error);
-        }
+        })();
       }
 
       // Auto-Link to Community if communityId is present
@@ -2332,8 +2337,60 @@ export class EventService {
     const eventFromPrompt: UpdateEventDto =
       await this.chatGptService.extractEventFromPrompt(prompt, event);
     console.log('eventFromPrompt', eventFromPrompt);
+    
+    // Kombiniere bestehende Event-Daten mit neuen Daten aus Prompt
+    const updatedEventData: any = {
+      ...event,
+      ...eventFromPrompt,
+    };
 
-    // update event with eventFromPrompt
+    // Automatische Region-Zuordnung im Hintergrund (nicht blockierend)
+    // Läuft asynchron und aktualisiert das Event später mit regionId
+    void (async () => {
+      try {
+        const eventDataForRegion: any = {
+          location: updatedEventData.location || event.location,
+          city: updatedEventData.city || event.city,
+          address: updatedEventData.address || event.address,
+          uploadLat: updatedEventData.uploadLat || (event as any).uploadLat,
+          uploadLon: updatedEventData.uploadLon || (event as any).uploadLon,
+          category: updatedEventData.category || event.category,
+          eventType: updatedEventData.eventType || (event as any).eventType,
+          genre: updatedEventData.genre || (event as any).genre,
+          country: updatedEventData.country || (event as any).country,
+        };
+
+        // Extrahiere coordinates aus verschiedenen möglichen Stellen
+        if (updatedEventData.location?.coordinates) {
+          eventDataForRegion.coordinates = updatedEventData.location.coordinates;
+        } else if (updatedEventData.coordinates) {
+          eventDataForRegion.coordinates = updatedEventData.coordinates;
+        } else if (event.location?.coordinates) {
+          eventDataForRegion.coordinates = event.location.coordinates;
+        } else if ((event as any).coordinates) {
+          eventDataForRegion.coordinates = (event as any).coordinates;
+        }
+
+        // Automatische Region-Zuordnung (erstellt Region falls nicht vorhanden)
+        const region = await this.regionService.autoAssignEventToRegion(
+          eventId,
+          eventDataForRegion,
+        );
+
+        if (region) {
+          // Update Event mit regionId im Hintergrund
+          await this.eventRepository.update(eventId, {
+            regionId: region.id,
+          } as any);
+          console.log(`Event ${eventId} wurde im Hintergrund der Region ${region.id} zugeordnet`);
+        }
+      } catch (error) {
+        console.warn('Fehler bei automatischer Region-Zuordnung im Hintergrund:', error);
+        // Fehler wird geloggt, aber nicht weitergeworfen
+      }
+    })();
+
+    // update event with eventFromPrompt (ohne auf Region-Zuordnung zu warten)
     return await this.eventRepository.updateFromPrompt(
       eventId,
       eventFromPrompt,

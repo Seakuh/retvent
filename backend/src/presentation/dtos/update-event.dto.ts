@@ -463,6 +463,10 @@ export class UpdateEventDto {
   @IsOptional()
   @IsString()
   region?: string;              // Bundesland/Region
+
+  @IsOptional()
+  @IsString()
+  regionId?: string;            // Referenz zur Region-Collection
   
   @IsOptional()
   @IsString()

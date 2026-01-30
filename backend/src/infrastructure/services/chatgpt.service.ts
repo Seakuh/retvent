@@ -754,7 +754,7 @@ Basierend auf folgenden Informationen über die Region "${regionData.name}":
 ${contextInfo.join('\n')}
 
 Erstelle:
-1. Eine ansprechende Regions-Beschreibung (150-250 Wörter) auf Deutsch, die:
+1. Eine ansprechende Regions-Beschreibung auf englisch (150-250 Wörter) auf Deutsch, die:
    - Den Charakter und die Atmosphäre der Region beschreibt
    - Typische Event-Locations und Hotspots erwähnt
    - Die kulturelle Vielfalt und das Nachtleben hervorhebt
