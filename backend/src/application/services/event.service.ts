@@ -2702,11 +2702,358 @@ export class EventService {
 
     return events;
 
-    // 1. Search on google 
-    
+    // 1. Search on google
+
     // 2. Search on meetup
 
 
 
+  }
+
+  /**
+   * Create event from AI query (placeholder)
+   * TODO: Implement AI-based event creation
+   */
+  async createEventFromAI(query: string): Promise<Event> {
+    throw new BadRequestException('AI event creation not yet implemented');
+  }
+
+  // ========================================================================
+  // EXTERNAL EVENT IMPORT - Store events from external sources
+  // ========================================================================
+
+  /**
+   * Store multiple events from external sources (scrapers, APIs, etc.)
+   * Handles deduplication based on title, date, and location.
+   *
+   * @param storeEventsDto - DTO containing events and metadata
+   * @param hostId - User ID of the importer (becomes event host)
+   * @returns Summary of stored events
+   */
+  async storeExternalEvents(
+    storeEventsDto: {
+      events: Array<{
+        title: string;
+        description?: string;
+        startDate: string;
+        startTime?: string;
+        endDate?: string;
+        endTime?: string;
+        city?: string;
+        address?: string;
+        lat?: number;
+        lon?: number;
+        category?: string;
+        price?: string;
+        ticketLink?: string;
+        website?: string;
+        imageUrl?: string;
+        tags?: string[];
+        eventType?: string;
+        eventFormat?: string;
+        genre?: string[];
+        venueName?: string;
+        organizerName?: string;
+        sourceUrl?: string;
+        sourcePlatform?: string;
+      }>;
+      sourcePlatform?: string;
+      region?: string;
+    },
+    hostId: string,
+  ): Promise<{
+    success: boolean;
+    totalReceived: number;
+    totalCreated: number;
+    totalUpdated: number;
+    totalSkipped: number;
+    events: Array<{
+      id: string;
+      title: string;
+      status: 'created' | 'updated' | 'skipped';
+      message?: string;
+    }>;
+  }> {
+    const results: Array<{
+      id: string;
+      title: string;
+      status: 'created' | 'updated' | 'skipped';
+      message?: string;
+    }> = [];
+
+    let totalCreated = 0;
+    let totalUpdated = 0;
+    let totalSkipped = 0;
+
+    for (const eventData of storeEventsDto.events) {
+      try {
+        // Check for duplicate based on title + date + city
+        const existingEvent = await this.findDuplicateExternalEvent(
+          eventData.title,
+          eventData.startDate,
+          eventData.city,
+        );
+
+        if (existingEvent) {
+          // Update existing event if source is the same or has more data
+          const shouldUpdate = this.shouldUpdateExternalEvent(existingEvent, eventData);
+
+          if (shouldUpdate) {
+            const updatedEvent = await this.updateExternalEvent(existingEvent.id, eventData);
+            results.push({
+              id: updatedEvent.id,
+              title: updatedEvent.title,
+              status: 'updated',
+              message: 'Event updated with new data',
+            });
+            totalUpdated++;
+          } else {
+            results.push({
+              id: existingEvent.id,
+              title: existingEvent.title,
+              status: 'skipped',
+              message: 'Duplicate event already exists',
+            });
+            totalSkipped++;
+          }
+          continue;
+        }
+
+        // Create new event
+        const newEvent = await this.createExternalEvent(eventData, hostId, storeEventsDto);
+        results.push({
+          id: newEvent.id,
+          title: newEvent.title,
+          status: 'created',
+        });
+        totalCreated++;
+      } catch (error) {
+        results.push({
+          id: '',
+          title: eventData.title,
+          status: 'skipped',
+          message: `Error: ${error.message}`,
+        });
+        totalSkipped++;
+      }
+    }
+
+    return {
+      success: true,
+      totalReceived: storeEventsDto.events.length,
+      totalCreated,
+      totalUpdated,
+      totalSkipped,
+      events: results,
+    };
+  }
+
+  /**
+   * Find duplicate external event based on title, date, and city
+   */
+  private async findDuplicateExternalEvent(
+    title: string,
+    startDate: string,
+    city?: string,
+  ): Promise<Event | null> {
+    // Normalize title for comparison
+    const normalizedTitle = title.toLowerCase().trim();
+    const dateObj = new Date(startDate);
+
+    // Search for events with similar title on the same date
+    const existingEvent = await this.eventRepository.findByTitleAndDate(
+      normalizedTitle,
+      dateObj,
+    );
+
+    // If city is provided, also check if it matches
+    if (existingEvent && city) {
+      const eventCity = existingEvent.city?.toLowerCase() || existingEvent.location?.city?.toLowerCase();
+      if (eventCity && eventCity !== city.toLowerCase()) {
+        return null; // Different city, not a duplicate
+      }
+    }
+
+    return existingEvent;
+  }
+
+  /**
+   * Determine if external event should be updated
+   */
+  private shouldUpdateExternalEvent(
+    existingEvent: Event,
+    newData: { description?: string; imageUrl?: string; tags?: string[] },
+  ): boolean {
+    // Update if new data has more content
+    if (!existingEvent.description && newData.description) return true;
+    if (!existingEvent.imageUrl && newData.imageUrl) return true;
+    if ((!existingEvent.tags || existingEvent.tags.length === 0) && newData.tags?.length > 0) return true;
+
+    return false;
+  }
+
+  /**
+   * Update an existing external event with new data
+   */
+  private async updateExternalEvent(
+    eventId: string,
+    eventData: {
+      description?: string;
+      imageUrl?: string;
+      tags?: string[];
+      website?: string;
+      ticketLink?: string;
+      price?: string;
+    },
+  ): Promise<Event> {
+    const updateData: Partial<Event> = {
+      updatedAt: new Date(),
+    };
+
+    if (eventData.description) updateData.description = eventData.description;
+    if (eventData.imageUrl) updateData.imageUrl = eventData.imageUrl;
+    if (eventData.tags) updateData.tags = eventData.tags;
+    if (eventData.website) updateData.website = eventData.website;
+    if (eventData.ticketLink) updateData.ticketLink = eventData.ticketLink;
+    if (eventData.price) updateData.price = eventData.price;
+
+    return this.eventRepository.update(eventId, updateData);
+  }
+
+  /**
+   * Create a new event from external source data
+   */
+  private async createExternalEvent(
+    eventData: {
+      title: string;
+      description?: string;
+      startDate: string;
+      startTime?: string;
+      endDate?: string;
+      endTime?: string;
+      city?: string;
+      address?: string;
+      lat?: number;
+      lon?: number;
+      category?: string;
+      price?: string;
+      ticketLink?: string;
+      website?: string;
+      imageUrl?: string;
+      tags?: string[];
+      eventType?: string;
+      eventFormat?: string;
+      genre?: string[];
+      venueName?: string;
+      organizerName?: string;
+      sourceUrl?: string;
+      sourcePlatform?: string;
+    },
+    hostId: string,
+    storeEventsDto: { sourcePlatform?: string; region?: string },
+  ): Promise<Event> {
+    // Build event object
+    const event: Partial<Event> = {
+      title: eventData.title,
+      description: eventData.description,
+      startDate: new Date(eventData.startDate),
+      startTime: eventData.startTime || '00:00',
+      endDate: eventData.endDate ? new Date(eventData.endDate) : undefined,
+      endTime: eventData.endTime,
+      city: eventData.city,
+      imageUrl: eventData.imageUrl,
+      category: eventData.category,
+      price: eventData.price,
+      ticketLink: eventData.ticketLink,
+      website: eventData.website || eventData.sourceUrl,
+      tags: eventData.tags,
+      hostId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: 'published',
+      region: storeEventsDto.region,
+    };
+
+    // Set location if coordinates provided
+    if (eventData.lat && eventData.lon) {
+      event.location = {
+        city: eventData.city,
+        address: eventData.address,
+        coordinates: {
+          lat: eventData.lat,
+          lon: eventData.lon,
+        },
+      };
+    } else if (eventData.address) {
+      event.location = {
+        city: eventData.city,
+        address: eventData.address,
+      };
+    }
+
+    // Set venue if provided
+    if (eventData.venueName) {
+      event.venue = {
+        name: eventData.venueName,
+      };
+    }
+
+    // Set organizer if provided
+    if (eventData.organizerName) {
+      event.organizer = {
+        name: eventData.organizerName,
+      };
+    }
+
+    // Set event type and format
+    if (eventData.eventType) {
+      event.eventType = eventData.eventType as Event['eventType'];
+    }
+    if (eventData.eventFormat) {
+      event.eventFormat = eventData.eventFormat as Event['eventFormat'];
+    }
+    if (eventData.genre) {
+      event.genre = eventData.genre as Event['genre'];
+    }
+
+    // Generate slugs
+    if (event.title && event.city && event.startDate) {
+      try {
+        const slugs = await this.slugService.generateSlugsForEvent({
+          title: event.title,
+          city: event.city,
+          startDate: event.startDate,
+          category: event.category,
+        });
+        Object.assign(event, slugs);
+      } catch (error) {
+        console.error('Slug generation failed:', error);
+      }
+    }
+
+    // AI enrichment (optional)
+    try {
+      const enriched = this.aiEnrichmentService.enrichEvent({
+        title: event.title,
+        description: event.description,
+        category: event.category,
+        city: event.city,
+      });
+      Object.assign(event, enriched);
+    } catch (error) {
+      console.error('AI enrichment failed:', error);
+    }
+
+    // Create the event
+    const newEvent = await this.eventRepository.createEventFromFormData(event);
+
+    // Push to feed
+    try {
+      await this.feedService.pushFeedItemFromEvent(newEvent, 'event');
+    } catch (error) {
+      console.error('Feed push failed:', error);
+    }
+
+    return newEvent;
   }
 }

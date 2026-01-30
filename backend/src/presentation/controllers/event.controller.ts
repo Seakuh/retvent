@@ -32,6 +32,7 @@ import { EventSearchResponseDto } from '../dtos/event-search.dto';
 import { UpdateEventDto } from '../dtos/update-event.dto';
 import { VectorSearchFilterDto } from '../dtos/vector-search-filter.dto';
 import { PlanReleaseDto } from '../dtos/plan-release.dto';
+import { StoreExternalEventsDto, StoreExternalEventsResponseDto } from '../dtos/store-external-events.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { UploadGuard } from '../guards/upload.guard';
 import { CommunityEventGuard } from '../guards/community-event.guard';
@@ -1971,5 +1972,84 @@ export class EventController {
   @Get('search/artists')
   async searchArtists(@Query('query') query: string) {
     return this.eventService.searchArtists(query);
+  }
+
+  // CREATE EVENT FROM AI
+  @Post('create/event/ai')
+  async createEventFromAI(@Body() body: { query: string }) {
+    return this.eventService.createEventFromAI(body.query);
+  }
+
+  // ========================================================================
+  // EXTERNAL EVENT IMPORT - Store events from external sources
+  // ========================================================================
+
+  /**
+   * POST /api/events/external/store
+   * Store multiple events from external sources (scrapers, APIs, etc.)
+   *
+   * This endpoint accepts an array of events and stores them in the database.
+   * It handles deduplication based on title, date, and location.
+   *
+   * @example Request body:
+   * {
+   *   "events": [
+   *     {
+   *       "title": "Schneeschuhtour für Einsteiger",
+   *       "description": "Geführte Tour durch die Winterlandschaft",
+   *       "startDate": "2026-02-02",
+   *       "startTime": "10:00",
+   *       "city": "Pfronten",
+   *       "category": "Naturerlebnis",
+   *       "price": "ab 35€",
+   *       "imageUrl": "https://example.com/image.jpg",
+   *       "tags": ["Schneeschuh", "Geführt", "Einsteiger"],
+   *       "eventType": "workshop",
+   *       "eventFormat": "outdoor",
+   *       "website": "https://www.schneeschuhwandern-allgaeu.de/"
+   *     }
+   *   ],
+   *   "sourcePlatform": "allgaeu.de",
+   *   "region": "Allgäu"
+   * }
+   */
+  @Post('external/store')
+  @UseGuards(JwtAuthGuard)
+  async storeExternalEvents(
+    @Body() storeEventsDto: StoreExternalEventsDto,
+    @Request() req,
+  ): Promise<StoreExternalEventsResponseDto> {
+    return this.eventService.storeExternalEvents(
+      storeEventsDto,
+      req.user.sub,
+    );
+  }
+
+  /**
+   * POST /api/events/external/store-single
+   * Store a single event from external source
+   * Convenience endpoint for storing one event at a time
+   */
+  @Post('external/store-single')
+  @UseGuards(JwtAuthGuard)
+  async storeExternalEvent(
+    @Body() eventData: any,
+    @Request() req,
+  ) {
+    const storeEventsDto: StoreExternalEventsDto = {
+      events: [eventData],
+      sourcePlatform: eventData.sourcePlatform,
+      region: eventData.region,
+    };
+
+    const result = await this.eventService.storeExternalEvents(
+      storeEventsDto,
+      req.user.sub,
+    );
+
+    return {
+      success: result.success,
+      event: result.events[0],
+    };
   }
 }
