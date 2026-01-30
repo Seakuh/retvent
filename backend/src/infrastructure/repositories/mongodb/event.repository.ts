@@ -89,10 +89,10 @@ export class MongoEventRepository implements IEventRepository {
     }
 
     // Nur veröffentlichte Events anzeigen
-    const filter = this.getPublishedEventsFilter(query);
+    //const filter = this.getPublishedEventsFilter(query);
 
     const events = await this.eventModel
-      .find(filter)
+      .find(query)
       .sort({ createdAt: -1 })
       .select(
         'id description title imageUrl isSponsored startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username',
@@ -350,9 +350,13 @@ export class MongoEventRepository implements IEventRepository {
     today.setHours(0, 0, 0, 0);
 
     const dateFilter = { startDate: { $gte: today } };
-    const filter = this.getPublishedEventsFilter(dateFilter);
+    //const filter = this.getPublishedEventsFilter(dateFilter);
     const events = await this.eventModel
-      .find(filter)
+      .find({ startDate: { $gte: today } })
+      .select(
+        'id title imageUrl description startDate city views tags commentCount lineup.name hostId host.profileImageUrl host.username commentCount tags',
+      )
+      .limit(50)
       .exec();
     return this.addCommentCountToEvents(events);
   }
