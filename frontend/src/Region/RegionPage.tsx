@@ -256,8 +256,26 @@ export const RegionPage = () => {
     };
   };
 
+  // Sammle alle Artists aus den Events
+  const getAllArtists = () => {
+    const artistsSet = new Set<string>();
+
+    events.forEach((event) => {
+      if (event.lineup && Array.isArray(event.lineup)) {
+        event.lineup.forEach((artist) => {
+          if (artist.name && artist.name.trim()) {
+            artistsSet.add(artist.name.trim());
+          }
+        });
+      }
+    });
+
+    return Array.from(artistsSet);
+  };
+
   const { tags, categories } = getAllTagsAndCategories();
   const allBubbles = [...categories, ...tags];
+  const allArtists = getAllArtists();
 
   if (isLoading) {
     return (
@@ -370,79 +388,102 @@ export const RegionPage = () => {
         </div>
       </div>
 
-      {allBubbles.length > 0 && (
-        <div className="region-page-bubbles-container">
-          {allBubbles.map((bubble, index) => (
-            <span
-              key={index}
-              className="region-page-bubble"
-              onClick={() => handleBubbleClick(bubble)}
-            >
-              {bubble}
-            </span>
-          ))}
+
+
+      {allArtists.length > 0 && (
+        <div className="region-page-artists-section">
+          <h3 className="region-page-artists-title">Upcoming Artists</h3>
+          <div className="region-page-artists-container">
+            {allArtists.map((artist, index) => (
+              <span
+                key={index}
+                className="region-page-artist-bubble"
+                onClick={() => navigate(`/artist/${encodeURIComponent(artist)}/events`)}
+              >
+                {artist}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 
       {region.vibe && (
-        <div className="region-page-vibe-container">
-          <div className="region-page-vibe-details">
-            {region.vibe.energy !== undefined && (
-              <div className="region-page-vibe-item">
-                <div className="region-page-vibe-label">
-                  <span>⚡ Energy</span>
-                  <span className="region-page-vibe-value">{region.vibe.energy}%</span>
+        <div className="region-page-vibe-section">
+          <h3 className="region-page-vibe-title">Upcoming Vibe</h3>
+          {allBubbles.length > 0 && (
+        <div className="region-page-bubbles-section">
+          <div className="region-page-bubbles-container">
+            {allBubbles.map((bubble, index) => (
+              <span
+                key={index}
+                className="region-page-bubble"
+                onClick={() => handleBubbleClick(bubble)}
+              >
+                {bubble}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+          <div className="region-page-vibe-container">
+            <div className="region-page-vibe-details">
+              {region.vibe.energy !== undefined && (
+                <div className="region-page-vibe-item">
+                  <div className="region-page-vibe-label">
+                    <span>⚡ Energy</span>
+                    <span className="region-page-vibe-value">{region.vibe.energy}%</span>
+                  </div>
+                  <div className="region-page-vibe-progress-bar">
+                    <div 
+                      className="region-page-vibe-progress-fill" 
+                      style={{ width: `${region.vibe.energy}%` }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="region-page-vibe-progress-bar">
-                  <div 
-                    className="region-page-vibe-progress-fill" 
-                    style={{ width: `${region.vibe.energy}%` }}
-                  ></div>
+              )}
+              {region.vibe.intimacy !== undefined && (
+                <div className="region-page-vibe-item">
+                  <div className="region-page-vibe-label">
+                    <span>💫 Intimacy</span>
+                    <span className="region-page-vibe-value">{region.vibe.intimacy}%</span>
+                  </div>
+                  <div className="region-page-vibe-progress-bar">
+                    <div 
+                      className="region-page-vibe-progress-fill" 
+                      style={{ width: `${region.vibe.intimacy}%` }}
+                    ></div>
+                  </div>
                 </div>
-              </div>
-            )}
-            {region.vibe.intimacy !== undefined && (
-              <div className="region-page-vibe-item">
-                <div className="region-page-vibe-label">
-                  <span>💫 Intimacy</span>
-                  <span className="region-page-vibe-value">{region.vibe.intimacy}%</span>
+              )}
+              {region.vibe.exclusivity !== undefined && (
+                <div className="region-page-vibe-item">
+                  <div className="region-page-vibe-label">
+                    <span>✨ Exclusivity</span>
+                    <span className="region-page-vibe-value">{region.vibe.exclusivity}%</span>
+                  </div>
+                  <div className="region-page-vibe-progress-bar">
+                    <div 
+                      className="region-page-vibe-progress-fill" 
+                      style={{ width: `${region.vibe.exclusivity}%` }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="region-page-vibe-progress-bar">
-                  <div 
-                    className="region-page-vibe-progress-fill" 
-                    style={{ width: `${region.vibe.intimacy}%` }}
-                  ></div>
+              )}
+              {region.vibe.social !== undefined && (
+                <div className="region-page-vibe-item">
+                  <div className="region-page-vibe-label">
+                    <span>👥 Social</span>
+                    <span className="region-page-vibe-value">{region.vibe.social}%</span>
+                  </div>
+                  <div className="region-page-vibe-progress-bar">
+                    <div 
+                      className="region-page-vibe-progress-fill" 
+                      style={{ width: `${region.vibe.social}%` }}
+                    ></div>
+                  </div>
                 </div>
-              </div>
-            )}
-            {region.vibe.exclusivity !== undefined && (
-              <div className="region-page-vibe-item">
-                <div className="region-page-vibe-label">
-                  <span>✨ Exclusivity</span>
-                  <span className="region-page-vibe-value">{region.vibe.exclusivity}%</span>
-                </div>
-                <div className="region-page-vibe-progress-bar">
-                  <div 
-                    className="region-page-vibe-progress-fill" 
-                    style={{ width: `${region.vibe.exclusivity}%` }}
-                  ></div>
-                </div>
-              </div>
-            )}
-            {region.vibe.social !== undefined && (
-              <div className="region-page-vibe-item">
-                <div className="region-page-vibe-label">
-                  <span>👥 Social</span>
-                  <span className="region-page-vibe-value">{region.vibe.social}%</span>
-                </div>
-                <div className="region-page-vibe-progress-bar">
-                  <div 
-                    className="region-page-vibe-progress-fill" 
-                    style={{ width: `${region.vibe.social}%` }}
-                  ></div>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -512,13 +512,29 @@
   }
 }
 
-.region-page-bubbles-container {
+.region-page-bubbles-section,
+.region-page-artists-section,
+.region-page-vibe-section {
   width: 100%;
   max-width: 80rem;
   margin: 0 auto;
   margin-top: 2rem;
   margin-bottom: 1rem;
   padding: 0 2rem;
+}
+
+.region-page-bubbles-title,
+.region-page-artists-title,
+.region-page-vibe-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+}
+
+.region-page-bubbles-container,
+.region-page-artists-container {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -544,13 +560,28 @@
   transform: translateY(-1px);
 }
 
+.region-page-artist-bubble {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.region-page-artist-bubble:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
 .region-page-vibe-container {
   width: 100%;
-  max-width: 80rem;
-  margin: 0 auto;
-  margin-top: 1.5rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem 2rem;
+  padding: 1.5rem;
   background: #000000;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
