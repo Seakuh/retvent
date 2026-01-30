@@ -120,6 +120,21 @@
   width: 100%;
 }
 
+.region-page-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.region-page-title-with-edit {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
 .region-page-title {
   font-size: 2rem;
   font-weight: 700;
@@ -128,40 +143,50 @@
   line-height: 1.2;
   color: white;
   text-transform: uppercase;
-  margin-bottom: 0.75rem;
 }
 
-.region-page-description-preview {
+.region-page-edit-icon-inline {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.region-page-description-text {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.region-page-description-more {
-  background: transparent;
-  border: none;
-  color: var(--color-neon-blue);
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
   cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
+  transition: all 0.2s ease;
   padding: 0;
-  text-align: left;
-  transition: color 0.2s ease;
+  flex-shrink: 0;
 }
 
-.region-page-description-more:hover {
-  color: var(--color-neon-blue-light);
+.region-page-edit-icon-inline:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.region-page-info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.region-page-info-icon:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
 }
 
 .region-page-description-modal-overlay {
@@ -418,6 +443,7 @@
 .region-page-vibe-container {
   width: 100%;
   max-width: 800px;
+  margin-top: 1.5rem;
   margin-bottom: 2rem;
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.05);
