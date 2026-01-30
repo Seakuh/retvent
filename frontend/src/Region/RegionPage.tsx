@@ -6,6 +6,9 @@ import "./RegionPage.css";
 import { getRegion, getRegionEvents, uploadRegionLogo, uploadRegionImages } from "./service";
 import { ChevronLeft, Plus, Navigation, X, Info, Edit } from "lucide-react";
 import { RegionSearchModal } from "./RegionSearchModal";
+import "leaflet/dist/leaflet.css";
+import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
+import { Icon, divIcon } from "leaflet";
 
 export const RegionPage = () => {
   const { regionSlug } = useParams();
@@ -225,15 +228,26 @@ export const RegionPage = () => {
                     <Edit size={18} />
                   </button>
                 </div>
-                {(region.description || region.introText) && (
-                  <button
-                    className="region-page-info-icon"
-                    onClick={() => setShowDescriptionModal(true)}
-                    aria-label="Show description"
-                  >
-                    <Info size={20} />
-                  </button>
-                )}
+                <div className="region-page-header-icons">
+                  {(region.description || region.introText) && (
+                    <button
+                      className="region-page-info-icon"
+                      onClick={() => setShowDescriptionModal(true)}
+                      aria-label="Show description"
+                    >
+                      <Info size={20} />
+                    </button>
+                  )}
+                  {region.coordinates && (
+                    <button
+                      className="region-page-navigation-icon"
+                      onClick={handleGoogleMapsNavigation}
+                      aria-label="Directions"
+                    >
+                      <Navigation size={20} />
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="region-page-actions">
                 <button
@@ -253,21 +267,45 @@ export const RegionPage = () => {
                   />
                   <span className="region-google-search-text">GOOGLE</span>
                 </button>
-                {region.coordinates && (
-                  <button
-                    className="region-navigation-button pill-button"
-                    onClick={handleGoogleMapsNavigation}
-                    aria-label="Directions"
-                  >
-                    <Navigation size={20} />
-                    <span>Directions</span>
-                  </button>
-                )}
+              </div>
+              <div className="region-page-events-header">
+                <h2 className="region-page-events-title-header">
+                  Upcoming Events
+                  <span className="region-page-events-count-header">({events.length})</span>
+                </h2>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* {region.coordinates && (
+        <div className="region-page-map-container">
+          <MapContainer
+            center={[region.coordinates.latitude, region.coordinates.longitude]}
+            zoom={10}
+            className="region-page-map"
+            zoomControl={true}
+            scrollWheelZoom={true}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker
+              position={[region.coordinates.latitude, region.coordinates.longitude]}
+              icon={divIcon({
+                className: 'region-marker-icon',
+                html: '<div class="region-marker-pin"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 20],
+              })}
+            >
+              <Popup>{region.name}</Popup>
+            </Marker>
+          </MapContainer>
+        </div>
+      )} */}
 
       {region.vibe && (
         <div className="region-page-vibe-container">
@@ -369,7 +407,6 @@ export const RegionPage = () => {
       )}
 
       <div className="region-page-events-container">
-        <h2 className="region-page-events-title">Upcoming Events in {region.name}</h2>
         {events.length > 0 ? (
           <div className="region-page-events-list">
             {events.map((event) => (
