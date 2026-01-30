@@ -1,10 +1,24 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./Footer.module.css";
 
 const Footer: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate("/");
+  };
+
   return (
     <footer className={styles.footer}>
+      <div className={styles.footerLogoContainer}>
+        <img
+          src="/logo.png"
+          alt="Event Scanner Logo"
+          className={styles.footerLogo}
+          onClick={handleLogoClick}
+        />
+      </div>
       <div className={styles.footerContent}>
         {/* Company Section */}
         <div className={styles.footerSection}>

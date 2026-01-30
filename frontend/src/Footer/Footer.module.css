@@ -7,6 +7,27 @@
   z-index: 1000;
 }
 
+.footerLogoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.footerLogo {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.footerLogo:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
 .footerContent {
   max-width: 1400px;
   margin: 0 auto;
@@ -208,6 +229,15 @@
 @media (max-width: 768px) {
   .footer {
     padding: 3rem 1.5rem 1.5rem;
+  }
+
+  .footerLogoContainer {
+    margin-bottom: 2rem;
+  }
+
+  .footerLogo {
+    width: 60px;
+    height: 60px;
   }
 
   .footerContent {
