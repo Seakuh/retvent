@@ -321,6 +321,34 @@ export interface Artist extends Profile {
   links?: string[];
 }
 
+export interface IRegion {
+  id: string;
+  name: string;
+  description?: string;
+  slug: string;
+  logoUrl?: string;
+  images?: string[];
+  vibe?: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  address?: string;
+  country?: string;
+  parentRegion?: string;
+  eventIds?: string[];
+  serviceIds?: string[];
+  commentIds?: string[];
+  likeIds?: string[];
+  shareCount?: number;
+  followerIds?: string[];
+  metaDescription?: string;
+  h1?: string;
+  introText?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface Comment {
   id?: string;
   _id?: string;

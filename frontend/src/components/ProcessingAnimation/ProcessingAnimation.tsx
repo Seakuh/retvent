@@ -3,11 +3,32 @@ import { useNavigate } from "react-router-dom";
 import "./ProcessingAnimation.css";
 
 const processingSteps = [
-  { text: "Image uploaded successfully", emoji: "📸" },
-  { text: "Analyzing event data", emoji: "🔍" },
-  { text: "Processing object information", emoji: "📊" },
-  { text: "Discovering location details", emoji: "📍" },
-  { text: "Gathering internet data", emoji: "🌐" },
+  { text: "Bild erfolgreich hochgeladen", emoji: "📸" },
+  { text: "Bildqualität wird analysiert", emoji: "🔬" },
+  { text: "Objekte werden erkannt", emoji: "👁️" },
+  { text: "Text wird extrahiert (OCR)", emoji: "📝" },
+  { text: "Farben werden analysiert", emoji: "🎨" },
+  { text: "Event-Typ wird identifiziert", emoji: "🎭" },
+  { text: "Datum & Uhrzeit werden gesucht", emoji: "📅" },
+  { text: "Location wird ermittelt", emoji: "📍" },
+  { text: "Künstler werden erkannt", emoji: "🎤" },
+  { text: "Genre wird bestimmt", emoji: "🎵" },
+  { text: "Preisinformationen werden gesucht", emoji: "💰" },
+  { text: "Veranstalter wird identifiziert", emoji: "🏢" },
+  { text: "Online-Datenbanken werden durchsucht", emoji: "🌐" },
+  { text: "Social Media wird gescannt", emoji: "📱" },
+  { text: "Ticketlinks werden gesucht", emoji: "🎫" },
+  { text: "Ähnliche Events werden gefunden", emoji: "🔗" },
+  { text: "Venue-Details werden geladen", emoji: "🏛️" },
+  { text: "Karteninformationen werden geholt", emoji: "🗺️" },
+  { text: "Metadaten werden zusammengeführt", emoji: "📊" },
+  { text: "Event wird validiert", emoji: "✅" },
+  { text: "Duplikate werden geprüft", emoji: "🔄" },
+  { text: "Event wird in Datenbank gespeichert", emoji: "💾" },
+  { text: "Suchindex wird aktualisiert", emoji: "🔍" },
+  { text: "Benachrichtigungen werden vorbereitet", emoji: "🔔" },
+  { text: "Punkte werden gutgeschrieben", emoji: "⭐" },
+  { text: "Finalisierung läuft", emoji: "🚀" },
 ];
 
 interface ProcessingAnimationProps {
@@ -34,7 +55,7 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({
           return prev;
         }
       });
-    }, 1500);
+    }, 2500); // Längere Zeit pro Schritt
 
     return () => clearInterval(interval);
   }, []);
@@ -45,8 +66,8 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({
       if ("Notification" in window) {
         Notification.requestPermission().then((permission) => {
           if (permission === "granted") {
-            new Notification("Event successfully uploaded!", {
-              body: "Your event has been successfully processed.\n Credited 20 points to your account.",
+            new Notification("Event erfolgreich hochgeladen!", {
+              body: "Dein Event wurde erfolgreich verarbeitet.\n20 Punkte wurden deinem Konto gutgeschrieben.",
               icon: "/logo.png",
             });
           }
@@ -68,36 +89,92 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({
   }, [isComplete, onComplete, eventId, navigate]);
 
   if (isComplete) {
-    return;
+    return null;
   }
 
+  // Zeige nur die letzten 5 Schritte im sichtbaren Bereich
+  const visibleStartIndex = Math.max(0, currentStep - 4);
+  const visibleSteps = processingSteps.slice(visibleStartIndex, currentStep + 1);
+
   return (
-    <div className="proccess-container">
-      <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/10 backdrop-blur-lg transition-opacity duration-300 pointer-events-none">
-        <div className="p-8 rounded-3xl w-[90%] max-w-md text-center">
-          <div className="mb-8">
-            <div className="w-24 h-24 mx-auto mb-6">
-              <div className="scanning-circle"></div>
+    <div className="processing-overlay">
+      <div className="processing-container">
+        {/* Animierter Hintergrund */}
+        <div className="processing-bg-effects">
+          <div className="processing-glow-orb processing-glow-1"></div>
+          <div className="processing-glow-orb processing-glow-2"></div>
+          <div className="processing-glow-orb processing-glow-3"></div>
+        </div>
+
+        {/* Hauptinhalt */}
+        <div className="processing-content">
+          {/* Spinner */}
+          <div className="processing-spinner-wrapper">
+            <div className="processing-spinner">
+              <div className="processing-spinner-ring"></div>
+              <div className="processing-spinner-ring"></div>
+              <div className="processing-spinner-ring"></div>
+              <div className="processing-spinner-core">
+                <span className="processing-spinner-emoji">
+                  {processingSteps[currentStep]?.emoji || "⚡"}
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-4">
-            {processingSteps.map((step, index) => (
-              <div
-                key={index}
-                className={`flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${
-                  index <= currentStep
-                    ? "bg-blue-900/80 backdrop-blur-sm"
-                    : "bg-blue-900/60 backdrop-blur-sm"
-                }`}
-              >
-                <span className="text-white text-lg">{step.text}</span>
-                <span className="text-2xl">
-                  {index < currentStep ? "✅" : step.emoji}
-                </span>
-              </div>
-            ))}
+          {/* Fortschrittsanzeige */}
+          <div className="processing-progress-info">
+            <span className="processing-step-counter">
+              Schritt {currentStep + 1} von {processingSteps.length}
+            </span>
+            <div className="processing-progress-bar">
+              <div 
+                className="processing-progress-fill"
+                style={{ width: `${((currentStep + 1) / processingSteps.length) * 100}%` }}
+              ></div>
+            </div>
           </div>
+
+          {/* Schritte Liste */}
+          <div className="processing-steps-list">
+            {visibleSteps.map((step, index) => {
+              const actualIndex = visibleStartIndex + index;
+              const isActive = actualIndex === currentStep;
+              const isCompleted = actualIndex < currentStep;
+              
+              return (
+                <div
+                  key={actualIndex}
+                  className={`processing-step-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
+                  style={{ 
+                    animationDelay: `${index * 0.1}s`,
+                    opacity: isActive ? 1 : isCompleted ? 0.6 : 0.3
+                  }}
+                >
+                  <div className="processing-step-icon">
+                    {isCompleted ? (
+                      <span className="processing-check">✓</span>
+                    ) : (
+                      <span>{step.emoji}</span>
+                    )}
+                  </div>
+                  <span className="processing-step-text">{step.text}</span>
+                  {isActive && (
+                    <div className="processing-step-loader">
+                      <div className="processing-dot"></div>
+                      <div className="processing-dot"></div>
+                      <div className="processing-dot"></div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Info Text */}
+          <p className="processing-info-text">
+            Bitte warten, dein Event wird verarbeitet...
+          </p>
         </div>
       </div>
     </div>

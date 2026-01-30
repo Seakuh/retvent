@@ -1,0 +1,243 @@
+.region-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.region-page-header {
+  width: 100%;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.region-page-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.region-page-logo-container {
+  width: 15rem;
+  height: 15rem;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.region-page-logo-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.region-page-title-container {
+  text-align: center;
+  width: 100%;
+}
+
+.region-page-title {
+  font-size: 4rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: white;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .region-page-title {
+    font-size: 2.5rem;
+  }
+  
+  .region-page-logo-container {
+    width: 10rem;
+    height: 10rem;
+  }
+}
+
+.region-page-intro-container {
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.region-page-intro-container p {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.6;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.region-page-description-container {
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.region-page-description-container p {
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.region-page-images-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.region-page-image-item {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.region-page-image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.region-page-location-container {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.region-page-location-container p {
+  margin: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.region-page-location-container strong {
+  color: white;
+  font-weight: 600;
+}
+
+.region-page-vibe-container {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.region-page-vibe-container p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.region-page-vibe-container strong {
+  color: white;
+  font-weight: 600;
+}
+
+.region-page-parent-container {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.region-page-parent-container p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.region-page-parent-container strong {
+  color: white;
+  font-weight: 600;
+}
+
+.region-page-events-container {
+  width: 100%;
+  margin-top: 3rem;
+}
+
+.region-page-events-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: white;
+  text-align: center;
+}
+
+.region-page-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.region-page-no-events {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.125rem;
+  padding: 3rem 0;
+}
+
+.region-page-not-found {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.region-page-not-found h1 {
+  font-size: 2.5rem;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.region-page-not-found p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.125rem;
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

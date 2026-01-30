@@ -1,47 +1,147 @@
-.scanning-circle {
-  width: 100%;
-  height: 100%;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #00ff87;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  position: relative;
-}
-
-.proccess-container {
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: hidden;
-  touch-action: none;
+/* Processing Overlay - Maximaler z-index */
+.processing-overlay {
+  position: fixed;
   inset: 0;
-  z-index: 10000000000;
+  z-index: 2147483647; /* Maximum z-index value */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: fadeIn 0.3s ease-out;
 }
 
-.scanning-circle::before,
-.scanning-circle::after {
-  content: '';
+.processing-container {
+  position: relative;
+  width: 90%;
+  max-width: 420px;
+  padding: 2rem;
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.9) 0%,
+    rgba(15, 23, 42, 0.95) 100%
+  );
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  box-shadow: 
+    0 0 60px rgba(99, 102, 241, 0.2),
+    0 0 100px rgba(139, 92, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+/* Animierte Hintergrund-Effekte */
+.processing-bg-effects {
   position: absolute;
-  border: 4px solid transparent;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.processing-glow-orb {
+  position: absolute;
   border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  animation: float 6s ease-in-out infinite;
 }
 
-.scanning-circle::before {
-  top: -12px;
-  left: -12px;
-  right: -12px;
-  bottom: -12px;
-  border-top-color: #60efff;
-  animation: spin 2s linear infinite;
+.processing-glow-1 {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  top: -50px;
+  left: -50px;
+  animation-delay: 0s;
 }
 
-.scanning-circle::after {
-  top: 6px;
-  left: 6px;
-  right: 6px;
-  bottom: 6px;
-  border-top-color: #fff;
-  animation: spin 3s linear infinite;
+.processing-glow-2 {
+  width: 150px;
+  height: 150px;
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  bottom: -30px;
+  right: -30px;
+  animation-delay: 2s;
+}
+
+.processing-glow-3 {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #f472b6, #c084fc);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(10px, -10px) scale(1.05); }
+  66% { transform: translate(-10px, 10px) scale(0.95); }
+}
+
+/* Hauptinhalt */
+.processing-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Spinner */
+.processing-spinner-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.processing-spinner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.processing-spinner-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+
+.processing-spinner-ring:nth-child(1) {
+  border-top-color: #6366f1;
+  animation: spin 1.5s linear infinite;
+}
+
+.processing-spinner-ring:nth-child(2) {
+  inset: 10px;
+  border-right-color: #06b6d4;
+  animation: spin 2s linear infinite reverse;
+}
+
+.processing-spinner-ring:nth-child(3) {
+  inset: 20px;
+  border-bottom-color: #f472b6;
+  animation: spin 2.5s linear infinite;
+}
+
+.processing-spinner-core {
+  position: absolute;
+  inset: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.processing-spinner-emoji {
+  font-size: 2rem;
+  animation: bounce 1s ease-in-out infinite;
 }
 
 @keyframes spin {
@@ -49,50 +149,187 @@
   100% { transform: rotate(360deg); }
 }
 
-.success-checkmark {
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.95); opacity: 0.8; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Fortschrittsanzeige */
+.processing-progress-info {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.processing-step-counter {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.processing-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.processing-progress-fill {
   height: 100%;
-  position: relative;
-  animation: scale-in 0.5s ease-out;
+  background: linear-gradient(90deg, #6366f1, #06b6d4, #f472b6);
+  background-size: 200% 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease-out;
+  animation: shimmer 2s linear infinite;
 }
 
-.success-checkmark::before,
-.success-checkmark::after {
-  content: '';
-  position: absolute;
-  background-color: #00ff87;
-  border-radius: 2px;
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-.success-checkmark::before {
-  width: 4px;
-  height: 50%;
-  left: 50%;
-  top: 0;
-  transform-origin: bottom;
-  animation: checkmark-left 0.5s ease-out;
+/* Schritte Liste */
+.processing-steps-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 280px;
+  overflow: hidden;
 }
 
-.success-checkmark::after {
-  width: 4px;
-  height: 30%;
-  left: 0;
-  bottom: 0;
-  transform-origin: bottom;
-  animation: checkmark-right 0.5s ease-out;
+.processing-step-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+  animation: slideIn 0.4s ease-out forwards;
 }
 
-@keyframes scale-in {
-  0% { transform: scale(0); }
-  100% { transform: scale(1); }
+.processing-step-item.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
 }
 
-@keyframes checkmark-left {
-  0% { transform: rotate(-45deg) scale(0); }
-  100% { transform: rotate(-45deg) scale(1); }
+.processing-step-item.completed {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.2);
 }
 
-@keyframes checkmark-right {
-  0% { transform: rotate(45deg) scale(0); }
-  100% { transform: rotate(45deg) scale(1); }
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.processing-step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.processing-check {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.processing-step-text {
+  flex: 1;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* Loading Dots Animation */
+.processing-step-loader {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.processing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+
+.processing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.processing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Info Text */
+.processing-info-text {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  margin: 0;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Mobile Optimierung */
+@media (max-width: 480px) {
+  .processing-container {
+    padding: 1.5rem;
+    border-radius: 20px;
+  }
+
+  .processing-spinner-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .processing-spinner-emoji {
+    font-size: 1.5rem;
+  }
+
+  .processing-step-item {
+    padding: 0.75rem;
+  }
+
+  .processing-step-text {
+    font-size: 0.8rem;
+  }
+
+  .processing-steps-list {
+    max-height: 240px;
+  }
 }

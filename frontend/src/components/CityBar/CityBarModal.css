@@ -60,6 +60,12 @@
   background-color: var(--color-neon-blue-light);
 }
 
+.suggestion-type {
+  font-weight: 600;
+  margin-right: 8px;
+  opacity: 0.8;
+}
+
 .search-modal-content {
   position: relative;
 }
