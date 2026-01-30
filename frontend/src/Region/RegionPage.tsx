@@ -113,7 +113,21 @@ export const RegionPage = () => {
 
       {region.vibe && (
         <div className="region-page-vibe-container">
-          <p><strong>Vibe:</strong> {region.vibe}</p>
+          <p><strong>Vibe:</strong></p>
+          <div className="region-page-vibe-details">
+            {region.vibe.energy !== undefined && (
+              <p><strong>Energy:</strong> {region.vibe.energy}/100</p>
+            )}
+            {region.vibe.intimacy !== undefined && (
+              <p><strong>Intimacy:</strong> {region.vibe.intimacy}/100</p>
+            )}
+            {region.vibe.exclusivity !== undefined && (
+              <p><strong>Exclusivity:</strong> {region.vibe.exclusivity}/100</p>
+            )}
+            {region.vibe.social !== undefined && (
+              <p><strong>Social:</strong> {region.vibe.social}/100</p>
+            )}
+          </div>
         </div>
       )}
 

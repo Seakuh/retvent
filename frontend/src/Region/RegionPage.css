@@ -147,10 +147,22 @@
   border-radius: 12px;
 }
 
-.region-page-vibe-container p {
-  margin: 0;
+.region-page-vibe-container > p {
+  margin: 0 0 1rem 0;
   color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
+}
+
+.region-page-vibe-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.region-page-vibe-details p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
 }
 
 .region-page-vibe-container strong {

@@ -321,6 +321,14 @@ export interface Artist extends Profile {
   links?: string[];
 }
 
+export interface Vibe {
+  energy?: number;
+  intimacy?: number;
+  exclusivity?: number;
+  social?: number;
+  _id?: string;
+}
+
 export interface IRegion {
   id: string;
   name: string;
@@ -328,7 +336,7 @@ export interface IRegion {
   slug: string;
   logoUrl?: string;
   images?: string[];
-  vibe?: string;
+  vibe?: Vibe;
   coordinates?: {
     latitude: number;
     longitude: number;
