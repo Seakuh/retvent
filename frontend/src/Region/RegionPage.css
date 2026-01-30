@@ -1,8 +1,8 @@
 .region-page-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
   padding: 0;
   max-width: 80rem;
   margin: 0 auto;
@@ -753,6 +753,144 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Date Navigation */
+.region-date-nav {
+  position: sticky;
+  top: var(--header-height, 120px);
+  left: 0;
+  right: 0;
+  z-index: 98;
+  width: 100vw;
+  max-width: 100%;
+  margin: 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+}
+
+.region-date-nav > * {
+  max-width: 80rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.region-date-nav-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  max-width: 80rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.region-date-nav-container::-webkit-scrollbar {
+  display: none;
+}
+
+.region-date-nav-scroll-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  z-index: 10;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.region-date-nav-scroll-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.region-date-nav-scroll-left {
+  left: 0.5rem;
+}
+
+.region-date-nav-scroll-right {
+  right: 0.5rem;
+}
+
+.region-date-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.region-date-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.region-date-nav-item.active,
+.region-date-nav-item.active-scroll {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+/* Date Sections */
+.region-date-section {
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.region-date-header {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  text-align: center;
+}
+
+.region-date-header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.region-date-events {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0 1.5rem;
+}
+
 .region-page-events-section {
   width: 100%;
   max-width: 80rem;
@@ -777,14 +915,16 @@
 
 .region-page-events-container {
   width: 100%;
-  padding: 0 1.5rem;
+  padding: 0;
   background: #000000;
 }
 
 .region-page-events-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0;
+  max-width: 80rem;
+  margin: 0 auto;
 }
 
 .region-page-no-events {
@@ -943,6 +1083,24 @@
 
   .region-page-similar-bubble {
     flex-shrink: 0;
+  }
+
+  /* Date Navigation auf Mobile */
+  .region-date-nav {
+    top: 0;
+    padding: 0 1rem;
+  }
+
+  .region-date-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .region-date-header-title {
+    font-size: 1.25rem;
+  }
+
+  .region-date-events {
+    padding: 0 1rem;
   }
 }
 
