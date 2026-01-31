@@ -614,6 +614,7 @@ export const RegionPage = () => {
   }
 
   return (
+    <div className="region-page-container-wrapper">
     <div className="region-page-container">
       <RegionHelmet region={region} eventsCount={events.length} />
       <div className={`region-page-header ${isScrolled ? "scrolled" : ""}`} ref={headerRef}>
@@ -1032,6 +1033,7 @@ export const RegionPage = () => {
         </div>
       )}
 <Footer />
+    </div>
     </div>
   );
 };
