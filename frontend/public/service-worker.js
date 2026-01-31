@@ -32,6 +32,32 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Push-Benachrichtigungen empfangen
+self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : {};
+  const title = data.title || 'Event Erinnerung';
+  const options = {
+    body: data.body || 'Dein Event startet bald!',
+    icon: '/logo.png',
+    badge: '/favicon.ico',
+    data: {
+      url: data.url || '/'
+    }
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
+// Klick auf Benachrichtigung
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow(event.notification.data.url)
+  );
+});
+
 // // Netzwerkanfragen abfangen
 // self.addEventListener("fetch", (event) => {
 //   event.respondWith(

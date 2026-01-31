@@ -162,6 +162,13 @@
       z-index: 10000;
       left: max(calc((100% - 80rem) / 2 + 1rem), 1rem);
     }
+
+    .notification-bell-detail-container {
+      position: absolute;
+      top: 2rem;
+      left: max(calc((100% - 80rem) / 2 + 4.5rem), 4.5rem);
+      z-index: 10000;
+    }
     
   
   .share-buttons {

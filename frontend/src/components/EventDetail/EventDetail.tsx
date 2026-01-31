@@ -1,4 +1,4 @@
-import { ChevronLeft, MoreVertical, Pencil, Users, ImagePlus, Film, Megaphone, X, Edit } from "lucide-react";
+import { ChevronLeft, MoreVertical, Pencil, Users, ImagePlus, Film, Megaphone, X, Edit, Bell } from "lucide-react";
 import React, { useCallback, useContext, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
@@ -24,6 +24,7 @@ import { SimilarEvents } from "./SimilarEvents";
 import { TicketLinkButton } from "../TicketLink/TicketLinkButton";
 import Footer from "../../Footer/Footer";
 import { parseEventUrl, getEventUrl } from "../../utils";
+import { NotificationBell } from "./components/NotificationBell";
 
 const EVENT_HISTORY_KEY = "recentEvents";
 const MAX_HISTORY_SIZE = 20;
@@ -327,6 +328,14 @@ export const EventDetail: React.FC = () => {
         <button className="back-button" onClick={handleBack}>
           <ChevronLeft className="h-5 w-5" />
         </button>
+
+        <div className="notification-bell-detail-container">
+          <NotificationBell 
+            eventId={eventId} 
+            eventTitle={event.title} 
+            startDate={event.startDate?.toString() || ""} 
+          />
+        </div>
 
         {/* Owner Settings Menu - only for logged in owner */}
         {isOwner && user && (
