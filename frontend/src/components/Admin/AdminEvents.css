@@ -1,5 +1,9 @@
 /* src/components/AdminEvents.css */
 
+.admin-events-container-wrapper {
+  background-color: #000000;
+}
+
 .admin-events-container {
     max-width: 80rem;
     margin: auto;

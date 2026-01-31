@@ -162,6 +162,7 @@ const AdminEvents: React.FC = () => {
   );
 
   return (
+    <div className="admin-events-container-wrapper">
     <div className="admin-events-container">
       <button onClick={handleBack} className="back-button">
         <ChevronLeft className="h-5 w-5" />{" "}
@@ -188,6 +189,7 @@ const AdminEvents: React.FC = () => {
           )}
         </>
       )}
+    </div>
     </div>
   );
 };
