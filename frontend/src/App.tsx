@@ -38,6 +38,9 @@ import "./utils/onboarding-helpers"; // Load onboarding debug helpers
 import { useVectorProfileResults } from "./hooks/useVectorProfileResults";
 import { ArtistEvents } from "./components/ArtistEvents/ArtistEvents";
 import { RegionPage } from "./Region/RegionPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 // const queryClient = new QueryClient({
 //   defaultOptions: {
 //     queries: {
@@ -195,6 +198,18 @@ const App: React.FC = () => {
                   <Route path="*" element={<LandingPage />} />
                 </Routes>
               </main>
+              <ToastContainer
+                position="bottom-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+              />
             </div>
             </UserContextProvider>
             {/* </QueryClientProvider> */}

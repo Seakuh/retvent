@@ -266,6 +266,7 @@ export const EventDetail: React.FC = () => {
   }
 
   const eventId = event?.id || event?._id || '';
+  const isFutureEvent = event?.startDate ? new Date(event.startDate) > new Date() : false;
   
   return (
     <div>
@@ -329,13 +330,15 @@ export const EventDetail: React.FC = () => {
           <ChevronLeft className="h-5 w-5" />
         </button>
 
-        <div className="notification-bell-detail-container">
-          <NotificationBell 
-            eventId={eventId} 
-            eventTitle={event.title} 
-            startDate={event.startDate?.toString() || ""} 
-          />
-        </div>
+        {isFutureEvent && (
+          <div className="notification-bell-detail-container">
+            <NotificationBell 
+              eventId={eventId} 
+              eventTitle={event.title} 
+              startDate={event.startDate?.toString() || ""} 
+            />
+          </div>
+        )}
 
         {/* Owner Settings Menu - only for logged in owner */}
         {isOwner && user && (
