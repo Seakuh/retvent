@@ -58,7 +58,7 @@ export class MongoRegionRepository implements IRegionRepository {
   }
 
   async findBySlug(slug: string): Promise<Region | null> {
-    const region = await this.regionModel.findOne({ slug }).exec();
+    const region = await this.regionModel.findOne({ slug: { $regex: new RegExp(`^${slug}$`, 'i') } }).exec();
     return region ? this.toEntity(region) : null;
   }
 
