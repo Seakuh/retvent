@@ -330,7 +330,6 @@ export const EventDetail: React.FC = () => {
           <ChevronLeft className="h-5 w-5" />
         </button>
 
-        {isFutureEvent && (
           <div className="notification-bell-detail-container">
             <NotificationBell 
               eventId={eventId} 
@@ -338,8 +337,6 @@ export const EventDetail: React.FC = () => {
               startDate={event.startDate?.toString() || ""} 
             />
           </div>
-        )}
-
         {/* Owner Settings Menu - only for logged in owner */}
         {isOwner && user && (
           <div className="owner-settings-container" ref={ownerMenuRef}>

@@ -1,4 +1,5 @@
 import {
+  Bell,
   CalendarIcon,
   ExternalLink,
   Eye,
@@ -18,6 +19,7 @@ import { RealListItemDropdown } from "./RealListItemDropdown";
 import { RealListItemProfileHeader } from "./RealListItemProfileHeader";
 import { RealListItemQrModal } from "./RealListItemQrModal";
 import { shareEvent } from "../../EventDetail/service";
+import { NotificationBell } from "../../EventDetail/components/NotificationBell";
 
 export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   event,
@@ -27,17 +29,23 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
   const { addFavorite, removeFavorite, isFavorite } = useContext(UserContext);
   const [showLineup, setShowLineup] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
-  const handleLike = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation(); // Verhindert das Navigieren zur Event-Detailseite
 
-    if (isFavorite(event.id!)) {
-      // Nutze isFavorite statt lokalem State
-      removeFavorite(event.id!);
-    } else {
-      addFavorite(event.id!);
+  const isFutureEvent = event.startDate ? new Date(event.startDate) > new Date() : false;
+
+  const handleLike = (e?: React.MouseEvent<HTMLDivElement>) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
-    // setIsLiked nicht nötig, da wir isFavorite vom Context nutzen
+
+    const eventId = event.id || event._id;
+    if (!eventId) return;
+
+    if (isFavorite(eventId)) {
+      removeFavorite(eventId);
+    } else {
+      addFavorite(eventId);
+    }
   };
 
   const handleAddToCalendar = () => {
@@ -170,6 +178,13 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             loading="lazy"
             decoding="async"
           />
+            <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 10 }}>
+              <NotificationBell 
+                eventId={event.id || event._id || ""} 
+                eventTitle={event.title} 
+                startDate={event.startDate?.toString() || ""} 
+              />
+            </div>
         </div>
         <div className="event-meta-container">
           <div className="event-meta-container-left">
@@ -234,10 +249,12 @@ export const RealListItem: React.FC<{ event: Event; isPast?: boolean }> = ({
             {event.description}
           </h2>
           <div style={{ position: "absolute", right: 12, top: 10, zIndex: 2 }}>
-            <RealListItemDropdown
-              eventId={event.id || event._id || ""}
-              onShare={(e) => shareEvent(e, event!)}
-            />
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <RealListItemDropdown
+                eventId={event.id || event._id || ""}
+                onShare={(e) => shareEvent(e, event!)}
+              />
+            </div>
           </div>
         </div>
         

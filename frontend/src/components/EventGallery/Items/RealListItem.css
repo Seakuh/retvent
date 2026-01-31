@@ -7,12 +7,6 @@
   position: relative;
 }
 
-@media (hover: hover) {
-  .real-list-item-container:hover {
-    transform: translateY(-2px);
-  }
-}
-
 .event-info-button-container {
   display: flex;
   flex-direction: row;

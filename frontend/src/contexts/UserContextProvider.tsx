@@ -63,6 +63,14 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     return favoriteEventIds.includes(eventId);
   };
 
+  // Expose context functions to window for the NotificationBell
+  useEffect(() => {
+    (window as any).userContext = {
+      addFavorite,
+      isFavorite
+    };
+  }, [favoriteEventIds, loggedIn]);
+
   const adjustUserLocation = (
     userLocation: {
       latitude: number;

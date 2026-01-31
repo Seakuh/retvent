@@ -72,7 +72,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ eventId, eve
     const now = new Date();
 
     if (notificationDate <= now) {
-      toast.error('This time is already in the past!');
+      toast.error('This time is right now!');
       return;
     }
 
@@ -89,6 +89,12 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ eventId, eve
     setIsSubscribed(true);
     setSelectedOption(minutesBefore);
     setIsOpen(false);
+
+    // Auto-like the event when setting a reminder
+    const { addFavorite, isFavorite } = (window as any).userContext || {};
+    if (addFavorite && isFavorite && !isFavorite(eventId)) {
+      addFavorite(eventId);
+    }
 
     // In a real app, you'd send this to a backend or use a Service Worker with Push API.
     const delay = notificationDate.getTime() - now.getTime();
@@ -127,10 +133,14 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ eventId, eve
   };
 
   return (
-    <div className="notification-bell-container" ref={dropdownRef}>
+    <div  className="notification-bell-container" ref={dropdownRef} onClick={(e) => e.stopPropagation()}>
       <button 
         className={`notification-bell-button ${isSubscribed ? 'active' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault(); 
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
         title="Set reminder"
       >
         {isSubscribed ? <Bell className="h-5 w-5" /> : <BellOff className="h-5 w-5" />}

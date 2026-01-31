@@ -3,9 +3,16 @@
   display: inline-block;
 }
 
+.notification-bell-detail-container {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10000;
+}
+
 .notification-bell-button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
   border-radius: 50%;
   padding: 10px;
   cursor: pointer;
@@ -14,15 +21,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .notification-bell-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .notification-bell-button.active {
-  background: #ff4d4d;
+  background: rgba(255, 77, 77, 0.4);
+  backdrop-filter: blur(12px);
   border-color: #ff4d4d;
   animation: bell-shake 0.5s ease-in-out;
 }
