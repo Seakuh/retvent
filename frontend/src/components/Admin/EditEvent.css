@@ -1,5 +1,7 @@
 /* EditEvent.css - Apple-like Dark Admin Panel */
-
+.edit-event-container-wrapper {
+  background-color: #000000;
+}
 /* Base Container */
 .edit-event-container {
   min-height: 100vh;

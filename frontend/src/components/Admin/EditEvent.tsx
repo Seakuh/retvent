@@ -17,10 +17,6 @@ import {
   Share2,
   Music,
   Eye,
-  Heart,
-  Crop,
-  ExternalLink,
-  Phone,
   Plus,
   CheckCircle,
 } from "lucide-react";
@@ -1106,6 +1102,7 @@ const EditEvent: React.FC = () => {
   if (error) return <div className="error">{error}</div>;
 
   return (
+    <div className="edit-event-container-wrapper">
     <div className="edit-event-container">
       {loading && (
         <div className="loading-screen">
@@ -2512,6 +2509,7 @@ const EditEvent: React.FC = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
