@@ -739,6 +739,11 @@ export class EventController {
     return this.eventService.createEventsByText(body.text);
   }
 
+  @Post('parse-from-url')
+  async parseEventFromUrl(@Body() body: { url: string }) {
+    return this.eventService.fetchAndParseUrl(body.url);
+  }
+
   // @Post('advertisement/create')
   // @UseGuards(JwtAuthGuard)
   // @UseInterceptors(FileInterceptor('file'))
@@ -915,6 +920,55 @@ export class EventController {
     const parsedData = this.eventMapper.toEntity(eventData, req.user.sub);
     const event = await this.eventService.createEvent(parsedData, image);
     return event;
+  }
+
+  // CREATE EVENT WITH MULTIPLE IMAGES AND FULL DETAILS
+  @Post('create/with-images')
+  @UseGuards(JwtAuthGuard, CommunityEventGuard)
+  @UseInterceptors(FilesInterceptor('images', 10, {
+    fileFilter: (req, file, callback) => {
+      if (file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+        callback(null, true);
+      } else {
+        callback(new BadRequestException('Only image files are allowed'), false);
+      }
+    },
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB per file
+  }))
+  async createEventWithImages(
+    @Request() req,
+    @Body() eventData: CreateEventDto,
+    @UploadedFiles() images?: Express.Multer.File[],
+  ) {
+    try {
+      const parsedData = this.eventMapper.toEntity(eventData, req.user.sub);
+
+      // Upload all images and get their URLs
+      if (images && images.length > 0) {
+        const imageUrls = await Promise.all(
+          images.map((image) => this.eventService.uploadEventImage(image, req.user.sub))
+        );
+
+        // Set primary image as first image
+        parsedData.imageUrl = imageUrls[0];
+
+        // Add additional images to eventPictures
+        if (imageUrls.length > 1) {
+          parsedData.eventPictures = imageUrls;
+        }
+      }
+
+      const event = await this.eventService.createEvent(parsedData);
+      return {
+        success: true,
+        event,
+        message: `Event "${event.title}" successfully created${images ? ` with ${images.length} image(s)` : ''}`,
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        error instanceof Error ? error.message : 'Failed to create event with images'
+      );
+    }
   }
 
   @Get('category/:category')

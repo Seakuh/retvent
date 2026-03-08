@@ -149,6 +149,49 @@ export class EventService {
     return events;
   }
 
+  async fetchAndParseUrl(url: string): Promise<Partial<Event>[]> {
+    const html = await axios.get(url, {
+      timeout: 15000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120.0.0.0',
+        Accept: 'text/html,application/xhtml+xml',
+      },
+    });
+
+    // Extract enriched text from HTML
+    const cheerio = require('cheerio');
+    const $ = cheerio.load(html.data);
+
+    // Extract Meta information
+    const metaTitle = $('meta[property="og:title"]').attr('content') ||
+                      $('meta[name="DC.Title"]').attr('content') ||
+                      $('title').text() || '';
+    const metaDescription = $('meta[property="og:description"]').attr('content') ||
+                           $('meta[name="description"]').attr('content') || '';
+
+    // Remove script and style elements
+    $('script, style, nav, footer, .header').remove();
+
+    // Extract main content area
+    const bodyText = $('main, article, .content, [role="main"]').length > 0
+      ? $('main, article, .content, [role="main"]').text()
+      : $('body').text();
+
+    const text = `
+Title: ${metaTitle}
+Description: ${metaDescription}
+---
+${bodyText}
+    `.replace(/\s+/g, ' ')
+      .trim()
+      .substring(0, 8000); // Limit to prevent token overflow
+
+    // Parse text to events using ChatGPT
+    const events = await this.chatGptService.generateEventsFromText(text);
+
+    return events;
+  }
+
   // createAdvertisementEvent(file: Express.Multer.File, eventData: any, id: any) {
   //   this.eventRepository.createAvertisementEvent();
   // }
@@ -2423,6 +2466,17 @@ export class EventService {
       eventFromPrompt,
       detailedEventDescription,
     );
+  }
+
+  async uploadEventImage(image: Express.Multer.File, userId?: string): Promise<string> {
+    if (!image) {
+      throw new BadRequestException('No image provided');
+    }
+    const imageUrl = await this.imageService.uploadImage(image);
+    if (!imageUrl) {
+      throw new BadRequestException('Failed to upload image');
+    }
+    return imageUrl;
   }
 
   async updateEventImage(
